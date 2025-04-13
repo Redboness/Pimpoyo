@@ -1,0 +1,900 @@
+/* --- Fuente principal Fredoka --- */
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap");
+
+/* --- Estilos Generales --- */
+body {
+  margin: 0;
+  font-family: "Fredoka", "Comic Sans MS", sans-serif;
+  color: #4a3112;
+  line-height: 1.4;
+}
+
+/* --- Contenedor Principal del Chat --- */
+.chat-container {
+  background-color: #fff4de;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* --- Cabecera --- */
+.chat-header {
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: none;
+  flex-shrink: 0;
+}
+
+.chat-header button {
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  box-shadow: none;
+}
+
+.button-refresh {
+  background-color: #ffffff;
+  color: #94ab3d;
+  font-size: 1.4em;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.button-panel {
+  background-color: #ffffff;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Icono de 3 barras SÓLO para el botón de ABRIR panel */
+.chat-header > .button-panel:not(#close-panel-btn)::before,
+.chat-header > .button-panel:not(#close-panel-btn)::after,
+.chat-header > .button-panel:not(#close-panel-btn) .panel-bar-middle {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 3px;
+  background-color: black;
+  border-radius: 1px;
+}
+
+.chat-header > .button-panel:not(#close-panel-btn)::before {
+  background-color: #94ab3d;
+  top: 11px;
+}
+
+.chat-header > .button-panel:not(#close-panel-btn)::after {
+  background-color: #f6eb9c;
+  bottom: 11px;
+}
+
+.chat-header > .button-panel:not(#close-panel-btn) .panel-bar-middle {
+  background-color: #fa77c5;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* --- Área de Mensajes --- */
+.chat-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Estilos Base Mensaje --- */
+.message {
+  display: flex;
+  align-items: flex-end;
+  max-width: 85%;
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.message:last-child {
+  margin-bottom: 0;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: #eee;
+  border: none;
+  object-fit: cover;
+}
+
+/* Burbuja Amarilla (Bot) */
+.message.received {
+  align-self: flex-start;
+}
+
+.message.received .avatar.bot-avatar {
+  margin-right: 12px;
+}
+
+.message.received .message-bubble {
+  background-color: #f5e187;
+  padding: 12px 18px;
+  border-radius: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  color: #4a3112;
+  /* Add these for correct button alignment */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Aligns text and button containers left */
+}
+
+.message.received .message-bubble p {
+  margin-bottom: 10px; /* Ensure space between text and buttons */
+}
+.message.received .message-bubble p:last-child {
+  margin-bottom: 0; /* Reset if it's the only element */
+}
+
+
+/* Burbuja Verde (Usuario) */
+.message.sent {
+  align-self: flex-end;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.message.sent .avatar.user-avatar {
+  margin-left: 12px;
+}
+
+.message.sent .message-bubble {
+  background-color: #94ab3d;
+  color: #ffffff;
+  border-radius: 20px;
+  padding: 12px 18px; /* Consistent padding */
+  display: inline-block;
+  max-width: 100%;
+  box-sizing: border-box;
+  box-shadow: none;
+}
+
+/* Contenido Párrafos */
+.message-bubble p {
+  margin: 0 0 10px 0;
+  line-height: 1.4;
+}
+
+.message-bubble p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Botones en Burbujas --- */
+
+/* Container for DEFAULT (usually text) buttons - Vertical Stack */
+.message-buttons {
+  display: flex;
+  flex-direction: column; /* Vertical stack */
+  gap: 5px; /* Gap between vertical buttons */
+  margin-top: 10px;
+  align-items: stretch; /* Make buttons take available width */
+  width: 100%; /* Ensure container allows stretching */
+}
+
+/* Container specifically for HORIZONTAL nav buttons (Tips) */
+.message-buttons-nav {
+  display: flex;
+  flex-direction: row; /* Horizontal layout */
+  justify-content: flex-end; /* Align buttons to the start */
+  gap: 10px; /* Gap between horizontal buttons */
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* Style for STANDARD TEXT buttons within messages */
+.message-button {
+  background-color: #ffffff;
+  color: #4a3112;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 25px;
+  font-family: inherit;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 3px rgba(74, 49, 18, 0.1);
+  flex-grow: 0; /* Prevent stretching by default */
+  width: auto; /* Let content determine width */
+  display: inline-block; /* Or block if using vertical stack */
+}
+
+.message-button:hover:not(:disabled) {
+  background-color: #fdf9e0;
+  box-shadow: 0 2px 5px rgba(74, 49, 18, 0.15);
+}
+
+/* Style for ROUND, PINKISH ICON buttons (Tips Navigation) */
+.message-button-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background-color: #fed8c6; /* Pinkish background */
+  cursor: pointer;
+  width: 40px; /* Fixed size for roundness */
+  height: 40px; /* Fixed size for roundness */
+  padding: 0;
+  border-radius: 50%; /* Makes it round */
+  color: #fa77c5; /* Pinkish icon color */
+  font-size: 1.2em;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.message-button-nav:hover:not(:disabled) {
+  background-color: rgba(250, 119, 197, 0.1); /* Lighter pinkish on hover */
+  color: #e057a8; /* Darker pink on hover */
+}
+
+/* Disabled state for ALL message buttons */
+.message-button:disabled,
+.message-button-nav:disabled {
+  color: #cccccc !important; /* Ensure grey color */
+  cursor: not-allowed;
+  opacity: 0.7; /* Slightly faded */
+}
+/* Specific disabled background for nav buttons */
+.message-button-nav:disabled {
+   background-color: #f0f0f0 !important; /* Lighter grey background */
+}
+/* Specific disabled background for text buttons */
+.message-button:disabled {
+   background-color: #e0e0e0 !important; /* Slightly darker grey */
+}
+
+
+/* --- Área de Input --- */
+.chat-input-area {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background-color: #94ab3d;
+  flex-shrink: 0;
+}
+
+.text-input {
+  flex-grow: 1;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 20px;
+  margin-right: 10px;
+  font-family: inherit;
+  font-size: 1em;
+  outline: none;
+  background-color: #ffffff;
+  color: #4a3112;
+}
+
+.text-input::placeholder {
+  color: #4a3112;
+  opacity: 0.6;
+}
+
+.send-button {
+  background-color: #fa77c5;
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+}
+
+.send-button:hover {
+  background-color: #f750b6;
+}
+
+
+/* --- Panel Lateral --- */
+#side-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 300px;
+  max-width: 80%;
+  background-color: #fff4de;
+  border-left: 1px solid rgba(148, 171, 61, 0.2);
+  box-shadow: -3px 0 15px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+#side-panel.open {
+  transform: translateX(0%);
+}
+
+#side-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid rgba(148, 171, 61, 0.2);
+  flex-shrink: 0;
+}
+
+#side-panel .panel-header h2 {
+  margin: 0;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #4a3112;
+}
+
+/* --- Botón Cerrar Panel --- */
+#close-panel-btn {
+  color: #fa77c5;
+  font-size: 1.4em;
+  background-color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  /* Inherits size etc. from .button-panel */
+  width: 40px;  /* Explicitly define size if needed */
+  height: 40px; /* Explicitly define size if needed */
+  border-radius: 50%; /* Ensure roundness */
+  display: flex; /* Ensure centering of icon */
+  align-items: center; /* Ensure centering of icon */
+  justify-content: center; /* Ensure centering of icon */
+}
+
+#close-panel-btn:hover {
+  background-color: #fce4ec;
+  color: #e057a8;
+}
+
+#close-panel-btn .panel-bar-middle {
+  display: none;
+}
+
+/* --- Contenido Panel Lateral --- */
+#side-panel .panel-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.panel-button {
+  display: block;
+  width: 100%;
+  background-color: #ffffff;
+  color: #4a3112;
+  border: 1px solid #eadca6;
+  padding: 12px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.2s ease;
+  margin-bottom: 15px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.panel-button:hover {
+  background-color: #fdf9e0;
+}
+
+.panel-button:last-child {
+  margin-bottom: 0;
+}
+
+/* Estilo para secciones de contenido del panel */
+.panel-section-content {
+  display: none; /* Controlled by JS/React State */
+  margin-top: 10px;
+  padding: 15px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: none;
+  border-top: none;
+}
+
+.panel-section-content h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #94ab3d;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+/* --- Estilos Glosario (SidePanel) --- */
+.glossary-index {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+}
+
+.glossary-index a {
+  font-family: "Fredoka", "Comic Sans MS", sans-serif;
+  font-weight: bold;
+  font-size: 1em;
+  min-width: auto;
+  padding: 3px 6px;
+  border: 1px solid #d3d9c1;
+  background-color: transparent;
+  color: #94ab3d;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  margin: 0 2px;
+  text-decoration: none;
+}
+
+.glossary-index a:hover {
+  background-color: #f0f5d4;
+  color: #7a8e31;
+  border-color: #c0c7a6;
+  text-decoration: underline;
+}
+
+.glossary-letter-heading {
+  font-size: 1.2em;
+  color: #4a3112;
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  margin-bottom: 2px;
+}
+
+.glossary-letter-heading:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.panel-section-content dl dt {
+  font-weight: bold;
+  color: #94ab3d;
+  margin-top: 5px;
+  margin-bottom: 2px;
+}
+
+.panel-section-content dl dd {
+  margin-left: 0;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  border-left: 2px solid #f5e187;
+  text-align: justify;
+}
+
+#glossary-content p {
+  text-align: justify;
+  margin-bottom: 10px;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+#glossary-content p:last-of-type {
+  margin-bottom: 0;
+}
+/* --- FIN ESTILOS GLOSARIO --- */
+
+/* --- ESTILOS ESTADÍSTICAS (SidePanel) --- */
+.stats-container {
+  padding: 10px 0;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.stat-label {
+  width: 80px;
+  font-size: 0.9em;
+  color: #4a3112;
+  text-align: right;
+  flex-shrink: 0;
+  font-weight: bold;
+}
+
+.stat-bar-track {
+  flex-grow: 1;
+  height: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #eadca6;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  width: 0%; /* Controlled by JS/React */
+  background-color: #ccc; /* Default, override as needed */
+  border-radius: 10px;
+  transition: width 0.6s ease-out;
+  text-align: right;
+  color: white;
+  font-size: 0.8em;
+  line-height: 20px;
+  padding-right: 5px;
+  box-sizing: border-box;
+}
+/* --- FIN ESTILOS ESTADÍSTICAS --- */
+
+
+/* --- ESTILOS AJUSTES (SidePanel) --- */
+.setting-item {
+  margin-bottom: 20px;
+}
+
+.setting-item label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #4a3112;
+}
+
+.settings-input { /* Input text/url en ajustes */
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #eadca6;
+  border-radius: 15px;
+  font-family: inherit;
+  font-size: 0.95em;
+  color: #4a3112;
+  box-sizing: border-box;
+}
+
+.settings-input:focus {
+  outline: none;
+  border-color: #94ab3d;
+  box-shadow: 0 0 3px rgba(148, 171, 61, 0.3);
+}
+
+.setting-item small { /* Texto de ayuda */
+  display: block;
+  font-size: 0.8em;
+  color: #666;
+  margin-top: 4px;
+}
+
+.avatar-setting-input { /* Contenedor para preview + input url */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Preview imagen avatar en ajustes */
+/* img tag is used directly with inline styles in SidePanel.tsx */
+
+#settings-save-btn { /* Botón Guardar Cambios */
+  background-color: #94ab3d;
+  color: white;
+  border: none;
+  /* Inherits .panel-button styles */
+}
+
+#settings-save-btn:hover:not(:disabled) {
+  background-color: #7a8e31;
+}
+
+/* Mensaje feedback guardado (p tag controlled by JS) */
+/* Inline styles used in SidePanel.tsx */
+
+.logout-button { /* Botón Salir del Chat */
+  background-color: #ee4d4d;
+  border: 1px solid #d32f2f;
+  color: white;
+   /* Inherits .panel-button styles */
+}
+
+.logout-button:hover {
+  background-color: #d32f2f;
+  border-color: #c62828;
+}
+/* --- FIN ESTILOS AJUSTES --- */
+
+/* --- Quitar colas de las burbujas --- */
+.message.received .message-bubble::before,
+.message.sent .message-bubble::before {
+  display: none;
+}
+
+/* --- Estilos Barra de Scroll (Chat y Panel) --- */
+.chat-messages::-webkit-scrollbar,
+#side-panel .panel-content::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track,
+#side-panel .panel-content::-webkit-scrollbar-track {
+  background: rgba(148, 171, 61, 0.1);
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb,
+#side-panel .panel-content::-webkit-scrollbar-thumb {
+  background-color: #94ab3d;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 244, 222, 0.5);
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover,
+#side-panel .panel-content::-webkit-scrollbar-thumb:hover {
+  background-color: #7a8e31;
+}
+
+.chat-messages,
+#side-panel .panel-content {
+  scrollbar-width: auto;
+  scrollbar-color: #94ab3d rgba(148, 171, 61, 0.1);
+}
+
+/* --- ESTILOS ProfileSetup / Login / Register --- */
+.profile-setup-wrapper {
+  /* Contenedor principal que reemplaza #nickname-screen y contiene los modos */
+  width: 100%;
+  min-height: 100vh; /* Ocupa toda la altura */
+  display: flex;
+  flex-direction: column; /* Organiza el selector de modo y el contenido */
+  background-color: #fff4de; /* Fondo general */
+}
+
+.step-container {
+  /* Estilo base para cada "paso" o vista (Login, Register-Apodo, etc.) */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centra verticalmente */
+  align-items: center; /* Centra horizontalmente */
+  flex-grow: 1; /* Permite que ocupe el espacio restante */
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: center;
+  width: 100%; /* Ocupa todo el ancho del wrapper */
+}
+
+.login-view {
+  /* Estilos específicos si se necesitan para la vista de login */
+  padding-top: 40px; /* Ejemplo: Más espacio arriba */
+}
+
+
+.form-select { /* Select para Género */
+  padding: 10px 15px;
+  border: 1px solid #eadca6;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 1em;
+  outline: none;
+  color: #4a3112;
+  background-color: #ffffff;
+  min-width: 200px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.form-select:disabled {
+  background-color: #eeeeee;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.step-container h2 { /* Estilo para los títulos h2 dentro de los pasos */
+  color: #4a3112;
+  margin-bottom: 10px;
+}
+
+.step-container p { /* Estilo para los párrafos dentro de los pasos */
+  color: #4a3112;
+  margin-bottom: 20px;
+  max-width: 400px; /* Limita ancho del texto */
+}
+
+.nickname-input-area { /* Contenedor para input+button en varios pasos */
+  display: flex;
+  flex-wrap: wrap; /* Permite que los elementos bajen si no caben */
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  width: 100%; /* Ocupa el ancho disponible */
+  max-width: 450px; /* Limita el ancho máximo */
+}
+
+.form-input { /* Estilo base para inputs de texto/número/password */
+  padding: 10px 15px;
+  border: 1px solid #eadca6;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 1em;
+  outline: none;
+  color: #4a3112;
+  background-color: #ffffff;
+  /* min-width: 200px; */ /* Quitado para permitir flexibilidad */
+  flex-grow: 1; /* Permite que crezca para llenar espacio */
+  box-sizing: border-box;
+}
+.nickname-input-area .form-input {
+   min-width: 200px; /* Mínimo específico en esta área */
+}
+
+
+.form-button { /* Estilo base para botones de formulario (Siguiente, Entrar, etc.) */
+  padding: 10px 20px;
+  background-color: #94ab3d;
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0; /* No se encoge */
+}
+.form-button:hover:not(:disabled) {
+  background-color: #7a8e31;
+}
+.form-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Botones para cambiar entre Registro/Login */
+.button-mode {
+  display: inline-block;
+  background-color: #ffffff;
+  color: #4a3112;
+  border: 1px solid #eadca6;
+  padding: 8px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.2s ease;
+  font-size: 0.9em;
+  box-sizing: border-box;
+}
+.button-mode:hover:not(:disabled) {
+  background-color: #fdf9e0;
+}
+.button-mode.active { /* Estilo cuando el modo está activo */
+  background-color: #e0e0e0;
+  border-color: #cccccc;
+  cursor: default;
+}
+.button-mode:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Enlace para cambiar a Login desde Registro */
+/* Corrected based on image */
+.switch-mode-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #4a3112;
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9em;
+  margin-top: 15px; /* Más espacio */
+}
+
+.switch-mode-link:hover:not(:disabled) {
+  color: #94ab3d;
+}
+
+.switch-mode-link:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+
+.error-message { /* Mensajes de error en formularios */
+  font-size: 0.9em;
+  margin-top: 10px; /* Más espacio */
+  min-height: 1.2em; /* Evita saltos de layout */
+  display: block;
+  color: red;
+  width: 100%; /* Ocupa ancho para centrarse bien */
+  max-width: 450px; /* Coincide con .nickname-input-area */
+}
+
+.hidden { /* Clase para ocultar elementos */
+  display: none !important;
+}
+
+/* --- Estilo Nickname en Cabecera Chat --- */
+#header-nickname {
+  color: #4a3112;
+  font-weight: bold;
+  font-size: 1.1em;
+  text-align: center;
+  flex-grow: 1;
+  margin: 0 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+
+/* --- Clases adicionales para campos específicos si necesitas ajustar --- */
+.final-step-area { /* Contenedor para el último paso de registro */
+   max-width: 450px;
+   margin: 20px auto 0 auto; /* Añadido margen superior */
+   text-align: left;
+   width: 90%; /* Asegura que no sea 100% en pantallas pequeñas */
+}
+.form-field { /* Contenedor para label+input en el último paso */
+   margin-bottom: 15px;
+}
+.form-field label {
+   display: block;
+   margin-bottom: 5px;
+   font-weight: normal; /* O bold si prefieres */
+}
+.final-step-area .form-input { /* Asegura que los inputs ocupen todo el ancho del field */
+  width: 100%;
+}
+.final-step-area .form-button { /* Centrar botón final */
+   display: block; /* Asegura que ocupe su línea */
+   margin: 20px auto 0 auto; /* Centrado horizontal */
+}
+.final-step-area .form-field input[type="checkbox"] {
+    width: auto; /* Checkbox tamaño normal */
+    margin-right: 10px; /* Espacio entre checkbox y label */
+    flex-shrink: 0; /* Evita que se encoja */
+}
+.final-step-area .form-field label[for="register-consentimiento"] {
+    display: inline; /* Permite que la label esté al lado */
+    margin-bottom: 0;
+    font-weight: normal;
+}
+.final-step-area .form-field:has(input[type="checkbox"]) {
+    display: flex; /* Alinea checkbox y label */
+    align-items: center;
+    justify-content: center; /* Centra el conjunto */
+    margin-bottom: 20px;
+}

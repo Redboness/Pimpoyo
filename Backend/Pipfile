@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+python-multipart = "*"
+psycopg2-binary = "*"
+bcrypt = "4.0.1"
+fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+python-dotenv = "*"
+passlib = {extras = ["bcrypt"], version = "*"}
+python-jose = {extras = ["cryptography"], version = "*"}
+databases = {extras = ["postgresql"], version = "*"}
+sqlalchemy = "*"
+asyncpg = "*"
+ollama = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"

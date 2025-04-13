@@ -1,0 +1,23 @@
+# Backend
+Backend/.env
+Backend/.venv/
+Backend/__pycache__/
+Backend/*.pyc
+Backend/*.pyo
+Backend/*.pyd
+Backend/.mypy_cache/
+Backend/.pytest_cache/
+Backend/.coverage
+Backend/htmlcov/
+Backend/.DS_Store
+Backend/Pipfile.lock
+# Frontend
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.env
+Frontend/.DS_Store
+Frontend/.cache/
+Frontend/*.log
+Frontend/*.lock
+Frontend/.vite/
+Redboness
