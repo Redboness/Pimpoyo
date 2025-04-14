@@ -13,7 +13,7 @@ IF NOT EXIST "%~dp0Frontend\package.json" (
     ECHO [X] ERROR: No se encontró package.json en la carpeta Frontend.
     goto :error_exit
 )
-START "Frontend (npm run dev)" /D "%~dp0Frontend" cmd /k "npm run dev"
+START "Frontend (npm run dev)" /D "%~dp0Frontend" cmd /k "npm run dev --host"
 ECHO [*] Servidor Frontend iniciado en la nueva ventana.
 ECHO.
 
@@ -31,9 +31,11 @@ if %errorlevel% neq 0 (
     goto :error_exit
 )
 
+START "Ngrok" /D "%~dp0Frontend" cmd /k "ngrok http 5173"
+
 ECHO [*] Ejecutando: pipenv run uvicorn main:app --reload
 ECHO [*] (Pulsa Ctrl+C para detener el servidor Backend)
-pipenv run uvicorn main:app --reload
+pipenv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 ECHO.
 ECHO [!] El servidor Backend ha terminado.

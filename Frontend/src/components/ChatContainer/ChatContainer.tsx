@@ -25,7 +25,6 @@ interface ChatContainerProps {
 const BOT_AVATAR_URL = "https://i.postimg.cc/GpMfkzPx/Rat-n-profesor-Copy.png";
 const USER_AVATAR_URL_DEFAULT =
   "https://i.postimg.cc/SQwcn892/Ni-o-avatar-copy.png"; // Fallback default
-const API_BASE_URL = "http://localhost:8000"; // API Base URL
 
 
 // --- Tips Data (Example) ---
@@ -103,7 +102,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     }
     try {
       // Use API_BASE_URL constant
-      const response = await fetch(`${API_BASE_URL}/users/me/`, {
+      const response = await fetch(`/api/users/me/`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -379,7 +378,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     // 3. Determine which system prompt and endpoint to use based on state
     // Use the state variable isFreeChatMode directly
     const currentSystemPrompt = isFreeChatMode ? SYSTEM_PROMPT_FREE_CHAT : SYSTEM_PROMPT_FAKE_NEWS;
-    const targetEndpoint = isFreeChatMode ? `${API_BASE_URL}/bot/chatlibre` : `${API_BASE_URL}/bot/chat`;
+    const targetEndpoint = isFreeChatMode ? `/api/bot/chatlibre` : `/api/bot/chat`;
 
     // 4. Construct the message history for Ollama API
     const ollamaMessages: OllamaMessage[] = [
@@ -409,7 +408,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         // Send the full messages array
         body: JSON.stringify({
             messages: ollamaMessages,
-            model: 'llama3.2:1b' // Ensure correct model name:tag
+            model: 'gemma3:4b' // Ensure correct model name:tag
         })
       });
 

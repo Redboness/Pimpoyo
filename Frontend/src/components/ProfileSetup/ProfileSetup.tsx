@@ -103,7 +103,7 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
 
     try {
       // Use your actual register endpoint URL
-      const response = await fetch('http://localhost:8000/register/', {
+      const response = await fetch('/api/register/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(registrationData),
@@ -137,7 +137,7 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
 
     try {
       // Use your actual token endpoint URL
-      const response = await fetch('http://localhost:8000/token', {
+      const response = await fetch('/api/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: loginFormData.toString(),

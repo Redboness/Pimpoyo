@@ -1,6 +1,7 @@
 # --- main.py ---
 
 import os
+import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -33,7 +34,7 @@ load_dotenv() # Load variables from .env
 DATABASE_URL = os.getenv("DATABASE_URL")
 SECRET_KEY = os.getenv("SECRET_KEY", "un_secreto_muy_fuerte_y_largo_aqui")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 480
 # OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434") # Optional
 
 if DATABASE_URL is None:
@@ -76,8 +77,14 @@ def get_password_hash(password: str) -> str:
 
 # --- FastAPI Instance and CORS ---
 app = FastAPI()
-origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
-app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+origins = ['*']
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- Ollama Client Setup ---
 ollama_client = ollama.Client() # Default host: http://localhost:11434
@@ -310,6 +317,8 @@ Estilo de Comunicación:
 - No afirmes lo que has recibido, es decir, si digo: Explicame que es el modelo llama3.2-1b de Meta, no digas: Claro, te explicaré cómo funciona el Modelo llama 3.2-1B de Meta, simplemente responde a la pregunta sin repetirla.
 - Tampoco afirmes que has escuchado al usuario, es decir, no digas cosas tipo ---¡Claro! Entiendo lo que quieres decir.--- o similar, simplemente di el resto.
 Objetivo Final: Que el usuario aprenda sobre la información que te pregunta, mediante un proceso interactivo y guiado.
+
+Es IMPERATIVO que evites alucinaciones, si te hacen una pregunta no pongas información que no sea sobre la que ha dicho el usuario.
 """
     # --- End System Prompt Definition ---
 
@@ -342,3 +351,6 @@ Objetivo Final: Que el usuario aprenda sobre la información que te pregunta, me
         print(f"Error interacting with Ollama in /bot/chatlibre: {e}")
         raise HTTPException(status_code=503, detail=f"Failed to get response from language model: {e}")
 # --- END FREE CHAT ENDPOINT ---
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

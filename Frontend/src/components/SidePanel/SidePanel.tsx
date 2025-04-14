@@ -63,7 +63,7 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
             avatar_url: newAvatarUrl || null
         };
 
-        const response = await fetch('http://localhost:8000/users/me/', {
+        const response = await fetch('/api/users/me/', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
