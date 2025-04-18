@@ -2,6 +2,7 @@
 REM Cambia la página de códigos de la consola a UTF-8 para mostrar acentos correctamente
 chcp 65001 > nul
 setlocal  REM <-- Usando setlocal simple
+set "PATH=%PATH%;C:\Program Files\PostgreSQL\17\bin"
 
 REM =====================================================================
 REM == Script de Instalación de Proyecto para Windows                  ==
