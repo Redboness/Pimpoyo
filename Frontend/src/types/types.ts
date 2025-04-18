@@ -18,9 +18,27 @@ export interface SidePanelProps {
   onSettingsSaved: () => void;
 }
 
+export interface NewsItem {
+  ID: string;
+  CATEGORY: 'TRUE' | 'FALSE';
+  TOPICS: string;
+  SOURCE: string;
+  HEADLINE: string;
+  TEXT: string;
+  LINK: string;
+}
+
+// Define the structure for the challenge state
+export interface NewsChallengeState {
+  trueNewsOriginalId: string; // The ID from the JSON of the TRUE news shown
+  presentedNewsMessageIds: [string | number, string | number]; // IDs of the two bot messages showing the news
+  presentedNewsOriginalIds: [string, string]; // Original IDs from JSON for the two shown news items (order matches presentedNewsMessageIds)
+  selectionMessageId: string | number | null; // ID of the bot message with the selection buttons
+}
+
 export interface MessageListProps {
-	messages: ChatMessage[];
-	onButtonClick: (messageId: number | string, buttonId: string) => void;
+  messages: ChatMessage[];
+  onButtonClick: (messageId: number | string, buttonId: string) => void;
 }
 
 export interface ChatInputProps {
@@ -37,7 +55,7 @@ export interface MessageButton {
 export interface ChatMessage {
   id: number | string;
   sender: 'user' | 'bot';
-  text?: string;
+  text?: string | null;
   htmlContent?: string;
   avatar: string;
   timestamp: number;

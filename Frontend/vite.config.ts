@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    allowedHosts: ['1fd7-83-38-145-130.ngrok-free.app'],
+    allowedHosts: ['pimpoyo.com', '*'],
     proxy: {
       // Requests starting with /api will be forwarded to your backend
       '/api': {

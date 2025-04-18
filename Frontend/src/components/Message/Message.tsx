@@ -9,7 +9,9 @@ interface MessageProps {
   onButtonClick: (messageId: number | string, buttonId: string) => void;
 }
 
+// Renders a single chat message bubble.
 function Message({ message, onButtonClick }: MessageProps) {
+  // Destructure htmlContent as well
   const { id, sender, text, htmlContent, avatar, buttons, buttonsDisabled } = message;
   const isUser = sender === 'user';
   const isTipNavButtonSet = buttons?.some(btn => btn.icon && btn.id.startsWith('btn-tip-')) ?? false;
@@ -23,21 +25,27 @@ function Message({ message, onButtonClick }: MessageProps) {
       />
       <div className="message-bubble">
 
-        {/* Render plain text if sender is user OR if text is empty/null */}
-        {/* Render Markdown if sender is bot AND text has content */}
-        {isUser || !text ? (
-          text && <p>{text}</p> /* Render user message or empty bot message simply */
-        ) : (
-          // Use ReactMarkdown for bot messages with text content
-          <ReactMarkdown>{text}</ReactMarkdown>
-        )}
+        {htmlContent ? (
+            // PRIORITY: If htmlContent exists, render it directly.
+            // Used for the news challenge's mobile view.
+            // WARNING: Ensure htmlContent is safe/sanitized before using dangerouslySetInnerHTML.
+            // In this specific case, we construct it carefully in ChatContainer.
+            <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+         ) : text ? (
+            // If no htmlContent but text exists:
+            isUser ? (
+                // Render user text simply within a paragraph
+                <p>{text}</p>
+            ) : (
+                // Render bot text using Markdown for formatting
+                <ReactMarkdown>{text}</ReactMarkdown>
+            )
+         ) : null /* Render nothing if both text and htmlContent are null/empty */
+        }
 
-        {/* Render HTML content if present (less common now, but kept for compatibility) */}
-        {htmlContent && (
-          <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
-        )}
 
-        {/* Conditionally render buttons */}
+
+        {/* Conditionally render buttons (logic remains the same) */}
         {buttons && buttons.length > 0 && (
           <div className={isTipNavButtonSet ? "message-buttons-nav" : "message-buttons"}>
             {buttons.map((button: MessageButton) => {
@@ -50,11 +58,7 @@ function Message({ message, onButtonClick }: MessageProps) {
                   disabled={buttonsDisabled}
                   aria-label={button.ariaLabel || button.text}
                 >
-                  {button.icon ? (
-                    <FontAwesomeIcon icon={button.icon} />
-                  ) : (
-                    button.text
-                  )}
+                  {button.icon ? ( <FontAwesomeIcon icon={button.icon} /> ) : ( button.text )}
                 </button>
               );
             })}

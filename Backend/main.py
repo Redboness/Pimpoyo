@@ -11,7 +11,8 @@ from jose import jwt, JWTError
 from databases import Database
 import sqlalchemy
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional
+import json
+from typing import Optional, List, Any
 import ollama # Import the Ollama library
 # Removed: from pydantic import BaseModel (no longer needed here if all models are external)
 
@@ -36,6 +37,9 @@ SECRET_KEY = os.getenv("SECRET_KEY", "un_secreto_muy_fuerte_y_largo_aqui")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480
 # OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434") # Optional
+
+NEWS_FILE_PATH = os.path.join(os.path.dirname(__file__), "datasets", "test.json")
+
 
 if DATABASE_URL is None:
     print("CRITICAL ERROR: DATABASE_URL variable is not defined.")
@@ -225,7 +229,48 @@ async def update_usuario_me(
         raise HTTPException(status_code=400, detail="Could not update profile.")
 
 
+# Endpoint para crear noticias a partir del json
+@app.get("/news/challenge", response_model=List[Any]) # Use List[Any] or create a Pydantic model matching NewsItem
+async def get_news_for_challenge():
+    """
+    Reads the news challenge data from the backend's local JSON file
+    and returns it as a list.
+    """
+    if not os.path.exists(NEWS_FILE_PATH):
+        print(f"ERROR: News data file not found at {NEWS_FILE_PATH}")
+        # In a real app, you might want to log this error more formally
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="News data source file not found on server."
+        )
 
+    try:
+        with open(NEWS_FILE_PATH, 'r', encoding='utf-8') as f:
+            news_data = json.load(f)
+        # Basic validation: Ensure it's a list
+        if not isinstance(news_data, list):
+             print(f"ERROR: Data in {NEWS_FILE_PATH} is not a JSON list.")
+             raise HTTPException(
+                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                 detail="Invalid format in news data source."
+             )
+        return news_data
+    except json.JSONDecodeError:
+        print(f"ERROR: Failed to decode JSON from {NEWS_FILE_PATH}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to parse news data source."
+        )
+    except Exception as e:
+        # Catch other potential file reading errors
+        print(f"ERROR: An unexpected error occurred while reading news file: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An internal server error occurred while accessing news data."
+        )
+
+
+# Seleccionar fake news bot env:
 @app.post("/bot/chat", response_model=ChatResponse)
 async def handle_fake_news_chat( # Renamed function slightly for clarity (optional)
     request: ChatRequest, # Uses model expecting messages: List[OllamaMessage] from client

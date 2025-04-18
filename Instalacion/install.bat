@@ -16,6 +16,7 @@ SET "SQL_SCRIPT_NAME=setup_db.sql"
 SET "DB_NAME=pimpoyo_db"
 SET "DB_USER=laydatfm"
 SET "DB_PASS=Pimpoyo7+"
+SET "DB_PORT=5432"
 SET "PYTHON_MISSING_MSG=ERROR: No se encontró Python o Pip en el PATH. Por favor, instala Python (https://www.python.org/) y asegúrate de que esté añadido a tu PATH."
 SET "NODE_MISSING_MSG=ERROR: No se encontró npm en el PATH. Por favor, instala Node.js (https://nodejs.org/) y asegúrate de que esté añadido a tu PATH."
 SET "POSTGRES_MISSING_MSG=ERROR: psql (PostgreSQL client) no encontrado en PATH. Instala PostgreSQL (postgresql.org) y añade su 'bin' dir al PATH."
@@ -196,7 +197,8 @@ ECHO [9] Creando archivo .env en la carpeta Backend...
 REM *** CORREGIDO: Usar ruta relativa ..\Backend ***
 SET "ENV_FILE_PATH=%~dp0..\Backend\.env"
 ECHO [*] Escribiendo DATABASE_URL en %ENV_FILE_PATH% ...
-echo DATABASE_URL=postgresql://%DB_USER%:%DB_PASS%@localhost:5432/%DB_NAME% > "%ENV_FILE_PATH%"
+
+echo DATABASE_URL=postgresql://%DB_USER%:%DB_PASS%@localhost:%DB_PORT%/%DB_NAME% > "%ENV_FILE_PATH%"
 if %errorlevel% neq 0 goto EnvFileWriteError_START_v5
 ECHO [*] Generando y escribiendo SECRET_KEY usando Python...
 SET "SECRET_KEY_VALUE="

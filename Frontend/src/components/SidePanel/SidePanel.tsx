@@ -46,11 +46,6 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
         setSettingsFeedback({ type: 'error', message: 'El nickname no puede estar vacío.' });
         return;
     }
-    // Optional: Add validation for URL format if desired
-    // if (newAvatarUrl && !isValidHttpUrl(newAvatarUrl)) {
-    //    setSettingsFeedback({ type: 'error', message: 'La URL del avatar no es válida.' });
-    //    return;
-    // }
 
     setSettingsLoading(true);
 
