@@ -18,6 +18,10 @@ export interface SidePanelProps {
   onSettingsSaved: () => void;
 }
 
+export type DifficultyLevel = 'bajo' | 'medio' | 'medio-alto' | 'alto';
+export const difficultyOrder: DifficultyLevel[] = ['bajo', 'medio', 'medio-alto', 'alto'];
+
+// Update NewsItem interface
 export interface NewsItem {
   ID: string;
   CATEGORY: 'TRUE' | 'FALSE';
@@ -26,14 +30,20 @@ export interface NewsItem {
   HEADLINE: string;
   TEXT: string;
   LINK: string;
+  DIFFICULTY_LEVEL: DifficultyLevel; // <-- Make sure this matches JSON
+  REASONING_TYPE?: string;         // Optional
+  KEY_ELEMENTS?: string[];         // Optional
+  JUSTIFICATION_HINTS?: string[];  // Optional
+  LIKELY_MISCONCEPTIONS?: string[];// Optional
 }
 
-// Define the structure for the challenge state
+// Update NewsChallengeState interface
 export interface NewsChallengeState {
-  trueNewsOriginalId: string; // The ID from the JSON of the TRUE news shown
-  presentedNewsMessageIds: [string | number, string | number]; // IDs of the two bot messages showing the news
-  presentedNewsOriginalIds: [string, string]; // Original IDs from JSON for the two shown news items (order matches presentedNewsMessageIds)
-  selectionMessageId: string | number | null; // ID of the bot message with the selection buttons
+  trueNewsOriginalId: string;
+  leftNewsOriginalId: string;
+  rightNewsOriginalId: string;
+  selectionMessageId: string | number | null;
+  // No need to store difficulty here, use component state
 }
 
 export interface MessageListProps {
@@ -56,7 +66,7 @@ export interface ChatMessage {
   id: number | string;
   sender: 'user' | 'bot';
   text?: string | null;
-  htmlContent?: string;
+  htmlContent?: string | null;
   avatar: string;
   timestamp: number;
   buttons?: MessageButton[];

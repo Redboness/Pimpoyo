@@ -38,7 +38,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480
 # OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434") # Optional
 
-NEWS_FILE_PATH = os.path.join(os.path.dirname(__file__), "datasets", "test.json")
+NEWS_FILE_PATH = os.path.join(os.path.dirname(__file__), "datasets", "analyzed_test.json")
 
 
 if DATABASE_URL is None:
