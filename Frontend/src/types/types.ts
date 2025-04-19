@@ -77,3 +77,31 @@ export interface OllamaMessage {
   role: 'system' | 'user' | 'assistant'; // The role of the message sender
   content: string;                       // The text content of the message
 }
+
+// Estructura para el glosario
+export interface GlossaryEntry {
+  id?: number;
+  term: string;
+  definition: string;
+  isDefault: boolean;
+  userId?: number | string;
+  fecha_creacion?: Date;
+}
+
+export interface GlossaryTermPublic {
+  id: number;                 // Equivalente a int
+  usuario_sesion_id: number;  // Equivalente a int (o number si era BigInt)
+  termino: string;            // Equivalente a str
+  definicion: string;         // Equivalente a str
+  fecha_creacion: string;     // Equivalente a datetime (JSON lo suele pasar como string ISO 8601)
+}
+
+/**
+ * Representa la estructura de datos que se envía a la API
+ * para crear un nuevo término del glosario.
+ * Coincide con el modelo Pydantic GlossaryTermCreate.
+ */
+export interface GlossaryTermCreate {
+    termino: string;
+    definicion: string;
+}

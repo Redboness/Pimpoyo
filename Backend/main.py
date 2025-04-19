@@ -26,7 +26,9 @@ from models.models import (
     TokenData,
     UsuarioUpdateProfile,
     ChatRequest,
-    ChatResponse
+    ChatResponse,
+    GlossaryTermCreate,
+    GlossaryTermPublic,
 )
 
 load_dotenv() # Load variables from .env
@@ -71,7 +73,22 @@ sesiones_table = sqlalchemy.Table(
     sqlalchemy.Column("precision_global_sesion", sqlalchemy.Float),
     sqlalchemy.Column("puntuacion_post_test", sqlalchemy.Float)
 )
-
+# NUEVA TABLA PARA EL GLOSARIO DEL USUARIO
+glosario_usuario_table = sqlalchemy.Table(
+    "glosario_usuario", metadata,
+    # ID único para cada entrada del glosario
+    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
+    # Clave foránea: Enlaza con la tabla 'sesiones' para saber qué usuario creó el término
+    sqlalchemy.Column("usuario_sesion_id", sqlalchemy.BIGINT, sqlalchemy.ForeignKey("sesiones.sesion_id"), nullable=False, index=True),
+    # La palabra o término
+    sqlalchemy.Column("termino", sqlalchemy.String(length=100), nullable=False),
+    # La definición de la palabra
+    sqlalchemy.Column("definicion", sqlalchemy.Text, nullable=False),
+    # Fecha y hora de creación (se pone automáticamente)
+    sqlalchemy.Column("fecha_creacion", sqlalchemy.TIMESTAMP(timezone=True), nullable=False, server_default=sqlalchemy.func.now()),
+    # Restricción ÚNICA: Evita que el MISMO usuario añada el MISMO término dos veces.
+    sqlalchemy.UniqueConstraint('usuario_sesion_id', 'termino', name='uq_usuario_termino')
+)
 # --- Password Hashing Configuration ---
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -395,7 +412,68 @@ Es IMPERATIVO que evites alucinaciones, si te hacen una pregunta no pongas infor
     except Exception as e:
         print(f"Error interacting with Ollama in /bot/chatlibre: {e}")
         raise HTTPException(status_code=503, detail=f"Failed to get response from language model: {e}")
-# --- END FREE CHAT ENDPOINT ---
+# --- (NUEVO) GLOSSARY ENDPOINTS ---
+
+@app.post("/glossary/", response_model=GlossaryTermPublic, status_code=status.HTTP_201_CREATED)
+async def create_glossary_term(
+    term_in: GlossaryTermCreate, # Recibe los datos validados por el modelo Pydantic
+    current_user: UsuarioInDB = Depends(get_current_active_user) # Requiere que el usuario esté autenticado
+):
+    """
+    Permite al usuario logueado añadir un nuevo término a su glosario personal.
+    Evita añadir términos duplicados para el mismo usuario.
+    """
+    # 1. Comprobar si el término ya existe PARA ESTE USUARIO (ignorando mayús/minús)
+    existing_query = glosario_usuario_table.select().where(
+        (glosario_usuario_table.c.usuario_sesion_id == current_user.sesion_id) &
+        (sqlalchemy.func.lower(glosario_usuario_table.c.termino) == sqlalchemy.func.lower(term_in.termino.strip()))
+    )
+    existing_term = await database.fetch_one(existing_query)
+    if existing_term:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f'El término "{term_in.termino}" ya existe en tu glosario.'
+        )
+
+    # 2. Si no existe, inserta el nuevo término en la base de datos
+    query = glosario_usuario_table.insert().values(
+        usuario_sesion_id=current_user.sesion_id,
+        termino=term_in.termino.strip(),
+        definicion=term_in.definicion.strip()
+    )
+    try:
+        last_record_id = await database.execute(query)
+        if last_record_id is None:
+             raise HTTPException(status_code=500, detail="Error al guardar el término en la base de datos.")
+
+        # 3. Devuelve el objeto recién creado
+        created_query = glosario_usuario_table.select().where(glosario_usuario_table.c.id == last_record_id)
+        created_term_db = await database.fetch_one(created_query)
+        if not created_term_db:
+             raise HTTPException(status_code=500, detail="No se pudo recuperar el término después de crearlo.")
+        return GlossaryTermPublic.from_orm(created_term_db)
+
+    except Exception as e:
+        print(f"Error detallado al crear término del glosario: {e}")
+        raise HTTPException(status_code=400, detail="No se pudo añadir el término al glosario.")
+
+
+@app.get("/glossary/", response_model=List[GlossaryTermPublic])
+async def get_user_glossary_terms(
+    current_user: UsuarioInDB = Depends(get_current_active_user) # Requiere autenticación
+):
+    """
+    Obtiene todos los términos del glosario añadidos por el usuario
+    actualmente logueado, ordenados alfabéticamente.
+    """
+    query = glosario_usuario_table.select().where(
+        glosario_usuario_table.c.usuario_sesion_id == current_user.sesion_id
+    ).order_by(sqlalchemy.func.lower(glosario_usuario_table.c.termino)) # Ordenar alfabéticamente
+
+    results = await database.fetch_all(query)
+    return results
+
+# --- FIN NUEVO GLOSSARY ENDPOINTS ---
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

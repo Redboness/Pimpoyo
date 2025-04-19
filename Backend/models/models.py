@@ -1,5 +1,5 @@
 # models/models.py
-
+from datetime import datetime
 from pydantic import BaseModel, Field, HttpUrl # Import HttpUrl for optional validation
 from typing import Optional, List # Import Optional and List
 
@@ -64,3 +64,19 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     reply: str
 
+# --- (NUEVO) Modelos para el Glosario ---
+
+class GlossaryTermBase(BaseModel):
+    termino: str = Field(..., min_length=1, max_length=100, description="La palabra o término del glosario")
+    definicion: str = Field(..., min_length=1, description="La definición del término")
+
+class GlossaryTermCreate(GlossaryTermBase):
+    pass # No necesita más campos para crear
+
+class GlossaryTermPublic(GlossaryTermBase):
+    id: int
+    usuario_sesion_id: int # O el tipo correcto si sesion_id es BigInt
+    fecha_creacion: datetime
+
+    class Config:
+        from_attributes = True

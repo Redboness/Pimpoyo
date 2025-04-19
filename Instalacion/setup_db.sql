@@ -126,6 +126,18 @@ COMMENT ON COLUMN eventos_uso.evento_ts IS 'Timestamp exacto del evento';
 COMMENT ON COLUMN eventos_uso.funcionalidad_usada IS 'Nombre de la función utilizada (ej. click_pedir_pista, consulta_estadisticas)';
 COMMENT ON COLUMN eventos_uso.contexto IS 'Información adicional sobre el contexto del evento (ej. en qué noticia pidió pista)';
 
+CREATE TABLE glosario_usuario (
+    id SERIAL PRIMARY KEY,
+    usuario_sesion_id BIGINT NOT NULL REFERENCES sesiones(sesion_id),
+    termino VARCHAR(100) NOT NULL,
+    definicion TEXT NOT NULL,
+    fecha_creacion TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_usuario_termino UNIQUE (usuario_sesion_id, termino)
+);
+
+-- Crear un índice en la clave foránea puede mejorar el rendimiento
+CREATE INDEX ix_glosario_usuario_usuario_sesion_id ON glosario_usuario (usuario_sesion_id);
+
 -- Permisos para el usuario laydatfm
 GRANT USAGE ON SCHEMA public TO laydatfm;
 
@@ -136,6 +148,8 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE eventos_uso TO laydatfm;
 GRANT USAGE, SELECT ON SEQUENCE sesiones_sesion_id_seq TO laydatfm;
 GRANT USAGE, SELECT ON SEQUENCE interacciones_interaccion_id_seq TO laydatfm;
 GRANT USAGE, SELECT ON SEQUENCE eventos_uso_evento_id_seq TO laydatfm;
+GRANT SELECT, INSERT ON TABLE glosario_usuario TO laydatfm;
+GRANT USAGE, SELECT ON SEQUENCE glosario_usuario_id_seq TO laydatfm;
 
 -- =====================================================================
 -- Fin del Script
