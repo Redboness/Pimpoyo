@@ -1007,3 +1007,41 @@ body {
     justify-content: center; /* Centra el conjunto */
     margin-bottom: 20px;
 }
+/* --- Estilos para el Textarea de Definición en el Glosario --- */
+
+.form-textarea {
+  /* Copiamos estilos base del .form-input para consistencia */
+  padding: 10px 15px;             /* Mismo padding interno */
+  border: 1px solid #eadca6;      /* Mismo borde */
+  border-radius: 20px;            /* Mismo borde redondeado */
+  font-family: inherit;           /* Misma fuente que el resto */
+  font-size: 1em;                 /* Mismo tamaño de fuente */
+  outline: none;                  /* Sin borde al hacer foco */
+  color: #4a3112;                 /* Mismo color de texto */
+  background-color: #ffffff;      /* Mismo fondo blanco */
+  box-sizing: border-box;         /* Incluye padding/border en el tamaño total */
+  width: 100%;                    /* Ocupa todo el ancho disponible */
+  resize: vertical;               /* Permite redimensionar solo verticalmente */
+  min-height: 80px;               /* Altura mínima (ajusta si quieres) */
+  line-height: 1.4;               /* Espaciado de línea cómodo */
+}
+
+/* Estilo opcional para cuando el textarea tiene foco */
+.form-textarea:focus {
+  border-color: #94ab3d;          /* Cambia color del borde (como en .form-input) */
+  box-shadow: 0 0 3px rgba(148, 171, 61, 0.3); /* Añade sombra suave */
+}
+
+/* Estilo opcional para el placeholder del textarea */
+.form-textarea::placeholder {
+  color: #4a3112;
+  opacity: 0.6;
+}
+
+/* Aseguramos que la label se vea bien encima */
+.glossary-add-form .form-field label[for="new-definition-input"] {
+    display: block;
+    margin-bottom: 5px; /* Un poco más de espacio */
+    font-weight: bold;
+    color: #4a3112;
+}
