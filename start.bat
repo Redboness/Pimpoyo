@@ -31,7 +31,7 @@ if %errorlevel% neq 0 (
     goto :error_exit
 )
 
-START "Ngrok" /D "%~dp0Frontend" cmd /k "ngrok http 5173"
+START "Ngrok" /D "%~dp0Frontend" cmd /k "ngrok http --url=cosmic-thankful-humpback.ngrok-free.app 5173"
 
 ECHO [*] Ejecutando: pipenv run uvicorn main:app --reload
 ECHO [*] (Pulsa Ctrl+C para detener el servidor Backend)
