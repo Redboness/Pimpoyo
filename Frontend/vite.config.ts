@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    allowedHosts: ['pimpoyo.com', '*'],
+    allowedHosts: ["cosmic-thankful-humpback.ngrok-free.app"], // CAMBIAR UNICAMENTE A DOMINIO!
     proxy: {
       // Requests starting with /api will be forwarded to your backend
       '/api': {
