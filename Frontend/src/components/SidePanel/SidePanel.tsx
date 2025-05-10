@@ -4,7 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { SidePanelProps, UserInfo, GlossaryTermPublic } from '../../types/types';
 
-// Define la estructura interna y los términos por defecto
+// --- CORREGIDO: Import del componente de estadísticas (descomentado) ---
+import EstadisticasPimpoyo from '../EstadisticasPimpoyo/EstadisticasPimpoyo'; // Asegúrate que la ruta es correcta
+// --- CORREGIDO: Import del CSS del panel (asumiendo que lo necesitas) ---
+
+
+// Define la estructura interna y los términos por defecto para el glosario
 interface GlossaryEntry {
   id?: number;
   term: string;
@@ -38,6 +43,17 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
   const [newDefinition, setNewDefinition] = useState('');
   const [glossaryLoading, setGlossaryLoading] = useState(false);
   const [glossaryError, setGlossaryError] = useState<string | null>(null);
+
+  // --- CORREGIDO: Estado temporal para estadísticas (descomentado) ---
+  // ¡RECUERDA CONECTAR ESTO A DATOS REALES MÁS ADELANTE!
+  const [userStats, setUserStats] = useState({
+    totalAnalizadas: 12,
+    aciertos: 9,
+    fallos: 3,
+    xp: 175,           // <-- NUEVO: XP actual del usuario (ejemplo)
+    xpNextLevel: 300,  // <-- NUEVO: XP necesario para el siguiente nivel (ejemplo)
+  });
+  // ---------------------------------------------------------
 
    useEffect(() => {
     if (userInfo) { setNicknameSetting(userInfo.apodo); setAvatarUrlSetting(userInfo.avatar_url || ''); }
@@ -199,32 +215,129 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
   // Renderizado
   return (
     <div id="side-panel" className={`side-panel ${isOpen ? 'open' : ''}`}>
-      <div className="panel-header"> <h2>PANEL</h2> <button id="close-panel-btn" className="panel-button-close" aria-label="Cerrar panel" onClick={onClose}><FontAwesomeIcon icon={faX} /></button> </div>
+      <div className="panel-header">
+        <h2>PANEL</h2>
+        <button id="close-panel-btn" className="panel-button-close" aria-label="Cerrar panel" onClick={onClose}>
+          <FontAwesomeIcon icon={faX} />
+        </button>
+      </div>
+
       <div className="panel-content">
-        {/* ... Botones navegación ... */}
-         <div className="panel-nav-buttons"> <button id="btn-glossary" className={`panel-button ${activeSection === 'glossary' ? 'active' : ''}`} onClick={() => handleSectionChange('glossary')}>GLOSARIO</button> <button id="btn-stats" className={`panel-button ${activeSection === 'stats' ? 'active' : ''}`} onClick={() => handleSectionChange('stats')}>ESTADÍSTICAS</button> <button id="btn-settings" className={`panel-button ${activeSection === 'settings' ? 'active' : ''}`} onClick={() => handleSectionChange('settings')}>AJUSTES</button> </div>
+        {/* Botones de Navegación */}
+        <div className="panel-nav-buttons">
+          <button id="btn-glossary" className={`panel-button ${activeSection === 'glossary' ? 'active' : ''}`} onClick={() => handleSectionChange('glossary')}>GLOSARIO</button>
+          <button id="btn-stats" className={`panel-button ${activeSection === 'stats' ? 'active' : ''}`} onClick={() => handleSectionChange('stats')}>ESTADÍSTICAS</button>
+          <button id="btn-settings" className={`panel-button ${activeSection === 'settings' ? 'active' : ''}`} onClick={() => handleSectionChange('settings')}>AJUSTES</button>
+        </div>
 
         {/* Sección Glosario */}
-        {activeSection === 'glossary' && ( <div id="glossary-content" className="panel-section-content" style={{ display: 'block' }}> <h3>Glosario</h3> <form onSubmit={handleAddGlossaryTerm} className="glossary-add-form" style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#fdf9e0', borderRadius: '8px' }}> <h4 style={{marginTop: 0, marginBottom: '15px'}}>Añadir mi palabra</h4> <div className="form-field" style={{ marginBottom: '10px' }}> <label htmlFor="new-term-input" style={{ display: 'block', marginBottom: '3px', fontWeight: 'bold' }}>Término:</label> <input type="text" id="new-term-input" className="form-input" value={newTerm} onChange={(e) => setNewTerm(e.target.value)} placeholder="Escribe la palabra..." maxLength={50} required disabled={glossaryLoading} style={{ width: '100%', boxSizing: 'border-box' }} /> </div> <div className="form-field" style={{ marginBottom: '15px' }}> <label htmlFor="new-definition-input" style={{ display: 'block', marginBottom: '3px', fontWeight: 'bold' }}>Definición:</label> <textarea id="new-definition-input" className="form-textarea" value={newDefinition} onChange={(e) => setNewDefinition(e.target.value)} placeholder="Escribe qué significa..." rows={3} required disabled={glossaryLoading} style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical' }} /> </div> {glossaryError && !glossaryLoading && <p className="error-message" style={{color: 'red', marginTop: '-5px', marginBottom: '10px'}}>{glossaryError}</p>}
-          {/* Texto del botón cambia entre Carga/Guardado/Normal */}
+        {activeSection === 'glossary' && (
+          <div id="glossary-content" className="panel-section-content" style={{ display: 'block' }}>
+            <h3>Glosario</h3>
+            {/* Formulario Añadir Palabra */}
+            <form onSubmit={handleAddGlossaryTerm} className="glossary-add-form" style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#fdf9e0', borderRadius: '8px' }}>
+               <h4 style={{marginTop: 0, marginBottom: '15px'}}>Añadir mi palabra</h4>
+               <div className="form-field" style={{ marginBottom: '10px' }}>
+                  <label htmlFor="new-term-input" style={{ display: 'block', marginBottom: '3px', fontWeight: 'bold' }}>Término:</label>
+                  <input type="text" id="new-term-input" className="form-input" value={newTerm} onChange={(e) => setNewTerm(e.target.value)} placeholder="Escribe la palabra..." maxLength={50} required disabled={glossaryLoading} style={{ width: '100%', boxSizing: 'border-box' }} />
+               </div>
+               <div className="form-field" style={{ marginBottom: '15px' }}>
+                 <label htmlFor="new-definition-input" style={{ display: 'block', marginBottom: '3px', fontWeight: 'bold' }}>Definición:</label>
+                 <textarea id="new-definition-input" className="form-textarea" value={newDefinition} onChange={(e) => setNewDefinition(e.target.value)} placeholder="Escribe qué significa..." rows={3} required disabled={glossaryLoading} style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical' }} />
+               </div>
+               {glossaryError && !glossaryLoading && <p className="error-message" style={{color: 'red', marginTop: '-5px', marginBottom: '10px'}}>{glossaryError}</p>}
           <button type="submit" className="form-button primary" disabled={glossaryLoading}>
             {glossaryLoading ? (userGlossaryTerms.length === 0 ? 'Cargando...' : 'Guardando...') : 'Añadir Palabra'}
           </button>
-           </form> <hr className="separator"/> <div className="glossary-index"> {alphabet.map(letter => ( groupedGlossary[letter] ? <a key={letter} href={`#glossary-${letter}`}>{letter}</a> : <span key={letter} style={{ padding: '2px 5px', color: '#ccc' }}>{letter}</span> ))} {groupedGlossary['#'] && <a href="#glossary-#">#</a>} </div> <hr className="separator"/>
-          {/* Mensaje de Carga */}
+            </form>
+            <hr className="separator"/>
+            {/* Índice Alfabético */}
+            <div className="glossary-index">
+              {alphabet.map(letter => (
+                groupedGlossary[letter]
+                  ? <a key={letter} href={`#glossary-${letter}`}>{letter}</a>
+                  : <span key={letter} style={{ padding: '2px 5px', color: '#ccc' }}>{letter}</span>
+              ))}
+              {groupedGlossary['#'] && <a href="#glossary-#">#</a>}
+            </div>
+            <hr className="separator"/>
+            {/* Mensajes Carga/Vacío */}
           {glossaryLoading && userGlossaryTerms.length === 0 && <p>Cargando tus palabras...</p> }
-          {/* Mensaje si no hay términos */}
           {!glossaryLoading && Object.keys(groupedGlossary).length === 0 && <p>Aún no hay palabras en el glosario. ¡Añade la primera!</p> }
           {/* Lista de Términos */}
-          {/* {!glossaryLoading && Object.keys(groupedGlossary).length > 0 && */ ( Object.keys(groupedGlossary).sort((a, b) => a === '#' ? 1 : b === '#' ? -1 : a.localeCompare(b)).map(letter => ( <div key={letter} className="glossary-letter-group"> <h4 id={`glossary-${letter}`} className="glossary-letter-heading">{letter}</h4> <dl> {groupedGlossary[letter].map((entry, index) => ( <React.Fragment key={entry.isDefault ? `default-${letter}-${index}` : `user-${entry.id}`}> <dt>{entry.term} {!entry.isDefault && <span style={{color: 'purple', fontSize: '0.8em', marginLeft: '5px'}}>(Mi palabra)</span>}</dt> <dd>{entry.definition}</dd> </React.Fragment> ))} </dl> </div> )) )}
-          </div> )}
+            {Object.keys(groupedGlossary).sort((a, b) => a === '#' ? 1 : b === '#' ? -1 : a.localeCompare(b)).map(letter => (
+              <div key={letter} className="glossary-letter-group">
+                <h4 id={`glossary-${letter}`} className="glossary-letter-heading">{letter}</h4>
+                <dl>
+                  {groupedGlossary[letter].map((entry, index) => (
+                    <React.Fragment key={entry.isDefault ? `default-${letter}-${index}` : `user-${entry.id}`}>
+                      <dt>{entry.term} {!entry.isDefault && <span style={{color: 'purple', fontSize: '0.8em', marginLeft: '5px'}}>(Mi palabra)</span>}</dt>
+                      <dd>{entry.definition}</dd>
+                    </React.Fragment>
+                  ))}
+                </dl>
+              </div>
+            ))}
+          </div>
+        )}
 
-        {/* Otras Secciones */}
-        {activeSection === 'stats' && ( <div id="stats-content" className="panel-section-content" style={{ display: 'block' }}> <h3>Estadísticas</h3> <p>(Contenido futuro...)</p> </div> )}
-        {activeSection === 'settings' && ( <div id="settings-content" className="panel-section-content" style={{ display: 'block' }}> <h3>Ajustes</h3> {userInfo ? (<> <div className="setting-item"> <label htmlFor="settings-nickname-input">Nickname:</label> <input type="text" id="settings-nickname-input" className="settings-input" value={nicknameSetting} onChange={(e) => setNicknameSetting(e.target.value)} maxLength={20} disabled={settingsLoading} /> </div> <div className="setting-item"> <label htmlFor="settings-avatar-url-input">URL del Avatar:</label> {avatarUrlSetting && <img src={avatarUrlSetting} alt="Avatar preview" className="avatar-preview" style={{ width: '40px', height: '40px', borderRadius: '50%', verticalAlign: 'middle', marginLeft: '10px', objectFit: 'cover' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} onLoad={(e) => { (e.target as HTMLImageElement).style.display = 'inline-block'; }} />} <input type="url" id="settings-avatar-url-input" className="settings-input" placeholder="Pega la URL de tu imagen aquí..." value={avatarUrlSetting} onChange={(e) => setAvatarUrlSetting(e.target.value)} disabled={settingsLoading} /> </div> <button id="settings-save-btn" className="panel-button" style={{ marginTop: '20px' }} onClick={handleSaveSettings} disabled={settingsLoading}> {settingsLoading ? 'Guardando...' : 'Guardar Cambios'} </button> {settingsFeedback && ( <p style={{ color: settingsFeedback.type === 'success' ? 'green' : 'red', textAlign: 'center', marginTop: '10px', fontWeight: 'bold' }}> {settingsFeedback.message} </p> )} </>) : ( <p>Cargando información...</p> )} <hr className="separator" /> <button id="settings-logout-btn" className="panel-button logout-button" onClick={onLogout}> Salir del Chat </button> </div> )}
+        {/* --- CORREGIDO: Sección Estadísticas --- */}
+        {activeSection === 'stats' && (
+          // Añadimos una clase específica para aplicar estilos RPG si es necesario
+          <div id="stats-content" className="panel-section-content rpg-stats-section" style={{ display: 'block' }}>
+             {/* Renderizamos el componente pasando los datos del estado */}
+             <EstadisticasPimpoyo
+              totalAnalizadas={userStats.totalAnalizadas}
+              aciertos={userStats.aciertos}
+              fallos={userStats.fallos}
+              xp={userStats.xp}
+              xpNextLevel={userStats.xpNextLevel}
+            />
+          </div>
+        )}
+        {/* ------------------------------------------ */}
 
+
+        {/* Sección Ajustes */}
+        {activeSection === 'settings' && (
+          <div id="settings-content" className="panel-section-content" style={{ display: 'block' }}>
+            <h3>Ajustes</h3>
+            {userInfo ? (<>
+              <div className="setting-item">
+                <label htmlFor="settings-nickname-input">Nickname:</label>
+                <input type="text" id="settings-nickname-input" className="settings-input" value={nicknameSetting} onChange={(e) => setNicknameSetting(e.target.value)} maxLength={20} disabled={settingsLoading} />
+              </div>
+              <div className="setting-item">
+                <label htmlFor="settings-avatar-url-input">URL del Avatar:</label>
+                {/* Previsualización del avatar */}
+                {avatarUrlSetting &&
+                  <img src={avatarUrlSetting} alt="Avatar preview" className="avatar-preview" style={{ width: '40px', height: '40px', borderRadius: '50%', verticalAlign: 'middle', marginLeft: '10px', objectFit: 'cover' }}
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    onLoad={(e) => { (e.target as HTMLImageElement).style.display = 'inline-block'; }} />
+                }
+                <input type="url" id="settings-avatar-url-input" className="settings-input" placeholder="Pega la URL de tu imagen aquí..." value={avatarUrlSetting} onChange={(e) => setAvatarUrlSetting(e.target.value)} disabled={settingsLoading} />
       </div>
+              <button id="settings-save-btn" className="panel-button" style={{ marginTop: '20px' }} onClick={handleSaveSettings} disabled={settingsLoading}>
+                {settingsLoading ? 'Guardando...' : 'Guardar Cambios'}
+              </button>
+              {/* Mensaje de feedback (éxito o error) */}
+              {settingsFeedback && (
+                <p style={{ color: settingsFeedback.type === 'success' ? 'green' : 'red', textAlign: 'center', marginTop: '10px', fontWeight: 'bold' }}>
+                  {settingsFeedback.message}
+                </p>
+              )}
+            </>) : (
+              <p>Cargando información...</p>
+            )}
+            <hr className="separator" />
+            <button id="settings-logout-btn" className="panel-button logout-button" onClick={onLogout}>
+              Salir del Chat
+            </button>
     </div>
+        )}
+
+      </div> {/* Cierre de panel-content */}
+    </div> // Cierre de side-panel
   );
 }
 

@@ -1,0 +1,209 @@
+/* src/components/EstadisticasPimpoyo/EstadisticasPimpoyo.css */
+
+/* --- NUEVO: Importar Fuente Fredoka (Regular 400, Bold 700) --- */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap');
+
+/* Contenedor principal - Establece Fredoka como fuente base */
+.estadisticas-pimpoyo {
+  background-color: #f5e8c3;
+  border: 4px solid #6b4f34;
+  padding: 20px 25px;
+  max-width: 380px;
+  margin: 20px auto;
+  font-family: 'Fredoka', sans-serif;
+  color: #4a2c1a;
+  position: relative;
+  border-radius: 5px;
+}
+
+/* Título - Hereda Fredoka, ajustamos tamaño/peso si es necesario */
+.estadisticas-pimpoyo h2 {
+  text-align: center;
+  color: #8b4513;
+  font-size: 1.9em;
+  margin-bottom: 25px;
+  text-shadow:#d2b48c;
+  font-weight: 700; /* Aseguramos negrita si es necesario */
+}
+
+/* --- Estilos para CADA item de estadística --- */
+.estadistica-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 12px 15px;
+  border-radius: 6px;
+  border: 1px solid rgba(107, 79, 52, 0.4);
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.estadistica-item:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+  border-color: rgba(107, 79, 52, 0.7);
+}
+
+/* Icono */
+.estadistica-item .icono {
+  font-size: 1.7em;
+  margin-right: 15px;
+  color: #8b4513;
+  width: 35px;
+  flex-shrink: 0;
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* Contenedor para Etiqueta y Detalles */
+.stat-main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* Etiqueta (Texto descriptivo) - Hereda Fredoka */
+.estadistica-item .etiqueta {
+  color: #4a2c1a;
+  font-size: 1em;
+  margin-bottom: 5px;
+  font-weight: 700; /* Usamos negrita (peso 700) */
+  line-height: 1.2;
+}
+
+/* Contenedor para Valor y Mini-Barra */
+.stat-details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Valor numérico - Hereda Fredoka */
+.estadistica-item .valor {
+  font-weight: 700; /* Negrita */
+  font-size: 1.3em;
+  color: #a0522d;
+  background-color: rgba(255, 215, 0, 0.2);
+  padding: 2px 8px;
+  border-radius: 15px;
+  border: 1px solid #daa520cc;
+  min-width: 35px;
+  text-align: center;
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+/* Colores específicos para aciertos/fallos (Valores) */
+.estadistica-item.aciertos .valor {
+  color: #3e8e41;
+  border-color: #5cb85ccc;
+  background-color: rgba(92, 184, 92, 0.2);
+}
+.estadistica-item.fallos .valor {
+  color: #b94a48;
+  border-color: #d9534fcc;
+  background-color: rgba(217, 83, 79, 0.2);
+}
+
+/* --- Estilos para Mini Barras --- */
+.mini-barra-progreso {
+  flex-grow: 1;
+  height: 12px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.mini-barra-progreso-relleno {
+  height: 100%;
+  border-radius: 6px 0 0 6px;
+  transition: width 0.5s ease-in-out;
+}
+
+.mini-barra-progreso-relleno.acierto-fill {
+  background-color: #5cb85c;
+}
+.mini-barra-progreso-relleno.fallo-fill {
+  background-color: #d9534f;
+}
+
+/* --- Estilos para Rango --- */
+.rango-detective {
+  /* Estilos base heredados */
+}
+.rango-detective .stat-main {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.rango-detective .etiqueta {
+  margin-bottom: 0;
+  font-size: 1em;
+  font-weight: 700; /* Negrita */
+}
+/* Texto del Rango - Hereda Fredoka */
+.rango-detective .valor-texto {
+  /* font-family: 'MedievalSharp', cursive; <-- ELIMINADO */
+  font-size: 1.25em;
+  color: #8b4513;
+  font-weight: 700; /* Negrita */
+  background-color: transparent; padding: 0; border: none; border-radius: 0;
+  min-width: 0; box-shadow: none; text-align: left; margin-left: 0;
+}
+.rango-detective .icono {
+   color: #daa520;
+   font-size: 1.9em;
+}
+
+
+/* --- Barra de Progreso XP --- */
+.progreso-contenedor {
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 2px dashed rgba(107, 79, 52, 0.5);
+}
+/* Título XP - Hereda Fredoka */
+.xp-titulo {
+  /* font-family: 'MedievalSharp', cursive; <-- ELIMINADO */
+  font-size: 1.4em;
+  margin-bottom: 10px;
+  color: #6b4f34;
+  text-align: center;
+  font-weight: 700; /* Negrita */
+}
+.barra-progreso {
+  background-color: #a1887f;
+  border-radius: 8px;
+  height: 22px;
+  overflow: hidden;
+  border: 2px solid #5d4037;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+}
+.barra-progreso-relleno {
+  background: linear-gradient(to right, #ffc107, #ffdd60);
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  position: relative;
+}
+.barra-progreso-relleno::after { /* Brillo */
+    content: '';
+    position: absolute; top: 1px; left: 3px; right: 3px; height: 5px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.1));
+    border-radius: 3px;
+}
+/* Texto numérico XP - Hereda Fredoka */
+.xp-texto {
+  text-align: center;
+  margin-top: 8px;
+  font-weight: 700; /* Negrita */
+  font-size: 1em;
+  color: #4a2c1a;
+}
+
+/* Contenedor general opcional */
+.rpg-stats-section {
+  padding: 15px;
+}

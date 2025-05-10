@@ -14,9 +14,11 @@ from fastapi.middleware.cors import CORSMiddleware
 import json
 from typing import Optional, List, Any
 import ollama # Import the Ollama library
-# Removed: from pydantic import BaseModel (no longer needed here if all models are external)
+# --- NUEVO: Asegúrate de que BaseModel está importado ---
+from pydantic import BaseModel
 
 # Import ALL necessary models from models.models
+# (Asegúrate de que UsuarioInDB y los demás necesarios estén aquí)
 from models.models import (
     UsuarioCreate,
     UsuarioInDB,
@@ -40,7 +42,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480
 # OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434") # Optional
 
-NEWS_FILE_PATH = os.path.join(os.path.dirname(__file__), "datasets", "analyzed_test.json")
+NEWS_FILE_PATH = os.path.join(os.path.dirname(__file__), "datasets", "analyzed_test_with_stats.json")
 
 
 if DATABASE_URL is None:
@@ -155,6 +157,13 @@ async def get_current_active_user(token: str = Depends(oauth2_scheme)) -> Usuari
         raise credentials_exception
     return usuario
 
+# --- NUEVO: Modelo Pydantic para la respuesta de estadísticas ---
+class UserStatsResponse(BaseModel):
+    total_analizadas: int = 0 # Mapea a interacciones_totales_sesion
+    precision_global: Optional[float] = None # Mapea a precision_global_sesion. Puede ser None.
+    # Podríamos añadir xp aquí si lo calculáramos en el backend
+    # xp: Optional[int] = None
+
 # --- Public Endpoints ---
 
 @app.get("/")
@@ -217,18 +226,22 @@ async def update_usuario_me(
     usuario_update: UsuarioUpdateProfile,
     current_user: UsuarioInDB = Depends(get_current_active_user)
 ):
-    update_data = {}
-    if usuario_update.apodo is not None and usuario_update.apodo != current_user.apodo:
-        existing_user = await get_usuario_by_apodo(usuario_update.apodo)
-        if existing_user and existing_user.sesion_id != current_user.sesion_id:
-            raise HTTPException(status_code=400, detail="That apodo is already in use.")
-        update_data["apodo"] = usuario_update.apodo
+    update_data = usuario_update.dict(exclude_unset=True) # Obtiene solo los campos enviados
 
-    if usuario_update.avatar_url is not None and usuario_update.avatar_url != current_user.avatar_url:
-       update_data["avatar_url"] = str(usuario_update.avatar_url).strip() if usuario_update.avatar_url else None
+    # Validación específica para el apodo si se intenta cambiar
+    if "apodo" in update_data and update_data["apodo"] != current_user.apodo:
+         existing_user = await get_usuario_by_apodo(update_data["apodo"])
+         if existing_user and existing_user.sesion_id != current_user.sesion_id:
+             raise HTTPException(status_code=400, detail="That apodo is already in use.")
+
+    # Asegurarse de que avatar_url sea string o None
+    if "avatar_url" in update_data:
+        update_data["avatar_url"] = str(update_data["avatar_url"]).strip() if update_data["avatar_url"] else None
 
     if not update_data:
-        return UsuarioPublic(**current_user.dict())
+        # No hay nada que actualizar, devuelve el usuario actual
+         return UsuarioPublic(**current_user.dict(include={'sesion_id', 'apodo', 'edad', 'genero', 'avatar_url'}))
+
 
     query = sesiones_table.update().where(
         sesiones_table.c.sesion_id == current_user.sesion_id
@@ -240,14 +253,38 @@ async def update_usuario_me(
         updated_user = await get_usuario_by_apodo(updated_apodo)
         if not updated_user:
               raise HTTPException(status_code=404, detail="User not found after update.")
-        return UsuarioPublic(**updated_user.dict())
+        # Devolvemos el modelo público
+        return UsuarioPublic(**updated_user.dict(include={'sesion_id', 'apodo', 'edad', 'genero', 'avatar_url'}))
     except Exception as e:
         print(f"Detailed profile update error: {e}")
         raise HTTPException(status_code=400, detail="Could not update profile.")
 
 
-# Endpoint para crear noticias a partir del json
-@app.get("/news/challenge", response_model=List[Any]) # Use List[Any] or create a Pydantic model matching NewsItem
+# --- NUEVO: Endpoint para obtener estadísticas del usuario ---
+@app.get("/users/me/stats", response_model=UserStatsResponse)
+async def get_user_stats(
+    current_user: UsuarioInDB = Depends(get_current_active_user) # Reutiliza la dependencia
+):
+    """
+    Obtiene las estadísticas de interacciones y precisión para el usuario logueado.
+    """
+    # Asumimos que 'current_user' (UsuarioInDB) ya contiene los datos de la tabla
+    # porque get_current_active_user hace la query a la base de datos.
+
+    # Manejamos el caso donde los contadores podrían ser None (aunque con server_default='0' no debería pasar para interacciones)
+    total = current_user.interacciones_totales_sesion if current_user.interacciones_totales_sesion is not None else 0
+    precision = current_user.precision_global_sesion # Este sí puede ser None
+
+    print(f"Returning stats for user {current_user.apodo}: total={total}, precision={precision}") # Log para depuración
+
+    return UserStatsResponse(
+        total_analizadas=total,
+        precision_global=precision
+    )
+# --- FIN NUEVO ENDPOINT DE STATS ---
+
+
+@app.get("/news/challenge", response_model=List[Any])
 async def get_news_for_challenge():
     """
     Reads the news challenge data from the backend's local JSON file
@@ -297,6 +334,7 @@ async def handle_fake_news_chat( # Renamed function slightly for clarity (option
     Handles Fake News focused chat requests. Prepends the system prompt
     to the history received from the client before sending to Ollama.
     Requires authentication.
+    (NECESITA LÓGICA ADICIONAL PARA ACTUALIZAR STATS DESPUÉS DE LA INTERACCIÓN)
     """
     print(f"Received '/bot/chat' request from user {current_user.apodo} for model {request.model} with {len(request.messages)} history messages.")
 
@@ -319,16 +357,10 @@ Adaptación Personalizada (Contexto Backend):
 - Ocasionalmente, podrías recibir información sobre las áreas de mejora del usuario. Usa esta información para enfocar sutilmente las preguntas o ejemplos en sus puntos débiles, ayudándole a practicar esas habilidades específicas.
 Objetivo Final: Que el usuario aprenda a verificar información de forma crítica y autónoma, mediante un proceso interactivo y guiado.
 """
-    # --- End System Prompt Definition ---
-
-    # Construct the full message list for Ollama
-    messages_to_ollama = [
-        {'role': 'system', 'content': system_message_content} # Start with system prompt
-    ]
-    # Append the history received from the client (converting Pydantic models to dicts)
+    messages_to_ollama = [{'role': 'system', 'content': system_message_content}]
     messages_to_ollama.extend([msg.dict() for msg in request.messages])
 
-    if len(messages_to_ollama) < 2: # Should have at least system + 1 user message
+    if len(messages_to_ollama) < 2:
          raise HTTPException(status_code=400, detail="Insufficient messages provided.")
 
     try:
@@ -343,13 +375,21 @@ Objetivo Final: Que el usuario aprenda a verificar información de forma crític
              print(f"Warning: Ollama response structure might be different: {response}")
              raise HTTPException(status_code=500, detail="Received empty or unexpected response from language model.")
 
+        # --- !!! IMPORTANTE: AQUÍ FALTARÍA LA LÓGICA !!! ---
+        # Después de obtener la respuesta del bot y saber si el usuario acertó/falló
+        # deberías:
+        # 1. Incrementar 'interacciones_totales_sesion'.
+        # 2. Recalcular 'precision_global_sesion'.
+        # 3. Hacer un UPDATE a la tabla 'sesiones' para guardar los nuevos valores.
+        # await update_user_stats_in_db(database, current_user.sesion_id, fue_acierto=True/False) # Ejemplo
+        # ---------------------------------------------------
+
         print(f"Sending reply to user {current_user.apodo} from /bot/chat")
         return ChatResponse(reply=reply_content)
 
     except Exception as e:
         print(f"Error interacting with Ollama in /bot/chat: {e}")
         raise HTTPException(status_code=503, detail=f"Failed to get response from language model: {e}")
-# --- END FAKE NEWS CHAT ENDPOINT ---
 
 
 # --- FREE CHAT ENDPOINT ---
@@ -382,16 +422,10 @@ Objetivo Final: Que el usuario aprenda sobre la información que te pregunta, me
 
 Es IMPERATIVO que evites alucinaciones, si te hacen una pregunta no pongas información que no sea sobre la que ha dicho el usuario.
 """
-    # --- End System Prompt Definition ---
-
-     # Construct the full message list for Ollama
-    messages_to_ollama = [
-        {'role': 'system', 'content': system_message_content} # Start with system prompt
-    ]
-    # Append the history received from the client (converting Pydantic models to dicts)
+    messages_to_ollama = [{'role': 'system', 'content': system_message_content}]
     messages_to_ollama.extend([msg.dict() for msg in request.messages])
 
-    if len(messages_to_ollama) < 2: # Should have at least system + 1 user message
+    if len(messages_to_ollama) < 2:
          raise HTTPException(status_code=400, detail="Insufficient messages provided.")
 
     try:
