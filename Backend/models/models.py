@@ -80,3 +80,11 @@ class GlossaryTermPublic(GlossaryTermBase):
 
     class Config:
         from_attributes = True
+
+# Modelo para estadisticas
+
+class UserStatsResponse(BaseModel):
+    total_analizadas: int = 0 # Mapea a interacciones_totales_sesion
+    precision_global: Optional[float] = None # Mapea a precision_global_sesion. Puede ser None.
+    # Podríamos añadir xp aquí si lo calculáramos en el backend
+    # xp: Optional[int] = None

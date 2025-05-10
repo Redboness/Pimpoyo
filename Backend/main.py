@@ -20,6 +20,7 @@ from pydantic import BaseModel
 # Import ALL necessary models from models.models
 # (Asegúrate de que UsuarioInDB y los demás necesarios estén aquí)
 from models.models import (
+    UserStatsResponse,
     UsuarioCreate,
     UsuarioInDB,
     UsuarioLogin,
@@ -156,13 +157,6 @@ async def get_current_active_user(token: str = Depends(oauth2_scheme)) -> Usuari
     if usuario is None:
         raise credentials_exception
     return usuario
-
-# --- NUEVO: Modelo Pydantic para la respuesta de estadísticas ---
-class UserStatsResponse(BaseModel):
-    total_analizadas: int = 0 # Mapea a interacciones_totales_sesion
-    precision_global: Optional[float] = None # Mapea a precision_global_sesion. Puede ser None.
-    # Podríamos añadir xp aquí si lo calculáramos en el backend
-    # xp: Optional[int] = None
 
 # --- Public Endpoints ---
 
