@@ -18,8 +18,8 @@ export interface SidePanelProps {
   onSettingsSaved: () => void;
 }
 
-export type DifficultyLevel = 'bajo' | 'medio' | 'medio-alto' | 'alto';
-export const difficultyOrder: DifficultyLevel[] = ['bajo', 'medio', 'medio-alto', 'alto'];
+export type DifficultyLevel = 'bajo' | 'medio' | 'alto';
+export const difficultyOrder: DifficultyLevel[] = ['bajo', 'medio', 'alto'];
 
 // Update NewsItem interface
 export interface NewsItem {
