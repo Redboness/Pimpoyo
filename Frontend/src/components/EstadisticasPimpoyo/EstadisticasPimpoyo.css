@@ -130,9 +130,6 @@
 }
 
 /* --- Estilos para Rango --- */
-.rango-detective {
-  /* Estilos base heredados */
-}
 .rango-detective .stat-main {
   flex-direction: row;
   align-items: center;
@@ -146,7 +143,7 @@
 /* Texto del Rango - Hereda Fredoka */
 .rango-detective .valor-texto {
   /* font-family: 'MedievalSharp', cursive; <-- ELIMINADO */
-  font-size: 1.25em;
+  font-size: 0.9em;
   color: #8b4513;
   font-weight: 700; /* Negrita */
   background-color: transparent; padding: 0; border: none; border-radius: 0;
