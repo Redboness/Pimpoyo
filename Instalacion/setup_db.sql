@@ -223,6 +223,51 @@ CREATE INDEX IF NOT EXISTS idx_eventos_uso_sesion_id ON eventos_uso (sesion_id);
 CREATE INDEX IF NOT EXISTS idx_eventos_uso_funcionalidad ON eventos_uso (funcionalidad_usada);
 
 COMMENT ON TABLE eventos_uso IS 'Registra eventos específicos de uso de funcionalidades de la aplicación por parte del usuario.';
+
+CREATE TABLE IF NOT EXISTS ChatSesionesNoticia (
+    chat_sesion_noticia_id BIGSERIAL PRIMARY KEY,
+    sesion_id BIGINT NOT NULL REFERENCES sesiones(sesion_id) ON DELETE CASCADE,
+    noticia_id_json VARCHAR(255) NOT NULL,
+    fecha_inicio TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    evaluacion_inicial_usuario VARCHAR(50) NULL, -- 'TRUE', 'FALSE', 'UNSURE'
+    explicacion_inicial_usuario TEXT NOT NULL,
+    noticia_verdad_real_json VARCHAR(50), -- Copiada del JSON por el backend
+    evaluacion_inicial_correcta BOOLEAN NULL,
+    fecha_fin TIMESTAMP WITH TIME ZONE NULL,
+    indicadores_discutidos TEXT[] NULL, -- Llenado por análisis post-chat LLM
+    conceptos_clave_discutidos TEXT[] NULL, -- Llenado por análisis post-chat LLM
+    mejora_comprension_evaluacion VARCHAR(10) NULL CHECK (mejora_comprension_evaluacion IN ('SI', 'NO', 'INCIERTO')),
+    mejora_comprension_justificacion TEXT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_chat_sesiones_usuario_v2 ON ChatSesionesNoticia(sesion_id);
+CREATE INDEX IF NOT EXISTS idx_chat_sesiones_noticia_v2 ON ChatSesionesNoticia(noticia_id_json);
+
+COMMENT ON TABLE ChatSesionesNoticia IS 'Registra cada sesión de análisis guiado por chatbot de una noticia por un usuario.';
+COMMENT ON COLUMN ChatSesionesNoticia.evaluacion_inicial_usuario IS 'La clasificación inicial (Verdadera/Falsa/Indeciso) que el usuario pudo haber dado antes de explicar.';
+COMMENT ON COLUMN ChatSesionesNoticia.noticia_verdad_real_json IS 'Veracidad real de la noticia, copiada del JSON por el backend para análisis posterior.';
+COMMENT ON COLUMN ChatSesionesNoticia.evaluacion_inicial_correcta IS 'Si la evaluación inicial del usuario fue correcta.';
+COMMENT ON COLUMN ChatSesionesNoticia.conceptos_clave_discutidos IS 'Array de conceptos o habilidades de pensamiento crítico que se abordaron durante el chat.';
+COMMENT ON COLUMN ChatSesionesNoticia.indicadores_discutidos IS 'Array de indicadores de desinformación que fueron relevantes o discutidos en el chat.';
+COMMENT ON COLUMN ChatSesionesNoticia.mejora_comprension_evaluacion IS 'Evaluación del LLM sobre si el usuario mejoró su comprensión (SI, NO, INCIERTO) tras el análisis post-chat.';
+COMMENT ON COLUMN ChatSesionesNoticia.mejora_comprension_justificacion IS 'Justificación breve del LLM para la evaluación de mejora_comprension, tras el análisis post-chat.';
+
+CREATE TABLE MensajesChatGuia (
+    mensaje_guia_id BIGSERIAL PRIMARY KEY,
+    chat_sesion_noticia_id BIGINT NOT NULL REFERENCES ChatSesionesNoticia(chat_sesion_noticia_id) ON DELETE CASCADE,
+    emisor VARCHAR(50) NOT NULL CHECK (emisor IN ('usuario', 'chatbot')), -- Quién envió el mensaje
+    contenido TEXT NOT NULL, -- El texto del mensaje
+    timestamp_mensaje TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    orden_en_chat SERIAL NOT NULL -- Para asegurar el orden correcto de los mensajes dentro de una sesión de chat
+    -- Podrías añadir un UNIQUE (chat_sesion_noticia_id, orden_en_chat) si `orden_en_chat` no fuera SERIAL y lo gestionaras manualmente.
+    -- Si es SERIAL por tabla, necesitarías gestionarlo por grupo (chat_sesion_noticia_id) en la aplicación o con un trigger.
+    -- Una mejor opción para 'orden_en_chat' sería un INTEGER que incrementas en la aplicación al guardar.
+);
+
+CREATE INDEX idx_mensajes_chat_sesion ON MensajesChatGuia(chat_sesion_noticia_id);
+
+COMMENT ON TABLE MensajesChatGuia IS 'Almacena cada mensaje intercambiado durante una sesión de análisis guiado de noticia.';
+COMMENT ON COLUMN MensajesChatGuia.orden_en_chat IS 'Número secuencial del mensaje dentro de su sesión de chat para reconstruir la conversación.';
 -- =====================================================================
 -- Fin del Script
 -- =====================================================================
