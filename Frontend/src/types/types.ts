@@ -1,3 +1,4 @@
+// src/types/types.ts
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 export interface UserInfo {
@@ -8,7 +9,6 @@ export interface UserInfo {
   avatar_url?: string | null;
 }
 
-// Interface for the props that receives SidePanel
 export interface SidePanelProps {
   isOpen: boolean;
   onClose: () => void;
@@ -21,7 +21,6 @@ export interface SidePanelProps {
 export type DifficultyLevel = 'bajo' | 'medio' | 'alto';
 export const difficultyOrder: DifficultyLevel[] = ['bajo', 'medio', 'alto'];
 
-// Update NewsItem interface
 export interface NewsItem {
   ID: string;
   CATEGORY: 'TRUE' | 'FALSE';
@@ -30,78 +29,118 @@ export interface NewsItem {
   HEADLINE: string;
   TEXT: string;
   LINK: string;
-  DIFFICULTY_LEVEL: DifficultyLevel; // <-- Make sure this matches JSON
-  REASONING_TYPE?: string;         // Optional
-  KEY_ELEMENTS?: string[];         // Optional
-  JUSTIFICATION_HINTS?: string[];  // Optional
-  LIKELY_MISCONCEPTIONS?: string[];// Optional
+  DIFFICULTY_LEVEL: DifficultyLevel;
+  REASONING_TYPE?: string;
+  KEY_ELEMENTS?: string[];
+  JUSTIFICATION_HINTS?: string[];
+  LIKELY_MISCONCEPTIONS?: string[];
 }
 
-// Update NewsChallengeState interface
 export interface NewsChallengeState {
   trueNewsOriginalId: string;
   leftNewsOriginalId: string;
   rightNewsOriginalId: string;
   selectionMessageId: string | number | null;
-  // No need to store difficulty here, use component state
-}
-
-export interface MessageListProps {
-  messages: ChatMessage[];
-  onButtonClick: (messageId: number | string, buttonId: string) => void;
-}
-
-export interface ChatInputProps {
-  onSendMessage: (text: string) => void;
 }
 
 export interface MessageButton {
   id: string;
-  text?: string; // Make text optional if icon is present
-  icon?: IconDefinition; // Optional icon
-  ariaLabel?: string; // For accessibility
+  text?: string;
+  icon?: IconDefinition;
+  ariaLabel?: string;
 }
 
 export interface ChatMessage {
   id: number | string;
-  sender: 'user' | 'bot';
+  sender: 'user' | 'bot' | 'system'; // 'system' añadido
   text?: string | null;
   htmlContent?: string | null;
-  avatar: string;
-  timestamp: number;
+  avatar?: string; // Hecho opcional
+  timestamp: number | Date; // Permitir Date
   buttons?: MessageButton[];
   buttonsDisabled?: boolean;
 }
 
-export interface OllamaMessage {
-  role: 'system' | 'user' | 'assistant'; // The role of the message sender
-  content: string;                       // The text content of the message
+export interface MessageListProps {
+  messages: ChatMessage[];
+  onButtonClick?: (messageId: number | string, buttonId: string) => void; // Hecho opcional
 }
 
-// Estructura para el glosario
+export interface ChatInputProps {
+  onSendMessage: (text: string) => void;
+  disabled?: boolean; // Añadido como opcional
+}
+
+export interface OllamaMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
 export interface GlossaryEntry {
   id?: number;
   term: string;
   definition: string;
   isDefault: boolean;
   userId?: number | string;
-  fecha_creacion?: Date;
+  fecha_creacion?: Date | string;
 }
 
 export interface GlossaryTermPublic {
-  id: number;                 // Equivalente a int
-  usuario_sesion_id: number;  // Equivalente a int (o number si era BigInt)
-  termino: string;            // Equivalente a str
-  definicion: string;         // Equivalente a str
-  fecha_creacion: string;     // Equivalente a datetime (JSON lo suele pasar como string ISO 8601)
+  id: number;
+  usuario_sesion_id: number;
+  termino: string;
+  definicion: string;
+  fecha_creacion: string;
 }
 
-/**
- * Representa la estructura de datos que se envía a la API
- * para crear un nuevo término del glosario.
- * Coincide con el modelo Pydantic GlossaryTermCreate.
- */
 export interface GlossaryTermCreate {
-    termino: string;
-    definicion: string;
+  termino: string;
+  definicion: string;
+}
+
+// --- Tipos para el Flujo de Análisis Guiado ---
+export interface NoticiaParaAnalisis {
+  noticia_id_json: string;
+  headline: string;
+  text: string;
+  source?: string | null;
+  difficulty_level?: string | null;
+}
+
+export interface ChatGuiaResponse {
+  chat_sesion_noticia_id: number;
+  respuesta_chatbot: string;
+}
+
+// --- Tipos para perfiles y autenticación ---
+export interface UserProfile extends UserInfo {
+  consentimiento_obtenido?: boolean;
+  curso_escolar?: string | null;
+  interacciones_totales_sesion?: number;
+  precision_global_sesion?: number | null;
+  tasa_falsos_negativos_global?: number | null;
+  tasa_falsos_positivos_global?: number | null;
+  puntuacion_pre_test?: number | null;
+  puntuacion_post_test?: number | null;
+  puntuacion_final?: number | null;
+}
+
+export interface Token {
+  access_token: string;
+  token_type: string;
+}
+
+export interface TokenData {
+  apodo?: string | null;
+  sesion_id?: number | null;
+}
+
+export interface UserUpdateProfilePayload {
+  apodo?: string;
+  avatar_url?: string | null;
+}
+
+export interface UserStatsResponse {
+  total_analizadas: number;
+  precision_global: number | null;
 }
