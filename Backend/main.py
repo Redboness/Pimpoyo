@@ -48,8 +48,8 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 SECRET_KEY = os.getenv("SECRET_KEY", "un_secreto_muy_fuerte_y_largo_aqui") # ¡Cambia esto en producción!
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 480))
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3:4b") # Modelo para chat interactivo
-OLLAMA_MODEL_ANALYSIS = os.getenv("OLLAMA_MODEL_ANALYSIS", "gemma3:4b") # Modelo para análisis post-chat
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.1b") # Modelo para chat interactivo
+OLLAMA_MODEL_ANALYSIS = os.getenv("OLLAMA_MODEL_ANALYSIS", "llama3.1b") # Modelo para análisis post-chat
 
 # Ruta al dataset de noticias (ajusta si es necesario)
 NEWS_DATASET_PATH = os.path.join(os.path.dirname(__file__), "datasets", "analyzed_test_with_stats.json")

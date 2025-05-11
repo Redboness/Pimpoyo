@@ -1,15 +1,24 @@
 {
   "compilerOptions": {
-    "composite": true, // NECESARIO: Habilita la compilación de proyectos referenciados
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo", // Opcional, pero común
-    "target": "ES2022", // O la versión de ECMAScript que soporte tu entorno Node
-    "lib": ["ES2023"],   // O la versión de ECMAScript que soporte tu entorno Node
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2023"],
     "module": "ESNext",
-    "moduleResolution": "bundler", // O "node"
-    "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true
-    // "noEmit": false, // ELIMINADO o false. No debe ser true para proyectos "composite" referenciados.
-                       // Si se elimina, el comportamiento por defecto es no emitir a menos que se especifique outDir.
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
   },
-  "include": ["vite.config.ts"] // O cualquier otro archivo .ts de configuración de Node
+  "include": ["vite.config.ts"]
 }

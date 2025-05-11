@@ -268,23 +268,6 @@ CREATE INDEX idx_mensajes_chat_sesion ON MensajesChatGuia(chat_sesion_noticia_id
 
 COMMENT ON TABLE MensajesChatGuia IS 'Almacena cada mensaje intercambiado durante una sesión de análisis guiado de noticia.';
 COMMENT ON COLUMN MensajesChatGuia.orden_en_chat IS 'Número secuencial del mensaje dentro de su sesión de chat para reconstruir la conversación.';
-
--- Otorgar permisos para la tabla chatsesionesnoticia
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE chatsesionesnoticia TO laydatfm;
-GRANT USAGE, SELECT ON SEQUENCE chatsesionesnoticia_chat_sesion_noticia_id_seq TO laydatfm;
-
--- Otorgar permisos para la tabla mensajeschatguia
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE mensajeschatguia TO laydatfm;
-GRANT USAGE, SELECT ON SEQUENCE mensajeschatguia_mensaje_guia_id_seq TO laydatfm;
-
--- Otorgar permisos para la tabla estadisticasdetalladasusuario
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE estadisticasdetalladasusuario TO laydatfm;
-GRANT USAGE, SELECT ON SEQUENCE estadisticasdetalladasusuario_estadistica_detalle_id_seq TO laydatfm;
-
--- Verificar que el esquema 'public' también tenga permisos (esto ya lo tenías, pero por si acaso)
-GRANT USAGE ON SCHEMA public TO laydatfm;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO laydatfm;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO laydatfm;
 -- =====================================================================
 -- Fin del Script
 -- =====================================================================
