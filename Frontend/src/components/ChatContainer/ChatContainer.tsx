@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/ChatContainer/ChatContainer.tsx
 import React, { useState, useEffect, useCallback } from "react";
 import MessageList from "../MessageList/MessageList";
@@ -11,46 +13,31 @@ import {
   OllamaMessage,
   NewsItem,
   NewsChallengeState,
-  DifficultyLevel, // <-- Import DifficultyLevel type
-  difficultyOrder // <-- Import difficultyOrder array
-} from "../../types/types"; // Adjust path as needed
+  DifficultyLevel,
+  difficultyOrder,
+  NoticiaParaAnalisis, // <-- NUEVO TIPO
+  ExplicacionInicialPayload, // <-- NUEVO TIPO
+  ChatGuiaResponse, // <-- NUEVO TIPO
+  ContinuarChatGuiaPayload, // <-- NUEVO TIPO
+  FinishPairChallengePayload, // <-- NUEVO TIPO
+  FinishPairChallengeResponse // <-- NUEVO TIPO
+} from "../../types/types";
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
-// Define OllamaMessage type if not already defined in types/types.ts
-// interface OllamaMessage {
-//  role: 'system' | 'user' | 'assistant';
-//  content: string;
-// }
-
-// Props that ChatContainer receives
 interface ChatContainerProps {
   authToken: string;
   onLogout: () => void;
 }
 
-// --- Constantes ---
 const BOT_AVATAR_URL = "https://i.postimg.cc/GpMfkzPx/Rat-n-profesor-Copy.png";
-const USER_AVATAR_URL_DEFAULT =
-  "https://i.postimg.cc/SQwcn892/Ni-o-avatar-copy.png"; // Fallback default
+const USER_AVATAR_URL_DEFAULT = "https://i.postimg.cc/SQwcn892/Ni-o-avatar-copy.png";
 
-
-// --- Tips Data (Example) ---
 const tips = [
-  {
-    title: "Consejo 1:",
-    text: "Revisa siempre la fuente de la información. ¿Es conocida? ¿Es fiable?",
-  },
-  {
-    title: "Consejo 2:",
-    text: "Busca otras fuentes que confirmen o desmientan la noticia. No te quedes con la primera versión.",
-  },
-  {
-    title: "Consejo 3:",
-    text: "Fíjate en la fecha de publicación. A veces, noticias antiguas se hacen pasar por actuales.",
-  },
+  { title: "Consejo 1:", text: "Revisa siempre la fuente de la información. ¿Es conocida? ¿Es fiable?" },
+  { title: "Consejo 2:", text: "Busca otras fuentes que confirmen o desmientan la noticia. No te quedes con la primera versión." },
+  { title: "Consejo 3:", text: "Fíjate en la fecha de publicación. A veces, noticias antiguas se hacen pasar por actuales." },
 ];
 
-// --- System Prompts ---
 const SYSTEM_PROMPT_FAKE_NEWS = `
 Rol: Eres un chatbot educativo y amigable llamado Pimpoyo, diseñado para niños de 10-12 años.
 Misión Principal: Enseñar a identificar noticias falsas y comprender sus consecuencias.
@@ -84,12 +71,8 @@ Estilo de Comunicación:
 - Tampoco afirmes que has escuchado al usuario, es decir, no digas cosas tipo ---¡Claro! Entiendo lo que quieres decir.--- o similar, simplemente di el resto.
 Objetivo Final: Que el usuario aprenda sobre la información que te pregunta, mediante un proceso interactivo y guiado.
 `;
-// --- End System Prompts ---
 
-
-// --- Componente Principal ---
 function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
-  // --- Estados ---
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false);
   const [currentUserInfo, setCurrentUserInfo] = useState<UserInfo | null>(null);
@@ -98,575 +81,591 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const [refreshUserInfoToggle, setRefreshUserInfoToggle] = useState<boolean>(false);
   const [isFreeChatMode, setIsFreeChatMode] = useState<boolean>(false);
 
-  // --- State for News Challenge ---
-  const [newsData, setNewsData] = useState<NewsItem[] | null>(null); // Cache for fetched news
-  const [isLoadingNews, setIsLoadingNews] = useState<boolean>(false); // Loading indicator for news fetch
-  // Ensure NewsChallengeState type definition reflects the new structure (left/right IDs)
-  const [newsChallengeState, setNewsChallengeState] = useState<NewsChallengeState | null>(null); // Holds current challenge info
-  // --- NEW State for Difficulty & Streaks ---
-  const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>('bajo'); // Start at 'bajo'
+  const [newsData, setNewsData] = useState<NewsItem[] | null>(null);
+  const [isLoadingNews, setIsLoadingNews] = useState<boolean>(false);
+  const [newsChallengeState, setNewsChallengeState] = useState<NewsChallengeState | null>(null);
+  const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>('bajo');
   const [correctStreak, setCorrectStreak] = useState<number>(0);
   const [incorrectStreak, setIncorrectStreak] = useState<number>(0);
-  // --- END NEW State ---
 
-  // Fetches user information from the backend using the provided auth token.
+  // --- NUEVOS ESTADOS PARA ANÁLISIS INDIVIDUAL GUIADO ---
+  const [isSingleNewsAnalysisMode, setIsSingleNewsAnalysisMode] = useState<boolean>(false);
+  const [singleNewsAnalysisData, setSingleNewsAnalysisData] = useState<NoticiaParaAnalisis | null>(null);
+  const [currentGuidedChatSessionId, setCurrentGuidedChatSessionId] = useState<number | null>(null);
+  const [isAwaitingInitialAnalysis, setIsAwaitingInitialAnalysis] = useState<boolean>(false);
+  // const [showFinishAnalysisButton, setShowFinishAnalysisButton] = useState<boolean>(false); // Eliminado, el botón se añade por addBotResponse
+
   const fetchUserInfo = useCallback(async () => {
     setChatError('');
-    console.log("ChatContainer: Fetching user info (fetchUserInfo)...");
     if (!authToken) {
-      console.error("No token found for fetchUserInfo");
       setIsLoadingUserInfo(false);
       return;
     }
     try {
       const response = await fetch(`/api/users/me/`, {
         method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Accept': 'application/json'
-        }
+        headers: { 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' }
       });
       if (!response.ok) {
-         if (response.status === 401) {
-           console.error("fetchUserInfo: Unauthorized (401). Logging out.");
-           onLogout();
-         } else {
-           const errorData = await response.json().catch(() => ({ detail: `HTTP error ${response.status}` }));
-           throw new Error(errorData.detail || `Failed to fetch user info: ${response.status}`);
-         }
-         return;
+        if (response.status === 401) { onLogout(); }
+        else { throw new Error((await response.json().catch(() => ({}))).detail || `Error ${response.status}`); }
+        return;
       }
-      const userData: UserInfo = await response.json();
-      setCurrentUserInfo(userData);
-      console.log("ChatContainer: User info received:", userData);
+      setCurrentUserInfo(await response.json());
     } catch (error) {
-      console.error("fetchUserInfo error:", error);
       setChatError(error instanceof Error ? error.message : 'Failed to load user data.');
     } finally {
       setIsLoadingUserInfo(false);
     }
   }, [authToken, onLogout]);
 
-
-  // Effect runs on component mount and when refreshUserInfoToggle or authToken changes.
   useEffect(() => {
-    console.log("ChatContainer: UserInfo fetch/refresh effect triggered.");
-    if (currentUserInfo === null || refreshUserInfoToggle) {
-        setIsLoadingUserInfo(true);
-    }
+    if (currentUserInfo === null || refreshUserInfoToggle) { setIsLoadingUserInfo(true); }
     fetchUserInfo();
-  }, [refreshUserInfoToggle, authToken, fetchUserInfo]); // fetchUserInfo added as dependency
+  }, [refreshUserInfoToggle, authToken, fetchUserInfo]);
 
-  // Creates the initial welcome message using the current user's nickname.
-  const createWelcomeMessage = useCallback((): ChatMessage => {
-    const nickname = currentUserInfo?.apodo || "Usuario";
-    const welcomeText = `¡Encantado de conocerte, ${nickname}! Soy Pimpoyo. Puedo ayudarte con tips y consejos, descifrar noticias falsas o simplemente conversar un rato.`;
-    return {
-      id: "welcome-msg-" + Date.now(),
-      sender: "bot",
-      text: welcomeText,
-      avatar: BOT_AVATAR_URL,
-      timestamp: Date.now(),
-    };
-  }, [currentUserInfo]);
+  const createWelcomeMessage = useCallback((): ChatMessage => ({
+    id: "welcome-msg-" + Date.now(),
+    sender: "bot",
+    text: `¡Encantado de conocerte, ${currentUserInfo?.apodo || "Usuario"}! Soy Pimpoyo. Puedo ayudarte con tips y consejos, descifrar noticias falsas o simplemente conversar un rato.`,
+    avatar: BOT_AVATAR_URL,
+    timestamp: Date.now(),
+  }), [currentUserInfo]);
 
-  // Effect runs when user info loading completes and if messages are empty.
   useEffect(() => {
     if (!isLoadingUserInfo && currentUserInfo && messages.length === 0) {
-      const welcomeMessage = createWelcomeMessage();
       const initialButtonsMessage: ChatMessage = {
-        id: "buttons-msg-" + Date.now(),
-        sender: "bot",
-        text: "¿Cómo empezamos?",
-        avatar: BOT_AVATAR_URL,
-        timestamp: Date.now() + 1,
+        id: "buttons-msg-" + Date.now(), sender: "bot", text: "¿Cómo empezamos?", avatar: BOT_AVATAR_URL, timestamp: Date.now() + 1,
         buttons: [
           { id: "btn-tips", text: "TIPS Y CONSEJOS" },
-          { id: "btn-news", text: "DESCIFRAR NOTICIAS FALSAS" },
+          { id: "btn-news", text: "DESCIFRAR NOTICIAS" },
           { id: "btn-talk", text: "SÓLO CHARLAR" },
         ],
         buttonsDisabled: false,
       };
       setIsFreeChatMode(false);
-      setMessages([welcomeMessage, initialButtonsMessage]);
+      setMessages([createWelcomeMessage(), initialButtonsMessage]);
     }
-  }, [isLoadingUserInfo, currentUserInfo, createWelcomeMessage, messages.length]); // Added messages.length
+  }, [isLoadingUserInfo, currentUserInfo, createWelcomeMessage, messages.length]);
 
-  // Toggles the visibility of the side panel.
   const togglePanel = () => setIsPanelOpen(!isPanelOpen);
-  // Closes the side panel.
   const closePanel = () => setIsPanelOpen(false);
-  // Callback function triggered when settings are saved in the SidePanel.
-  const handleSettingsSaved = () => {
-    console.log("ChatContainer: Settings saved, triggering refresh.");
-    setRefreshUserInfoToggle((prev) => !prev);
-  };
+  const handleSettingsSaved = () => setRefreshUserInfoToggle(prev => !prev);
 
-  // Adds a message bubble representing the user's choice (usually from a button click).
   const addUserChoiceMessage = useCallback((text: string) => {
-      if (!currentUserInfo) return;
-      const userChoiceMessage: ChatMessage = {
-        id: Date.now() + Math.random(),
-        sender: "user",
-        text: text,
-        avatar: currentUserInfo?.avatar_url || USER_AVATAR_URL_DEFAULT,
-        timestamp: Date.now(),
-      };
-      setMessages((prevMessages) => [...prevMessages, userChoiceMessage]);
+    if (!currentUserInfo) return;
+    setMessages(prev => [...prev, {
+      id: Date.now() + Math.random(), sender: "user", text,
+      avatar: currentUserInfo?.avatar_url || USER_AVATAR_URL_DEFAULT, timestamp: Date.now(),
+    }]);
   }, [currentUserInfo]);
 
-  // Adds a message bubble from the bot, potentially with buttons, after a specified delay.
-  const addBotResponse = useCallback((
-      text: string | null, // Allow null text if using htmlContent
-      buttons: MessageButton[] = [],
-      delay: number = 300,
-      onMessageAdded?: (id: string | number) => void,
-      htmlContent: string | null = null // Add optional htmlContent
-    ): string | number => {
-       const botMsgId = "bot-msg-" + Date.now() + Math.random();
-       const botMsg: ChatMessage = {
-          id: botMsgId,
-          sender: "bot",
-          text: text, // Can be null
-          htmlContent: htmlContent, // Can be set
-          avatar: BOT_AVATAR_URL,
-          timestamp: Date.now() + delay,
-          buttons: buttons,
-          buttonsDisabled: buttons.length === 0,
-        };
-       // Warning if both are somehow set unintentionally
-       if (text && htmlContent) {
-           console.warn("addBotResponse: Both text and htmlContent provided.");
-       }
+  const addBotResponse = useCallback((text: string | null, buttons: MessageButton[] = [], delay: number = 300, onMessageAdded?: (id: string | number) => void, htmlContent: string | null = null): string | number => {
+    const botMsgId = "bot-msg-" + Date.now() + Math.random();
+    const botMsg: ChatMessage = {
+      id: botMsgId, sender: "bot", text, htmlContent, avatar: BOT_AVATAR_URL,
+      timestamp: Date.now() + delay, buttons, buttonsDisabled: buttons.length === 0,
+    };
+    if (text && htmlContent) console.warn("addBotResponse: Both text and htmlContent provided.");
+    setTimeout(() => {
+      setMessages(prev => [...prev, botMsg]);
+      if (onMessageAdded) onMessageAdded(botMsgId);
+    }, delay);
+    return botMsgId;
+  }, []);
 
-      setTimeout(() => {
-         setMessages((prevMessages) => [...prevMessages, botMsg]);
-         if (onMessageAdded) { onMessageAdded(botMsgId); }
-      }, delay);
-      return botMsgId;
-   }, []);
-
-  // --- NEW: Helper functions for difficulty adjustment ---
   const increaseDifficulty = useCallback(() => {
-      const currentIndex = difficultyOrder.indexOf(difficultyLevel);
-      if (currentIndex < difficultyOrder.length - 1) {
-        const nextLevel = difficultyOrder[currentIndex + 1];
-        setDifficultyLevel(nextLevel);
-        console.log(`Difficulty increased to: ${nextLevel}`);
-        return true; // Indicate change occurred
-      }
-      console.log(`Already at max difficulty: ${difficultyLevel}`);
-      return false; // Indicate no change
+    const currentIndex = difficultyOrder.indexOf(difficultyLevel);
+    if (currentIndex < difficultyOrder.length - 1) {
+      const nextLevel = difficultyOrder[currentIndex + 1];
+      setDifficultyLevel(nextLevel); console.log(`Difficulty increased to: ${nextLevel}`); return true;
+    } console.log(`Already at max difficulty: ${difficultyLevel}`); return false;
   }, [difficultyLevel]);
 
   const decreaseDifficulty = useCallback(() => {
-      const currentIndex = difficultyOrder.indexOf(difficultyLevel);
-      if (currentIndex > 0) {
-        const prevLevel = difficultyOrder[currentIndex - 1];
-        setDifficultyLevel(prevLevel);
-        console.log(`Difficulty decreased to: ${prevLevel}`);
-        return true; // Indicate change occurred
-      }
-      console.log(`Already at min difficulty: ${difficultyLevel}`);
-      return false; // Indicate no change
+    const currentIndex = difficultyOrder.indexOf(difficultyLevel);
+    if (currentIndex > 0) {
+      const prevLevel = difficultyOrder[currentIndex - 1];
+      setDifficultyLevel(prevLevel); console.log(`Difficulty decreased to: ${prevLevel}`); return true;
+    } console.log(`Already at min difficulty: ${difficultyLevel}`); return false;
   }, [difficultyLevel]);
-  // --- End Helper Functions ---
 
+  const resetSingleAnalysisMode = useCallback(() => {
+    setIsSingleNewsAnalysisMode(false);
+    setSingleNewsAnalysisData(null);
+    setCurrentGuidedChatSessionId(null);
+    setIsAwaitingInitialAnalysis(false);
+    // setShowFinishAnalysisButton(false); // No es necesario si el botón lo añade el bot
+  }, []);
 
-  // Fetches news from the BACKEND API, filters by difficulty, selects T/F items, presents side-by-side, then adds selection prompt.
-  const presentNewsChallenge = useCallback(async () => {
-      if (isLoadingNews) return;
-      setIsLoadingNews(true);
-      setChatError('');
-      // Add intro message first, indicating the level
-      const introId = addBotResponse(`Buscando noticias de nivel "${difficultyLevel}"...`, [], 0);
+  const processTwoNewsChallenge = useCallback((currentNewsData: NewsItem[], introId: string | number) => {
+    const newsAtCurrentLevel = currentNewsData.filter(item => item.DIFFICULTY_LEVEL === difficultyLevel);
+    const trueNewsFiltered = newsAtCurrentLevel.filter(item => item.CATEGORY === 'TRUE');
+    const falseNewsFiltered = newsAtCurrentLevel.filter(item => item.CATEGORY === 'FALSE');
 
-      let fetchedNews: NewsItem[];
-
-      // 1. Fetch or use cached news data
-      if (newsData) {
-          fetchedNews = newsData;
-          console.log("Using cached news data.");
-      } else {
-          console.log("Fetching news data from backend API: /api/news/challenge...");
-          try {
-              const response = await fetch('/api/news/challenge');
-              if (!response.ok) {
-                  let errorDetail = `Error del servidor ${response.status}`;
-                  try { const errorData = await response.json(); errorDetail = errorData.detail || errorDetail; }
-                  catch (e) { console.error(e); errorDetail = response.statusText || errorDetail; }
-                  throw new Error(errorDetail);
-              }
-              const data = await response.json();
-              if (!Array.isArray(data) || data.length === 0) throw new Error("Invalid news data format");
-              // Basic validation for required fields
-              fetchedNews = data.filter(item => item.ID && item.CATEGORY && item.HEADLINE && item.TEXT && item.DIFFICULTY_LEVEL) as NewsItem[];
-              if (fetchedNews.length !== data.length) console.warn("Some fetched items missing fields");
-              if (fetchedNews.length === 0) throw new Error("No valid news items fetched");
-              setNewsData(fetchedNews); // Cache data
-          } catch (error) {
-              console.error("Failed to load news data from API:", error);
-              const errorMsg = error instanceof Error ? error.message : "Error desconocido";
-              setChatError(`No pude cargar las noticias: ${errorMsg}`);
-              setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! Hubo un problema al buscar las noticias (${errorMsg}).` } : msg));
-              addBotResponse("¿Probamos otra cosa?", [{ id: "btn-tips-again", text: "Ver Tips" }, { id: "btn-talk-again", text: "Sólo Charlar" }], 300);
-              setIsLoadingNews(false);
-              return;
-          }
-      }
-
-      // --- Filter by current difficulty level ---
-      console.log(`Filtering ${fetchedNews.length} items for difficulty: ${difficultyLevel}`);
-      const newsAtCurrentLevel = fetchedNews.filter(item => item.DIFFICULTY_LEVEL === difficultyLevel);
-      console.log(`Found ${newsAtCurrentLevel.length} items at level ${difficultyLevel}.`);
-      // --- End Filter ---
-
-      // 2. Filter selected difficulty news into TRUE/FALSE
-      const trueNewsFiltered = newsAtCurrentLevel.filter(item => item.CATEGORY === 'TRUE');
-      const falseNewsFiltered = newsAtCurrentLevel.filter(item => item.CATEGORY === 'FALSE');
-
-      // Check if enough news items exist AT THIS DIFFICULTY LEVEL
-      if (trueNewsFiltered.length === 0 || falseNewsFiltered.length === 0) {
+    if (trueNewsFiltered.length === 0 || falseNewsFiltered.length === 0) {
         const missingType = trueNewsFiltered.length === 0 ? 'verdaderas' : 'falsas';
-        const errorText = `¡Vaya! No encontré suficientes noticias ${missingType} de nivel "${difficultyLevel}" para este desafío.`;
-        console.error(errorText);
-        setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: errorText } : msg));
+        setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Vaya! No encontré suficientes noticias ${missingType} de nivel "${difficultyLevel}" para este desafío.` } : msg));
         addBotResponse("¿Quieres intentar con otro nivel o hacer otra cosa?", [
-          // Future feature idea: { id: "btn-difficulty-change", text: "Cambiar Nivel" },
-          { id: "btn-tips-again", text: "Ver Tips" },
-          { id: "btn-talk-again", text: "Sólo Charlar" },
+            { id: "btn-tips-again", text: "Ver Tips" }, { id: "btn-talk-again", text: "Sólo Charlar" },
         ], 300);
-        setChatError(`Not enough news for difficulty ${difficultyLevel}`);
         setIsLoadingNews(false);
         return;
-      }
+    }
 
-      // Select one random TRUE and one random FALSE from the *filtered* list
-      const randomTrueIndex = Math.floor(Math.random() * trueNewsFiltered.length);
-      const randomFalseIndex = Math.floor(Math.random() * falseNewsFiltered.length);
-      const selectedTrueNews = trueNewsFiltered[randomTrueIndex];
-      const selectedFalseNews = falseNewsFiltered[randomFalseIndex];
+    const selectedTrueNews = trueNewsFiltered[Math.floor(Math.random() * trueNewsFiltered.length)];
+    const selectedFalseNews = falseNewsFiltered[Math.floor(Math.random() * falseNewsFiltered.length)];
+    const showTrueOnLeft = Math.random() < 0.5;
+    const leftNewsItem = showTrueOnLeft ? selectedTrueNews : selectedFalseNews;
+    const rightNewsItem = showTrueOnLeft ? selectedFalseNews : selectedTrueNews;
 
+    const createMobileViewHtml = (newsItem: NewsItem): string => {
+        const escapeHtml = (unsafe: string): string => !unsafe ? '' : unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        const formattedTextHtml = escapeHtml(newsItem.TEXT).split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
+        return `<div class="mobile-news-view"><div class="mobile-news-content"><h2 class="mobile-news-headline">${escapeHtml(newsItem.HEADLINE)}</h2><div class="mobile-news-text-scroll">${formattedTextHtml || '<p>...</p>'}</div></div><div class="mobile-news-footer"></div></div>`;
+    };
+    const leftHtml = createMobileViewHtml(leftNewsItem);
+    const rightHtml = createMobileViewHtml(rightNewsItem);
+    const combinedHtml = `<div class="news-challenge-container">${leftHtml}${rightHtml}</div>`;
 
-      // 3. Prepare Presentation (Randomize L/R order & Generate HTML)
-      const showTrueOnLeft = Math.random() < 0.5;
-      const leftNewsItem = showTrueOnLeft ? selectedTrueNews : selectedFalseNews;
-      const rightNewsItem = showTrueOnLeft ? selectedFalseNews : selectedTrueNews;
+    setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `Nivel: ${difficultyLevel}. ¡Aquí tienes! Una REAL y una FALSA:` } : msg));
+    const presentationMessage: ChatMessage = {
+        id: "news-pres-" + Date.now(), sender: 'bot', avatar: BOT_AVATAR_URL, text: null,
+        htmlContent: combinedHtml, timestamp: Date.now() + 300, buttons: [], buttonsDisabled: true,
+    };
+    setTimeout(() => { setMessages(prev => [...prev, presentationMessage]); }, 300);
 
-      // Helper to create HTML for one news view
-      const createMobileViewHtml = (newsItem: NewsItem): string => {
-          const escapeHtml = (unsafe: string): string => !unsafe ? '' : unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-          const formattedTextHtml = escapeHtml(newsItem.TEXT).split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
-          return `<div class="mobile-news-view"><div class="mobile-news-content"><h2 class="mobile-news-headline">${escapeHtml(newsItem.HEADLINE)}</h2><div class="mobile-news-text-scroll">${formattedTextHtml || '<p>...</p>'}</div></div><div class="mobile-news-footer"></div></div>`;
-      };
-      const leftHtml = createMobileViewHtml(leftNewsItem);
-      const rightHtml = createMobileViewHtml(rightNewsItem);
-      const combinedHtml = `<div class="news-challenge-container">${leftHtml}${rightHtml}</div>`;
-
-      // 4. Add ONE Message Bubble for the News Presentation
-      // Update the intro message with final text
-      setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `Nivel: ${difficultyLevel}. ¡Aquí tienes! Una REAL y una FALSA:` } : msg));
-
-      // Generate ID directly for the message object, removing the unused variable
-      const presentationMessage: ChatMessage = {
-          // REMOVED: const presentationMessageId = "news-pres-" + Date.now();
-          id: "news-pres-" + Date.now(), // Assign ID directly here
-          sender: 'bot',
-          avatar: BOT_AVATAR_URL,
-          text: null,
-          htmlContent: combinedHtml, // Use the combined HTML for side-by-side view
-          timestamp: Date.now() + 300, // Show slightly after updated intro
-          buttons: [],
-          buttonsDisabled: true,
-      };
-      // Add the single presentation message using htmlContent
-      setTimeout(() => {
-          setMessages(prev => [...prev, presentationMessage]);
-      }, 300); // Delay slightly
+    const selectionMessageId = addBotResponse(
+        "¿Cuál de las dos noticias crees que es la VERDADERA?",
+        [{ id: `select-news-left`, text: "Noticia Izquierda" }, { id: `select-news-right`, text: "Noticia Derecha" }],
+        800
+    );
+    setNewsChallengeState({
+        trueNewsOriginalId: selectedTrueNews.ID,
+        leftNewsOriginalId: leftNewsItem.ID,
+        rightNewsOriginalId: rightNewsItem.ID,
+        selectionMessageId: selectionMessageId as string, // Cast a string
+    });
+    setIsLoadingNews(false);
+  }, [difficultyLevel, addBotResponse, BOT_AVATAR_URL, setIsLoadingNews, setMessages, setNewsChallengeState]);
 
 
-      // 5. Add Selection Prompt and Buttons AFTER presentation
-      const selectionMessageId = addBotResponse(
-           "¿Cuál de las dos noticias crees que es la VERDADERA?",
-           [{ id: `select-news-left`, text: "Noticia Izquierda" }, { id: `select-news-right`, text: "Noticia Derecha" }],
-           800 // Delay more
-      );
+  const presentNewsChallenge = useCallback(async (forceSingleAnalysisMode: boolean = false) => {
+    if (isLoadingNews) return;
+    setIsLoadingNews(true);
+    setChatError('');
+    resetSingleAnalysisMode();
+    setNewsChallengeState(null);
 
-      // 6. Update Challenge State
-      setNewsChallengeState({
-          trueNewsOriginalId: selectedTrueNews.ID,
-          leftNewsOriginalId: leftNewsItem.ID,
-          rightNewsOriginalId: rightNewsItem.ID,
-          selectionMessageId: selectionMessageId,
-      });
+    const shouldUseSingleAnalysis = forceSingleAnalysisMode || (
+        (difficultyLevel === 'medio' || difficultyLevel === 'alto') && Math.random() < 0.6 // Ajusta esta probabilidad
+    );
 
-      setIsLoadingNews(false);
+    let introMessage = `Buscando desafío de nivel "${difficultyLevel}"...`;
+    if (shouldUseSingleAnalysis) {
+        introMessage = `¡Vamos a analizar una noticia a fondo! Nivel: ${difficultyLevel}.`;
+    }
+    const introId = addBotResponse(introMessage, [], 0);
 
-  }, [newsData, isLoadingNews, addBotResponse, difficultyLevel]); // Added difficultyLevel
+    if (shouldUseSingleAnalysis) {
+        try {
+            const response = await fetch('/api/activity/guided-analysis/next-news', {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ detail: `Error ${response.status}` }));
+                throw new Error(errorData.detail || `No se pudo cargar la noticia para análisis: ${response.status}`);
+            }
+            const newsToAnalyze: NoticiaParaAnalisis = await response.json();
+            setSingleNewsAnalysisData(newsToAnalyze);
+            setIsSingleNewsAnalysisMode(true);
+
+            setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `Analicemos esta noticia (Nivel: ${difficultyLevel}):` } : msg));
+
+            const newsHtml = `
+                <div class="single-news-display" style="background-color: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-top: 10px;">
+                    <h2>${newsToAnalyze.headline}</h2>
+                    ${newsToAnalyze.source ? `<p style="font-style: italic; color: #555; font-size: 0.9em;">Fuente: ${newsToAnalyze.source}</p>` : ''}
+                    <div class="single-news-text-scroll" style="max-height: 200px; overflow-y: auto; margin-top: 10px; line-height: 1.5;">
+                        ${newsToAnalyze.text.split('\n').filter((p: string) => p.trim() !== '').map((p: string) => `<p>${p}</p>`).join('')}
+                    </div>
+                </div>`;
+            addBotResponse(null, [], 100, undefined, newsHtml);
+
+            setTimeout(() => {
+                addBotResponse(
+                    "Léela con atención. Cuando estés listo/a, dime: ¿Crees que esta noticia es Verdadera o Falsa? Y, lo más importante, ¿por qué piensas eso? Escribe tu análisis completo aquí abajo.",
+                    [], 300
+                );
+                setIsAwaitingInitialAnalysis(true);
+            }, 1200);
+
+        } catch (error) {
+            console.error("Error fetching single news for analysis:", error);
+            const errorMsg = error instanceof Error ? error.message : "Error desconocido";
+            setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! No pude cargar una noticia para analizar (${errorMsg}).` } : msg));
+            addBotResponse("¿Probamos otra cosa?", [
+                { id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" },
+            ], 300);
+            resetSingleAnalysisMode();
+        } finally {
+            setIsLoadingNews(false);
+        }
+    } else { // MODO DOS NOTICIAS
+        if (!newsData) {
+             try {
+                const response = await fetch('/api/news/challenge', { headers: { 'Authorization': `Bearer ${authToken}` } });
+                if (!response.ok) throw new Error((await response.json().catch(() => ({}))).detail || "Error cargando noticias");
+                const allFetchedNews: NewsItem[] = await response.json();
+                if (!Array.isArray(allFetchedNews) || allFetchedNews.length === 0) throw new Error("No se recibieron noticias válidas");
+                setNewsData(allFetchedNews);
+                processTwoNewsChallenge(allFetchedNews, introId);
+            } catch (error) {
+                console.error("Failed to load news data from API:", error);
+                const errorMsg = error instanceof Error ? error.message : "Error desconocido";
+                setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! Hubo un problema al buscar las noticias (${errorMsg}).` } : msg));
+                addBotResponse("¿Probamos otra cosa?", [{ id: "btn-tips-again", text: "Ver Tips" }, { id: "btn-talk-again", text: "Sólo Charlar" }], 300);
+                setIsLoadingNews(false);
+                return;
+            }
+        } else {
+             processTwoNewsChallenge(newsData, introId);
+        }
+    }
+  }, [authToken, isLoadingNews, newsData, difficultyLevel, addBotResponse, resetSingleAnalysisMode, processTwoNewsChallenge]);
 
 
-  // Handles clicks on buttons within messages...
-  const handleMessageButtonClick = useCallback((
-    messageId: number | string,
-    buttonId: string
-  ) => {
+  const handleMessageButtonClick = useCallback(async (messageId: number | string, buttonId: string) => {
     console.log(`Button Clicked: MessageID=${messageId}, ButtonID=${buttonId}`);
+    // Deshabilitar solo el botón presionado en el mensaje específico.
+    if (!buttonId.startsWith("select-news-") && buttonId !== "btn-finish-analysis" && buttonId !== "btn-finish-analysis-anyway") {
+        setMessages(current => current.map(msg => {
+            if (msg.id === messageId) {
+                return { ...msg, buttonsDisabled: true };
+            }
+            // Si estamos en newsChallengeState, y es el mensaje de selección, también deshabilitarlo si el botón no es de selección.
+            if (newsChallengeState && msg.id === newsChallengeState.selectionMessageId && !buttonId.startsWith("select-news-")) {
+                return { ...msg, buttonsDisabled: true };
+            }
+            return msg;
+        }));
+    }
 
-    // --- Part 1: Disable buttons ---
-    // Only disable if it's NOT a news selection button OR if it IS the selection message
-    // This prevents disabling buttons on the news presentation message itself
-    if (!buttonId.startsWith("select-news-")) {
-         setMessages((currentMessages) =>
-            currentMessages.map((msg) =>
-                // Disable buttons on the original message OR on the selection prompt if it exists
-                (msg.id === messageId || (newsChallengeState && msg.id === newsChallengeState.selectionMessageId))
-                 ? { ...msg, buttonsDisabled: true } : msg
-            )
-         );
-    } // L/R Selection button disabling is handled below
 
-    // --- Part 2: Handle different button actions ---
-
-    // --- Tip Navigation ---
-    if (buttonId.startsWith("btn-tip-next-") || buttonId.startsWith("btn-tip-prev-")) {
-       const isNext = buttonId.startsWith("btn-tip-next-");
-       const currentIndex = parseInt(buttonId.split("-").pop() || "0", 10);
-       const targetIndex = isNext ? currentIndex + 1 : currentIndex - 1;
-       if (targetIndex >= 0 && targetIndex < tips.length) {
-         const targetTip = tips[targetIndex];
-         const newButtons: MessageButton[] = [];
-         if (targetIndex > 0) newButtons.push({ id: `btn-tip-prev-${targetIndex}`, icon: faArrowLeft, ariaLabel: 'Anterior' });
-         if (targetIndex < tips.length - 1) newButtons.push({ id: `btn-tip-next-${targetIndex}`, icon: faArrowRight, ariaLabel: 'Siguiente' });
-         else newButtons.push({ id: "btn-tip-understood", text: "He entendido los consejos" });
-         setMessages(currentMessages =>
-             currentMessages.map(msg => msg.id === messageId ? { ...msg, text: `${targetTip.title} ${targetTip.text}`, buttons: newButtons, buttonsDisabled: false, timestamp: Date.now() } : msg)
-         );
-       }
+    if (buttonId === "btn-finish-analysis" || buttonId === "btn-finish-analysis-anyway") {
+      addUserChoiceMessage("He terminado de analizar esta noticia.");
+      // setShowFinishAnalysisButton(false); // No es necesario este estado si el botón lo añade el bot y se consume con el click
+      if (currentGuidedChatSessionId) {
+        try {
+          addBotResponse("Procesando tu análisis final...", [], 0);
+          const response = await fetch(`/api/activity/guided-analysis/finish-news/${currentGuidedChatSessionId}`, {
+            method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` }
+          });
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ detail: `Error ${response.status}` }));
+            throw new Error(errorData.detail || "No se pudo finalizar el análisis.");
+           }
+          const result = await response.json();
+          addBotResponse(result.message || "¡Análisis completado! 👍", [], 300);
+          addBotResponse("¿Qué hacemos ahora?", [
+            { id: "btn-news-again", text: "Siguiente Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" },
+          ], 500);
+        } catch (error) {
+            addBotResponse(`Error al finalizar: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
+                { id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" },
+            ]);
+        }
+        finally { resetSingleAnalysisMode(); }
+      } else {
+        addBotResponse("Parece que no había un análisis activo. ¿Qué hacemos?", [
+            { id: "btn-news-again", text: "Ver Desafíos" }, { id: "btn-talk-again", text: "Sólo Charlar" },
+        ]);
+        resetSingleAnalysisMode();
+    }
       return;
     }
 
-    // --- Mode Selection / Challenge Start ---
+    if (buttonId.startsWith("btn-tip-next-") || buttonId.startsWith("btn-tip-prev-")) {
+      const isNext = buttonId.startsWith("btn-tip-next-");
+      const currentIndex = parseInt(buttonId.split("-").pop() || "0", 10);
+      const targetIndex = isNext ? currentIndex + 1 : currentIndex - 1;
+      if (targetIndex >= 0 && targetIndex < tips.length) {
+        const targetTip = tips[targetIndex];
+        const newButtons: MessageButton[] = [];
+        if (targetIndex > 0) newButtons.push({ id: `btn-tip-prev-${targetIndex}`, icon: faArrowLeft, ariaLabel: 'Anterior' });
+        if (targetIndex < tips.length - 1) newButtons.push({ id: `btn-tip-next-${targetIndex}`, icon: faArrowRight, ariaLabel: 'Siguiente' });
+        else newButtons.push({ id: "btn-tip-understood", text: "He entendido los consejos" });
+        setMessages(current => current.map(msg => msg.id === messageId ? { ...msg, text: `${targetTip.title} ${targetTip.text}`, buttons: newButtons, buttonsDisabled: false, timestamp: Date.now() } : msg));
+      }
+      return;
+    }
+
     if (buttonId === "btn-tips" || buttonId === "btn-tips-again") {
-      setIsFreeChatMode(false);
+      setIsFreeChatMode(false); resetSingleAnalysisMode();
       addUserChoiceMessage(buttonId === "btn-tips" ? "TIPS Y CONSEJOS" : "Ver Tips");
       const firstTip = tips[0];
       addBotResponse(`${firstTip.title} ${firstTip.text}`, [{ id: "btn-tip-next-0", icon: faArrowRight, ariaLabel: 'Siguiente' }]);
-      setNewsChallengeState(null);
+      setNewsChallengeState(null); // Asegurar que el estado del desafío de dos noticias se limpia
       return;
     }
     if (buttonId === "btn-news" || buttonId === "btn-news-again") {
-       setIsFreeChatMode(false);
-       addUserChoiceMessage(buttonId === "btn-news" ? "DESCIFRAR NOTICIAS FALSAS" : "Jugar otra vez");
-       setNewsChallengeState(null); // Reset before starting
-       presentNewsChallenge(); // Start the challenge using current difficulty
-       return;
+      setIsFreeChatMode(false);
+      addUserChoiceMessage(buttonId === "btn-news" ? "DESCIFRAR NOTICIAS" : "Otro Desafío");
+      presentNewsChallenge();
+      return;
     }
     if (buttonId === "btn-talk" || buttonId === "btn-talk-again") {
-      setIsFreeChatMode(true);
+      setIsFreeChatMode(true); resetSingleAnalysisMode();
       addUserChoiceMessage(buttonId === "btn-talk" ? "SÓLO CHARLAR" : "Sólo Charlar");
-      addBotResponse("¡Claro! ¿De qué te gustaría hablar?", []); // Removed buttons here for clarity
-      setNewsChallengeState(null);
+      addBotResponse("¡Claro! ¿De qué te gustaría hablar?", []);
+      setNewsChallengeState(null); // Asegurar que el estado del desafío de dos noticias se limpia
       return;
     }
 
-    // --- Post-Tip Options ---
     if (buttonId === "btn-tip-understood") {
       addUserChoiceMessage("He entendido los consejos");
-      addBotResponse("¡Estupendo! 👍 ¿Quieres repasarlos?", [{ id: "btn-repeat-tips-yes", text: "Sí" }, { id: "btn-repeat-tips-no", text: "No" }]);
+      addBotResponse("¡Estupendo! 👍 ¿Quieres repasarlos o hacer otra cosa?", [
+        { id: "btn-repeat-tips-yes", text: "Repasar Tips" },
+        { id: "btn-news-again", text: "Descifrar Noticias" },
+        { id: "btn-talk-again", text: "Sólo Charlar" }
+      ]);
       return;
     }
     if (buttonId === "btn-repeat-tips-yes") {
-      setIsFreeChatMode(false);
-      addUserChoiceMessage("Sí, por favor");
+      setIsFreeChatMode(false); resetSingleAnalysisMode();
+      addUserChoiceMessage("Sí, por favor, repasemos");
       const firstTip = tips[0];
       addBotResponse(`${firstTip.title} ${firstTip.text}`, [{ id: "btn-tip-next-0", icon: faArrowRight, ariaLabel: 'Siguiente' }]);
       return;
     }
-    if (buttonId === "btn-repeat-tips-no") {
-      addUserChoiceMessage("No, gracias");
-      addBotResponse("De acuerdo. ¿Qué hacemos ahora?", [
-        { id: "btn-tips-again", text: "Ver Tips" },
-        { id: "btn-news-again", text: "Descifrar Noticias" }, // Consistent text
-        { id: "btn-talk-again", text: "Sólo Charlar" },
-      ]);
-       setNewsChallengeState(null); // Ensure reset if leaving tips/news mode
-      return;
-    }
 
-    // --- News Challenge Selection (Left/Right) with Difficulty ---
     if (newsChallengeState && (buttonId === "select-news-left" || buttonId === "select-news-right")) {
-        // Disable selection buttons immediately on the correct prompt message
-         setMessages((currentMessages) =>
-             currentMessages.map((msg) =>
-                 msg.id === newsChallengeState.selectionMessageId ? { ...msg, buttonsDisabled: true } : msg
-             )
-         );
+      setMessages(current => current.map(msg => msg.id === newsChallengeState.selectionMessageId ? { ...msg, buttonsDisabled: true } : msg));
+      const choseLeft = buttonId === "select-news-left";
+      const choiceText = choseLeft ? "Noticia Izquierda" : "Noticia Derecha";
+      addUserChoiceMessage(`Creo que la verdadera es: ${choiceText}`);
 
-        const choseLeft = buttonId === "select-news-left";
-        const choiceText = choseLeft ? "Noticia Izquierda" : "Noticia Derecha";
-        addUserChoiceMessage(`Creo que la verdadera es: ${choiceText}`);
+      const selectedNewsId = choseLeft ? newsChallengeState.leftNewsOriginalId : newsChallengeState.rightNewsOriginalId;
+      let actualFalseNewsId = "";
+      if (newsChallengeState.leftNewsOriginalId === newsChallengeState.trueNewsOriginalId) {
+          actualFalseNewsId = newsChallengeState.rightNewsOriginalId;
+      } else {
+          actualFalseNewsId = newsChallengeState.leftNewsOriginalId;
+      }
 
-        const chosenOriginalId = choseLeft ? newsChallengeState.leftNewsOriginalId : newsChallengeState.rightNewsOriginalId;
-        const isCorrect = chosenOriginalId === newsChallengeState.trueNewsOriginalId;
+      const payload: FinishPairChallengePayload = {
+        noticia_verdadera_id_json: newsChallengeState.trueNewsOriginalId,
+        noticia_falsa_id_json: actualFalseNewsId,
+        seleccion_usuario_id_json: selectedNewsId,
+      };
 
-        // --- Difficulty / Streak Logic ---
+      try {
+        addBotResponse("Veamos...", [], 0);
+        const response = await fetch('/api/challenge/finish-pair-selection', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+          body: JSON.stringify(payload)
+        });
+        const result: FinishPairChallengeResponse = await response.json();
+        if (!response.ok) throw new Error(result.message || `Error ${response.status}`);
+
+        const isCorrectBackend = result.es_correcto;
         let difficultyChangedMessage: string | null = null;
-        if (isCorrect) {
-            const newStreak = correctStreak + 1;
-            setCorrectStreak(newStreak);
-            setIncorrectStreak(0); // Reset incorrect streak
-            console.log(`Correct streak: ${newStreak}`);
-            if (newStreak >= 3) {
-                console.log("Attempting to increase difficulty...");
-                if (increaseDifficulty()) { // Try to increase difficulty
-                    difficultyChangedMessage = "¡Tres seguidas! 😎 ¡Subimos un poco la dificultad!";
-                    setCorrectStreak(0); // Reset streak after level up
-                } else {
-                    console.log("Already at max difficulty, resetting streak.");
-                    setCorrectStreak(0); // Reset streak even at max level
-                }
-            }
-        } else { // Incorrect
-            const newStreak = incorrectStreak + 1;
-            setIncorrectStreak(newStreak);
-            setCorrectStreak(0); // Reset correct streak
-            console.log(`Incorrect streak: ${newStreak}`);
-            if (newStreak >= 3) {
-                console.log("Attempting to decrease difficulty...");
-                 if (decreaseDifficulty()) { // Try to decrease difficulty
-                     difficultyChangedMessage = "¡Ánimo! 💪 Vamos a probar con unas un poco más sencillas.";
-                     setIncorrectStreak(0); // Reset streak after level down
-                 } else {
-                    console.log("Already at min difficulty, resetting streak.");
-                    setIncorrectStreak(0); // Reset streak even at min level
-                 }
-            }
+        if (isCorrectBackend) {
+          const newStreak = correctStreak + 1; setCorrectStreak(newStreak); setIncorrectStreak(0);
+          if (newStreak >= 3) { if (increaseDifficulty()) { difficultyChangedMessage = "¡Tres seguidas! 😎 ¡Subimos un poco la dificultad!"; setCorrectStreak(0); } else { setCorrectStreak(0);}}
+        } else {
+          const newStreak = incorrectStreak + 1; setIncorrectStreak(newStreak); setCorrectStreak(0);
+          if (newStreak >= 3) { if (decreaseDifficulty()) { difficultyChangedMessage = "¡Ánimo! 💪 Vamos a probar con unas un poco más sencillas."; setIncorrectStreak(0); } else {setIncorrectStreak(0);}}
         }
-        // --- End Difficulty Logic ---
 
-        // Prepare standard feedback
         let feedbackText = "";
-        if (isCorrect) { feedbackText = `✅ ¡Correcto! La ${choiceText.toLowerCase()} era la verdadera.`; }
+        if (isCorrectBackend) { feedbackText = `✅ ¡Correcto! La ${choiceText.toLowerCase()} era la verdadera.`; }
         else { const correctPos = (newsChallengeState.leftNewsOriginalId === newsChallengeState.trueNewsOriginalId) ? "la izquierda" : "la derecha"; feedbackText = `❌ ¡Ups! La ${choiceText.toLowerCase()} era la falsa. La verdadera era ${correctPos}.`; }
 
-        // Add difficulty change message first (if any), then feedback
-        let feedbackDelay = 500; // Default delay
-        if (difficultyChangedMessage) {
-            addBotResponse(difficultyChangedMessage, [], 300); // Show difficulty message sooner
-            feedbackDelay = 800; // Delay standard feedback more
-        }
-        // Add standard feedback and next steps
+        let feedbackDelay = 500;
+        if (difficultyChangedMessage) { addBotResponse(difficultyChangedMessage, [], 300); feedbackDelay = 800; }
         addBotResponse(feedbackText, [
-            { id: "btn-news-again", text: "Jugar otra vez" },
-            { id: "btn-tips-again", text: "Ver Tips" },
-            { id: "btn-talk-again", text: "Sólo Charlar" },
+          { id: "btn-news-again", text: "Jugar otra vez" }, { id: "btn-tips-again", text: "Ver Tips" }, { id: "btn-talk-again", text: "Sólo Charlar" },
         ], feedbackDelay);
 
-        setNewsChallengeState(null); // Reset challenge state
-        return;
+      } catch (error) {
+        addBotResponse(`Error al procesar tu elección: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
+            { id: "btn-news-again", text: "Jugar otra vez" }, { id: "btn-talk-again", text: "Sólo Charlar" },
+        ]);
+      }
+      finally { setNewsChallengeState(null); }
+      return;
     }
-    // --- End News Challenge Selection ---
-
   }, [
-      addUserChoiceMessage, addBotResponse, presentNewsChallenge, newsChallengeState,
-      correctStreak, incorrectStreak, increaseDifficulty, decreaseDifficulty // Added ALL dependencies
-     ]);
+    authToken, addUserChoiceMessage, addBotResponse, presentNewsChallenge, newsChallengeState,
+    correctStreak, incorrectStreak, increaseDifficulty, decreaseDifficulty,
+    currentGuidedChatSessionId, resetSingleAnalysisMode, // Eliminado singleNewsAnalysisData y BOT_AVATAR_URL si no se usan directamente aquí
+    // Asegúrate que difficultyLevel y newsData (si processTwoNewsChallenge se moviera aquí) estén
+  ]);
 
 
-  // Handles sending user-typed text messages to the backend API (Ollama).
   const handleSendMessage = async (inputText: string) => {
-    // Prevent sending text while challenge selection is active
-    if (newsChallengeState && newsChallengeState.selectionMessageId) {
-       const selectionMessage = messages.find(msg => msg.id === newsChallengeState.selectionMessageId);
-       if (selectionMessage && !selectionMessage.buttonsDisabled) { addBotResponse("Elige una de las noticias con los botones antes de escribir, por favor.", [], 0); return; }
-    }
     if (!inputText.trim() || !currentUserInfo) return;
 
     const newUserMessage: ChatMessage = {
       id: Date.now() + Math.random(), sender: "user", text: inputText,
       avatar: currentUserInfo?.avatar_url || USER_AVATAR_URL_DEFAULT, timestamp: Date.now(),
     };
+    setMessages(currentMessages => [...currentMessages, newUserMessage]);
 
-    let updatedMessagesForApi: ChatMessage[] = [];
-    setMessages(currentMessages => { updatedMessagesForApi = [...currentMessages, newUserMessage]; return updatedMessagesForApi; });
+    if (isSingleNewsAnalysisMode && isAwaitingInitialAnalysis && singleNewsAnalysisData) {
+      setIsAwaitingInitialAnalysis(false); // Usuario ha enviado su análisis inicial
+      let evaluacion: 'TRUE' | 'FALSE' | 'UNSURE' | null = null;
+      const lowerInput = inputText.toLowerCase();
+      if (/\b(es\s+)?verdadera\b/.test(lowerInput) && !/\bno\s+(es\s+)?verdadera\b/.test(lowerInput)) evaluacion = 'TRUE';
+      else if (/\b(es\s+)?falsa\b/.test(lowerInput) && !/\bno\s+(es\s+)?falsa\b/.test(lowerInput)) evaluacion = 'FALSE';
+      else if (/\b(no\s+estoy\s+segur|no\s+s[eé]|dudo)\b/.test(lowerInput)) evaluacion = 'UNSURE';
 
-    const currentSystemPrompt = isFreeChatMode ? SYSTEM_PROMPT_FREE_CHAT : SYSTEM_PROMPT_FAKE_NEWS;
-    const targetEndpoint = isFreeChatMode ? `/api/bot/chatlibre` : `/api/bot/chat`;
-
-    // Construct Ollama messages - Exclude challenge presentation (htmlContent) and selection prompt
-    const ollamaMessages: OllamaMessage[] = [
-         { role: 'system', content: currentSystemPrompt },
-         ...updatedMessagesForApi
-              .filter(msg => !msg.htmlContent && !(newsChallengeState && msg.id === newsChallengeState.selectionMessageId) && msg.text)
-              .map((msg): OllamaMessage => ({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.text! }))
-    ];
-
-
-    console.log(`Sending ${ollamaMessages.length} messages to ${targetEndpoint} for Ollama processing.`);
-    try {
-      const response = await fetch(targetEndpoint, {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' },
-        body: JSON.stringify({ messages: ollamaMessages, model: 'gemma3:4b' }) // Ensure model name correct
-      });
-      if (!response.ok) { /* ... error handling ... */ throw new Error('API Error'); }
-      const data = await response.json();
-      const botMessage: ChatMessage = {
-        id: Date.now() + Math.random() + 1, sender: "bot", text: data.reply,
-        avatar: BOT_AVATAR_URL, timestamp: Date.now(),
+      const payload: ExplicacionInicialPayload = {
+        noticia_id_json: singleNewsAnalysisData.noticia_id_json,
+        explicacion_usuario: inputText,
+        evaluacion_inicial_opcional: evaluacion,
       };
-      setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
-        console.error(`Error sending message via ${targetEndpoint}:`, error);
-        const displayError = error instanceof Error ? error.message : 'Unknown error';
-        const errorMsg: ChatMessage = {
-            id: Date.now() + Math.random() + 2, sender: 'bot',
-            text: `Lo siento, hubo un problema: ${displayError}`,
-            avatar: BOT_AVATAR_URL, timestamp: Date.now(),
-       };
-       setMessages(prev => [...prev, errorMsg]);
+      try {
+        addBotResponse("Hmm, déjame pensar en tu análisis...", [], 0);
+        const response = await fetch('/api/activity/guided-analysis/explain', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) { throw new Error((await response.json().catch(() => ({}))).detail || `Error ${response.status}`); }
+        const responseData: ChatGuiaResponse = await response.json();
+        setCurrentGuidedChatSessionId(responseData.chat_sesion_noticia_id);
+        addBotResponse(responseData.respuesta_chatbot, [], 500);
+        // setShowFinishAnalysisButton(true); // No es necesario si el botón se añade en el siguiente addBotResponse
+        addBotResponse(
+            "¿Quieres seguir profundizando sobre esta noticia o prefieres terminar el análisis?",
+            [{ id: "btn-finish-analysis", text: "Terminar análisis y continuar" }],
+            600
+        );
+      } catch (error) {
+        addBotResponse(`Error al procesar tu análisis inicial: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
+            { id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" }
+        ]);
+        resetSingleAnalysisMode();
+    }
+
+    } else if (isSingleNewsAnalysisMode && currentGuidedChatSessionId) {
+      const payload: ContinuarChatGuiaPayload = { mensaje_usuario: inputText };
+      try {
+        addBotResponse("...", [], 0); // Input se deshabilita por la lógica de 'disabled' prop
+        const response = await fetch(`/api/activity/guided-analysis/chat/${currentGuidedChatSessionId}/continue`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+            body: JSON.stringify(payload),
+        });
+        if (!response.ok) { throw new Error((await response.json().catch(() => ({}))).detail || `Error ${response.status}`);}
+        const responseData: ChatGuiaResponse = await response.json();
+        addBotResponse(responseData.respuesta_chatbot, [], 500);
+        // setShowFinishAnalysisButton(true); // No es necesario
+        addBotResponse(
+            "¿Alguna otra pregunta o duda sobre esto, o damos por finalizado el análisis de esta noticia?",
+            [{ id: "btn-finish-analysis", text: "Finalizar Análisis de esta Noticia" }],
+            600
+        );
+      } catch (error) {
+        addBotResponse(`Error continuando la conversación guiada: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
+            { id: "btn-finish-analysis-anyway", text: "Terminar Análisis Igualmente" }, // Opción para salir del bucle si hay error
+            { id: "btn-news-again", text: "Otro Desafío" }
+        ]);
+      }
+    } else {
+        if (newsChallengeState && newsChallengeState.selectionMessageId) {
+             const selectionMessage = messages.find(msg => msg.id === newsChallengeState.selectionMessageId);
+             if (selectionMessage && !selectionMessage.buttonsDisabled) {
+                 addBotResponse("Elige una de las noticias con los botones antes de escribir, por favor.", [], 0); return;
+             }
+        }
+        const currentSystemPrompt = isFreeChatMode ? SYSTEM_PROMPT_FREE_CHAT : SYSTEM_PROMPT_FAKE_NEWS;
+        const targetEndpoint = isFreeChatMode ? `/api/bot/chatlibre` : `/api/bot/chat`;
+
+        // Reconstruir historial para Ollama incluyendo el mensaje actual del usuario
+        const messagesForOllama: OllamaMessage[] = [{ role: 'system', content: currentSystemPrompt }];
+        messages.forEach(msg => { // Usar el estado 'messages' que ya está actualizado por el setMessages inicial
+            if (msg.text && !msg.htmlContent) {
+                if (!(newsChallengeState && msg.id === newsChallengeState.selectionMessageId && !msg.buttonsDisabled)) {
+                    messagesForOllama.push({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.text });
+                }
+            }
+        });
+        if (newUserMessage.text && !newUserMessage.htmlContent) { // Añadir el mensaje actual del usuario si es de texto
+             messagesForOllama.push({ role: 'user', content: newUserMessage.text });
+        }
+
+
+        try {
+            const apiResponse = await fetch(targetEndpoint, {
+                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' },
+                body: JSON.stringify({ messages: messagesForOllama, model: 'gemma3:4b' }) // Usar messagesForOllama
+            });
+            if (!apiResponse.ok) {  const errData = await apiResponse.json().catch(() => ({})); throw new Error(errData.detail || `API Error ${apiResponse.status}`);  }
+            const data = await apiResponse.json();
+            addBotResponse(data.reply, [], 300);
+        } catch (error) {
+            console.error(`Error sending message via ${targetEndpoint}:`, error);
+            addBotResponse(`Lo siento, hubo un problema: ${error instanceof Error ? error.message : 'Desconocido'}`, [], 100);
+        }
     }
   };
 
-
-  // Resets the chat to its initial state, including difficulty/streaks.
   const handleRefresh = () => {
-    console.log("Reiniciando chat...");
     if (!isLoadingUserInfo && currentUserInfo) {
       const welcomeMessage = createWelcomeMessage();
       const initialButtonsMessage: ChatMessage = {
-        id: "buttons-msg-" + Date.now(), sender: "bot", text: "¿Cómo empezamos?",
-        avatar: BOT_AVATAR_URL, timestamp: Date.now() + 1,
-        buttons: [ { id: "btn-tips", text: "TIPS Y CONSEJOS" }, { id: "btn-news", text: "DESCIFRAR NOTICIAS FALSAS" }, { id: "btn-talk", text: "SÓLO CHARLAR" } ],
+        id: "buttons-msg-" + Date.now(), sender: "bot", text: "¿Cómo empezamos?", avatar: BOT_AVATAR_URL, timestamp: Date.now() + 1,
+        buttons: [ { id: "btn-tips", text: "TIPS Y CONSEJOS" }, { id: "btn-news", text: "DESCIFRAR NOTICIAS" }, { id: "btn-talk", text: "SÓLO CHARLAR" } ],
         buttonsDisabled: false,
       };
       setIsFreeChatMode(false);
       setMessages([welcomeMessage, initialButtonsMessage]);
       setNewsChallengeState(null);
-      // Reset difficulty and streaks on full refresh
-      setDifficultyLevel('bajo');
-      setCorrectStreak(0);
-      setIncorrectStreak(0);
-      console.log("Difficulty and streaks reset.");
+      resetSingleAnalysisMode();
+      setDifficultyLevel('bajo'); setCorrectStreak(0); setIncorrectStreak(0);
     }
     closePanel();
   };
 
-  // --- Renderizado Principal ---
   if (isLoadingUserInfo && currentUserInfo === null) { return <div style={{ padding: '50px', textAlign: 'center', fontSize: '1.2em' }}>Cargando Pimpoyo...</div>; }
   if (!currentUserInfo && chatError && !isLoadingUserInfo) { return <div style={{ padding: '50px', textAlign: 'center', color: 'red' }}><h2>Error al cargar</h2><p>{chatError}</p><button onClick={onLogout}>Inicio</button></div>; }
   if (!currentUserInfo && !isLoadingUserInfo) { return <div style={{ padding: '50px', textAlign: 'center', color: 'orange' }}><p>No se pudo cargar info / sesión terminada.</p><button onClick={onLogout}>Inicio</button></div>; }
-  if (!currentUserInfo) { return <div style={{ padding: '50px', textAlign: 'center', fontSize: '1.2em' }}>Cargando...</div>; } // Fallback
+  if (!currentUserInfo) { return <div style={{ padding: '50px', textAlign: 'center', fontSize: '1.2em' }}>Cargando...</div>; }
+
+  let chatInputDisabled = isLoadingNews;
+
+  if (!chatInputDisabled) {
+    if (isSingleNewsAnalysisMode) {
+      if (isAwaitingInitialAnalysis) {
+        chatInputDisabled = false;
+      } else if (!currentGuidedChatSessionId) {
+        chatInputDisabled = true;
+      } else {
+        chatInputDisabled = false;
+      }
+    } else if (newsChallengeState && newsChallengeState.selectionMessageId) {
+      const selectionMessage = messages.find(msg => msg.id === newsChallengeState.selectionMessageId);
+      if (selectionMessage && !selectionMessage.buttonsDisabled) {
+        chatInputDisabled = true;
+      }
+    }
+  }
 
   return (
     <div className="chat-container">
       <ChatHeader nickname={currentUserInfo.apodo || 'Usuario'} onPanelToggle={togglePanel} onRefresh={handleRefresh} />
-      {/* Display specific news loading error if relevant */}
-      {chatError && isLoadingNews && ( <div style={{ padding: '5px', background: '#fff0f0', color: 'red', textAlign: 'center' }}>Error noticias: {chatError}</div> )}
+      {chatError && (isLoadingNews || isSingleNewsAnalysisMode) && ( <div style={{ padding: '5px', background: '#fff0f0', color: 'red', textAlign: 'center' }}>Error: {chatError}</div> )}
       <MessageList messages={messages} onButtonClick={handleMessageButtonClick} />
-      <ChatInput onSendMessage={handleSendMessage} />
+      <ChatInput
+        onSendMessage={handleSendMessage}
+        disabled={chatInputDisabled}
+      />
       <SidePanel isOpen={isPanelOpen} onClose={closePanel} userInfo={currentUserInfo} authToken={authToken} onLogout={onLogout} onSettingsSaved={handleSettingsSaved} />
     </div>
   );
 }
-
 export default ChatContainer;

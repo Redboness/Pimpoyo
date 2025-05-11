@@ -1,11 +1,11 @@
-// src/components/ChatContainer/ChatInput.tsx
+// src/components/ChatInput/ChatInput.tsx
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { ChatInputProps } from '../../types/types';
+import { ChatInputProps } from '../../types/types'; // types.ts ya debería tener 'disabled'
 
-
-function ChatInput({ onSendMessage }: ChatInputProps) {
+// El comentario está encima de la función, como solicitaste.
+function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
   const [inputText, setInputText] = useState('');
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -13,28 +13,30 @@ function ChatInput({ onSendMessage }: ChatInputProps) {
   };
 
   const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault();
+    if (disabled) return; // No hacer nada si está deshabilitado
     if (inputText.trim()) {
-      onSendMessage(inputText.trim()); // Call the function passed from parent
-      setInputText(''); // Clear input after sending
+      onSendMessage(inputText.trim());
+      setInputText('');
     }
   };
 
   return (
-    // Structure from index.html, wrapped in a form for Enter key submission
     <form className="chat-input-area" onSubmit={handleSubmit}>
       <input
         type="text"
-        className="text-input" // Class from style.css
-        placeholder="Comienza a escribir..." // Placeholder from index.html
+        className="text-input"
+        placeholder={disabled ? "Esperando respuesta o acción..." : "Comienza a escribir..."} // Placeholder dinámico
         value={inputText}
         onChange={handleInputChange}
         aria-label="Mensaje a enviar"
+        disabled={disabled} // <-- APLICAR PROPIEDAD DISABLED
       />
       <button
-        type="submit" // Submit button triggers form onSubmit
-        className="send-button" // Class from style.css
-        aria-label="Enviar mensaje" // Label from index.html
+        type="submit"
+        className="send-button"
+        aria-label="Enviar mensaje"
+        disabled={disabled} // <-- APLICAR PROPIEDAD DISABLED
       >
         <FontAwesomeIcon icon={faChevronRight} />
       </button>

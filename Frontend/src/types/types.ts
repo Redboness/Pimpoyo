@@ -53,6 +53,7 @@ export interface MessageListProps {
 
 export interface ChatInputProps {
   onSendMessage: (text: string) => void;
+  disabled?: boolean;
 }
 
 export interface MessageButton {
@@ -104,4 +105,44 @@ export interface GlossaryTermPublic {
 export interface GlossaryTermCreate {
     termino: string;
     definicion: string;
+}
+
+export interface NoticiaParaAnalisis { // Coincidir con el modelo Pydantic
+  noticia_id_json: string;
+  headline: string;
+  text: string;
+  source?: string | null;
+  difficulty_level?: string | null;
+  // Añade otros campos si el backend los envía y los necesitas
+}
+
+// Para el request de /explain
+export interface ExplicacionInicialPayload {
+    noticia_id_json: string;
+    explicacion_usuario: string;
+    evaluacion_inicial_opcional?: 'TRUE' | 'FALSE' | 'UNSURE' | null;
+}
+
+// Para la respuesta de /explain y /continue
+export interface ChatGuiaResponse {
+    chat_sesion_noticia_id: number;
+    respuesta_chatbot: string;
+}
+
+// Para el request de /continue
+export interface ContinuarChatGuiaPayload {
+    mensaje_usuario: string;
+}
+
+// Para el request de /challenge/finish-pair-selection
+export interface FinishPairChallengePayload {
+    noticia_verdadera_id_json: string;
+    noticia_falsa_id_json: string;
+    seleccion_usuario_id_json: string;
+    tiempo_respuesta_ms?: number;
+}
+
+export interface FinishPairChallengeResponse {
+    message: string;
+    es_correcto: boolean;
 }

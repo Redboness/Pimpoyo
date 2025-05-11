@@ -118,7 +118,7 @@ function EstadisticasPimpoyo({ totalAnalizadas, aciertos, fallos, xp, xpNextLeve
             style={estiloRellenoProgreso}
             role="progressbar"
             aria-valuenow={xp}
-            aria-valuemin="0"
+            aria-valuemin={0}
             aria-valuemax={xpNextLevel}
           ></div>
         </div>

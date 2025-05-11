@@ -73,6 +73,49 @@ class GlossaryTermPublic(GlossaryTermBase):
     class Config:
         from_attributes = True
 
+# Interacciones
+
+class InteraccionBase(BaseModel):
+    noticia_id_json: str
+    noticia_fuente_json: Optional[str] = None
+    noticia_verdad_real_json: str # TRUE, FALSE
+    noticia_tema_json: Optional[str] = None # Corresponde a TOPICS
+    noticia_dificultad_json: Optional[str] = None
+    noticia_tipos_razonamiento_json: Optional[List[str]] = None # REASONING_TYPE del JSON
+    respuesta_usuario: Optional[str] = None # TRUE, FALSE, Noticia Izquierda, Noticia Derecha, NO_EVALUADO
+    es_correcto: Optional[bool] = None
+    tiempo_respuesta_ms: Optional[int] = None
+    puntos_otorgados: Optional[int] = 0
+    tipo_error: Optional[str] = None # FALSO_POSITIVO, FALSO_NEGATIVO
+    feedback_mostrado: Optional[str] = None
+    # secuencia_interaccion: int # Se manejará probablemente en el backend al insertar
+    criterios_evaluacion_ids: Optional[Dict[str, Any]] = None # JSONB
+
+    # Campos del JSON de la noticia original
+    key_elements_json: Optional[List[str]] = None
+    justification_hints_json: Optional[List[str]] = None
+    likely_misconceptions_json: Optional[List[str]] = None
+    indicadores_clave_detectados_noticia_json: Optional[List[str]] = None # INDICADORES_CLAVE_DETECTADOS del JSON
+
+    # Indicadores que el usuario seleccionó o se discutieron (del análisis LLM o input futuro)
+    indicadores_seleccionados_o_discutidos_usuario: Optional[List[str]] = None
+
+    tipo_interaccion: str # Ej: 'DOS_NOTICIAS', 'ANALISIS_INDIVIDUAL_GUIADO'
+
+
+class InteraccionCreate(InteraccionBase):
+    sesion_id: int
+
+
+class InteraccionInDB(InteraccionCreate):
+    interaccion_id: int
+    interaccion_ts: datetime
+    secuencia_interaccion: int
+
+
+class InteraccionPublic(InteraccionInDB):
+    pass
+
 # --- Modelo para Estadísticas (Existente) ---
 class UserStatsResponse(BaseModel):
     total_analizadas: int = 0
@@ -138,3 +181,9 @@ class MensajeChatGuiaPublic(BaseModel):
 
     class Config:
         from_attributes = True
+
+class FinishPairChallengeRequest(BaseModel):
+    noticia_verdadera_id_json: str # ID de la noticia que ERA la verdadera
+    noticia_falsa_id_json: str   # ID de la noticia que ERA la falsa
+    seleccion_usuario_id_json: str # ID de la noticia que el usuario seleccionó como verdadera
+    tiempo_respuesta_ms: Optional[int] = None

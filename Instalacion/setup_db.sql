@@ -51,60 +51,51 @@ COMMENT ON COLUMN sesiones.tasa_falsos_negativos_global IS 'Tasa global de notic
 COMMENT ON COLUMN sesiones.tasa_falsos_positivos_global IS 'Tasa global de noticias verdaderas que el usuario clasificó incorrectamente como falsas.';
 COMMENT ON COLUMN sesiones.puntuacion_post_test IS 'Puntuación obtenida en una evaluación posterior al uso, si aplica.';
 
--- Tabla para los Detalles de Interacción (Sección B)
+DROP TABLE IF EXISTS interacciones CASCADE; -- Si necesitas recrearla
+
 CREATE TABLE interacciones (
     interaccion_id BIGSERIAL PRIMARY KEY,
     sesion_id BIGINT NOT NULL REFERENCES sesiones(sesion_id) ON DELETE CASCADE,
     interaccion_ts TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    noticia_id_json VARCHAR(255) NOT NULL, -- Identificador de la noticia correspondiente al "ID" en tu JSON
-    noticia_fuente_json VARCHAR(255), -- Fuente de la noticia (copiada del JSON, ej. "El Economista")
-    noticia_verdad_real_json VARCHAR(50) NOT NULL, -- Veracidad real (copiada del JSON, ej. "TRUE", "FALSE")
-    noticia_tema_json VARCHAR(100), -- Tema (copiado del JSON, ej. "Covid-19")
-    noticia_dificultad_json VARCHAR(50), -- Dificultad (copiada del JSON, ej. "alto")
-    noticia_tipos_razonamiento_json TEXT[], -- REASONING_TYPE (copiado del JSON en el momento de la interacción)
-    respuesta_usuario VARCHAR(50) NOT NULL, -- Respuesta del usuario (ej. "TRUE", "FALSE")
-    es_correcto BOOLEAN NOT NULL, -- True si la respuesta_usuario es correcta
-    tiempo_respuesta_ms INTEGER, -- Tiempo de respuesta en milisegundos
+
+    noticia_id_json VARCHAR(255) NOT NULL,
+    noticia_fuente_json VARCHAR(255),
+    noticia_verdad_real_json VARCHAR(50) NOT NULL, -- TRUE, FALSE
+    noticia_tema_json VARCHAR(100), -- Corresponde a TOPICS
+    noticia_dificultad_json VARCHAR(50),
+    noticia_tipos_razonamiento_json TEXT[], -- REASONING_TYPE del JSON
+
+    respuesta_usuario VARCHAR(255), -- TRUE, FALSE, Noticia Izquierda, Noticia Derecha, NO_EVALUADO, NO_EVALUADO_INICIALMENTE
+    es_correcto BOOLEAN NULL, -- Puede ser NULL si no hay evaluación directa
+    tiempo_respuesta_ms INTEGER,
     puntos_otorgados INTEGER DEFAULT 0,
-    tipo_error VARCHAR(100), -- Ej. "FALSO_POSITIVO", "FALSO_NEGATIVO" (si es_correcto es False)
-    feedback_mostrado TEXT, -- Descripción del feedback que se le dio al usuario
-    secuencia_interaccion INTEGER NOT NULL, -- Orden de esta interacción dentro de la actividad para este usuario
-    criterios_evaluacion_ids JSONB, -- Opcional: IDs de Criterios de Evaluación curriculares
-    indicadores_seleccionados_usuario TEXT[] -- Indicadores que el usuario seleccionó para justificar su respuesta
+    tipo_error VARCHAR(100), -- Ej. "FALSO_POSITIVO", "FALSO_NEGATIVO"
+    feedback_mostrado TEXT,
+    secuencia_interaccion INTEGER NOT NULL,
+    criterios_evaluacion_ids JSONB,
 
-    -- Clave Foránea hacia la tabla 'sesiones'
-    CONSTRAINT fk_sesion
-        FOREIGN KEY(sesion_id)
-        REFERENCES sesiones(sesion_id)
-        ON DELETE RESTRICT,
+    key_elements_json TEXT[],
+    justification_hints_json TEXT[],
+    likely_misconceptions_json TEXT[],
+    indicadores_clave_detectados_noticia_json TEXT[], -- Del JSON original de la noticia
+    indicadores_seleccionados_o_discutidos_usuario TEXT[], -- Del usuario o análisis LLM
 
-    -- Restricción para que la secuencia sea única por sesión
-    UNIQUE (sesion_id, secuencia_interaccion)
+    tipo_interaccion VARCHAR(50) NOT NULL, -- Ej: 'DOS_NOTICIAS', 'ANALISIS_INDIVIDUAL_GUIADO'
+
+    UNIQUE (sesion_id, secuencia_interaccion) -- Asegura que la secuencia es única por sesión
 );
 
--- Índices y comentarios para la tabla interacciones
-CREATE INDEX idx_interacciones_sesion_id ON interacciones (sesion_id);
-CREATE INDEX idx_interacciones_noticia_id ON interacciones (noticia_id);
-CREATE INDEX idx_interacciones_timestamp ON interacciones (interaccion_ts);
+-- Índices para la tabla interacciones
+CREATE INDEX IF NOT EXISTS idx_interacciones_sesion_id ON interacciones (sesion_id);
+CREATE INDEX IF NOT EXISTS idx_interacciones_noticia_id_json ON interacciones (noticia_id_json); -- Corregido
 
-COMMENT ON COLUMN interacciones.interaccion_id IS 'ID único para esta interacción específica';
-COMMENT ON COLUMN interacciones.sesion_id IS 'FK a la tabla sesiones (BIGINT), vincula la interacción al usuario/sesión';
-COMMENT ON COLUMN interacciones.interaccion_ts IS 'Timestamp exacto de la interacción';
-COMMENT ON COLUMN interacciones.noticia_id IS 'Identificador único de la noticia presentada';
-COMMENT ON COLUMN interacciones.noticia_fuente IS 'Origen de la noticia (ej. generada_por_error_X, set_inicial_Y)';
-COMMENT ON COLUMN interacciones.noticia_verdad_real IS 'Clasificación real de la noticia (VERDADERA, FALSA, SATIRA, etc.)';
-COMMENT ON COLUMN interacciones.noticia_tema IS 'Tema de la noticia (CIENCIA, DEPORTES, etc.)';
-COMMENT ON COLUMN interacciones.noticia_dificultad IS 'Nivel de dificultad asignado a la noticia';
-COMMENT ON COLUMN interacciones.respuesta_usuario IS 'La respuesta dada por el niño (VERDADERA, FALSA, etc.)';
-COMMENT ON COLUMN interacciones.es_correcto IS 'Booleano (True/False) indicando si la respuesta fue correcta';
-COMMENT ON COLUMN interacciones.tiempo_respuesta_ms IS 'Tiempo de respuesta en milisegundos';
-COMMENT ON COLUMN interacciones.puntos_otorgados IS 'Puntos otorgados por esta interacción específica';
-COMMENT ON COLUMN interacciones.tipo_error IS 'Categoría del error (FALSO_POSITIVO, FALSO_NEGATIVO, etc.) si es_correcto es False';
-COMMENT ON COLUMN interacciones.feedback_mostrado IS 'Tipo de feedback o explicación mostrada al niño';
-COMMENT ON COLUMN interacciones.secuencia_interaccion IS 'Número de orden de esta interacción en la sesión (1, 2, 3...)';
-COMMENT ON COLUMN interacciones.criterios_evaluacion_ids IS 'Array JSON con códigos oficiales de los Criterios de Evaluación curriculares abordados';
+-- Comentarios para la tabla interacciones (actualizados)
+COMMENT ON TABLE interacciones IS 'Registra cada interacción de un usuario con una noticia.';
 COMMENT ON COLUMN interacciones.noticia_id_json IS 'Identificador de la noticia utilizado en el archivo JSON.';
-
+COMMENT ON COLUMN interacciones.noticia_fuente_json IS 'Fuente de la noticia (copiada del JSON).';
+COMMENT ON COLUMN interacciones.indicadores_seleccionados_o_discutidos_usuario IS 'Indicadores que el usuario identificó o que fueron discutidos (del análisis LLM o futuro input).';
+COMMENT ON COLUMN interacciones.tipo_interaccion IS 'Tipo de desafío/interacción: DOS_NOTICIAS o ANALISIS_INDIVIDUAL_GUIADO.';
+-- (Añadir comentarios para las nuevas columnas si es necesario)
 
 -- Tabla para el Uso de Funcionalidades / Comportamiento (Sección C)
 CREATE TABLE eventos_uso (
