@@ -1,5 +1,15 @@
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
+// --- NUEVA INTERFAZ PARA ESTADÍSTICAS DETALLADAS ---
+export interface UserDetailedStats {
+  totalAnalizadas: number;
+  aciertos: number;
+  fallos: number;
+  xp: number;
+  xpNextLevel: number;
+}
+// --- FIN NUEVA INTERFAZ ---
+
 export interface UserInfo {
   sesion_id: number;
   apodo: string;
@@ -86,7 +96,7 @@ export interface GlossaryEntry {
   definition: string;
   isDefault: boolean;
   userId?: number | string;
-  fecha_creacion?: Date;
+  fecha_creacion?: Date; // Mantenido como Date, pero la API envía string
 }
 
 export interface GlossaryTermPublic {
@@ -94,7 +104,7 @@ export interface GlossaryTermPublic {
   usuario_sesion_id: number;  // Equivalente a int (o number si era BigInt)
   termino: string;            // Equivalente a str
   definicion: string;         // Equivalente a str
-  fecha_creacion: string;     // Equivalente a datetime (JSON lo suele pasar como string ISO 8601)
+  fecha_creacion: string;     // API devuelve string ISO 8601
 }
 
 /**

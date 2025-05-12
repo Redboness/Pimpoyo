@@ -2,12 +2,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
-import { SidePanelProps, UserInfo, GlossaryTermPublic } from '../../types/types';
-
-// --- CORREGIDO: Import del componente de estadísticas (descomentado) ---
-import EstadisticasPimpoyo from '../EstadisticasPimpoyo/EstadisticasPimpoyo'; // Asegúrate que la ruta es correcta
-// --- CORREGIDO: Import del CSS del panel (asumiendo que lo necesitas) ---
-
+import { SidePanelProps, GlossaryTermPublic, UserDetailedStats } from '../../types/types';
+import EstadisticasPimpoyo from '../EstadisticasPimpoyo/EstadisticasPimpoyo';
 
 // Define la estructura interna y los términos por defecto para el glosario
 interface GlossaryEntry {
@@ -44,38 +40,25 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
   const [glossaryLoading, setGlossaryLoading] = useState(false);
   const [glossaryError, setGlossaryError] = useState<string | null>(null);
 
-  // --- CORREGIDO: Estado temporal para estadísticas (descomentado) ---
-  // ¡RECUERDA CONECTAR ESTO A DATOS REALES MÁS ADELANTE!
-  const [userStats, setUserStats] = useState({
-    totalAnalizadas: 12,
-    aciertos: 9,
-    fallos: 3,
-    xp: 175,           // <-- NUEVO: XP actual del usuario (ejemplo)
-    xpNextLevel: 300,  // <-- NUEVO: XP necesario para el siguiente nivel (ejemplo)
-  });
-  // ---------------------------------------------------------
+  const [fetchedStats, setFetchedStats] = useState<UserDetailedStats | null>(null);
+  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(false);
+  const [statsError, setStatsError] = useState<string | null>(null);
 
-   useEffect(() => {
+  useEffect(() => {
     if (userInfo) { setNicknameSetting(userInfo.apodo); setAvatarUrlSetting(userInfo.avatar_url || ''); }
     else { setNicknameSetting(''); setAvatarUrlSetting(''); }
   }, [userInfo]);
 
-  // Obtiene las palabras del usuario desde la API
   const fetchUserGlossaryTerms = useCallback(async () => {
     if (!authToken) { console.warn("fetchUserGlossaryTerms: No auth token found."); return; }
-    // Evita llamadas múltiples si ya está cargando
-    // if (glossaryLoading) { console.log("fetchUserGlossaryTerms: Already loading, skipping."); return; } // Podemos quitar esto si handleAdd lo controla
-
     console.log("Fetching user glossary terms from API...");
     setGlossaryLoading(true);
     setGlossaryError(null);
-
     try {
       const response = await fetch('/api/glossary/', {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' }
       });
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ detail: `HTTP error ${response.status}` }));
         throw new Error(errorData.detail || `Failed to fetch glossary: ${response.status}`);
@@ -85,35 +68,82 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
         id: termFromApi.id, term: termFromApi.termino, definition: termFromApi.definicion,
         isDefault: false, userId: termFromApi.usuario_sesion_id, fecha_creacion: termFromApi.fecha_creacion
       })).filter(entry => entry.term && entry.definition);
-
       setUserGlossaryTerms(formattedData);
-      console.log("User glossary terms fetched successfully:", formattedData);
-
     } catch (error) {
       console.error("Error fetching user glossary terms:", error);
       setGlossaryError(error instanceof Error ? error.message : 'No se pudieron cargar tus palabras.');
       setUserGlossaryTerms([]);
     } finally {
-      setGlossaryLoading(false); // Quita el loading al terminar fetch
+      setGlossaryLoading(false);
     }
-  }, [authToken]); // Solo depende de authToken
+  }, [authToken]);
 
-  // Efecto que llama a fetchUserGlossaryTerms al cambiar la sección o el token
   useEffect(() => {
     if (activeSection === 'glossary' && authToken) {
       fetchUserGlossaryTerms();
     }
    }, [activeSection, authToken, fetchUserGlossaryTerms]);
 
-  // Cambiar Sección
+  const fetchUserStats = useCallback(async () => {
+    if (!authToken) {
+      console.warn("fetchUserStats: No auth token found.");
+      setStatsError("No autenticado. No se pueden cargar estadísticas.");
+      setFetchedStats(null);
+      return;
+    }
+    console.log("Fetching detailed user stats...");
+    setIsStatsLoading(true);
+    setStatsError(null);
+
+    try {
+      const response = await fetch('/api/users/me/detailed-stats', {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ detail: `Error HTTP ${response.status}` }));
+        throw new Error(errorData.detail || `Error al cargar estadísticas: ${response.status}`);
+      }
+      const statsData: UserDetailedStats = await response.json();
+      setFetchedStats(statsData);
+      console.log("Detailed stats fetched successfully:", statsData);
+
+    } catch (error) {
+      console.error("Error fetching user stats:", error);
+      const errorMessage = error instanceof Error ? error.message : 'No se pudieron cargar las estadísticas.';
+      setStatsError(errorMessage);
+      setFetchedStats(null);
+    } finally {
+      setIsStatsLoading(false);
+    }
+  }, [authToken]);
+
+  useEffect(() => {
+    if (isOpen && activeSection === 'stats' && !isStatsLoading) { // El chequeo !isStatsLoading es clave aquí
+      fetchUserStats();
+    }
+    if (!isOpen || activeSection !== 'stats') {
+       setFetchedStats(null);
+       setStatsError(null);
+    }
+  // --- MODIFICACIÓN CLAVE: Quitar isStatsLoading del array de dependencias ---
+  }, [isOpen, activeSection, fetchUserStats]);
+  // --- FIN MODIFICACIÓN ---
+
   const handleSectionChange = (section: string | null) => {
     setActiveSection(section);
-    if (section === 'settings' && userInfo) { setNicknameSetting(userInfo.apodo); setAvatarUrlSetting(userInfo.avatar_url || ''); }
-    if (section !== 'glossary') { setNewTerm(''); setNewDefinition(''); setGlossaryError(null); }
-    // La carga inicial ahora la dispara el useEffect de arriba
+    if (section === 'settings' && userInfo) {
+      setNicknameSetting(userInfo.apodo);
+      setAvatarUrlSetting(userInfo.avatar_url || '');
+    }
+    if (section !== 'glossary') {
+      setNewTerm('');
+      setNewDefinition('');
+      setGlossaryError(null);
+    }
   };
 
-  // Guardar Ajustes
   const handleSaveSettings = async () => {
      setSettingsFeedback(null);
     const newNickname = nicknameSetting.trim();
@@ -137,22 +167,18 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
     }
   };
 
-  // --- MODIFICADO: Añade una palabra y LUEGO recarga la lista completa ---
   const handleAddGlossaryTerm = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!newTerm.trim() || !newDefinition.trim()) { setGlossaryError("Debes escribir un término y una definición."); return; }
     if (!authToken) { setGlossaryError("Error de autenticación."); return; }
     setGlossaryError(null);
-    setGlossaryLoading(true); // Pone 'Guardando...' en el botón
-    console.log(`Enviando término para guardar: ${newTerm.trim()}`);
+    setGlossaryLoading(true);
     try {
-        // *** Revisa ruta '/api/glossary/' ***
         const response = await fetch('/api/glossary/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' },
             body: JSON.stringify({ termino: newTerm.trim(), definicion: newDefinition.trim() })
         });
-
         if (!response.ok) {
              let errorDetail = `Error ${response.status}: ${response.statusText}`;
              try {
@@ -161,28 +187,16 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
              } catch (e) { /* Ignora si la respuesta de error no es JSON */ }
             throw new Error(errorDetail);
         }
-
-        // --- ÉXITO AL GUARDAR ---
-        console.log("Término guardado en BD con éxito.");
-        setNewTerm(''); // Limpia formulario
+        setNewTerm('');
         setNewDefinition('');
-
-        // --- ¡NUEVO! En lugar de actualizar el estado local, volvemos a cargar todo ---
-        console.log("Volviendo a cargar la lista completa desde la API...");
-        await fetchUserGlossaryTerms(); // Llama a la función que hace el GET
-        // setUserGlossaryTerms(prevTerms => [...prevTerms, addedTerm]); // <-- Ya NO hacemos esto
-
+        await fetchUserGlossaryTerms();
     } catch (error) {
         console.error("Error al añadir término del glosario:", error);
         setGlossaryError(error instanceof Error ? error.message : 'No se pudo añadir la palabra.');
-        // Si falla el POST, quitamos el loading aquí
         setGlossaryLoading(false);
     }
-    // Nota: setGlossaryLoading(false) se llamará dentro del finally de fetchUserGlossaryTerms si el POST tuvo éxito
   };
 
-
-  // Calcula los términos agrupados (con pre-filtrado)
   const groupedGlossary = useMemo(() => {
     const combinedTerms = [...defaultGlossaryTerms, ...userGlossaryTerms];
     const validTerms = combinedTerms.filter((term) => term && typeof term.term === 'string' && term.term.length > 0);
@@ -205,14 +219,11 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
         }
         return acc;
     }, {} as Record<string, GlossaryEntry[]>);
-    // console.log(">>> groupedGlossary calculado final:", finalGroupedResult); // Log opcional
     return finalGroupedResult;
   }, [userGlossaryTerms]);
 
-
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 
-  // Renderizado
   return (
     <div id="side-panel" className={`side-panel ${isOpen ? 'open' : ''}`}>
       <div className="panel-header">
@@ -223,18 +234,15 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
       </div>
 
       <div className="panel-content">
-        {/* Botones de Navegación */}
         <div className="panel-nav-buttons">
           <button id="btn-glossary" className={`panel-button ${activeSection === 'glossary' ? 'active' : ''}`} onClick={() => handleSectionChange('glossary')}>GLOSARIO</button>
           <button id="btn-stats" className={`panel-button ${activeSection === 'stats' ? 'active' : ''}`} onClick={() => handleSectionChange('stats')}>ESTADÍSTICAS</button>
           <button id="btn-settings" className={`panel-button ${activeSection === 'settings' ? 'active' : ''}`} onClick={() => handleSectionChange('settings')}>AJUSTES</button>
         </div>
 
-        {/* Sección Glosario */}
         {activeSection === 'glossary' && (
           <div id="glossary-content" className="panel-section-content" style={{ display: 'block' }}>
             <h3>Glosario</h3>
-            {/* Formulario Añadir Palabra */}
             <form onSubmit={handleAddGlossaryTerm} className="glossary-add-form" style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#fdf9e0', borderRadius: '8px' }}>
                <h4 style={{marginTop: 0, marginBottom: '15px'}}>Añadir mi palabra</h4>
                <div className="form-field" style={{ marginBottom: '10px' }}>
@@ -246,12 +254,11 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
                  <textarea id="new-definition-input" className="form-textarea" value={newDefinition} onChange={(e) => setNewDefinition(e.target.value)} placeholder="Escribe qué significa..." rows={3} required disabled={glossaryLoading} style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical' }} />
                </div>
                {glossaryError && !glossaryLoading && <p className="error-message" style={{color: 'red', marginTop: '-5px', marginBottom: '10px'}}>{glossaryError}</p>}
-          <button type="submit" className="form-button primary" disabled={glossaryLoading}>
-            {glossaryLoading ? (userGlossaryTerms.length === 0 ? 'Cargando...' : 'Guardando...') : 'Añadir Palabra'}
-          </button>
+                <button type="submit" className="form-button primary" disabled={glossaryLoading}>
+                    {glossaryLoading ? (userGlossaryTerms.length === 0 && !glossaryError ? 'Cargando...' : 'Guardando...') : 'Añadir Palabra'}
+                </button>
             </form>
             <hr className="separator"/>
-            {/* Índice Alfabético */}
             <div className="glossary-index">
               {alphabet.map(letter => (
                 groupedGlossary[letter]
@@ -261,10 +268,8 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
               {groupedGlossary['#'] && <a href="#glossary-#">#</a>}
             </div>
             <hr className="separator"/>
-            {/* Mensajes Carga/Vacío */}
-          {glossaryLoading && userGlossaryTerms.length === 0 && <p>Cargando tus palabras...</p> }
-          {!glossaryLoading && Object.keys(groupedGlossary).length === 0 && <p>Aún no hay palabras en el glosario. ¡Añade la primera!</p> }
-          {/* Lista de Términos */}
+            {glossaryLoading && userGlossaryTerms.length === 0 && !glossaryError && <p>Cargando tus palabras...</p> }
+            {!glossaryLoading && !glossaryError && Object.keys(groupedGlossary).length === 0 && <p>Aún no hay palabras en el glosario. ¡Añade la primera!</p> }
             {Object.keys(groupedGlossary).sort((a, b) => a === '#' ? 1 : b === '#' ? -1 : a.localeCompare(b)).map(letter => (
               <div key={letter} className="glossary-letter-group">
                 <h4 id={`glossary-${letter}`} className="glossary-letter-heading">{letter}</h4>
@@ -281,24 +286,25 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
           </div>
         )}
 
-        {/* --- CORREGIDO: Sección Estadísticas --- */}
         {activeSection === 'stats' && (
-          // Añadimos una clase específica para aplicar estilos RPG si es necesario
           <div id="stats-content" className="panel-section-content rpg-stats-section" style={{ display: 'block' }}>
-             {/* Renderizamos el componente pasando los datos del estado */}
-             <EstadisticasPimpoyo
-              totalAnalizadas={userStats.totalAnalizadas}
-              aciertos={userStats.aciertos}
-              fallos={userStats.fallos}
-              xp={userStats.xp}
-              xpNextLevel={userStats.xpNextLevel}
-            />
+             {isStatsLoading && <p>Cargando estadísticas...</p>}
+             {statsError && <p className="error-message" style={{color: 'red'}}>Error: {statsError}</p>}
+             {!isStatsLoading && !statsError && fetchedStats && (
+               <EstadisticasPimpoyo
+                 totalAnalizadas={fetchedStats.totalAnalizadas ?? 0}
+                 aciertos={fetchedStats.aciertos ?? 0}
+                 fallos={fetchedStats.fallos ?? 0}
+                 xp={fetchedStats.xp ?? 0}
+                 xpNextLevel={fetchedStats.xpNextLevel > 0 ? fetchedStats.xpNextLevel : 1}
+               />
+             )}
+             {!isStatsLoading && !statsError && !fetchedStats && (
+                <p>No hay datos de estadísticas disponibles o aún no has jugado.</p>
+             )}
           </div>
         )}
-        {/* ------------------------------------------ */}
 
-
-        {/* Sección Ajustes */}
         {activeSection === 'settings' && (
           <div id="settings-content" className="panel-section-content" style={{ display: 'block' }}>
             <h3>Ajustes</h3>
@@ -309,18 +315,16 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
               </div>
               <div className="setting-item">
                 <label htmlFor="settings-avatar-url-input">URL del Avatar:</label>
-                {/* Previsualización del avatar */}
                 {avatarUrlSetting &&
                   <img src={avatarUrlSetting} alt="Avatar preview" className="avatar-preview" style={{ width: '40px', height: '40px', borderRadius: '50%', verticalAlign: 'middle', marginLeft: '10px', objectFit: 'cover' }}
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).src = ''; }}
                     onLoad={(e) => { (e.target as HTMLImageElement).style.display = 'inline-block'; }} />
                 }
                 <input type="url" id="settings-avatar-url-input" className="settings-input" placeholder="Pega la URL de tu imagen aquí..." value={avatarUrlSetting} onChange={(e) => setAvatarUrlSetting(e.target.value)} disabled={settingsLoading} />
-      </div>
+              </div>
               <button id="settings-save-btn" className="panel-button" style={{ marginTop: '20px' }} onClick={handleSaveSettings} disabled={settingsLoading}>
                 {settingsLoading ? 'Guardando...' : 'Guardar Cambios'}
               </button>
-              {/* Mensaje de feedback (éxito o error) */}
               {settingsFeedback && (
                 <p style={{ color: settingsFeedback.type === 'success' ? 'green' : 'red', textAlign: 'center', marginTop: '10px', fontWeight: 'bold' }}>
                   {settingsFeedback.message}
@@ -333,11 +337,10 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
             <button id="settings-logout-btn" className="panel-button logout-button" onClick={onLogout}>
               Salir del Chat
             </button>
-    </div>
+          </div>
         )}
-
-      </div> {/* Cierre de panel-content */}
-    </div> // Cierre de side-panel
+      </div>
+    </div>
   );
 }
 
