@@ -155,4 +155,5 @@ export interface FinishPairChallengePayload {
 export interface FinishPairChallengeResponse {
     message: string;
     es_correcto: boolean;
+    explanation?: string; // CAMBIO: Añadido campo opcional para la explicación
 }

@@ -171,7 +171,13 @@ class MensajeChatGuiaPublic(BaseModel):
 # --- Definición CORREGIDA y COMPLETA de FinishPairChallengeRequest ---
 class FinishPairChallengeRequest(BaseModel):
     noticia_verdadera_id_json: str
-    noticia_falsa_id_json: str
+    noticia_falsa_id_json: str # Asegúrate que este ID se envía desde el frontend
     seleccion_usuario_id_json: str
     tiempo_respuesta_ms: Optional[int] = None
-# --- FIN CORRECCIÓN ---
+
+# --- Modelo para la respuesta del desafío de pares ---
+class FinishPairChallengeResponse(BaseModel):
+    message: str
+    es_correcto: bool
+    explanation: Optional[str] = None # Nuevo campo para la explicación
+    

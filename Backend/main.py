@@ -206,8 +206,10 @@ mensajes_chat_guia_table = sqlalchemy.Table(
 )
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Comentario encima de la función verify_password
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
+# Comentario encima de la función get_password_hash
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
@@ -244,6 +246,7 @@ async def shutdown():
         print("INFO: Desconectado de la base de datos PostgreSQL.")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+# Comentario encima de la función create_access_token
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -253,12 +256,12 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
-
+# Comentario encima de la función get_usuario_by_apodo
 async def get_usuario_by_apodo(apodo: str) -> Optional[UsuarioInDB]:
     query = sesiones_table.select().where(sesiones_table.c.apodo == apodo)
     result = await database.fetch_one(query)
     return UsuarioInDB(**dict(result)) if result else None
-
+# Comentario encima de la función get_current_active_user
 async def get_current_active_user(token: str = Depends(oauth2_scheme)) -> UsuarioInDB:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -468,13 +471,13 @@ async def get_user_glossary_terms(current_user: UsuarioInDB = Depends(get_curren
     ).order_by(sqlfunc.lower(glosario_usuario_table.c.termino))
     results = await database.fetch_all(query)
     return [GlossaryTermPublic.model_validate(row) for row in results]
-
+# Comentario encima de la función get_next_secuencia_interaccion
 async def get_next_secuencia_interaccion(sesion_id: int) -> int:
     query = select(sqlfunc.max(interacciones_table.c.secuencia_interaccion))\
         .where(interacciones_table.c.sesion_id == sesion_id)
     max_secuencia = await database.fetch_val(query)
     return (max_secuencia or 0) + 1
-
+# Comentario encima de la función registrar_interaccion_y_actualizar_estadisticas
 async def registrar_interaccion_y_actualizar_estadisticas(
     db: Database,
     sesion_id: int,
@@ -714,6 +717,37 @@ async def finish_guided_analysis_news_endpoint(
     if not noticia_original_data:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Datos originales de la noticia {noticia_id_json_actual} no encontrados.")
 
+    # Construcción del mensaje de feedback mejorado
+    feedback_message = "¡Análisis de la noticia completado! "
+    evaluacion_correcta = chat_sesion_db["evaluacion_inicial_correcta"]
+    categoria_real = noticia_original_data.get("CATEGORY", "Desconocida").upper()
+    
+    # CAMBIO: Traducción y formato en negrita para la categoría
+    categoria_real_es = ""
+    if categoria_real == "TRUE":
+        categoria_real_es = "**Verdadera**"
+    elif categoria_real == "FALSE":
+        categoria_real_es = "**Falsa**"
+    else:
+        # Fallback por si acaso la categoría no es TRUE o FALSE
+        categoria_real_es = f"**{categoria_real.capitalize()}**" 
+
+    if evaluacion_correcta is True:
+        feedback_message += f"¡Muy bien! Determinaste correctamente que la noticia era {categoria_real_es}."
+    elif evaluacion_correcta is False:
+        feedback_message += f"Parece que tu evaluación inicial no fue acertada. La noticia en realidad era {categoria_real_es}."
+    else: # Casos de UNSURE o no evaluado inicialmente
+        feedback_message += f"La noticia analizada era {categoria_real_es}."
+
+
+    # Añadir pistas o elementos clave si existen en el dataset
+    justification_hints = noticia_original_data.get("JUSTIFICATION_HINTS")
+    if justification_hints and isinstance(justification_hints, list) and len(justification_hints) > 0:
+        feedback_message += f" Algunos puntos clave para identificarla eran: \"{'; '.join(justification_hints[:2])}\"."
+    elif justification_hints and isinstance(justification_hints, str) and justification_hints.strip(): 
+        feedback_message += f" Un punto clave para identificarla era: \"{justification_hints}\"."
+
+
     if not chat_sesion_db["fecha_fin"]:
         update_fecha_fin_query = chat_sesiones_noticia_table.update().where(
             chat_sesiones_noticia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id
@@ -721,7 +755,9 @@ async def finish_guided_analysis_news_endpoint(
         await database.execute(update_fecha_fin_query)
 
         indicadores_res_llm, conceptos_res_llm = [], []
-        # ... (Aquí iría la lógica de análisis post-chat con LLM y actualización de chat_sesiones_noticia_table)
+        # TODO: Implementar lógica de análisis post-chat con LLM si se desea un feedback más profundo sobre la conversación
+        # y actualizar los campos 'indicadores_discutidos', 'conceptos_clave_discutidos' en chat_sesiones_noticia_table.
+        # Por ahora, se dejan vacíos.
 
         respuesta_usuario_stats = chat_sesion_db["evaluacion_inicial_usuario"]
         es_correcto_stats = chat_sesion_db["evaluacion_inicial_correcta"]
@@ -738,9 +774,10 @@ async def finish_guided_analysis_news_endpoint(
             es_correcto=es_correcto_stats,
             indicadores_discutidos_llm=list(set((indicadores_res_llm or []) + (conceptos_res_llm or [])))
         )
-        return {"message": "Análisis finalizado, resultados procesados y estadísticas actualizadas."}
+        return {"message": feedback_message} 
     else:
-        return {"message": "El análisis para esta noticia ya había finalizado."}
+        return {"message": f"El análisis para esta noticia ya había finalizado. {feedback_message}"}
+
 
 @challenge_router.post("/finish-pair-selection", status_code=status.HTTP_200_OK)
 async def finish_pair_selection_challenge(
@@ -749,7 +786,7 @@ async def finish_pair_selection_challenge(
 ):
     print(f"DEBUG: Recibido en finish_pair_selection_challenge: {request_data.model_dump()}")
     
-    if not hasattr(request_data, 'seleccion_usuario_id_json'): # Esto es más una guarda para un caso inesperado
+    if not hasattr(request_data, 'seleccion_usuario_id_json'):
         print("ERROR DEBUG: 'seleccion_usuario_id_json' no encontrado en request_data ATRIBUTO.")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -758,30 +795,61 @@ async def finish_pair_selection_challenge(
 
     seleccion_usuario_id = request_data.seleccion_usuario_id_json
     noticia_verdadera_id = request_data.noticia_verdadera_id_json
-    # Asegúrate de que noticia_falsa_id_json también se use si es necesario para la lógica o se elimine del modelo si no.
+    noticia_falsa_id = request_data.noticia_falsa_id_json 
 
     noticia_seleccionada_data = next((n for n in ALL_NEWS_DATA if n.get("ID") == seleccion_usuario_id), None)
     noticia_verdadera_del_par_data = next((n for n in ALL_NEWS_DATA if n.get("ID") == noticia_verdadera_id), None)
+    noticia_falsa_del_par_data = next((n for n in ALL_NEWS_DATA if n.get("ID") == noticia_falsa_id), None)
 
-    if not noticia_seleccionada_data or not noticia_verdadera_del_par_data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Una o ambas noticias del desafío no fueron encontradas.")
+
+    if not noticia_seleccionada_data or not noticia_verdadera_del_par_data or not noticia_falsa_del_par_data:
+        missing_ids = []
+        if not noticia_seleccionada_data: missing_ids.append(f"seleccionada ({seleccion_usuario_id})")
+        if not noticia_verdadera_del_par_data: missing_ids.append(f"verdadera ({noticia_verdadera_id})")
+        if not noticia_falsa_del_par_data: missing_ids.append(f"falsa ({noticia_falsa_id})")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Datos no encontrados para una o más noticias: {', '.join(missing_ids)}.")
 
     es_correcto_par = (seleccion_usuario_id == noticia_verdadera_id)
-    respuesta_usuario_evaluacion = "TRUE"
-    es_correcto_evaluacion = (noticia_seleccionada_data.get("CATEGORY") == "TRUE")
+    
+    explanation_string = ""
+    if es_correcto_par:
+        explanation_string = "¡Correcto! "
+        hint = noticia_seleccionada_data.get("JUSTIFICATION_HINTS")
+        if hint:
+            explanation_string += f"Elegiste la noticia verdadera. Una pista clave era: \"{hint[0] if isinstance(hint, list) and hint else hint if isinstance(hint, str) else 'Revisar la fuente y el contenido con cuidado.'}\"."
+        else:
+            explanation_string += "Has identificado correctamente la noticia verdadera."
+    else:
+        explanation_string = "¡Ups! Esta vez no acertaste. "
+        hint_seleccionada_falsa = noticia_seleccionada_data.get("JUSTIFICATION_HINTS") 
+        hint_verdadera_no_seleccionada = noticia_verdadera_del_par_data.get("JUSTIFICATION_HINTS") 
+        
+        if hint_seleccionada_falsa:
+            explanation_string += f"La noticia que elegiste era la falsa, por ejemplo, una pista era: \"{hint_seleccionada_falsa[0] if isinstance(hint_seleccionada_falsa, list) and hint_seleccionada_falsa else hint_seleccionada_falsa if isinstance(hint_seleccionada_falsa, str) else 'El titular podría ser engañoso.'}\". "
+        else:
+            explanation_string += "La noticia que elegiste era la falsa. "
+
+        if hint_verdadera_no_seleccionada:
+             explanation_string += f"La verdadera, en cambio, se distinguía porque: \"{hint_verdadera_no_seleccionada[0] if isinstance(hint_verdadera_no_seleccionada, list) and hint_verdadera_no_seleccionada else hint_verdadera_no_seleccionada if isinstance(hint_verdadera_no_seleccionada, str) else 'Presentaba información verificable.'}\"."
+        else:
+            explanation_string += "La verdadera presentaba información más fiable."
+
 
     await registrar_interaccion_y_actualizar_estadisticas(
         db=database,
         sesion_id=current_user.sesion_id,
-        noticia_id_json=seleccion_usuario_id,
+        noticia_id_json=seleccion_usuario_id, 
         tipo_interaccion='DOS_NOTICIAS',
-        noticia_data_from_json=noticia_seleccionada_data,
-        respuesta_usuario=respuesta_usuario_evaluacion,
-        es_correcto=es_correcto_evaluacion,
+        noticia_data_from_json=noticia_seleccionada_data, 
+        respuesta_usuario= "TRUE" if es_correcto_par else "FALSE", 
+        es_correcto=es_correcto_par, 
         tiempo_respuesta_ms=request_data.tiempo_respuesta_ms
-        # El parámetro 'indicadores_discutidos_llm' aquí tomará su valor por defecto None
     )
-    return {"message": "Resultado del desafío registrado y estadísticas actualizadas.", "es_correcto": es_correcto_par}
+    return {
+        "message": "Resultado del desafío registrado.", 
+        "es_correcto": es_correcto_par,
+        "explanation": explanation_string.strip()
+    }
 
 app.include_router(auth_router)
 app.include_router(users_router)

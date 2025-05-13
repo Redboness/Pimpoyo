@@ -69,7 +69,7 @@ Estilo de Comunicación:
 - Tampoco afirmes que has escuchado al usuario, es decir, no digas cosas tipo ---¡Claro! Entiendo lo que quieres decir.--- o similar, simplemente di el resto.
 Objetivo Final: Que el usuario aprenda sobre la información que te pregunta, mediante un proceso interactivo y guiado.
 `;
-
+// Comentario encima de la función ChatContainer
 function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false);
@@ -90,7 +90,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const [singleNewsAnalysisData, setSingleNewsAnalysisData] = useState<NoticiaParaAnalisis | null>(null);
   const [currentGuidedChatSessionId, setCurrentGuidedChatSessionId] = useState<number | null>(null);
   const [isAwaitingInitialAnalysis, setIsAwaitingInitialAnalysis] = useState<boolean>(false);
-
+  // Comentario encima de la función fetchUserInfo
   const fetchUserInfo = useCallback(async () => {
     setChatError('');
     if (!authToken) {
@@ -119,7 +119,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     if (currentUserInfo === null || refreshUserInfoToggle) { setIsLoadingUserInfo(true); }
     fetchUserInfo();
   }, [refreshUserInfoToggle, authToken, fetchUserInfo]);
-
+  // Comentario encima de la función createWelcomeMessage
   const createWelcomeMessage = useCallback((): ChatMessage => ({
     id: "welcome-msg-" + Date.now(),
     sender: "bot",
@@ -143,11 +143,13 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       setMessages([createWelcomeMessage(), initialButtonsMessage]);
     }
   }, [isLoadingUserInfo, currentUserInfo, createWelcomeMessage, messages.length]);
-
+  // Comentario encima de la función togglePanel
   const togglePanel = () => setIsPanelOpen(!isPanelOpen);
+  // Comentario encima de la función closePanel
   const closePanel = () => setIsPanelOpen(false);
+  // Comentario encima de la función handleSettingsSaved
   const handleSettingsSaved = () => setRefreshUserInfoToggle(prev => !prev);
-
+  // Comentario encima de la función addUserChoiceMessage
   const addUserChoiceMessage = useCallback((text: string) => {
     if (!currentUserInfo) return;
     setMessages(prev => [...prev, {
@@ -155,7 +157,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       avatar: currentUserInfo?.avatar_url || USER_AVATAR_URL_DEFAULT, timestamp: Date.now(),
     }]);
   }, [currentUserInfo]);
-
+  // Comentario encima de la función addBotResponse
   const addBotResponse = useCallback((text: string | null, buttons: MessageButton[] = [], delay: number = 300, onMessageAdded?: (id: string | number) => void, htmlContent: string | null = null): string | number => {
     const botMsgId = "bot-msg-" + Date.now() + Math.random();
     const botMsg: ChatMessage = {
@@ -169,7 +171,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     }, delay);
     return botMsgId;
   }, []);
-
+  // Comentario encima de la función increaseDifficulty
   const increaseDifficulty = useCallback(() => {
     const currentIndex = difficultyOrder.indexOf(difficultyLevel);
     if (currentIndex < difficultyOrder.length - 1) {
@@ -177,7 +179,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       setDifficultyLevel(nextLevel); console.log(`Difficulty increased to: ${nextLevel}`); return true;
     } console.log(`Already at max difficulty: ${difficultyLevel}`); return false;
   }, [difficultyLevel]);
-
+  // Comentario encima de la función decreaseDifficulty
   const decreaseDifficulty = useCallback(() => {
     const currentIndex = difficultyOrder.indexOf(difficultyLevel);
     if (currentIndex > 0) {
@@ -185,14 +187,14 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       setDifficultyLevel(prevLevel); console.log(`Difficulty decreased to: ${prevLevel}`); return true;
     } console.log(`Already at min difficulty: ${difficultyLevel}`); return false;
   }, [difficultyLevel]);
-
+  // Comentario encima de la función resetSingleAnalysisMode
   const resetSingleAnalysisMode = useCallback(() => {
     setIsSingleNewsAnalysisMode(false);
     setSingleNewsAnalysisData(null);
     setCurrentGuidedChatSessionId(null);
     setIsAwaitingInitialAnalysis(false);
   }, []);
-
+  // Comentario encima de la función processTwoNewsChallenge
   const processTwoNewsChallenge = useCallback((currentNewsData: NewsItem[], introId: string | number) => {
     const newsAtCurrentLevel = currentNewsData.filter(item => item.DIFFICULTY_LEVEL === difficultyLevel);
     const trueNewsFiltered = newsAtCurrentLevel.filter(item => item.CATEGORY === 'TRUE');
@@ -226,9 +228,8 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     const selectionMessageId = addBotResponse( "¿Cuál de las dos noticias crees que es la VERDADERA?", [{ id: `select-news-left`, text: "Noticia Izquierda" }, { id: `select-news-right`, text: "Noticia Derecha" }], 800 );
     setNewsChallengeState({ trueNewsOriginalId: selectedTrueNews.ID, leftNewsOriginalId: leftNewsItem.ID, rightNewsOriginalId: rightNewsItem.ID, selectionMessageId: selectionMessageId as string, });
     setIsLoadingNews(false);
-  }, [difficultyLevel, addBotResponse, BOT_AVATAR_URL, setIsLoadingNews, setMessages, setNewsChallengeState]); // Dependencias originales mantenidas
-
-
+  }, [difficultyLevel, addBotResponse, BOT_AVATAR_URL, setIsLoadingNews, setMessages, setNewsChallengeState]);
+  // Comentario encima de la función presentNewsChallenge
   const presentNewsChallenge = useCallback(async (forceSingleAnalysisMode: boolean = false) => {
     if (isLoadingNews) return;
     setIsLoadingNews(true);
@@ -311,8 +312,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         }
     }
   }, [authToken, isLoadingNews, newsData, difficultyLevel, addBotResponse, resetSingleAnalysisMode, processTwoNewsChallenge]);
-
-
+  // Comentario encima de la función handleMessageButtonClick
   const handleMessageButtonClick = useCallback(async (messageId: number | string, buttonId: string) => {
     console.log(`Button Clicked: MessageID=${messageId}, ButtonID=${buttonId}`);
 
@@ -458,12 +458,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
 
       const payload: FinishPairChallengePayload = {
         noticia_verdadera_id_json: newsChallengeState.trueNewsOriginalId,
-        noticia_falsa_id_json: actualFalseNewsId,
+        noticia_falsa_id_json: actualFalseNewsId, 
         seleccion_usuario_id_json: selectedNewsId,
       };
       console.log("Enviando payload a /finish-pair-selection:", JSON.stringify(payload));
 
-      // --- INICIO DE BLOQUE MODIFICADO PARA MANEJAR ERROR "body stream already read" ---
       try {
         addBotResponse("Veamos...", [], 0);
         const response = await fetch('/api/challenge/finish-pair-selection', {
@@ -478,23 +477,20 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
 
           if (contentType && contentType.includes("application/json")) {
             try {
-              const errorData = await response.json(); // Lee el cuerpo como JSON (1ª y única vez para este path de error)
+              const errorData = await response.json(); 
               errorContentToThrow = errorData.detail || `Error ${response.status}`;
               if (Array.isArray(errorData.detail)) {
                 errorContentToThrow = errorData.detail.map((err: any) => `${err.loc.join('.')}: ${err.msg}`).join('; ');
               }
             } catch (jsonError) {
-              // Si falla el parseo de JSON, intentamos leer como texto como fallback
-              // Esto puede pasar si el servidor dice que es JSON pero envía algo malformado
               console.warn("Fallo al parsear error JSON, intentando como texto:", jsonError);
-              errorContentToThrow = await response.text(); // Lee el cuerpo como texto (1ª y única vez para este path de error)
+              errorContentToThrow = await response.text(); 
               if (!errorContentToThrow) {
                 errorContentToThrow = `Error ${response.status}: ${response.statusText} (respuesta vacía o no textual)`;
               }
             }
           } else {
-            // Si no es JSON, o no se especifica, léelo como texto.
-            errorContentToThrow = await response.text(); // Lee el cuerpo como texto (1ª y única vez para este path de error)
+            errorContentToThrow = await response.text(); 
             if (!errorContentToThrow) {
               errorContentToThrow = `Error ${response.status}: ${response.statusText} (respuesta vacía o no textual)`;
             }
@@ -502,8 +498,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
           throw new Error(errorContentToThrow);
         }
 
-        // Si response.ok es true, el cuerpo NO ha sido leído aún por el bloque if(!response.ok)
-        const result: FinishPairChallengeResponse = await response.json(); // Lee el cuerpo (1ª vez para el caso exitoso)
+        const result: FinishPairChallengeResponse = await response.json(); 
         
         const isCorrectBackend = result.es_correcto;
         let difficultyChangedMessage: string | null = null;
@@ -516,14 +511,30 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         }
 
         let feedbackText = "";
-        if (isCorrectBackend) { feedbackText = `✅ ¡Correcto! La ${choiceText.toLowerCase()} era la verdadera.`; }
-        else { const correctPos = (newsChallengeState.leftNewsOriginalId === newsChallengeState.trueNewsOriginalId) ? "la izquierda" : "la derecha"; feedbackText = `❌ ¡Ups! La ${choiceText.toLowerCase()} era la falsa. La verdadera era ${correctPos}.`; }
+        if (isCorrectBackend) { 
+            feedbackText = `✅ ¡Correcto! La ${choiceText.toLowerCase()} era la verdadera.`; 
+        } else { 
+            const correctPos = (newsChallengeState.leftNewsOriginalId === newsChallengeState.trueNewsOriginalId) ? "la izquierda" : "la derecha"; 
+            feedbackText = `❌ ¡Ups! La ${choiceText.toLowerCase()} era la falsa. La verdadera era ${correctPos}.`; 
+        }
 
-        let feedbackDelay = 500;
-        if (difficultyChangedMessage) { addBotResponse(difficultyChangedMessage, [], 300); feedbackDelay = 800; }
-        addBotResponse(feedbackText, [
-          { id: "btn-news-again", text: "Jugar otra vez" }, { id: "btn-tips-again", text: "Ver Tips" }, { id: "btn-talk-again", text: "Sólo Charlar" },
-        ], feedbackDelay);
+        if (result.explanation) {
+            feedbackText += ` ${result.explanation}`;
+        }
+
+        let feedbackDelay = 300; 
+        if (difficultyChangedMessage) { 
+            addBotResponse(difficultyChangedMessage, [], 300); 
+            feedbackDelay = 500; 
+        }
+        
+        addBotResponse(feedbackText, [], feedbackDelay);
+
+        addBotResponse("¿Qué quieres hacer ahora?", [
+          { id: "btn-news-again", text: "Jugar otra vez" }, 
+          { id: "btn-tips-again", text: "Ver Tips" }, 
+          { id: "btn-talk-again", text: "Sólo Charlar" },
+        ], feedbackDelay + 200); 
 
       } catch (error) {
         console.error("Error capturado en el bloque catch principal del desafío:", error); 
@@ -533,7 +544,6 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       }
       finally { setNewsChallengeState(null); }
       return;
-      // --- FIN DE BLOQUE MODIFICADO ---
     }
   }, [
     authToken, addUserChoiceMessage, addBotResponse, presentNewsChallenge, newsChallengeState,
@@ -541,7 +551,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     currentGuidedChatSessionId, resetSingleAnalysisMode,
   ]);
 
-
+  // Comentario encima de la función handleSendMessage
   const handleSendMessage = async (inputText: string) => {
     if (!inputText.trim() || !currentUserInfo) return;
 
@@ -575,9 +585,10 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         const responseData: ChatGuiaResponse = await response.json();
         setCurrentGuidedChatSessionId(responseData.chat_sesion_noticia_id);
         addBotResponse(responseData.respuesta_chatbot, [], 500);
+        // CAMBIO: Texto de la burbuja de continuación/fin para análisis guiado
         addBotResponse(
-            "¿Quieres seguir profundizando sobre esta noticia o prefieres terminar el análisis?",
-            [{ id: "btn-finish-analysis", text: "Terminar análisis y continuar" }],
+            "Puedes hacer más preguntas sobre esta noticia si tienes más dudas, o podemos finalizar este análisis cuando quieras.",
+            [{ id: "btn-finish-analysis", text: "Finalizar análisis de esta noticia" }],
             600
         );
       } catch (error) {
@@ -599,9 +610,10 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         if (!response.ok) { throw new Error((await response.json().catch(() => ({}))).detail || `Error ${response.status}`);}
         const responseData: ChatGuiaResponse = await response.json();
         addBotResponse(responseData.respuesta_chatbot, [], 500);
+        // CAMBIO: Texto de la burbuja de continuación/fin para análisis guiado (consistente)
         addBotResponse(
-            "¿Alguna otra pregunta o duda sobre esto, o damos por finalizado el análisis de esta noticia?",
-            [{ id: "btn-finish-analysis", text: "Finalizar Análisis de esta Noticia" }],
+            "Puedes hacer más preguntas sobre esta noticia si tienes más dudas, o podemos finalizar este análisis cuando quieras.",
+            [{ id: "btn-finish-analysis", text: "Finalizar análisis de esta noticia" }],
             600
         );
       } catch (error) {
@@ -648,7 +660,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         }
     }
   };
-
+  // Comentario encima de la función handleRefresh
   const handleRefresh = () => {
     if (!isLoadingUserInfo && currentUserInfo) {
       const welcomeMessage = createWelcomeMessage();
@@ -697,7 +709,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       } else if (!currentGuidedChatSessionId) {
         determinedChatInputDisabled = true;
       } else {
-        determinedChatInputDisabled = false;
+        // Durante el análisis guiado, el input debe estar habilitado
+        // a menos que la última burbuja sea la que tiene el botón "Finalizar análisis de esta noticia"
+        const lastBotMsgIsPromptToFinish = lastMessage?.sender === 'bot' && 
+                                           lastMessage.buttons?.some(b => b.id === "btn-finish-analysis");
+        determinedChatInputDisabled = lastBotMsgIsPromptToFinish ?? false;
       }
     } else if (hasExclusiveChoiceButtons) {
       determinedChatInputDisabled = true;
