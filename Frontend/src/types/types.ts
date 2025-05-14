@@ -1,3 +1,4 @@
+// src/types/types.ts
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 // --- NUEVA INTERFAZ PARA ESTADÍSTICAS DETALLADAS ---
@@ -40,11 +41,11 @@ export interface NewsItem {
   HEADLINE: string;
   TEXT: string;
   LINK: string;
-  DIFFICULTY_LEVEL: DifficultyLevel; // <-- Make sure this matches JSON
-  REASONING_TYPE?: string;         // Optional
-  KEY_ELEMENTS?: string[];         // Optional
-  JUSTIFICATION_HINTS?: string[];  // Optional
-  LIKELY_MISCONCEPTIONS?: string[];// Optional
+  DIFFICULTY_LEVEL: DifficultyLevel; 
+  REASONING_TYPE?: string;        
+  KEY_ELEMENTS?: string[];        
+  JUSTIFICATION_HINTS?: string[]; 
+  LIKELY_MISCONCEPTIONS?: string[];
 }
 
 // Update NewsChallengeState interface
@@ -53,7 +54,6 @@ export interface NewsChallengeState {
   leftNewsOriginalId: string;
   rightNewsOriginalId: string;
   selectionMessageId: string | number | null;
-  // No need to store difficulty here, use component state
 }
 
 export interface MessageListProps {
@@ -68,9 +68,9 @@ export interface ChatInputProps {
 
 export interface MessageButton {
   id: string;
-  text?: string; // Make text optional if icon is present
-  icon?: IconDefinition; // Optional icon
-  ariaLabel?: string; // For accessibility
+  text?: string; 
+  icon?: IconDefinition; 
+  ariaLabel?: string; 
 }
 
 export interface ChatMessage {
@@ -85,8 +85,8 @@ export interface ChatMessage {
 }
 
 export interface OllamaMessage {
-  role: 'system' | 'user' | 'assistant'; // The role of the message sender
-  content: string;                       // The text content of the message
+  role: 'system' | 'user' | 'assistant'; 
+  content: string;                      
 }
 
 // Estructura para el glosario
@@ -96,15 +96,15 @@ export interface GlossaryEntry {
   definition: string;
   isDefault: boolean;
   userId?: number | string;
-  fecha_creacion?: Date; // Mantenido como Date, pero la API envía string
+  fecha_creacion?: Date; 
 }
 
 export interface GlossaryTermPublic {
-  id: number;                 // Equivalente a int
-  usuario_sesion_id: number;  // Equivalente a int (o number si era BigInt)
-  termino: string;            // Equivalente a str
-  definicion: string;         // Equivalente a str
-  fecha_creacion: string;     // API devuelve string ISO 8601
+  id: number;                
+  usuario_sesion_id: number; 
+  termino: string;           
+  definicion: string;        
+  fecha_creacion: string;    
 }
 
 /**
@@ -117,13 +117,15 @@ export interface GlossaryTermCreate {
     definicion: string;
 }
 
-export interface NoticiaParaAnalisis { // Coincidir con el modelo Pydantic
+export interface NoticiaParaAnalisis { 
   noticia_id_json: string;
   headline: string;
   text: string;
   source?: string | null;
   difficulty_level?: string | null;
-  // Añade otros campos si el backend los envía y los necesitas
+  // INICIO DE LA MODIFICACIÓN NECESARIA
+  initialUserEvaluation?: 'TRUE' | 'FALSE' | 'UNSURE' | null; // Para recordar la evaluación V/F del usuario
+  // FIN DE LA MODIFICACIÓN NECESARIA
 }
 
 // Para el request de /explain
@@ -155,5 +157,5 @@ export interface FinishPairChallengePayload {
 export interface FinishPairChallengeResponse {
     message: string;
     es_correcto: boolean;
-    explanation?: string; // CAMBIO: Añadido campo opcional para la explicación
+    explanation?: string; 
 }

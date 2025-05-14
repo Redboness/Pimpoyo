@@ -132,7 +132,7 @@ interacciones_table = sqlalchemy.Table(
     sqlalchemy.Column("noticia_tema", sqlalchemy.String(length=100)),
     sqlalchemy.Column("noticia_dificultad", sqlalchemy.String(length=50)),
     sqlalchemy.Column("noticia_tipos_razonamiento_json", ARRAY(sqlalchemy.Text)),
-    sqlalchemy.Column("respuesta_usuario", sqlalchemy.String(length=255)), # Ajustado a 255 para "NO_EVALUADO_INICIALMENTE"
+    sqlalchemy.Column("respuesta_usuario", sqlalchemy.String(length=255)), 
     sqlalchemy.Column("es_correcto", sqlalchemy.Boolean, nullable=True),
     sqlalchemy.Column("tiempo_respuesta_ms", Integer),
     sqlalchemy.Column("puntos_otorgados", Integer, server_default='0'),
@@ -140,13 +140,7 @@ interacciones_table = sqlalchemy.Table(
     sqlalchemy.Column("feedback_mostrado", sqlalchemy.Text),
     sqlalchemy.Column("secuencia_interaccion", Integer, nullable=False),
     sqlalchemy.Column("criterios_evaluacion_ids", sqlalchemy.JSON),
-    # --- MODIFICACIÓN / ELIMINACIÓN de Columnas ---
-    # sqlalchemy.Column("key_elements_json", ARRAY(sqlalchemy.Text)), # ELIMINADO
-    # sqlalchemy.Column("justification_hints_json", ARRAY(sqlalchemy.Text)), # ELIMINADO
-    # sqlalchemy.Column("likely_misconceptions_json", ARRAY(sqlalchemy.Text)), # ELIMINADO
-    # sqlalchemy.Column("indicadores_clave_detectados_noticia_json", ARRAY(sqlalchemy.Text)), # ELIMINADO
-    sqlalchemy.Column("indicadores_seleccionados_usuario", ARRAY(sqlalchemy.Text)), # <--- MODIFICACIÓN (nombre coincide con BD)
-    # --- FIN MODIFICACIÓN / ELIMINACIÓN ---
+    sqlalchemy.Column("indicadores_seleccionados_usuario", ARRAY(sqlalchemy.Text)), 
     sqlalchemy.Column("tipo_interaccion", sqlalchemy.String(length=50), nullable=False),
     sqlalchemy.UniqueConstraint('sesion_id', 'secuencia_interaccion', name='uq_sesion_secuencia_interaccion')
 )
@@ -368,18 +362,13 @@ async def get_user_detailed_stats(current_user: UsuarioInDB = Depends(get_curren
     fallos = current_user.fallos_totales_sesion or 0
     xp_actual = current_user.xp_actual or 0
 
-    xp_next_level = XP_NIVELES[-1] * 2
+    xp_next_level = XP_NIVELES[-1] * 2 
     for level_xp in XP_NIVELES:
         if xp_actual < level_xp:
             xp_next_level = level_xp
             break
-    if xp_actual in XP_NIVELES:
-        try:
-            current_level_index = XP_NIVELES.index(xp_actual)
-            if current_level_index < len(XP_NIVELES) - 1:
-                xp_next_level = XP_NIVELES[current_level_index + 1]
-        except ValueError:
-            pass
+    if xp_actual >= XP_NIVELES[-1]: 
+        xp_next_level = xp_actual + 50 
 
     return UserDetailedStatsResponse(
         totalAnalizadas=total_analizadas,
@@ -399,39 +388,40 @@ async def get_news_for_challenge():
 async def handle_fake_news_chat(request: ChatRequest, current_user: UsuarioInDB = Depends(get_current_active_user)):
     if not ollama_client:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Servicio de Chatbot no disponible.")
-    system_message_content = """Rol: Eres un chatbot educativo y amigable llamado Pimpoyo, diseñado para niños de 10-12 años...""" # Keep original prompt
-    messages_to_ollama = [{'role': 'system', 'content': system_message_content}]
-    messages_to_ollama.extend([msg.model_dump() for msg in request.messages])
-    if len(messages_to_ollama) < 2:
+    messages_to_ollama = [msg.model_dump() for msg in request.messages]
+    if not messages_to_ollama or messages_to_ollama[0]['role'] != 'system':
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="System message is missing or not first.")
+    if len(messages_to_ollama) < 2: 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Insufficient messages provided.")
     try:
         response = ollama_client.chat(model=request.model, messages=messages_to_ollama)
         reply_content = response.get('message', {}).get('content', '')
         if not reply_content:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Received empty or unexpected response from language model.")
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Received empty response from language model.")
         return ChatResponse(reply=reply_content)
     except Exception as e:
         print(f"Error interacting with Ollama in /bot/chat: {e}")
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=f"Failed to get response from language model: {e}")
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=f"Failed to get response from language model: {str(e)}")
 
 @chat_router.post("/chatlibre", response_model=ChatResponse)
 async def handle_free_chat(request: ChatRequest, current_user: UsuarioInDB = Depends(get_current_active_user)):
     if not ollama_client:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Servicio de Chatbot no disponible.")
-    system_message_content = """Rol: Eres un chatbot educativo y amigable llamado Pimpoyo, diseñado para niños de 10-12 años...""" # Keep original prompt
-    messages_to_ollama = [{'role': 'system', 'content': system_message_content}]
-    messages_to_ollama.extend([msg.model_dump() for msg in request.messages])
+    messages_to_ollama = [msg.model_dump() for msg in request.messages]
+    if not messages_to_ollama or messages_to_ollama[0]['role'] != 'system':
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="System message is missing or not first.")
     if len(messages_to_ollama) < 2:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Insufficient messages provided.")
     try:
         response = ollama_client.chat(model=request.model, messages=messages_to_ollama)
         reply_content = response.get('message', {}).get('content', '')
         if not reply_content:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Received empty or unexpected response from language model.")
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Received empty response from language model.")
         return ChatResponse(reply=reply_content)
     except Exception as e:
         print(f"Error interacting with Ollama in /bot/chatlibre: {e}")
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=f"Failed to get response from language model: {e}")
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=f"Failed to get response from language model: {str(e)}")
+
 
 @glossary_router.post("/", response_model=GlossaryTermPublic, status_code=status.HTTP_201_CREATED)
 async def create_glossary_term(term_in: GlossaryTermCreate, current_user: UsuarioInDB = Depends(get_current_active_user)):
@@ -471,23 +461,23 @@ async def get_user_glossary_terms(current_user: UsuarioInDB = Depends(get_curren
     ).order_by(sqlfunc.lower(glosario_usuario_table.c.termino))
     results = await database.fetch_all(query)
     return [GlossaryTermPublic.model_validate(row) for row in results]
-# Comentario encima de la función get_next_secuencia_interaccion
+
 async def get_next_secuencia_interaccion(sesion_id: int) -> int:
     query = select(sqlfunc.max(interacciones_table.c.secuencia_interaccion))\
         .where(interacciones_table.c.sesion_id == sesion_id)
     max_secuencia = await database.fetch_val(query)
     return (max_secuencia or 0) + 1
-# Comentario encima de la función registrar_interaccion_y_actualizar_estadisticas
+
 async def registrar_interaccion_y_actualizar_estadisticas(
     db: Database,
     sesion_id: int,
-    noticia_id_json: str, # Este es el ID del archivo JSON original de noticias
+    noticia_id_json: str, 
     tipo_interaccion: str,
-    noticia_data_from_json: dict, # Datos de la noticia del archivo JSON
+    noticia_data_from_json: dict, 
     respuesta_usuario: Optional[str],
     es_correcto: Optional[bool],
     tiempo_respuesta_ms: Optional[int] = None,
-    indicadores_discutidos_llm: Optional[List[str]] = None # Cambiado para coincidir con el nombre usado
+    indicadores_discutidos_llm: Optional[List[str]] = None 
 ):
     secuencia = await get_next_secuencia_interaccion(sesion_id)
     xp_ganado_interaccion = 0
@@ -520,16 +510,10 @@ async def registrar_interaccion_y_actualizar_estadisticas(
         "tiempo_respuesta_ms": tiempo_respuesta_ms,
         "puntos_otorgados": puntos_otorgados_interaccion,
         "tipo_error": None,
-        "feedback_mostrado": None,
+        "feedback_mostrado": None, 
         "secuencia_interaccion": secuencia,
         "criterios_evaluacion_ids": None,
-        # --- MODIFICACIÓN / ELIMINACIÓN de claves ---
-        # "key_elements_json": noticia_data_from_json.get("KEY_ELEMENTS"), # ELIMINADO
-        # "justification_hints_json": noticia_data_from_json.get("JUSTIFICATION_HINTS"), # ELIMINADO
-        # "likely_misconceptions_json": noticia_data_from_json.get("LIKELY_MISCONCEPTIONS"), # ELIMINADO
-        # "indicadores_clave_detectados_noticia_json": noticia_data_from_json.get("INDICADORES_CLAVE_DETECTADOS"), # ELIMINADO
-        "indicadores_seleccionados_usuario": indicadores_discutidos_llm, # <--- MODIFICACIÓN (nombre de clave coincide con columna BD)
-        # --- FIN MODIFICACIÓN / ELIMINACIÓN ---
+        "indicadores_seleccionados_usuario": indicadores_discutidos_llm,
         "tipo_interaccion": tipo_interaccion,
     }
     if es_correcto is False:
@@ -584,7 +568,7 @@ async def registrar_interaccion_y_actualizar_estadisticas(
         await db.execute(update_sesion_query)
     else:
         print(f"ADVERTENCIA: No se encontró la sesión {sesion_id} para actualizar estadísticas.")
-
+    
     criterios_a_registrar = []
     if noticia_data_from_json.get("TOPICS"):
         criterios_a_registrar.append({"tipo_criterio": "TEMA_NOTICIA", "valor_criterio": noticia_data_from_json.get("TOPICS")})
@@ -593,14 +577,9 @@ async def registrar_interaccion_y_actualizar_estadisticas(
     if processed_reasoning_types:
         for razonamiento in processed_reasoning_types:
             criterios_a_registrar.append({"tipo_criterio": "TIPO_RAZONAMIENTO_NOTICIA", "valor_criterio": razonamiento})
-    # Ya no se usan estas claves en interaccion_data, así que no se pueden registrar aquí a menos que vengan de otro lado.
-    # if noticia_data_from_json.get("INDICADORES_CLAVE_DETECTADOS"):
-    #     for indicador in noticia_data_from_json.get("INDICADORES_CLAVE_DETECTADOS", []):
-    #         criterios_a_registrar.append({"tipo_criterio": "INDICADOR_CLAVE_NOTICIA", "valor_criterio": indicador})
-    if indicadores_discutidos_llm: # Esto corresponde a 'indicadores_seleccionados_usuario'
+    if indicadores_discutidos_llm: 
         for indicador_usr in indicadores_discutidos_llm:
             criterios_a_registrar.append({"tipo_criterio": "INDICADOR_USUARIO_O_DISCUTIDO", "valor_criterio": indicador_usr})
-
 
     for criterio in criterios_a_registrar:
         valor_criterio_str = str(criterio["valor_criterio"])
@@ -628,77 +607,171 @@ async def registrar_interaccion_y_actualizar_estadisticas(
             set_=set_values
         )
         await db.execute(on_conflict_stmt)
-    print(f"Estadísticas detalladas actualizadas para sesión {sesion_id}")
 
 @guided_analysis_router.get("/next-news", response_model=NoticiaParaAnalisis)
 async def get_next_guided_analysis_news_endpoint(current_user: UsuarioInDB = Depends(get_current_active_user)):
-    # ... (contenido de la función sin cambios)
     if not ollama_client: raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Servicio de Chatbot no disponible para análisis guiado.")
     if not ALL_NEWS_DATA: raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Dataset de noticias no disponible.")
+    
     query_seen_news = select(chat_sesiones_noticia_table.c.noticia_id_json).where(chat_sesiones_noticia_table.c.sesion_id == current_user.sesion_id)
     seen_news_records = await database.fetch_all(query_seen_news)
     seen_news_ids = {record["noticia_id_json"] for record in seen_news_records}
-    eligible_news = [news for news in ALL_NEWS_DATA if news.get("DIFFICULTY_LEVEL", "").lower() in ["medio", "alto"] and news.get("ID") not in seen_news_ids]
-    if not eligible_news: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No hay más noticias de nivel medio/alto disponibles para esta actividad.")
+    
+    eligible_news = [
+        news for news in ALL_NEWS_DATA 
+        if news.get("DIFFICULTY_LEVEL", "").lower() in ["medio", "alto", "bajo"] and news.get("ID") not in seen_news_ids
+    ] 
+    
+    if not eligible_news: 
+        print(f"ADVERTENCIA: No quedan noticias inéditas para análisis guiado para el usuario {current_user.apodo}. Considerando repetidas.")
+        eligible_news = [news for news in ALL_NEWS_DATA if news.get("DIFFICULTY_LEVEL", "").lower() in ["medio", "alto", "bajo"]]
+        if not eligible_news: 
+             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No hay noticias disponibles en el dataset para esta actividad.")
+
     selected_news_data = random.choice(eligible_news)
-    return NoticiaParaAnalisis(noticia_id_json=selected_news_data["ID"], headline=selected_news_data.get("HEADLINE", "Sin titular"), text=selected_news_data.get("TEXT", "Sin texto"), source=selected_news_data.get("SOURCE"), difficulty_level=selected_news_data.get("DIFFICULTY_LEVEL"))
+    return NoticiaParaAnalisis(
+        noticia_id_json=selected_news_data["ID"], 
+        headline=selected_news_data.get("HEADLINE", "Sin titular"), 
+        text=selected_news_data.get("TEXT", "Sin texto"), 
+        source=selected_news_data.get("SOURCE"), 
+        difficulty_level=selected_news_data.get("DIFFICULTY_LEVEL")
+    )
 
 @guided_analysis_router.post("/explain", response_model=ChatGuiaResponse)
 async def start_guided_analysis_explanation_endpoint(request_data: ExplicacionInicialRequest, current_user: UsuarioInDB = Depends(get_current_active_user)):
-    # ... (contenido de la función sin cambios)
     if not ollama_client: raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Servicio de Chatbot no disponible.")
     noticia_data = next((n for n in ALL_NEWS_DATA if n.get("ID") == request_data.noticia_id_json), None)
     if not noticia_data: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Noticia no encontrada en el dataset.")
+    
     noticia_category = noticia_data.get("CATEGORY", "").upper()
     eval_correcta = None
-    if request_data.evaluacion_inicial_opcional and noticia_category and request_data.evaluacion_inicial_opcional.upper() != "UNSURE": eval_correcta = (request_data.evaluacion_inicial_opcional.upper() == noticia_category)
-    insert_chat_sesion_query = chat_sesiones_noticia_table.insert().values(sesion_id=current_user.sesion_id, noticia_id_json=request_data.noticia_id_json, explicacion_inicial_usuario=request_data.explicacion_usuario, evaluacion_inicial_usuario=request_data.evaluacion_inicial_opcional, noticia_verdad_real_json=noticia_category if noticia_category else None, evaluacion_inicial_correcta=eval_correcta, fecha_inicio=datetime.now(dt_timezone.utc))
+    if request_data.evaluacion_inicial_opcional and noticia_category and request_data.evaluacion_inicial_opcional.upper() != "UNSURE": 
+        eval_correcta = (request_data.evaluacion_inicial_opcional.upper() == noticia_category)
+    
+    insert_chat_sesion_query = chat_sesiones_noticia_table.insert().values(
+        sesion_id=current_user.sesion_id, 
+        noticia_id_json=request_data.noticia_id_json, 
+        explicacion_inicial_usuario=request_data.explicacion_usuario, 
+        evaluacion_inicial_usuario=request_data.evaluacion_inicial_opcional, 
+        noticia_verdad_real_json=noticia_category if noticia_category else None, 
+        evaluacion_inicial_correcta=eval_correcta, 
+        fecha_inicio=datetime.now(dt_timezone.utc)
+    )
     chat_sesion_id = await database.execute(insert_chat_sesion_query)
-    if not chat_sesion_id: raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="No se pudo crear la sesión de chat.")
-    user_first_message_content = f"Evaluación: {request_data.evaluacion_inicial_opcional or 'No especificada'}. Análisis: {request_data.explicacion_usuario}"
-    user_message_query = mensajes_chat_guia_table.insert().values(chat_sesion_noticia_id=chat_sesion_id, emisor='usuario', contenido=user_first_message_content, timestamp_mensaje=datetime.now(dt_timezone.utc))
+    if not chat_sesion_id: 
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="No se pudo crear la sesión de chat.")
+    
+    user_first_message_content = f"Evaluación del usuario: {request_data.evaluacion_inicial_opcional or 'No especificada'}. Justificación: {request_data.explicacion_usuario}"
+    user_message_query = mensajes_chat_guia_table.insert().values(
+        chat_sesion_noticia_id=chat_sesion_id, 
+        emisor='usuario', 
+        contenido=user_first_message_content, 
+        timestamp_mensaje=datetime.now(dt_timezone.utc)
+    )
     await database.execute(user_message_query)
-    system_prompt_content = ("Rol: Eres 'Pimpoyo'...") # Keep original prompt
-    ollama_messages = [OllamaMessage(role="system", content=system_prompt_content), OllamaMessage(role="user", content=user_first_message_content)]
+    
+    system_prompt_content = ( 
+        "Rol: Eres 'Pimpoyo', un chatbot guía para niños de 10-12 años. Ayúdalos a analizar una noticia paso a paso. "
+        "Tarea: El usuario acaba de darte su opinión inicial (si cree que una noticia es Verdadera/Falsa y por qué). "
+        "Tu misión es NO decirle directamente si acertó o no sobre la veracidad (eso se le mostrará por otro medio si decide finalizar el análisis). "
+        "Enfócate en su EXPLICACIÓN. Valida su esfuerzo. Si su explicación es buena, elógiala y quizás profundiza un poco o pregunta qué más le hizo pensar así. "
+        "Si es débil, confusa o se basa en suposiciones, haz preguntas guía SUAVES para que reflexione sobre aspectos de la noticia (fuente, titular, lenguaje, pruebas, etc.) "
+        "que podrían ayudarle a formar una mejor opinión o a identificar las pistas. Sé breve, amigable y no uses tecnicismos. "
+        "Mantén la conversación centrada en la noticia que están analizando. "
+        "Ejemplo si explica bien: '¡Buen análisis! Veo que te fijaste en [algo que dijo]. ¿Qué más te llamó la atención de la noticia?' "
+        "Ejemplo si explica mal: 'Entiendo tu punto. Sobre la fuente que menciona la noticia, ¿te parece conocida? ¿Y qué me dices del titular, es muy llamativo o más bien informativo?'"
+    )
+
+    ollama_messages = [
+        OllamaMessage(role="system", content=system_prompt_content), 
+        OllamaMessage(role="user", content=user_first_message_content)
+    ]
     try:
-        chat_ollama_response = ollama_client.chat(model=OLLAMA_MODEL, messages=[msg.model_dump() for msg in ollama_messages])
+        chat_ollama_response = ollama_client.chat(
+            model=OLLAMA_MODEL_ANALYSIS, 
+            messages=[msg.model_dump() for msg in ollama_messages]
+        )
         chatbot_reply_content = chat_ollama_response['message']['content']
+        if not chatbot_reply_content: 
+             chatbot_reply_content = "¡Entendido! Gracias por compartir tu primer análisis. ¿Hay algo en particular de la noticia que te gustaría que exploráramos juntos? Puedes preguntarme lo que quieras sobre ella."
     except Exception as e:
         print(f"Error al contactar Ollama en /explain: {e}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error al obtener respuesta inicial del chatbot guía: {str(e)}")
-    chatbot_message_query = mensajes_chat_guia_table.insert().values(chat_sesion_noticia_id=chat_sesion_id, emisor='chatbot', contenido=chatbot_reply_content, timestamp_mensaje=datetime.now(dt_timezone.utc))
+        chatbot_reply_content = "Vaya, mis circuitos están un poco revueltos ahora mismo. Pero dime, ¿qué te hizo pensar así sobre la noticia?"
+    
+    chatbot_message_query = mensajes_chat_guia_table.insert().values(
+        chat_sesion_noticia_id=chat_sesion_id, 
+        emisor='chatbot', 
+        contenido=chatbot_reply_content, 
+        timestamp_mensaje=datetime.now(dt_timezone.utc)
+    )
     await database.execute(chatbot_message_query)
+    
     return ChatGuiaResponse(chat_sesion_noticia_id=chat_sesion_id, respuesta_chatbot=chatbot_reply_content)
+
 
 @guided_analysis_router.post("/chat/{chat_sesion_noticia_id}/continue", response_model=ChatGuiaResponse)
 async def continue_guided_analysis_chat_endpoint(chat_sesion_noticia_id: int, request_data: ContinuarChatGuiaRequest, current_user: UsuarioInDB = Depends(get_current_active_user)):
-    # ... (contenido de la función sin cambios)
     if not ollama_client: raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Servicio de Chatbot no disponible.")
-    chat_sesion_query = chat_sesiones_noticia_table.select().where((chat_sesiones_noticia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id) & (chat_sesiones_noticia_table.c.sesion_id == current_user.sesion_id))
+    chat_sesion_query = chat_sesiones_noticia_table.select().where(
+        (chat_sesiones_noticia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id) & 
+        (chat_sesiones_noticia_table.c.sesion_id == current_user.sesion_id)
+    )
     chat_sesion_db = await database.fetch_one(chat_sesion_query)
-    if not chat_sesion_db: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sesión de chat no encontrada o no pertenece al usuario.")
-    if chat_sesion_db["fecha_fin"]: raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Esta sesión de chat ya ha finalizado.")
-    user_message_query = mensajes_chat_guia_table.insert().values(chat_sesion_noticia_id=chat_sesion_noticia_id, emisor='usuario', contenido=request_data.mensaje_usuario, timestamp_mensaje=datetime.now(dt_timezone.utc))
+    if not chat_sesion_db: 
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sesión de chat no encontrada o no pertenece al usuario.")
+    if chat_sesion_db["fecha_fin"]: 
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Esta sesión de chat ya ha finalizado. No se pueden añadir más mensajes.")
+    
+    user_message_query = mensajes_chat_guia_table.insert().values(
+        chat_sesion_noticia_id=chat_sesion_noticia_id, 
+        emisor='usuario', 
+        contenido=request_data.mensaje_usuario, 
+        timestamp_mensaje=datetime.now(dt_timezone.utc)
+    )
     await database.execute(user_message_query)
-    history_query = mensajes_chat_guia_table.select().where(mensajes_chat_guia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id).order_by(mensajes_chat_guia_table.c.mensaje_guia_id)
+    
+    history_query = mensajes_chat_guia_table.select().where(
+        mensajes_chat_guia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id
+    ).order_by(mensajes_chat_guia_table.c.orden_en_chat) 
+    
     message_history_db = await database.fetch_all(history_query)
     ollama_messages_history = []
     for msg_db in message_history_db:
         role_for_ollama = "user" if msg_db["emisor"] == "usuario" else "assistant"
         ollama_messages_history.append(OllamaMessage(role=role_for_ollama, content=msg_db["contenido"]))
-    system_prompt_content = ("Rol: Eres 'Pimpoyo'...") # Keep original prompt
+    
+    system_prompt_content = (
+         "Rol: Eres 'Pimpoyo', un chatbot guía para niños de 10-12 años. Ayúdalos a analizar una noticia paso a paso. "
+        "Contexto: Estás continuando una conversación sobre una noticia específica que el usuario está analizando. Ya le diste un feedback conversacional inicial a su primera evaluación. "
+        "Tarea: Responde a la NUEVA pregunta o comentario del usuario de forma clara y sencilla. Sigue guiándolo para que reflexione sobre la noticia. "
+        "Evita dar la solución (si es V/F) directamente. Anímalo a encontrar pistas por sí mismo. Sé breve y amigable."
+        "Si el usuario parece estar atascado o pide una pista directa, puedes ofrecer una pequeña ayuda sutil."
+    )
     final_ollama_messages = [OllamaMessage(role="system", content=system_prompt_content)] + ollama_messages_history
+    
     try:
-        chat_ollama_response = ollama_client.chat(model=OLLAMA_MODEL, messages=[msg.model_dump() for msg in final_ollama_messages])
+        chat_ollama_response = ollama_client.chat(
+            model=OLLAMA_MODEL_ANALYSIS, 
+            messages=[msg.model_dump() for msg in final_ollama_messages]
+        )
         chatbot_reply_content = chat_ollama_response['message']['content']
+        if not chatbot_reply_content:
+            chatbot_reply_content = "Entendido. ¿Qué más quieres que veamos de esta noticia o qué otra duda tienes?"
     except Exception as e:
         print(f"Error al contactar Ollama en /continue: {e}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error al obtener respuesta del chatbot guía: {str(e)}")
-    chatbot_message_query = mensajes_chat_guia_table.insert().values(chat_sesion_noticia_id=chat_sesion_noticia_id, emisor='chatbot', contenido=chatbot_reply_content, timestamp_mensaje=datetime.now(dt_timezone.utc))
+        chatbot_reply_content = "Mis antenas de detective están un poco cruzadas. ¿Podrías preguntarme de otra forma?"
+    
+    chatbot_message_query = mensajes_chat_guia_table.insert().values(
+        chat_sesion_noticia_id=chat_sesion_noticia_id, 
+        emisor='chatbot', 
+        contenido=chatbot_reply_content, 
+        timestamp_mensaje=datetime.now(dt_timezone.utc)
+    )
     await database.execute(chatbot_message_query)
+    
     return ChatGuiaResponse(chat_sesion_noticia_id=chat_sesion_noticia_id, respuesta_chatbot=chatbot_reply_content)
 
-
+# // INICIO DE LA ÚNICA FUNCIÓN A MODIFICAR EN ESTE TURNO //
 @guided_analysis_router.post("/finish-news/{chat_sesion_noticia_id}", status_code=status.HTTP_200_OK)
 async def finish_guided_analysis_news_endpoint(
     chat_sesion_noticia_id: int,
@@ -714,50 +787,107 @@ async def finish_guided_analysis_news_endpoint(
 
     noticia_id_json_actual = chat_sesion_db["noticia_id_json"]
     noticia_original_data = next((n for n in ALL_NEWS_DATA if n.get("ID") == noticia_id_json_actual), None)
-    if not noticia_original_data:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Datos originales de la noticia {noticia_id_json_actual} no encontrados.")
-
-    # Construcción del mensaje de feedback mejorado
-    feedback_message = "¡Análisis de la noticia completado! "
-    evaluacion_correcta = chat_sesion_db["evaluacion_inicial_correcta"]
-    categoria_real = noticia_original_data.get("CATEGORY", "Desconocida").upper()
     
-    # CAMBIO: Traducción y formato en negrita para la categoría
-    categoria_real_es = ""
-    if categoria_real == "TRUE":
-        categoria_real_es = "**Verdadera**"
-    elif categoria_real == "FALSE":
-        categoria_real_es = "**Falsa**"
-    else:
-        # Fallback por si acaso la categoría no es TRUE o FALSE
-        categoria_real_es = f"**{categoria_real.capitalize()}**" 
+    if not noticia_original_data:
+        print(f"ADVERTENCIA CRÍTICA: Datos originales de la noticia {noticia_id_json_actual} no encontrados para feedback en finish-news para sesion_id {current_user.sesion_id}.")
+        if not chat_sesion_db["fecha_fin"]:
+            update_fecha_fin_query = chat_sesiones_noticia_table.update().where(
+                chat_sesiones_noticia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id
+            ).values(fecha_fin=datetime.now(dt_timezone.utc))
+            await database.execute(update_fecha_fin_query)
+            
+            pseudo_noticia_data = {"ID": noticia_id_json_actual, "CATEGORY": "DESCONOCIDA"} 
+            respuesta_usuario_stats = chat_sesion_db["evaluacion_inicial_usuario"] or "NO_EVALUADO_INICIALMENTE"
+            es_correcto_stats = chat_sesion_db["evaluacion_inicial_correcta"]
 
-    if evaluacion_correcta is True:
-        feedback_message += f"¡Muy bien! Determinaste correctamente que la noticia era {categoria_real_es}."
-    elif evaluacion_correcta is False:
-        feedback_message += f"Parece que tu evaluación inicial no fue acertada. La noticia en realidad era {categoria_real_es}."
-    else: # Casos de UNSURE o no evaluado inicialmente
-        feedback_message += f"La noticia analizada era {categoria_real_es}."
+            await registrar_interaccion_y_actualizar_estadisticas(
+                db=database, sesion_id=current_user.sesion_id,
+                noticia_id_json=noticia_id_json_actual,
+                tipo_interaccion='ANALISIS_INDIVIDUAL_GUIADO_FINALIZADO_ERR_DATA',
+                noticia_data_from_json=pseudo_noticia_data,
+                respuesta_usuario=respuesta_usuario_stats,
+                es_correcto=es_correcto_stats, 
+                indicadores_discutidos_llm=None
+            )
+        return {"message": "¡Análisis completado! No se pudieron cargar todos los detalles de la noticia para un feedback extenso, pero tu progreso ha sido guardado."}
 
-
-    # Añadir pistas o elementos clave si existen en el dataset
+    feedback_message_parts = []
+    evaluacion_correcta = chat_sesion_db["evaluacion_inicial_correcta"] 
+    evaluacion_usuario_texto = chat_sesion_db["evaluacion_inicial_usuario"]
+    
+    categoria_real_noticia = noticia_original_data.get("CATEGORY", "Desconocida").upper()
+    titular_noticia = noticia_original_data.get("HEADLINE", "esta noticia") 
+    fuente_noticia = noticia_original_data.get("SOURCE")
+    
     justification_hints = noticia_original_data.get("JUSTIFICATION_HINTS")
-    if justification_hints and isinstance(justification_hints, list) and len(justification_hints) > 0:
-        feedback_message += f" Algunos puntos clave para identificarla eran: \"{'; '.join(justification_hints[:2])}\"."
-    elif justification_hints and isinstance(justification_hints, str) and justification_hints.strip(): 
-        feedback_message += f" Un punto clave para identificarla era: \"{justification_hints}\"."
+    key_elements = noticia_original_data.get("KEY_ELEMENTS")
+    reasoning_type_data = noticia_original_data.get("REASONING_TYPE")
+    likely_misconceptions_data = noticia_original_data.get("LIKELY_MISCONCEPTIONS")
 
+    categoria_real_display_text = "de categoría desconocida"
+    if categoria_real_noticia == "TRUE":
+        categoria_real_display_text = "**Verdadera**"
+    elif categoria_real_noticia == "FALSE":
+        categoria_real_display_text = "**Falsa**"
+    
+    feedback_message_parts.append(f"¡Análisis de \"{titular_noticia}\" finalizado! ")
+
+    if evaluacion_usuario_texto == "UNSURE" or evaluacion_usuario_texto is None:
+        feedback_message_parts.append(f"Al principio no estabas seguro/a. Esta noticia era {categoria_real_display_text}.")
+    elif evaluacion_correcta is True:
+        feedback_message_parts.append(f"¡Muy bien! 👍 Correctamente identificaste que la noticia era {categoria_real_display_text}.")
+    elif evaluacion_correcta is False:
+        feedback_message_parts.append(f"Tu primera impresión fue diferente. Resulta que la noticia era {categoria_real_display_text}.")
+    else: 
+        feedback_message_parts.append(f"La noticia era {categoria_real_display_text}.")
+
+    explicacion_concisa_pistas = []
+
+    if justification_hints:
+        hint_text = ""
+        if isinstance(justification_hints, list) and justification_hints:
+            # Convertir todos los elementos a string y filtrar los None/vacíos antes de unir
+            hint_text = ". ".join(filter(None, [str(h).strip() for h in justification_hints if str(h).strip()][:1])) # Primera pista útil
+        elif isinstance(justification_hints, str) and justification_hints.strip():
+            hint_text = justification_hints
+        if hint_text:
+            explicacion_concisa_pistas.append(f"Pista clave: \"{hint_text}\".")
+
+    if key_elements and isinstance(key_elements, list) and key_elements:
+        elementos_str = ", ".join(filter(None, [str(el).strip() for el in key_elements if str(el).strip()][:2]))
+        if elementos_str:
+            explicacion_concisa_pistas.append(f"Fíjate en: {elementos_str}.")
+
+    if reasoning_type_data:
+        reasoning_text = ""
+        if isinstance(reasoning_type_data, list) and reasoning_type_data:
+            first_reasoning = str(reasoning_type_data[0]).strip()
+            if first_reasoning:
+                reasoning_text = first_reasoning.lower()
+        elif isinstance(reasoning_type_data, str) and reasoning_type_data.strip():
+            reasoning_text = reasoning_type_data.lower()
+        if reasoning_text:
+             explicacion_concisa_pistas.append(f"Aquí era importante la '{reasoning_text}'.")
+    
+    if categoria_real_noticia == "FALSE" and likely_misconceptions_data and isinstance(likely_misconceptions_data, list) and likely_misconceptions_data:
+        first_misconception = str(likely_misconceptions_data[0]).strip()
+        if first_misconception:
+            explicacion_concisa_pistas.append(f"A veces uno puede pensar erróneamente que \"{first_misconception}\", ¡así que atento/a!")
+
+    if explicacion_concisa_pistas:
+        feedback_message_parts.append("Para que lo tengas en cuenta: " + " ".join(explicacion_concisa_pistas))
+    elif categoria_real_noticia == "FALSE": 
+        feedback_message_parts.append("Analizar bien los detalles y la fuente siempre ayuda a detectar noticias falsas. ¡Buen esfuerzo!")
+    elif categoria_real_noticia == "TRUE":
+        feedback_message_parts.append("Confirmar la información con fuentes fiables es un buen hábito. ¡Sigue así!")
+    
+    feedback_message = " ".join(feedback_message_parts)
 
     if not chat_sesion_db["fecha_fin"]:
         update_fecha_fin_query = chat_sesiones_noticia_table.update().where(
             chat_sesiones_noticia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id
         ).values(fecha_fin=datetime.now(dt_timezone.utc))
         await database.execute(update_fecha_fin_query)
-
-        indicadores_res_llm, conceptos_res_llm = [], []
-        # TODO: Implementar lógica de análisis post-chat con LLM si se desea un feedback más profundo sobre la conversación
-        # y actualizar los campos 'indicadores_discutidos', 'conceptos_clave_discutidos' en chat_sesiones_noticia_table.
-        # Por ahora, se dejan vacíos.
 
         respuesta_usuario_stats = chat_sesion_db["evaluacion_inicial_usuario"]
         es_correcto_stats = chat_sesion_db["evaluacion_inicial_correcta"]
@@ -768,16 +898,16 @@ async def finish_guided_analysis_news_endpoint(
             db=database,
             sesion_id=current_user.sesion_id,
             noticia_id_json=noticia_id_json_actual,
-            tipo_interaccion='ANALISIS_INDIVIDUAL_GUIADO',
+            tipo_interaccion='ANALISIS_INDIVIDUAL_GUIADO_FINALIZADO', 
             noticia_data_from_json=noticia_original_data,
             respuesta_usuario=respuesta_usuario_stats,
             es_correcto=es_correcto_stats,
-            indicadores_discutidos_llm=list(set((indicadores_res_llm or []) + (conceptos_res_llm or [])))
+            indicadores_discutidos_llm=None 
         )
         return {"message": feedback_message} 
     else:
-        return {"message": f"El análisis para esta noticia ya había finalizado. {feedback_message}"}
-
+        return {"message": f"(Análisis de \"{titular_noticia}\" ya concluido) {feedback_message}"}
+# // FIN DE LA ÚNICA FUNCIÓN MODIFICADA EN ESTE TURNO //
 
 @challenge_router.post("/finish-pair-selection", status_code=status.HTTP_200_OK)
 async def finish_pair_selection_challenge(
