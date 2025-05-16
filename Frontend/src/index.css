@@ -179,6 +179,8 @@ body {
 .message-bubble p {
   margin: 0 0 10px 0;
   line-height: 1.4;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .message-bubble p:last-child {
@@ -382,13 +384,13 @@ body {
 /* --- Área de Input --- */
 .chat-input-area {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   padding: 15px;
   background-color: #94ab3d;
   flex-shrink: 0;
 }
 
-.text-input {
+.text-input { /* This now styles the textarea */
   flex-grow: 1;
   padding: 10px 15px;
   border: none;
@@ -399,12 +401,44 @@ body {
   outline: none;
   background-color: #ffffff;
   color: #4a3112;
+  resize: none;
+  overflow-y: auto;
+  line-height: 1.0;
+  height: auto;
+  min-height: calc(1em * 1.0 + 5px);
+  max-height: calc(4 * 1em * 1.0 + 5px);
+  scrollbar-width: auto; /* Options: 'auto', 'thin', 'none' */
+  scrollbar-color: #94ab3d rgba(148, 171, 61, 0.1);
+}
+
+.text-input::-webkit-scrollbar {
+  width: 8px; /* Consistent with your other scrollbars */
+  /* Alternatively, for a textarea, you might prefer slightly thinner: */
+  /* width: 6px; */
+}
+
+.text-input::-webkit-scrollbar-track {
+  background: rgba(148, 171, 61, 0.1); /* Matches your theme's track color */
+  border-radius: 4px; /* Consistent border-radius */
+  /* You might want the track to be a bit more subtle inside the white textarea */
+  /* Example: background: rgba(0, 0, 0, 0.03); */
+}
+
+.text-input::-webkit-scrollbar-thumb {
+  background-color: #94ab3d; /* Matches your theme's thumb color */
+  border-radius: 4px; /* Consistent border-radius */
+  border: 1px solid rgba(255, 244, 222, 0.5); /* Matches your theme's thumb border */
+}
+
+.text-input::-webkit-scrollbar-thumb:hover {
+  background-color: #7a8e31; /* Matches your theme's thumb hover color */
 }
 
 .text-input::placeholder {
   color: #4a3112;
   opacity: 0.6;
 }
+
 
 .send-button {
   background-color: #fa77c5;
@@ -421,6 +455,7 @@ body {
   align-items: center;
   flex-shrink: 0;
   transition: background-color 0.2s ease;
+  /* self-align: flex-end; /* Optional: if you need to explicitly align it with a multi-line textarea */
 }
 
 .send-button:hover {

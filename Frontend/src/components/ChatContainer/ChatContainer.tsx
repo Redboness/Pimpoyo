@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 // src/components/ChatContainer/ChatContainer.tsx
 import { useState, useEffect, useCallback } from "react";
 import MessageList from "../MessageList/MessageList";
@@ -13,11 +14,11 @@ import {
   NewsChallengeState,
   DifficultyLevel,
   difficultyOrder,
-  NoticiaParaAnalisis, 
+  NoticiaParaAnalisis,
   ExplicacionInicialPayload,
-  ChatGuiaResponse, 
+  ChatGuiaResponse,
   ContinuarChatGuiaPayload,
-  FinishPairChallengePayload, 
+  FinishPairChallengePayload,
   FinishPairChallengeResponse
 } from "../../types/types";
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
@@ -121,6 +122,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   useEffect(() => {
     if (currentUserInfo === null || refreshUserInfoToggle) { setIsLoadingUserInfo(true); }
     fetchUserInfo();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshUserInfoToggle, authToken, fetchUserInfo]);
   // Comentario encima de la función createWelcomeMessage
   const createWelcomeMessage = useCallback((): ChatMessage => ({
@@ -174,7 +176,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       if (onMessageAdded) onMessageAdded(botMsgId);
     }, delay);
     return botMsgId;
-  }, []); 
+  }, []);
   // Comentario encima de la función increaseDifficulty
   const increaseDifficulty = useCallback(() => {
     const currentIndex = difficultyOrder.indexOf(difficultyLevel);
@@ -232,17 +234,18 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     const selectionMessageId = addBotResponse( "¿Cuál de las dos noticias crees que es la VERDADERA?", [{ id: `select-news-left`, text: "Noticia Izquierda" }, { id: `select-news-right`, text: "Noticia Derecha" }], 800 );
     setNewsChallengeState({ trueNewsOriginalId: selectedTrueNews.ID, leftNewsOriginalId: leftNewsItem.ID, rightNewsOriginalId: rightNewsItem.ID, selectionMessageId: selectionMessageId as string, });
     setIsLoadingNews(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [difficultyLevel, addBotResponse, BOT_AVATAR_URL, setIsLoadingNews, setMessages, setNewsChallengeState]);
   // Comentario encima de la función presentNewsChallenge
   const presentNewsChallenge = useCallback(async (forceSingleAnalysisMode: boolean = false) => {
     if (isLoadingNews) return;
     setIsLoadingNews(true);
     setChatError('');
-    resetSingleAnalysisMode(); 
+    resetSingleAnalysisMode();
     setNewsChallengeState(null);
 
     const shouldUseSingleAnalysis = forceSingleAnalysisMode || (
-        (difficultyLevel === 'medio' || difficultyLevel === 'alto') && Math.random() < 0.6 
+        (difficultyLevel === 'medio' || difficultyLevel === 'alto') && Math.random() < 0.6
     );
 
     let introMessage = `Buscando desafío de nivel "${difficultyLevel}"...`;
@@ -316,7 +319,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         }
     }
   }, [authToken, isLoadingNews, newsData, difficultyLevel, addBotResponse, resetSingleAnalysisMode, processTwoNewsChallenge]);
-  
+
   // Comentario encima de la función handleMessageButtonClick
   const handleMessageButtonClick = useCallback(async (messageId: number | string, buttonId: string) => {
     console.log(`Button Clicked: MessageID=${messageId}, ButtonID=${buttonId}`);
@@ -332,40 +335,40 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
             return msg;
         }));
     }
-    
+
     if (buttonId === "btn-finish-analysis" && isSingleNewsAnalysisMode && currentGuidedChatSessionId) {
         addUserChoiceMessage("Terminar análisis y ver solución.");
         setIsBotTyping(true);
         try {
-          addBotResponse("Revisando tu análisis y preparando la solución...", [], 0); 
-          setIsBotTyping(true); 
+          addBotResponse("Revisando tu análisis y preparando la solución...", [], 0);
+          setIsBotTyping(true);
           const response = await fetch(`/api/activity/guided-analysis/finish-news/${currentGuidedChatSessionId}`, {
             method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` }
           });
-          setIsBotTyping(false); 
+          setIsBotTyping(false);
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({ detail: `Error ${response.status}` }));
             throw new Error(errorData.detail || "No se pudo finalizar el análisis y obtener la solución.");
           }
-          const result = await response.json(); 
-          addBotResponse(result.message || "¡Análisis completado!", [], 300); 
-          
+          const result = await response.json();
+          addBotResponse(result.message || "¡Análisis completado!", [], 300);
+
           addBotResponse("¿Qué hacemos ahora?", [
-            { id: "btn-news-again", text: "Siguiente Desafío" }, 
+            { id: "btn-news-again", text: "Siguiente Desafío" },
             { id: "btn-talk-again", text: "Sólo Charlar" },
           ], 500);
 
         } catch (error) {
-            setIsBotTyping(false); 
+            setIsBotTyping(false);
             addBotResponse(`Error al finalizar y mostrar solución: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
                 { id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" },
             ]);
         }
-        finally { 
-            resetSingleAnalysisMode(); 
+        finally {
+            resetSingleAnalysisMode();
         }
         return;
-    } else if (buttonId === "btn-finish-analysis-anyway") { 
+    } else if (buttonId === "btn-finish-analysis-anyway") {
         addUserChoiceMessage("Terminar Análisis Igualmente.");
          if (currentGuidedChatSessionId) {
             addBotResponse("De acuerdo, finalizando este análisis.", [], 0);
@@ -436,16 +439,16 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       const choseLeft = buttonId === "select-news-left";
       const choiceText = choseLeft ? "Noticia Izquierda" : "Noticia Derecha";
       addUserChoiceMessage(`Creo que la verdadera es: ${choiceText}`);
-      
-      const veamosId = addBotResponse("Veamos...", [],0); 
-      setIsBotTyping(true); 
+
+      const veamosId = addBotResponse("Veamos...", [],0);
+      setIsBotTyping(true);
 
       const selectedNewsId = choseLeft ? newsChallengeState.leftNewsOriginalId : newsChallengeState.rightNewsOriginalId;
       let actualFalseNewsId = "";
 
       if (!newsChallengeState.trueNewsOriginalId || !newsChallengeState.leftNewsOriginalId || !newsChallengeState.rightNewsOriginalId) {
         console.error("Error: IDs de noticias faltantes en newsChallengeState", newsChallengeState);
-        setMessages(prev => prev.filter(m => m.id !== veamosId)); 
+        setMessages(prev => prev.filter(m => m.id !== veamosId));
         setIsBotTyping(false);
         addBotResponse("Hubo un problema interno al identificar las noticias. Intenta de nuevo o elige otra opción.", [
             { id: "btn-news-again", text: "Jugar otra vez" }, { id: "btn-talk-again", text: "Sólo Charlar" },
@@ -453,12 +456,12 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         setNewsChallengeState(null); return;
       }
       actualFalseNewsId = newsChallengeState.leftNewsOriginalId === newsChallengeState.trueNewsOriginalId ? newsChallengeState.rightNewsOriginalId : newsChallengeState.leftNewsOriginalId;
-      
+
       if (typeof newsChallengeState.trueNewsOriginalId !== 'string' || !newsChallengeState.trueNewsOriginalId ||
           typeof actualFalseNewsId !== 'string' || !actualFalseNewsId ||
           typeof selectedNewsId !== 'string' || !selectedNewsId) {
           console.error("Error: Uno o más IDs de noticias para el payload no son válidos.", { /* ... */ });
-          setMessages(prev => prev.filter(m => m.id !== veamosId)); 
+          setMessages(prev => prev.filter(m => m.id !== veamosId));
           setIsBotTyping(false);
           addBotResponse("Hubo un error al procesar tu elección debido a IDs de noticias inválidos. Por favor, intenta de nuevo.", [
             { id: "btn-news-again", text: "Jugar otra vez" }, { id: "btn-talk-again", text: "Sólo Charlar" },
@@ -468,53 +471,53 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
 
       const payload: FinishPairChallengePayload = {
         noticia_verdadera_id_json: newsChallengeState.trueNewsOriginalId,
-        noticia_falsa_id_json: actualFalseNewsId, 
+        noticia_falsa_id_json: actualFalseNewsId,
         seleccion_usuario_id_json: selectedNewsId,
       };
-      
+
       try {
-        const response = await fetch('/api/challenge/finish-pair-selection', { 
+        const response = await fetch('/api/challenge/finish-pair-selection', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
           body: JSON.stringify(payload)
          });
-        setMessages(prev => prev.filter(m => m.id !== veamosId)); 
-        setIsBotTyping(false); 
+        setMessages(prev => prev.filter(m => m.id !== veamosId));
+        setIsBotTyping(false);
 
-        if (!response.ok) { 
+        if (!response.ok) {
             let errorContentToThrow = `Error ${response.status}`;
             try {
                 const errorData = await response.json();
                 errorContentToThrow = errorData.detail || errorContentToThrow;
-            } catch (e) { /* no es json */ }
+            } catch (e) { console.error("Error parsing error response:", e); }
             throw new Error(errorContentToThrow);
         }
 
-        const result: FinishPairChallengeResponse = await response.json(); 
+        const result: FinishPairChallengeResponse = await response.json();
         const isCorrectBackend = result.es_correcto;
         let difficultyChangedMessage: string | null = null;
-        let tempCorrectStreak = correctStreak; 
+        let tempCorrectStreak = correctStreak;
 
         if (isCorrectBackend) {
-            tempCorrectStreak++; 
+            tempCorrectStreak++;
             setCorrectStreak(prev => prev + 1);
             setIncorrectStreak(0);
-            if (tempCorrectStreak >= 3) { 
-                if (increaseDifficulty()) { 
+            if (tempCorrectStreak >= 3) {
+                if (increaseDifficulty()) {
                     difficultyChangedMessage = "¡Tres seguidas! 😎 ¡Subimos un poco la dificultad!";
-                    setCorrectStreak(0); 
-                } else { 
-                   if (tempCorrectStreak % 3 === 0) { 
+                    setCorrectStreak(0);
+                } else {
+                   if (tempCorrectStreak % 3 === 0) {
                         difficultyChangedMessage = "¡Imparable! Sigues dominando el nivel más alto. 🔥";
                    }
                 }
             }
-        } else { 
+        } else {
             const newIncStreak = incorrectStreak + 1;
             setIncorrectStreak(newIncStreak);
-            setCorrectStreak(0); 
-            tempCorrectStreak = 0; 
-            if (newIncStreak >= 3) { 
+            setCorrectStreak(0);
+            tempCorrectStreak = 0;
+            if (newIncStreak >= 3) {
                 if (decreaseDifficulty()) {
                     difficultyChangedMessage = "¡Ánimo! 💪 Vamos a probar con unas un poco más sencillas.";
                     setIncorrectStreak(0);
@@ -523,13 +526,13 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
                 }
             }
         }
-        
+
         let feedbackText = "";
-        if (isCorrectBackend) { 
-            feedbackText = `✅ ¡Correcto! La ${choiceText.toLowerCase()} era la verdadera.`; 
-        } else { 
-            const correctPos = (newsChallengeState.leftNewsOriginalId === newsChallengeState.trueNewsOriginalId) ? "la izquierda" : "la derecha"; 
-            feedbackText = `❌ ¡Ups! La ${choiceText.toLowerCase()} era la falsa. La verdadera era ${correctPos}.`; 
+        if (isCorrectBackend) {
+            feedbackText = `✅ ¡Correcto! La ${choiceText.toLowerCase()} era la verdadera.`;
+        } else {
+            const correctPos = (newsChallengeState.leftNewsOriginalId === newsChallengeState.trueNewsOriginalId) ? "la izquierda" : "la derecha";
+            feedbackText = `❌ ¡Ups! La ${choiceText.toLowerCase()} era la falsa. La verdadera era ${correctPos}.`;
         }
         if (result.explanation) {
             feedbackText += ` ${result.explanation}`;
@@ -541,7 +544,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
             feedbackPresentationDelay = 600;
         }
         addBotResponse(feedbackText, [], feedbackPresentationDelay);
-        
+
         // INICIO MODIFICACIÓN EXCLUSIVA: Lógica de botones post-desafío de pares
         let nextStepButtons: MessageButton[];
         const isThreeStreakSpecialAndLevelUp = isCorrectBackend && tempCorrectStreak > 0 && tempCorrectStreak % 3 === 0 && difficultyChangedMessage && difficultyChangedMessage.includes("¡Subimos un poco la dificultad!");
@@ -560,20 +563,20 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
                 { id: "btn-talk-again", text: "Sólo Charlar" }
             ];
         }
-         else { 
+         else {
             // Para respuestas incorrectas, o correctas sin racha especial.
             nextStepButtons = [
                 { id: "btn-news-again", text: "Jugar otra vez" },
                 { id: "btn-tips-again", text: "Ver Tips" },
-                { id: "btn-talk-again", text: "Sólo Charlar" } 
+                { id: "btn-talk-again", text: "Sólo Charlar" }
             ];
         }
         addBotResponse("¿Qué quieres hacer ahora?", nextStepButtons, feedbackPresentationDelay + 200);
         // FIN MODIFICACIÓN EXCLUSIVA
-      } catch (error) { 
+      } catch (error) {
         setIsBotTyping(false);
-        setMessages(prev => prev.filter(m => m.id !== veamosId)); 
-        console.error("Error en desafío de pares:", error); 
+        setMessages(prev => prev.filter(m => m.id !== veamosId));
+        console.error("Error en desafío de pares:", error);
         addBotResponse(`Error al procesar tu elección: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
             { id: "btn-news-again", text: "Jugar otra vez" }, { id: "btn-talk-again", text: "Sólo Charlar" },
         ]);
@@ -581,9 +584,10 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       finally { setNewsChallengeState(null); }
       return;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     authToken, addUserChoiceMessage, addBotResponse, presentNewsChallenge, newsChallengeState,
-    correctStreak, incorrectStreak, increaseDifficulty, decreaseDifficulty, difficultyLevel, 
+    correctStreak, incorrectStreak, increaseDifficulty, decreaseDifficulty, difficultyLevel,
     isSingleNewsAnalysisMode, currentGuidedChatSessionId, // guidedAnalysesSubmitted no es dependencia directa aquí
   ]);
 
@@ -596,11 +600,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       avatar: currentUserInfo?.avatar_url || USER_AVATAR_URL_DEFAULT, timestamp: Date.now(),
     };
     setMessages(currentMessages => [...currentMessages, newUserMessage]);
-    
+
     setIsBotTyping(true);
 
     if (isSingleNewsAnalysisMode && isAwaitingInitialAnalysis && singleNewsAnalysisData) {
-      setIsAwaitingInitialAnalysis(false); 
+      setIsAwaitingInitialAnalysis(false);
       let evaluacion: 'TRUE' | 'FALSE' | 'UNSURE' | null = null;
       const lowerInput = inputText.toLowerCase();
       if (/\b(es\s+)?verdadera\b/.test(lowerInput) && !/\bno\s+(es\s+)?verdadera\b/.test(lowerInput)) evaluacion = 'TRUE';
@@ -617,18 +621,18 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         evaluacion_inicial_opcional: evaluacion,
       };
       try {
-        const response = await fetch('/api/activity/guided-analysis/explain', { 
+        const response = await fetch('/api/activity/guided-analysis/explain', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
           body: JSON.stringify(payload),
         });
         // setIsBotTyping(false) se llama en addBotResponse
         if (!response.ok) { throw new Error((await response.json().catch(() => ({}))).detail || `Error ${response.status}`); }
-        const responseData: ChatGuiaResponse = await response.json(); 
-        
+        const responseData: ChatGuiaResponse = await response.json();
+
         setCurrentGuidedChatSessionId(responseData.chat_sesion_noticia_id);
-        addBotResponse(responseData.respuesta_chatbot, [], 500); 
-        
+        addBotResponse(responseData.respuesta_chatbot, [], 500);
+
         const newSubmittedCount = guidedAnalysesSubmitted + 1;
         setGuidedAnalysesSubmitted(newSubmittedCount);
 
@@ -641,17 +645,17 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         addBotResponse(
             "Puedes seguir preguntándome sobre esta noticia si tienes más dudas, o si ya estás listo/a:",
             buttonsForInitialGuidedPhase,
-            600 
+            600
         );
       } catch (error) {
-        setIsBotTyping(false); 
+        setIsBotTyping(false);
         addBotResponse(`Error al procesar tu análisis inicial: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
             { id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" }
         ]);
         resetSingleAnalysisMode();
       }
 
-    } else if (isSingleNewsAnalysisMode && currentGuidedChatSessionId) { 
+    } else if (isSingleNewsAnalysisMode && currentGuidedChatSessionId) {
       const payload: ContinuarChatGuiaPayload = { mensaje_usuario: inputText };
       try {
         const response = await fetch(`/api/activity/guided-analysis/chat/${currentGuidedChatSessionId}/continue`, {
@@ -662,30 +666,30 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         if (!response.ok) { throw new Error((await response.json().catch(() => ({}))).detail || `Error ${response.status}`);}
         const responseData: ChatGuiaResponse = await response.json();
         addBotResponse(responseData.respuesta_chatbot, [], 500);
-        
+
         let buttonsForContinuedGuidedPhase: MessageButton[] = [
             { id: "btn-finish-analysis", text: "Terminar análisis y ver solución" }
         ];
-        if (guidedAnalysesSubmitted >= 5) { 
+        if (guidedAnalysesSubmitted >= 5) {
              buttonsForContinuedGuidedPhase.push({ id: "btn-tips-again", text: "Ver Tips" });
         }
         addBotResponse(
             "Puedes seguir preguntándome, o si prefieres:",
             buttonsForContinuedGuidedPhase,
-            600 
+            600
         );
       } catch (error) {
-        setIsBotTyping(false); 
+        setIsBotTyping(false);
         addBotResponse(`Error continuando la conversación guiada: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
             { id: "btn-finish-analysis-anyway", text: "Terminar Análisis Igualmente" },
             { id: "btn-news-again", text: "Otro Desafío" }
         ]);
       }
-    } else { 
+    } else {
         if (newsChallengeState && newsChallengeState.selectionMessageId) {
              const selectionMessage = messages.find(msg => msg.id === newsChallengeState.selectionMessageId);
              if (selectionMessage && !selectionMessage.buttonsDisabled) {
-                 addBotResponse("Elige una de las noticias con los botones antes de escribir, por favor.", [], 0); 
+                 addBotResponse("Elige una de las noticias con los botones antes de escribir, por favor.", [], 0);
                  setIsBotTyping(false); // Importante resetear si retornamos antes
                  return;
              }
@@ -708,21 +712,21 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
                 method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' },
                 body: JSON.stringify({ messages: messagesForOllama, model: 'gemma3:4b' })
             });
-            if (!apiResponse.ok) {  
+            if (!apiResponse.ok) {
                 setIsBotTyping(false); // Ocultar en error de API antes de lanzar
-                const errData = await apiResponse.json().catch(() => ({})); throw new Error(errData.detail || `API Error ${apiResponse.status}`);  
+                const errData = await apiResponse.json().catch(() => ({})); throw new Error(errData.detail || `API Error ${apiResponse.status}`);
             }
             const data = await apiResponse.json();
             addBotResponse(data.reply, [], 300); // Esto llama a setIsBotTyping(false)
 
-            if (!isFreeChatMode) { 
+            if (!isFreeChatMode) {
                 addBotResponse(
                     "Puedes seguir preguntando o:",
                     [
                         { id: "btn-news-again", text: "Ir a Otro Desafío" },
                         { id: "btn-tips-again", text: "Ver Tips" },
                     ],
-                    500 
+                    500
                 );
             }
         } catch (error) {
@@ -745,17 +749,17 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       setMessages([welcomeMessage, initialButtonsMessage]);
       setNewsChallengeState(null);
       resetSingleAnalysisMode();
-      setDifficultyLevel('bajo'); 
+      setDifficultyLevel('bajo');
       setCorrectStreak(0);
-      setIncorrectStreak(0); 
-      setGuidedAnalysesSubmitted(0); 
+      setIncorrectStreak(0);
+      setGuidedAnalysesSubmitted(0);
     }
     closePanel();
   };
- 
-  let determinedChatInputDisabled = isLoadingNews || isBotTyping; 
 
-  if (!determinedChatInputDisabled) { 
+  let determinedChatInputDisabled = isLoadingNews || isBotTyping;
+
+  if (!determinedChatInputDisabled) {
     const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
 
     const hasStrictlyExclusiveChoiceButtons =
@@ -773,33 +777,33 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         );
 
     if (isSingleNewsAnalysisMode) {
-      if (isAwaitingInitialAnalysis) { 
+      if (isAwaitingInitialAnalysis) {
         determinedChatInputDisabled = false;
-      } else if (currentGuidedChatSessionId) { 
-        determinedChatInputDisabled = false; 
-      } else { 
+      } else if (currentGuidedChatSessionId) {
+        determinedChatInputDisabled = false;
+      } else {
           determinedChatInputDisabled = true;
       }
     } else if (hasStrictlyExclusiveChoiceButtons) {
       determinedChatInputDisabled = true;
     } else {
-      determinedChatInputDisabled = false; 
+      determinedChatInputDisabled = false;
     }
   }
-  
+
   return (
     <div className="chat-container">
       <ChatHeader nickname={currentUserInfo?.apodo || 'Usuario'} onPanelToggle={togglePanel} onRefresh={handleRefresh} />
       {chatError && (isLoadingNews || isSingleNewsAnalysisMode) && ( <div style={{ padding: '5px', background: '#fff0f0', color: 'red', textAlign: 'center' }}>Error: {chatError}</div> )}
-      <MessageList 
-        messages={messages} 
-        onButtonClick={handleMessageButtonClick} 
+      <MessageList
+        messages={messages}
+        onButtonClick={handleMessageButtonClick}
         isBotTyping={isBotTyping}
         botAvatarUrl={BOT_AVATAR_URL}
       />
       <ChatInput
         onSendMessage={handleSendMessage}
-        disabled={determinedChatInputDisabled} 
+        disabled={determinedChatInputDisabled}
       />
       <SidePanel isOpen={isPanelOpen} onClose={closePanel} userInfo={currentUserInfo} authToken={authToken} onLogout={onLogout} onSettingsSaved={handleSettingsSaved} />
     </div>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // src/components/SidePanel/SidePanel.tsx
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -184,7 +185,7 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
              try {
                  const errorJson = await response.json();
                  errorDetail = errorJson.detail || errorDetail;
-             } catch (e) { /* Ignora si la respuesta de error no es JSON */ }
+             } catch (e) { console.error("Error parsing JSON:", e); }
             throw new Error(errorDetail);
         }
         setNewTerm('');

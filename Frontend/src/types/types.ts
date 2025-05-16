@@ -41,10 +41,10 @@ export interface NewsItem {
   HEADLINE: string;
   TEXT: string;
   LINK: string;
-  DIFFICULTY_LEVEL: DifficultyLevel; 
-  REASONING_TYPE?: string;        
-  KEY_ELEMENTS?: string[];        
-  JUSTIFICATION_HINTS?: string[]; 
+  DIFFICULTY_LEVEL: DifficultyLevel;
+  REASONING_TYPE?: string;
+  KEY_ELEMENTS?: string[];
+  JUSTIFICATION_HINTS?: string[];
   LIKELY_MISCONCEPTIONS?: string[];
 }
 
@@ -59,6 +59,8 @@ export interface NewsChallengeState {
 export interface MessageListProps {
   messages: ChatMessage[];
   onButtonClick: (messageId: number | string, buttonId: string) => void;
+  isBotTyping?: boolean;
+  botAvatarUrl?: string;
 }
 
 export interface ChatInputProps {
@@ -68,9 +70,9 @@ export interface ChatInputProps {
 
 export interface MessageButton {
   id: string;
-  text?: string; 
-  icon?: IconDefinition; 
-  ariaLabel?: string; 
+  text?: string;
+  icon?: IconDefinition;
+  ariaLabel?: string;
 }
 
 export interface ChatMessage {
@@ -85,8 +87,8 @@ export interface ChatMessage {
 }
 
 export interface OllamaMessage {
-  role: 'system' | 'user' | 'assistant'; 
-  content: string;                      
+  role: 'system' | 'user' | 'assistant';
+  content: string;
 }
 
 // Estructura para el glosario
@@ -96,15 +98,15 @@ export interface GlossaryEntry {
   definition: string;
   isDefault: boolean;
   userId?: number | string;
-  fecha_creacion?: Date; 
+  fecha_creacion?: Date;
 }
 
 export interface GlossaryTermPublic {
-  id: number;                
-  usuario_sesion_id: number; 
-  termino: string;           
-  definicion: string;        
-  fecha_creacion: string;    
+  id: number;
+  usuario_sesion_id: number;
+  termino: string;
+  definicion: string;
+  fecha_creacion: string;
 }
 
 /**
@@ -117,7 +119,7 @@ export interface GlossaryTermCreate {
     definicion: string;
 }
 
-export interface NoticiaParaAnalisis { 
+export interface NoticiaParaAnalisis {
   noticia_id_json: string;
   headline: string;
   text: string;
@@ -157,5 +159,5 @@ export interface FinishPairChallengePayload {
 export interface FinishPairChallengeResponse {
     message: string;
     es_correcto: boolean;
-    explanation?: string; 
+    explanation?: string;
 }
