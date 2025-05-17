@@ -17,6 +17,8 @@ export interface UserInfo {
   genero?: string | null;
   edad?: number;
   avatar_url?: string | null;
+  curso_escolar: string
+  password: string;
 }
 
 // Interface for the props that receives SidePanel

@@ -8,6 +8,7 @@ interface RegisterPayload {
   edad: number; // API likely expects number
   password: string;
   consentimiento_obtenido: boolean;
+  curso_escolar: string; // Asegúrate que tu backend espera este campo
 }
 
 // Interface for the props received from App.tsx
@@ -16,93 +17,77 @@ interface ProfileSetupProps {
 }
 
 // Type for the different steps in registration mode
-type RegisterStep = 'apodo' | 'genero' | 'edad' | 'final';
+type RegisterStep = 'apodo' | 'genero' | 'edad' | 'curso' | 'final'; // 'curso' añadido
 
 function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
-  // State: Current mode ('register' or 'login')
   const [mode, setMode] = useState<'register' | 'login'>('register');
-  // State: Current step within registration flow
   const [step, setStep] = useState<RegisterStep>('apodo');
 
-  // State: Unified form data storage
   const [formData, setFormData] = useState({
     apodo: '',
-    genero: '', // Default empty or provide a default like 'prefiero_no_decir'
-    edad: '', // Store as string from input, convert later
+    genero: '', 
+    edad: '', 
+    curso_escolar: '', // Campo añadido para el curso escolar
     password: '',
     confirmPassword: '',
     consentimiento: false,
   });
 
-  // State: Error messages for the user
   const [error, setError] = useState<string>('');
-  // State: Loading indicator for API calls
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // --- Handlers ---
-
-  // Unified input change handler
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = event.target;
     const newValue = type === 'checkbox' ? (event.target as HTMLInputElement).checked : value;
     setFormData(prevData => ({ ...prevData, [name]: newValue }));
-    setError(''); // Clear error on input change
+    setError(''); 
   };
 
-  // Handler for moving to the next step in Registration
   const handleRegisterNextStep = (event?: React.MouseEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>) => {
     if (event) event.preventDefault();
     setError('');
 
-    // --- Añadir estos logs para depurar ---
-    console.log('Current step:', step);
-    console.log('Current formData.genero:', formData.genero);
-    // --- Fin de logs ---
-
-    // Validar paso actual antes de avanzar
     if (step === 'apodo') {
       if (!formData.apodo.trim()) { setError('Por favor, introduce un nickname.'); return; }
       setStep('genero');
     } else if (step === 'genero') {
-       // La validación está aquí:
-      if (!formData.genero) {
-         console.log('Validation failed: formData.genero is empty or null.'); // Log si falla
+      if (!formData.genero) { 
          setError('Por favor, selecciona un género.');
-         return; // No avanza si no hay género seleccionado
+         return; 
       }
-      // Si llega aquí, la validación pasó
-      console.log('Validation passed for genero.');
-      setStep('edad'); // <-- Debería llegar aquí si seleccionaste un género
+      setStep('edad'); 
     } else if (step === 'edad') {
        const edadNum = parseInt(formData.edad, 10);
        if (!formData.edad || isNaN(edadNum) || edadNum <= 0) { setError('Introduce una edad válida.'); return; }
-       setStep('final');
+       setStep('curso'); // <--- CORRECCIÓN: Ir al paso 'curso'
+    } else if (step === 'curso') { 
+       if (!formData.curso_escolar) { setError('Por favor, selecciona tu curso.'); return; }
+       setStep('final'); 
     }
   };
 
-  // Handler for final Registration submission
   const handleRegisterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
 
-    // Final step validations
     if (!formData.password || formData.password.length < 8) { setError('La contraseña debe tener al menos 8 caracteres.'); return; }
     if (formData.password !== formData.confirmPassword) { setError('Las contraseñas no coinciden.'); return; }
     if (!formData.consentimiento) { setError('Debes aceptar el consentimiento informado.'); return; }
+    if (!formData.curso_escolar) { setError('Por favor, selecciona tu curso antes de finalizar.'); return; } // Validación adicional por si acaso
 
     setIsLoading(true);
-    const edadNum = parseInt(formData.edad, 10); // Convert age string to number
+    const edadNum = parseInt(formData.edad, 10);
 
     const registrationData: RegisterPayload = {
       apodo: formData.apodo.trim(),
-      genero: formData.genero || 'prefiero_no_decir', // Handle case where genero might be ""
+      genero: formData.genero || 'prefiero_no_decir', 
       edad: edadNum,
       password: formData.password,
       consentimiento_obtenido: formData.consentimiento,
+      curso_escolar: formData.curso_escolar, // <--- CORRECCIÓN: Usar el valor del estado
     };
 
     try {
-      // Use your actual register endpoint URL
       const response = await fetch('/api/register/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -114,9 +99,17 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
 
       console.log('Registration successful:', responseData);
       alert('¡Registro completado! Ahora puedes iniciar sesión.');
-      setMode('login'); // Switch to login mode
-      // Reset sensitive fields
-      setFormData(prev => ({ ...prev, password: '', confirmPassword: '', edad: '', genero: '' })); // Keep apodo for login convenience?
+      setMode('login'); 
+      setFormData(prev => ({ 
+        ...prev, 
+        password: '', 
+        confirmPassword: '', 
+        // Resetea también los campos de información personal tras un registro exitoso
+        edad: '', 
+        genero: '',
+        curso_escolar: '',
+        consentimiento: false // Podrías querer resetear esto también
+      }));
 
     } catch (err) {
       setIsLoading(false);
@@ -124,7 +117,6 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
     }
   };
 
-  // Handler for Login submission
   const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!formData.apodo.trim() || !formData.password) { setError('Por favor, introduce apodo y contraseña.'); return; }
@@ -132,11 +124,10 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
     setIsLoading(true);
 
     const loginFormData = new URLSearchParams();
-    loginFormData.append('username', formData.apodo.trim()); // FastAPI expects 'username'
+    loginFormData.append('username', formData.apodo.trim());
     loginFormData.append('password', formData.password);
 
     try {
-      // Use your actual token endpoint URL
       const response = await fetch('/api/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -145,117 +136,92 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
       setIsLoading(false);
       const responseData = await response.json();
       if (!response.ok) { throw new Error(responseData.detail || `Error: ${response.status}`); }
-
-      // On successful login, pass the token up to App.tsx
       onAuthSuccess(responseData.access_token);
-
     } catch (err) {
       setIsLoading(false);
       setError(err instanceof Error ? err.message : 'Error de conexión al iniciar sesión.');
     }
   };
 
-
-  // --- Render ---
   return (
     <div className="profile-setup-wrapper">
-
-      {/* Selector de Modo (Aplicar clases para estilo) */}
       <div style={{ padding: '20px', textAlign: 'center', borderBottom: '1px solid #eee' }}>
         <button onClick={() => { setMode('register'); setStep('apodo'); setError(''); }} disabled={mode === 'register' || isLoading} className={`button-mode ${mode === 'register' ? 'active' : ''}`} style={{ marginRight: '10px' }}>Registrarse</button>
         <button onClick={() => { setMode('login'); setError(''); }} disabled={mode === 'login' || isLoading} className={`button-mode ${mode === 'login' ? 'active' : ''}`}>Iniciar Sesión</button>
       </div>
 
-      {/* Formulario de LOGIN */}
       {mode === 'login' && (
-        // Usamos la nueva clase genérica para el contenedor del paso
         <div className="step-container login-view" style={{ padding: '20px' }}>
           <h2>Iniciar Sesión</h2>
-          {/* Usamos la clase original para el layout interno */}
           <form className="nickname-input-area" onSubmit={handleLoginSubmit}>
-            {/* Input Apodo */}
             <input
               type="text"
-              // Usamos CLASE en lugar de ID para estilo repetido
-              className="form-input nickname-style-input" // Clase genérica + clase específica si se necesita
-              id="login-apodo-input" // ID único para label (si hubiera)
+              className="form-input nickname-style-input"
+              id="login-apodo-input" 
               name="apodo" placeholder="Escribe tu nickname..."
               value={formData.apodo} onChange={handleInputChange} required disabled={isLoading}
             />
-            {/* Input Password */}
             <input
               type="password"
-              className="form-input password-style-input" // Clase genérica
-              id="login-password-input" // ID único
+              className="form-input password-style-input"
+              id="login-password-input"
               name="password" placeholder="Contraseña..."
               value={formData.password} onChange={handleInputChange} required disabled={isLoading}
               style={{ marginTop: '10px' }}
             />
-            {/* Botón Login */}
             <button
               type="submit"
-              // Usamos CLASE en lugar de ID para estilo repetido
-              className="form-button nickname-style-button" // Clase genérica + clase específica si se necesita
+              className="form-button nickname-style-button"
               disabled={isLoading} style={{ marginTop: '10px' }}
             >
               {isLoading ? 'Iniciando...' : 'Entrar'}
             </button>
           </form>
-          {/* Mensaje de Error */}
           {error && <p className="error-message" style={{ color: 'red', display: 'block', marginTop: '10px' }}>{error}</p>}
         </div>
       )}
 
-       {/* Flujo de REGISTRO */}
        {mode === 'register' && (
          <div className="register-flow">
-            {/* === PASO 1: APODO === */}
             {step === 'apodo' && (
-             <div className="step-container"> {/* Clase para centrado/fondo */}
+             <div className="step-container">
                 <h2>¡Bienvenido/a a Pimpoyo!</h2>
                 <p>Por favor, introduce un nickname para empezar:</p>
                 <form className="nickname-input-area" onSubmit={handleRegisterNextStep}>
                     <input
                         type="text"
-                        className="form-input" // Clase para estilo del input
-                        id="register-apodo" // ID único
+                        className="form-input"
+                        id="register-apodo"
                         name="apodo" value={formData.apodo} onChange={handleInputChange}
                         placeholder="Escribe tu nickname..." maxLength={20} required disabled={isLoading}
                     />
-                    <button type="submit" className="form-button" disabled={isLoading}>Siguiente</button> {/* Clase para estilo del botón */}
+                    <button type="submit" className="form-button" disabled={isLoading}>Siguiente</button>
                 </form>
-
-                {/* --- NUEVO BOTÓN/ENLACE PARA LOGIN --- */}
-                <div style={{ marginTop: '15px' }}> {/* Espacio extra */}
+                <div style={{ marginTop: '15px' }}>
                   <button
-                    type="button" // Importante para que no envíe el formulario de arriba
-                    className="switch-mode-link" // Nueva clase para darle estilo de enlace
+                    type="button"
+                    className="switch-mode-link"
                     disabled={isLoading}
                     onClick={() => {
-                        setMode('login'); // Cambia al modo login
-                        setError(''); // Limpia cualquier error previo
-                        // Opcional: Limpiar campos si es necesario al cambiar de modo
-                        // setFormData(prev => ({...prev, password: '', confirmPassword: '', etc...}));
+                        setMode('login');
+                        setError('');
                     }}
                   >
                     ¿Ya tienes cuenta? Inicia Sesión
                   </button>
                 </div>
-                {/* --- FIN NUEVO BOTÓN/ENLACE --- */}
               {error && <p className="error-message" style={{ color: 'red', display: 'block' }}>{error}</p>}
             </div>
-          )}
+            )}
 
-          {/* === PASO 2: GÉNERO === */}
-          {step === 'genero' && (
-            <div className="step-container gender-step-style"> {/* Clase genérica + específica */}
+            {step === 'genero' && (
+            <div className="step-container gender-step-style">
               <h2>Un poco más sobre ti...</h2>
               <p>Selecciona tu género:</p>
-              {/* Área de input/botón - reutilizar clase si aplica */}
               <div className="nickname-input-area">
                 <select
-                  className="form-select" // Clase específica para select
-                  id="register-genero" // ID único
+                  className="form-select"
+                  id="register-genero"
                   name="genero" value={formData.genero} onChange={handleInputChange}
                   required disabled={isLoading}
                   style={{ width: 'auto', minWidth: '200px'}}
@@ -270,35 +236,65 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
               </div>
               {error && <p className="error-message" style={{ color: 'red', display: 'block' }}>{error}</p>}
             </div>
-          )}
+            )}
 
-          {/* === PASO 3: EDAD === */}
-          {step === 'edad' && (
-             <div className="step-container age-step-style"> {/* Clase genérica + específica */}
+            {step === 'edad' && (
+             <div className="step-container age-step-style"> 
               <h2>¡Casi listo!</h2>
               <p>Introduce tu edad:</p>
               <div className="nickname-input-area">
                 <input
                   type="number"
-                  className="form-input age-style-input" // Clase para estilo
-                  id="register-edad" // ID único
+                  className="form-input age-style-input"
+                  id="register-edad"
                   name="edad" value={formData.edad} onChange={handleInputChange}
                   placeholder="Tu edad..." required min="1" disabled={isLoading}
                   style={{ width: 'auto', minWidth: '150px'}}
                 />
+                {/* El botón aquí ahora correctamente llevará al paso 'curso' debido al cambio en handleRegisterNextStep */}
                 <button type="button" className="form-button nickname-style-button" onClick={handleRegisterNextStep} disabled={isLoading}>Siguiente</button>
               </div>
               {error && <p className="error-message" style={{ color: 'red', display: 'block' }}>{error}</p>}
             </div>
-          )}
+            )}
 
-          {/* === PASO 4: FINAL (Contraseña + Consentimiento) === */}
-          {step === 'final' && (
-             <div className="step-container final-step-style"> {/* Clase genérica + específica */}
+            {/* === PASO CURSO ESCOLAR (YA DEBERÍA ESTAR VISIBLE SI `step` LLEGA A 'curso') === */}
+            {step === 'curso' && (
+             <div className="step-container course-step-style"> 
+                <h2>¿En qué curso estás?</h2>
+                <p>Esto nos ayudará a adaptar mejor el contenido.</p>
+                <div className="nickname-input-area">
+                  <select
+                    className="form-select"
+                    id="register-curso"
+                    name="curso_escolar" 
+                    value={formData.curso_escolar}
+                    onChange={handleInputChange}
+                    required
+                    disabled={isLoading}
+                    style={{ width: 'auto', minWidth: '220px'}}
+                  >
+                    <option value="">Selecciona tu curso...</option>
+                    <option value="quinto">Quinto de Primaria</option>
+                    <option value="sexto">Sexto de Primaria</option>
+                  </select>
+                  <button 
+                    type="button" 
+                    className="form-button nickname-style-button" 
+                    onClick={handleRegisterNextStep} 
+                    disabled={isLoading || !formData.curso_escolar} 
+                  >
+                    Siguiente
+                  </button>
+                </div>
+                {error && <p className="error-message" style={{ color: 'red', display: 'block' }}>{error}</p>}
+              </div>
+            )}
+
+            {step === 'final' && (
+             <div className="step-container final-step-style">
               <h2>Seguridad y Consentimiento</h2>
               <form className="final-step-area" onSubmit={handleRegisterSubmit} style={{ maxWidth: '450px', margin: '0 auto', textAlign: 'left' }}>
-                {/* Inputs para password, confirmPassword, checkbox consentimiento */}
-                {/* ... (Usar className="form-field", className="form-input", etc.) ... */}
                  <div className="form-field" style={{ marginBottom: '15px' }}>
                     <label htmlFor="register-password">Contraseña (mín. 8 caracteres):</label>
                     <input type="password" id="register-password" name="password" className="form-input" value={formData.password} onChange={handleInputChange} required minLength={8} disabled={isLoading} />
@@ -317,12 +313,11 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
               </form>
               {error && <p className="error-message" style={{ color: 'red', textAlign: 'center', marginTop: '10px' }}>{error}</p>}
             </div>
-          )}
-        </div> // fin .register-flow
+            )}
+        </div> 
       )}
-    </div> // fin .profile-setup-wrapper
+    </div>
   );
 }
-
 
 export default ProfileSetup;

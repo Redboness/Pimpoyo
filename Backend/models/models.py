@@ -15,6 +15,7 @@ class PerfilBase(BaseModel):
 class UsuarioCreate(PerfilBase):
     password: str = Field(..., min_length=8)
     consentimiento_obtenido: bool
+    curso_escolar: str
 
 class UsuarioUpdateProfile(BaseModel):
     apodo: Optional[str] = Field(None, min_length=1, max_length=50)
@@ -33,6 +34,7 @@ class UsuarioInDB(PerfilBase):
 class UsuarioPublic(PerfilBase):
     sesion_id: int
     avatar_url: Optional[str] = None
+    curso_escolar: Optional[str] = None
 
 class UserDetailedStatsResponse(BaseModel):
     totalAnalizadas: int

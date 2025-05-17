@@ -286,10 +286,15 @@ guided_analysis_router = APIRouter(tags=["Guided Analysis Activity"])
 challenge_router = APIRouter(prefix="/challenge", tags=["Challenges"])
 
 @auth_router.post("/register/", response_model=UsuarioPublic, status_code=status.HTTP_201_CREATED)
-async def register_usuario(usuario_in: UsuarioCreate):
+async def register_usuario(usuario_in: UsuarioCreate): # UsuarioCreate ahora incluye curso_escolar
     existing_user = await get_usuario_by_apodo(usuario_in.apodo)
     if existing_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Apodo already registered.")
+    
+    # Validación simple para curso_escolar (puedes hacerla más robusta)
+    if usuario_in.curso_escolar not in ["quinto", "sexto"]: # Asumiendo valores en minúscula
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Curso escolar debe ser 'quinto' o 'sexto'.")
+
     hashed_password = get_password_hash(usuario_in.password)
     query = sesiones_table.insert().values(
         apodo=usuario_in.apodo,
@@ -298,18 +303,30 @@ async def register_usuario(usuario_in: UsuarioCreate):
         genero=usuario_in.genero,
         avatar_url=str(usuario_in.avatar_url) if usuario_in.avatar_url else None,
         consentimiento_obtenido=usuario_in.consentimiento_obtenido,
+        curso_escolar=usuario_in.curso_escolar # <--- GUARDAR EL CURSO ESCOLAR
     )
     try:
         last_record_id = await database.execute(query)
         if last_record_id is None:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error creating user.")
+        
+        # Devolver el usuario creado, incluyendo el curso_escolar
+        # UsuarioPublic ahora debería tener curso_escolar gracias al cambio en models.py
         created_user_query = sesiones_table.select().where(sesiones_table.c.sesion_id == last_record_id)
         created_user_db = await database.fetch_one(created_user_query)
         if not created_user_db:
              raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not retrieve user after creation.")
-        return UsuarioPublic(**dict(created_user_db))
+        
+        # Mapear explícitamente para asegurar que curso_escolar está
+        user_public_data = dict(created_user_db)
+        # El modelo UsuarioPublic se encargará de la validación y serialización correctas
+        return UsuarioPublic(**user_public_data)
+
     except Exception as e:
         print(f"Detailed registration error: {e}")
+        # Considera si el error es por la constraint de la base de datos o algo más
+        if "curso_escolar" in str(e).lower(): # Ejemplo muy básico de detección de error
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Error con el campo curso_escolar: {str(e)[:100]}")
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Could not register user. Error: {str(e)[:100]}")
 
 @auth_router.post("/token", response_model=Token)
