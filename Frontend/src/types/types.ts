@@ -120,6 +120,7 @@ export interface GlossaryTermCreate {
 }
 
 export interface NoticiaParaAnalisis {
+  area_de_enfoque_sugerida: { area_de_enfoque_sugerida: any; };
   noticia_id_json: string;
   headline: string;
   text: string;

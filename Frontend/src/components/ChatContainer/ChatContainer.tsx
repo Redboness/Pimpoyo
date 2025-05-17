@@ -14,10 +14,10 @@ import {
   NewsChallengeState,
   DifficultyLevel,
   difficultyOrder,
-  NoticiaParaAnalisis,
-  ExplicacionInicialPayload,
+  NoticiaParaAnalisis,       // Asegúrate que esta interfaz en types.ts incluye area_de_enfoque_sugerida
+  ExplicacionInicialPayload, // Esta interfaz también se modificará en types.ts
   ChatGuiaResponse,
-  ContinuarChatGuiaPayload,
+  ContinuarChatGuiaPayload,  // Esta interfaz también podría modificarse en types.ts si decides pasar el área de enfoque aquí
   FinishPairChallengePayload,
   FinishPairChallengeResponse
 } from "../../types/types";
@@ -52,7 +52,7 @@ Estilo de Comunicación:
 - Lenguaje: Simple, adecuado para niños de 10-12 años. Evita tecnicismos complejos.
 - No afirmes lo que has recibido, es decir, si digo: Explicame como funciona X cosa, no digas: Claro, te explicaré cómo funciona X cosa (respuesta), simplemente responde a la pregunta sin repetirla.
 Adaptación Personalizada (Contexto Backend):
-- Ocasionalmente, podrías recibir información sobre las áreas de mejora del usuario. Usa esta información para enfocar sutilmente las preguntas o ejemplos en sus puntos débiles, ayudándole a practicar esas habilidades específicas.
+- Ocasionalmente, podrías recibir información sobre las áreas de mejora del usuario (como 'area_de_enfoque_sugerida'). Usa esta información para enfocar sutilmente las preguntas o ejemplos en sus puntos débiles, ayudándole a practicar esas habilidades específicas.
 Objetivo Final: Que el usuario aprenda a verificar información de forma crítica y autónoma, mediante un proceso interactivo y guiado.
 `;
 
@@ -88,7 +88,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const [incorrectStreak, setIncorrectStreak] = useState<number>(0);
 
   const [isSingleNewsAnalysisMode, setIsSingleNewsAnalysisMode] = useState<boolean>(false);
-  const [singleNewsAnalysisData, setSingleNewsAnalysisData] = useState<NoticiaParaAnalisis | null>(null);
+  const [singleNewsAnalysisData, setSingleNewsAnalysisData] = useState<NoticiaParaAnalisis | null>(null); // Este estado contendrá `area_de_enfoque_sugerida`
   const [currentGuidedChatSessionId, setCurrentGuidedChatSessionId] = useState<number | null>(null);
   const [isAwaitingInitialAnalysis, setIsAwaitingInitialAnalysis] = useState<boolean>(false);
   const [guidedAnalysesSubmitted, setGuidedAnalysesSubmitted] = useState<number>(0);
@@ -196,7 +196,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   // Comentario encima de la función resetSingleAnalysisMode
   const resetSingleAnalysisMode = useCallback(() => {
     setIsSingleNewsAnalysisMode(false);
-    setSingleNewsAnalysisData(null);
+    setSingleNewsAnalysisData(null); // Esto limpiará también el area_de_enfoque_sugerida
     setCurrentGuidedChatSessionId(null);
     setIsAwaitingInitialAnalysis(false);
   }, []);
@@ -263,8 +263,8 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
                 const errorData = await response.json().catch(() => ({ detail: `Error ${response.status}` }));
                 throw new Error(errorData.detail || `No se pudo cargar la noticia para análisis: ${response.status}`);
             }
-            const newsToAnalyze: NoticiaParaAnalisis = await response.json();
-            setSingleNewsAnalysisData({...newsToAnalyze, initialUserEvaluation: undefined });
+            const newsToAnalyze: NoticiaParaAnalisis = await response.json(); // Esto ahora incluirá area_de_enfoque_sugerida si el backend lo envía
+            setSingleNewsAnalysisData({...newsToAnalyze, initialUserEvaluation: undefined }); // Se guarda aquí
             setIsSingleNewsAnalysisMode(true);
 
             setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `Analicemos esta noticia (Nivel: ${difficultyLevel}):` } : msg));
@@ -278,6 +278,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
                     </div>
                 </div>`;
             addBotResponse(null, [], 100, undefined, newsHtml);
+            
+            // Opcional: Si quieres mostrar el área de enfoque al usuario (podría ser demasiado directo)
+            // if (newsToAnalyze.area_de_enfoque_sugerida) {
+            //   addBotResponse(`Pista: Intenta prestar especial atención a "${newsToAnalyze.area_de_enfoque_sugerida}" en esta noticia.`, [], 200);
+            // }
 
             setTimeout(() => {
                 addBotResponse(
@@ -522,7 +527,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
                     difficultyChangedMessage = "¡Ánimo! 💪 Vamos a probar con unas un poco más sencillas.";
                     setIncorrectStreak(0);
                 } else {
-                    setIncorrectStreak(0);
+                    setIncorrectStreak(0); // Reset incorrect streak even if at min difficulty
                 }
             }
         }
@@ -545,7 +550,6 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         }
         addBotResponse(feedbackText, [], feedbackPresentationDelay);
 
-        // INICIO MODIFICACIÓN EXCLUSIVA: Lógica de botones post-desafío de pares
         let nextStepButtons: MessageButton[];
         const isThreeStreakSpecialAndLevelUp = isCorrectBackend && tempCorrectStreak > 0 && tempCorrectStreak % 3 === 0 && difficultyChangedMessage && difficultyChangedMessage.includes("¡Subimos un poco la dificultad!");
         const isThreeStreakSpecialMaxLevel = isCorrectBackend && tempCorrectStreak > 0 && tempCorrectStreak % 3 === 0 && difficultyChangedMessage && difficultyChangedMessage.includes("¡Imparable!");
@@ -556,7 +560,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
                 { id: "btn-tips-again", text: "Ver Tips" },
                 { id: "btn-talk-again", text: "Sólo Charlar" }
             ];
-        } else if (isThreeStreakSpecialMaxLevel) { // Si es racha de 3 pero ya estaba en nivel máximo
+        } else if (isThreeStreakSpecialMaxLevel) { 
             nextStepButtons = [
                 { id: "btn-news-again", text: "Siguiente Desafío" },
                 { id: "btn-tips-again", text: "Ver Tips" },
@@ -564,7 +568,6 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
             ];
         }
          else {
-            // Para respuestas incorrectas, o correctas sin racha especial.
             nextStepButtons = [
                 { id: "btn-news-again", text: "Jugar otra vez" },
                 { id: "btn-tips-again", text: "Ver Tips" },
@@ -572,7 +575,6 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
             ];
         }
         addBotResponse("¿Qué quieres hacer ahora?", nextStepButtons, feedbackPresentationDelay + 200);
-        // FIN MODIFICACIÓN EXCLUSIVA
       } catch (error) {
         setIsBotTyping(false);
         setMessages(prev => prev.filter(m => m.id !== veamosId));
@@ -588,7 +590,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   }, [
     authToken, addUserChoiceMessage, addBotResponse, presentNewsChallenge, newsChallengeState,
     correctStreak, incorrectStreak, increaseDifficulty, decreaseDifficulty, difficultyLevel,
-    isSingleNewsAnalysisMode, currentGuidedChatSessionId, // guidedAnalysesSubmitted no es dependencia directa aquí
+    isSingleNewsAnalysisMode, currentGuidedChatSessionId, 
   ]);
 
   // Comentario encima de la función handleSendMessage
@@ -615,10 +617,14 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
           setSingleNewsAnalysisData(prevData => prevData ? { ...prevData, initialUserEvaluation: evaluacion } : null);
       }
 
+      // MODIFICACIÓN: Añadir area_de_enfoque_sugerida al payload si existe
       const payload: ExplicacionInicialPayload = {
         noticia_id_json: singleNewsAnalysisData.noticia_id_json,
         explicacion_usuario: inputText,
         evaluacion_inicial_opcional: evaluacion,
+        // Si singleNewsAnalysisData.area_de_enfoque_sugerida tiene un valor, lo incluimos.
+        // Asegúrate de que ExplicacionInicialPayload en types.ts permite este campo opcional.
+        ...(singleNewsAnalysisData.area_de_enfoque_sugerida && { area_de_enfoque_sugerida: singleNewsAnalysisData.area_de_enfoque_sugerida })
       };
       try {
         const response = await fetch('/api/activity/guided-analysis/explain', {
@@ -626,7 +632,6 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
           body: JSON.stringify(payload),
         });
-        // setIsBotTyping(false) se llama en addBotResponse
         if (!response.ok) { throw new Error((await response.json().catch(() => ({}))).detail || `Error ${response.status}`); }
         const responseData: ChatGuiaResponse = await response.json();
 
@@ -655,8 +660,14 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         resetSingleAnalysisMode();
       }
 
-    } else if (isSingleNewsAnalysisMode && currentGuidedChatSessionId) {
-      const payload: ContinuarChatGuiaPayload = { mensaje_usuario: inputText };
+    } else if (isSingleNewsAnalysisMode && currentGuidedChatSessionId && singleNewsAnalysisData) {
+      // MODIFICACIÓN: Añadir area_de_enfoque_sugerida al payload si existe y es relevante para la continuación
+      const payload: ContinuarChatGuiaPayload = { 
+        mensaje_usuario: inputText,
+        // Podrías decidir si reenviar el área de enfoque en cada mensaje de continuación,
+        // o si el backend ya la conoce por la sesión. Si la reenvías:
+        // ...(singleNewsAnalysisData.area_de_enfoque_sugerida && { area_de_enfoque_sugerida: singleNewsAnalysisData.area_de_enfoque_sugerida })
+      };
       try {
         const response = await fetch(`/api/activity/guided-analysis/chat/${currentGuidedChatSessionId}/continue`, {
             method: 'POST',
@@ -670,7 +681,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         let buttonsForContinuedGuidedPhase: MessageButton[] = [
             { id: "btn-finish-analysis", text: "Terminar análisis y ver solución" }
         ];
-        if (guidedAnalysesSubmitted >= 5) {
+        if (guidedAnalysesSubmitted >= 5) { // Podrías usar otro contador o lógica aquí
              buttonsForContinuedGuidedPhase.push({ id: "btn-tips-again", text: "Ver Tips" });
         }
         addBotResponse(
@@ -685,12 +696,12 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
             { id: "btn-news-again", text: "Otro Desafío" }
         ]);
       }
-    } else {
+    } else { // Modo Chat Libre o Interacciones Generales de Noticias Falsas (no análisis guiado individual)
         if (newsChallengeState && newsChallengeState.selectionMessageId) {
              const selectionMessage = messages.find(msg => msg.id === newsChallengeState.selectionMessageId);
              if (selectionMessage && !selectionMessage.buttonsDisabled) {
                  addBotResponse("Elige una de las noticias con los botones antes de escribir, por favor.", [], 0);
-                 setIsBotTyping(false); // Importante resetear si retornamos antes
+                 setIsBotTyping(false); 
                  return;
              }
         }
@@ -710,16 +721,16 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         try {
             const apiResponse = await fetch(targetEndpoint, {
                 method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' },
-                body: JSON.stringify({ messages: messagesForOllama, model: 'gemma3:4b' })
+                body: JSON.stringify({ messages: messagesForOllama, model: 'gemma3:4b' }) // Usar el modelo por defecto aquí o el que corresponda
             });
             if (!apiResponse.ok) {
-                setIsBotTyping(false); // Ocultar en error de API antes de lanzar
+                setIsBotTyping(false); 
                 const errData = await apiResponse.json().catch(() => ({})); throw new Error(errData.detail || `API Error ${apiResponse.status}`);
             }
             const data = await apiResponse.json();
-            addBotResponse(data.reply, [], 300); // Esto llama a setIsBotTyping(false)
+            addBotResponse(data.reply, [], 300); 
 
-            if (!isFreeChatMode) {
+            if (!isFreeChatMode) { // Solo añadir estos botones si no estamos en chat libre
                 addBotResponse(
                     "Puedes seguir preguntando o:",
                     [
@@ -730,7 +741,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
                 );
             }
         } catch (error) {
-            setIsBotTyping(false); // Asegurar que se oculta en cualquier error del try
+            setIsBotTyping(false); 
             console.error(`Error sending message via ${targetEndpoint}:`, error);
             addBotResponse(`Lo siento, hubo un problema: ${error instanceof Error ? error.message : 'Desconocido'}`, [], 100);
         }
