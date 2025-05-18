@@ -332,7 +332,7 @@ function SidePanel({
 
             {/* Sección para el Botón de Post-Test */}
             <hr className="separator" style={{marginTop: '25px', marginBottom: '15px'}}/>
-            <h3 style={{color: '#4a3112', marginBottom: '10px'}}>Evaluación de Progreso</h3>
+            <h3 style={{color: '#4a3112', marginBottom: '10px'}}>Evaluación de progreso</h3>
             {necesitaPreTest && (
                  <p style={{textAlign: 'center', color: '#777', fontSize: '0.9em'}}>
                     Primero necesitas completar las actividades iniciales para desbloquear la evaluación de progreso.

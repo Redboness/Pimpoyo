@@ -36,14 +36,14 @@ function EstadisticasPimpoyo({ totalAnalizadas, aciertos, fallos, xp, xpNextLeve
 
   return (
     <div className="estadisticas-pimpoyo">
-    <h2>Registro del Detective</h2>
+    <h2>Registro del detective</h2>
 
     {/* --- Rango --- */}
     <div className="estadistica-item rango-detective">
       <span className="icono">🎖️</span>
       {/* Contenedor para etiqueta y valor */}
       <div className="stat-main">
-        <span className="etiqueta">Rango Actual:</span>
+        <span className="etiqueta">Rango actual:</span>
         <span className="valor-texto">{rango}</span>
       </div>
     </div>
@@ -53,7 +53,7 @@ function EstadisticasPimpoyo({ totalAnalizadas, aciertos, fallos, xp, xpNextLeve
       <span className="icono" aria-label="Total">📰</span>
       {/* Contenedor para etiqueta y valor */}
       <div className="stat-main">
-        <span className="etiqueta">Noticias Analizadas:</span>
+        <span className="etiqueta">Noticias analizadas:</span>
         {/* Contenedor solo para el valor (sin barra aquí) */}
         <div className="stat-details">
            <span className="valor">{totalAnalizadas}</span>
@@ -67,7 +67,7 @@ function EstadisticasPimpoyo({ totalAnalizadas, aciertos, fallos, xp, xpNextLeve
       <span className="icono" aria-label="Aciertos">✔️</span>
       {/* Contenedor para etiqueta y valor+barra */}
       <div className="stat-main">
-        <span className="etiqueta">Aciertos Detectivescos:</span>
+        <span className="etiqueta">Aciertos detectivescos:</span>
         {/* Contenedor para valor Y la nueva mini-barra */}
         <div className="stat-details">
           <span className="valor">{aciertos}</span>
@@ -89,7 +89,7 @@ function EstadisticasPimpoyo({ totalAnalizadas, aciertos, fallos, xp, xpNextLeve
       <span className="icono" aria-label="Fallos">❌</span>
        {/* Contenedor para etiqueta y valor+barra */}
       <div className="stat-main">
-        <span className="etiqueta">Pistas a Revisar:</span>
+        <span className="etiqueta">Intentos fallidos:</span>
          {/* Contenedor para valor Y la nueva mini-barra */}
         <div className="stat-details">
           <span className="valor">{fallos}</span>
