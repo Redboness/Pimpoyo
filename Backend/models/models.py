@@ -11,17 +11,23 @@ class PerfilBase(BaseModel):
     genero: str | None = None
     edad: int
     avatar_url: Optional[HttpUrl | str] = None
+    curso_escolar: Optional[str] = None
+    puntuacion_pre_test: Optional[float] = None
+    puntuacion_post_test: Optional[float] = None # Añadido para que UsuarioInDB y UsuarioPublic lo hereden
 
-class UsuarioCreate(PerfilBase):
-    password: str = Field(..., min_length=8)
+
+class UsuarioCreate(PerfilBase): # Hereda curso_escolar y puntuacion_pre_test (opcional)
+    password: str
     consentimiento_obtenido: bool
-    curso_escolar: str
+    curso_escolar: str # Lo hacemos requerido aquí, sobrescribiendo el opcional de PerfilBase
+    # puntuacion_pre_test ya es opcional desde PerfilBase, se enviará desde el frontend
+
 
 class UsuarioUpdateProfile(BaseModel):
     apodo: Optional[str] = Field(None, min_length=1, max_length=50)
     avatar_url: Optional[HttpUrl | str | None] = Field(None)
 
-class UsuarioInDB(PerfilBase):
+class UsuarioInDB(PerfilBase): # Hereda puntuacion_pre_test y puntuacion_post_test de PerfilBase
     sesion_id: int
     hashed_password: str
     consentimiento_obtenido: bool
@@ -30,11 +36,12 @@ class UsuarioInDB(PerfilBase):
     fallos_totales_sesion: Optional[int] = 0
     precision_global_sesion: Optional[float] = None
     xp_actual: Optional[int] = 0
+    # Si tienes puntuacion_final en tu tabla y es distinta de puntuacion_post_test, añádela aquí también si la usas.
 
-class UsuarioPublic(PerfilBase):
+class UsuarioPublic(PerfilBase): # Hereda puntuacion_pre_test y puntuacion_post_test de PerfilBase
     sesion_id: int
     avatar_url: Optional[str] = None
-    curso_escolar: Optional[str] = None
+    # curso_escolar, puntuacion_pre_test, puntuacion_post_test se heredan de PerfilBase
 
 class UserDetailedStatsResponse(BaseModel):
     totalAnalizadas: int
@@ -113,17 +120,19 @@ class InteraccionInDB(InteraccionCreate):
 class InteraccionPublic(InteraccionInDB):
     pass
 
-class NoticiaParaAnalisis(BaseModel):
+class NoticiaParaAnalisis(BaseModel): # Para análisis guiado normal
     noticia_id_json: str
     headline: str
     text: str
     source: Optional[str] = None
     difficulty_level: Optional[str] = None
+    area_de_enfoque_sugerida: Optional[str] = None # Ya lo tenías de antes
 
 class ExplicacionInicialRequest(BaseModel):
     noticia_id_json: str
     explicacion_usuario: str = Field(..., min_length=1)
     evaluacion_inicial_opcional: Optional[str] = Field(None, pattern="^(TRUE|FALSE|UNSURE)$")
+    area_de_enfoque_sugerida: Optional[str] = None # Añadido para consistencia con ChatContainer
 
 class ChatGuiaResponse(BaseModel):
     chat_sesion_noticia_id: int
@@ -131,6 +140,7 @@ class ChatGuiaResponse(BaseModel):
 
 class ContinuarChatGuiaRequest(BaseModel):
     mensaje_usuario: str = Field(..., min_length=1)
+    area_de_enfoque_sugerida: Optional[str] = None # Opcional
 
 class MejoraComprensionSubModel(BaseModel):
     evaluacion: str # SI, NO, INCIERTO
@@ -155,7 +165,6 @@ class ChatSesionNoticiaPublic(BaseModel):
     conceptos_clave_discutidos: Optional[List[str]] = None
     mejora_comprension_evaluacion: Optional[str] = None
     mejora_comprension_justificacion: Optional[str] = None
-
     class Config:
         from_attributes = True
 
@@ -166,20 +175,54 @@ class MensajeChatGuiaPublic(BaseModel):
     contenido: str
     timestamp_mensaje: datetime
     orden_en_chat: int
-
     class Config:
         from_attributes = True
 
-# --- Definición CORREGIDA y COMPLETA de FinishPairChallengeRequest ---
 class FinishPairChallengeRequest(BaseModel):
     noticia_verdadera_id_json: str
-    noticia_falsa_id_json: str # Asegúrate que este ID se envía desde el frontend
+    noticia_falsa_id_json: str
     seleccion_usuario_id_json: str
     tiempo_respuesta_ms: Optional[int] = None
 
-# --- Modelo para la respuesta del desafío de pares ---
 class FinishPairChallengeResponse(BaseModel):
     message: str
     es_correcto: bool
-    explanation: Optional[str] = None # Nuevo campo para la explicación
-    
+    explanation: Optional[str] = None
+
+
+# --- Modelos para el Post-Test ---
+
+class PreguntaPostTestEleccion(BaseModel): # Ya lo tienes
+    id_pregunta: str
+    texto_pregunta: str
+    opciones: List[str]
+
+class NoticiaParaPostTest(BaseModel): # Ya lo tienes
+    noticia_id_json: str
+    headline: str
+    text: str
+    source: Optional[str] = None
+
+class PostTestStartResponse(BaseModel): # Ya lo tienes, asegúrate que usa NoticiaParaPostTest
+    preguntas_eleccion: List[PreguntaPostTestEleccion]
+    noticias_para_analizar: List[NoticiaParaPostTest] # Corregido para usar tu nombre de modelo
+
+# Tu `RespuestaPostTestItem` actual se usa para el análisis de noticias.
+# Lo renombramos para claridad y añadimos uno para las preguntas de elección.
+class RespuestaPreguntaEleccionItem(BaseModel): # <--- AÑADIR ESTE
+    id_pregunta: str
+    respuesta_seleccionada: str
+
+class RespuestaAnalisisNoticiaItem(BaseModel): # <--- PUEDES RENOMBRAR TU RespuestaPostTestItem A ESTE
+    noticia_id_json: str
+    evaluacion_usuario: str # 'TRUE' o 'FALSE' (antes tu `RespuestaPostTestItem` tenía `respuesta_usuario`)
+
+class PostTestSubmitPayload(BaseModel): # <--- MODIFICAR ESTE
+    respuestas_eleccion: List[RespuestaPreguntaEleccionItem]
+    respuestas_analisis_noticias: List[RespuestaAnalisisNoticiaItem] # Usar el nombre claro
+
+class PostTestSubmitResponse(BaseModel): # Ya lo tienes y está bien
+    message: str
+    puntuacion_final: float
+    aciertos: int
+    total_preguntas: int

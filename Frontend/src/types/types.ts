@@ -19,6 +19,8 @@ export interface UserInfo {
   avatar_url?: string | null;
   curso_escolar: string
   password: string;
+  puntuacion_pre_test?: number | null; // Lo añadimos antes
+  puntuacion_post_test?: number | null; // Para el resultado del post-test
 }
 
 // Interface for the props that receives SidePanel
@@ -29,6 +31,7 @@ export interface SidePanelProps {
   authToken: string;
   onLogout: () => void;
   onSettingsSaved: () => void;
+  onStartPostTest: () => void;
 }
 
 export type DifficultyLevel = 'bajo' | 'medio' | 'alto';
@@ -122,6 +125,7 @@ export interface GlossaryTermCreate {
 }
 
 export interface NoticiaParaAnalisis {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   area_de_enfoque_sugerida: { area_de_enfoque_sugerida: any; };
   noticia_id_json: string;
   headline: string;
@@ -163,4 +167,60 @@ export interface FinishPairChallengeResponse {
     message: string;
     es_correcto: boolean;
     explanation?: string;
+}
+
+// src/types/types.ts
+// ... (otros tipos que ya tienes) ...
+export interface PreguntaPostTestEleccion {
+  id_pregunta: string;
+  texto_pregunta: string;
+  opciones: string[];
+  // No se incluye la respuesta correcta aquí, ya que es para el frontend durante el test
+}
+
+// Para cada noticia que se muestra en la fase de análisis del post-test
+export interface NoticiaParaAnalisisPostTest {
+  noticia_id_json: string;
+  headline: string;
+  text: string;
+  source?: string | null;
+  // No se incluye CATEGORY para no revelar la respuesta durante el test
+}
+
+// Estructura de la respuesta del backend cuando se inicia el post-test
+export interface PostTestStartResponse {
+  preguntas_eleccion: PreguntaPostTestEleccion[];
+  noticias_para_analizar: NoticiaParaAnalisisPostTest[];
+}
+
+// Para enviar la respuesta a una pregunta de elección múltiple
+export interface RespuestaPreguntaEleccionItem {
+  id_pregunta: string;
+  respuesta_seleccionada: string;
+}
+
+// Para enviar la evaluación de una noticia en el post-test
+export interface RespuestaAnalisisNoticiaItem {
+  noticia_id_json: string;
+  evaluacion_usuario: 'TRUE' | 'FALSE'; // El usuario indica si cree que es Verdadera o Falsa
+}
+
+// Payload que el frontend envía al backend al finalizar el post-test
+export interface PostTestSubmitPayload {
+  respuestas_eleccion: RespuestaPreguntaEleccionItem[];
+  respuestas_analisis_noticias: RespuestaAnalisisNoticiaItem[];
+}
+
+// Estructura de la respuesta del backend después de enviar el post-test
+export interface PostTestSubmitResponse {
+  message: string;
+  puntuacion_final: number;
+  aciertos: number;
+  total_preguntas: number;
+}
+
+export interface PostTestFlowProps {
+  authToken: string;
+  onTestComplete: (score: number, aciertos: number, totalQuestions: number) => void;
+  onCancelTest?: () => void;
 }

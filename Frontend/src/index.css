@@ -1080,3 +1080,192 @@ body {
     font-weight: bold;
     color: #4a3112;
 }
+
+/* Post test stuff */
+
+/* === Estilos para PostTestFlow === */
+.post-test-flow-container {
+  padding: 20px;
+  text-align: center;
+  font-family: "Fredoka", "Comic Sans MS", sans-serif; /* Hereda o define tu fuente */
+  background-color: #fff4de; /* Mismo fondo que chat-container */
+  min-height: calc(100vh - 60px); /* Ajusta si tu header tiene altura diferente */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.post-test-title {
+  color: #4a3112;
+  margin-bottom: 10px;
+}
+
+.post-test-subtitle {
+  color: #6b4f34;
+  margin-bottom: 30px;
+  max-width: 600px;
+}
+
+.post-test-item-block { /* Para preguntas de elección y para noticias */
+  border: 1px solid #e0cda1;
+  padding: 25px; /* Un poco más de padding */
+  margin: 20px auto;
+  max-width: 700px;
+  background-color: #fffaf0;
+  border-radius: 10px; /* Bordes más redondeados */
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  text-align: left; /* Por defecto para el contenido interno */
+}
+
+.post-test-question-text {
+  font-weight: bold;
+  margin-bottom: 15px;
+  font-size: 1.1em;
+  color: #4a3112;
+}
+
+.post-test-options-group {
+  margin-left: 10px; /* Indentación para las opciones */
+}
+
+.post-test-option-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px; /* Más espacio entre opciones */
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid transparent; /* Borde sutil para efecto hover/selected */
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.post-test-option-item:hover {
+  background-color: #fdf9e0;
+}
+
+.post-test-option-item input[type="radio"] {
+  margin-right: 10px;
+  transform: scale(1.1); /* Hacer los radio un poco más grandes */
+  cursor: pointer;
+}
+.post-test-option-item label {
+  cursor: pointer;
+  color: #4a3112;
+}
+
+.post-test-option-item.selected { /* Clase para la opción seleccionada */
+  border-color: #94ab3d;
+  background-color: #f0f5d4;
+  font-weight: bold;
+}
+
+.post-test-news-headline {
+  font-size: 1.4em; /* Más grande para la noticia */
+  color: #4a3112;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.post-test-news-source {
+  font-style: italic;
+  color: #777;
+  margin-bottom: 15px;
+  font-size: 0.9em;
+  text-align: center;
+}
+.post-test-news-text-scroll {
+  max-height: 200px;
+  overflow-y: auto;
+  text-align: justify;
+  border: 1px solid #f0e6d0;
+  padding: 15px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  background-color: #fff;
+  border-radius: 6px;
+}
+.post-test-news-text-scroll p {
+  margin-bottom: 0.5em;
+}
+.post-test-news-text-scroll p:last-child {
+  margin-bottom: 0;
+}
+
+
+.post-test-button { /* Estilo base para botones del test */
+  margin: 10px 5px;
+  padding: 12px 25px;
+  font-size: 1em;
+  cursor: pointer;
+  border: none;
+  border-radius: 25px; /* Consistente con .form-button */
+  font-weight: bold;
+  font-family: inherit; /* Heredar Fredoka */
+  transition: background-color 0.2s, transform 0.1s;
+}
+.post-test-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.post-test-button:disabled {
+    background-color: #cccccc !important;
+    color: #666666 !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+
+.post-test-button-true {
+  background-color: #a8d8a8; /* Verde más suave */
+  color: #206024; /* Color de texto más oscuro para contraste */
+}
+.post-test-button-true:hover:not(:disabled) {
+  background-color: #8bcd8b;
+}
+
+.post-test-button-false {
+  background-color: #fab1a0; /* Salmón más suave */
+  color: #a52a2a; /* Color de texto más oscuro */
+}
+.post-test-button-false:hover:not(:disabled) {
+  background-color: #f79481;
+}
+
+.post-test-button-next { /* Para "Siguiente" y "Finalizar" */
+  background-color: #94ab3d; /* Tu verde principal */
+  color: white;
+}
+.post-test-button-next:hover:not(:disabled) {
+  background-color: #7a8e31; /* Tu verde principal más oscuro */
+}
+
+.post-test-button-cancel {
+    background-color: #e0e0e0;
+    color: #555555;
+}
+.post-test-button-cancel:hover:not(:disabled) {
+    background-color: #d0d0d0;
+}
+
+
+.post-test-loading-error {
+  font-size: 1.2em;
+  color: #c62828; /* Rojo error */
+  margin-top: 30px;
+}
+
+.post-test-finished-message {
+  margin-top: 30px;
+  font-size: 1.2em;
+  padding: 25px;
+  background-color: #e6ffed;
+  border: 1px solid #b2dfdb;
+  border-radius: 8px;
+  color: #2e7d32;
+  max-width: 600px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+.post-test-finished-message p {
+    margin-bottom: 15px;
+}

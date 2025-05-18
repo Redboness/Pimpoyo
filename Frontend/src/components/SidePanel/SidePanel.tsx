@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
-import { SidePanelProps, GlossaryTermPublic, UserDetailedStats } from '../../types/types';
+import { SidePanelProps, GlossaryTermPublic, UserDetailedStats } from '../../types/types'; // Asegúrate que UserInfo y SidePanelProps estén actualizadas en types.ts
 import EstadisticasPimpoyo from '../EstadisticasPimpoyo/EstadisticasPimpoyo';
 
 // Define la estructura interna y los términos por defecto para el glosario
@@ -29,7 +29,15 @@ const defaultGlossaryTerms: GlossaryEntry[] = [
 ];
 
 // Componente SidePanel
-function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsSaved }: SidePanelProps) {
+function SidePanel({
+    isOpen,
+    onClose,
+    userInfo,
+    authToken,
+    onLogout,
+    onSettingsSaved,
+    onStartPostTest // <--- RECIBIR LA NUEVA PROP
+}: SidePanelProps) {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [nicknameSetting, setNicknameSetting] = useState('');
   const [avatarUrlSetting, setAvatarUrlSetting] = useState('');
@@ -46,8 +54,13 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
   const [statsError, setStatsError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (userInfo) { setNicknameSetting(userInfo.apodo); setAvatarUrlSetting(userInfo.avatar_url || ''); }
-    else { setNicknameSetting(''); setAvatarUrlSetting(''); }
+    if (userInfo) {
+      setNicknameSetting(userInfo.apodo);
+      setAvatarUrlSetting(userInfo.avatar_url || '');
+    } else {
+      setNicknameSetting('');
+      setAvatarUrlSetting('');
+    }
   }, [userInfo]);
 
   const fetchUserGlossaryTerms = useCallback(async () => {
@@ -121,16 +134,14 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
   }, [authToken]);
 
   useEffect(() => {
-    if (isOpen && activeSection === 'stats' && !isStatsLoading) { // El chequeo !isStatsLoading es clave aquí
+    if (isOpen && activeSection === 'stats' && !isStatsLoading) {
       fetchUserStats();
     }
     if (!isOpen || activeSection !== 'stats') {
        setFetchedStats(null);
        setStatsError(null);
     }
-  // --- MODIFICACIÓN CLAVE: Quitar isStatsLoading del array de dependencias ---
   }, [isOpen, activeSection, fetchUserStats]);
-  // --- FIN MODIFICACIÓN ---
 
   const handleSectionChange = (section: string | null) => {
     setActiveSection(section);
@@ -158,7 +169,7 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
         const responseData = await response.json();
         if (!response.ok) { throw new Error(responseData.detail || `Error: ${response.status}`); }
         setSettingsFeedback({ type: 'success', message: '¡Cambios guardados!' });
-        onSettingsSaved();
+        onSettingsSaved(); // Esto refrescará la userInfo en ChatContainer
         setTimeout(() => setSettingsFeedback(null), 3000);
     } catch (error) {
         setSettingsLoading(false);
@@ -190,15 +201,17 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
         }
         setNewTerm('');
         setNewDefinition('');
-        await fetchUserGlossaryTerms();
+        await fetchUserGlossaryTerms(); // Refrescar la lista
     } catch (error) {
         console.error("Error al añadir término del glosario:", error);
         setGlossaryError(error instanceof Error ? error.message : 'No se pudo añadir la palabra.');
-        setGlossaryLoading(false);
+    } finally {
+        setGlossaryLoading(false); // Asegurar que se quita el loading incluso si hay error al final
     }
   };
 
   const groupedGlossary = useMemo(() => {
+    // ... (tu lógica de groupedGlossary)
     const combinedTerms = [...defaultGlossaryTerms, ...userGlossaryTerms];
     const validTerms = combinedTerms.filter((term) => term && typeof term.term === 'string' && term.term.length > 0);
     let sortedTerms: GlossaryEntry[] = [];
@@ -225,6 +238,18 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 
+  // Lógica para decidir si mostrar el botón de post-test
+  // Asumiendo que UserInfo en types.ts ahora tiene puntuacion_pre_test y puntuacion_post_test
+  const puedeHacerPostTest = userInfo &&
+                             (userInfo.puntuacion_pre_test !== null && userInfo.puntuacion_pre_test !== undefined) &&
+                             (userInfo.puntuacion_post_test === null || userInfo.puntuacion_post_test === undefined);
+
+  const yaHizoPostTest = userInfo &&
+                        (userInfo.puntuacion_post_test !== null && userInfo.puntuacion_post_test !== undefined);
+
+  const necesitaPreTest = userInfo && (userInfo.puntuacion_pre_test === null || userInfo.puntuacion_pre_test === undefined);
+
+
   return (
     <div id="side-panel" className={`side-panel ${isOpen ? 'open' : ''}`}>
       <div className="panel-header">
@@ -242,6 +267,7 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
         </div>
 
         {activeSection === 'glossary' && (
+          // ... (tu contenido de glosario) ...
           <div id="glossary-content" className="panel-section-content" style={{ display: 'block' }}>
             <h3>Glosario</h3>
             <form onSubmit={handleAddGlossaryTerm} className="glossary-add-form" style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#fdf9e0', borderRadius: '8px' }}>
@@ -303,10 +329,40 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
              {!isStatsLoading && !statsError && !fetchedStats && (
                 <p>No hay datos de estadísticas disponibles o aún no has jugado.</p>
              )}
+
+            {/* Sección para el Botón de Post-Test */}
+            <hr className="separator" style={{marginTop: '25px', marginBottom: '15px'}}/>
+            <h3 style={{color: '#4a3112', marginBottom: '10px'}}>Evaluación de Progreso</h3>
+            {necesitaPreTest && (
+                 <p style={{textAlign: 'center', color: '#777', fontSize: '0.9em'}}>
+                    Primero necesitas completar las actividades iniciales para desbloquear la evaluación de progreso.
+                 </p>
+            )}
+            {puedeHacerPostTest && (
+                <button
+                    className="panel-button"
+                    onClick={() => {
+                        if(onStartPostTest) onStartPostTest();
+                        onClose(); // Cierra el panel lateral
+                    }}
+                    // Aplicar un estilo distintivo para este botón
+                    style={{ backgroundColor: '#5cb85c', color: 'white', fontWeight: 'bold', border: 'none' }}
+                >
+                    Evaluar mi progreso actual
+                </button>
+            )}
+            {yaHizoPostTest && userInfo && ( // Mostrar puntuación si ya hizo el post-test
+                <p style={{textAlign: 'center', color: 'green', fontWeight: 'bold', marginTop:'10px'}}>
+                    ¡Ya completaste tu evaluación de progreso!
+                    <br />
+                    Puntuación: {userInfo.puntuacion_post_test?.toFixed(2)}%
+                </p>
+            )}
           </div>
         )}
 
         {activeSection === 'settings' && (
+          // ... (tu contenido de ajustes) ...
           <div id="settings-content" className="panel-section-content" style={{ display: 'block' }}>
             <h3>Ajustes</h3>
             {userInfo ? (<>
@@ -334,12 +390,15 @@ function SidePanel({ isOpen, onClose, userInfo, authToken, onLogout, onSettingsS
             </>) : (
               <p>Cargando información...</p>
             )}
-            <hr className="separator" />
-            <button id="settings-logout-btn" className="panel-button logout-button" onClick={onLogout}>
-              Salir del Chat
-            </button>
+            {/* El botón de Logout se mueve al final del panel-content */}
           </div>
         )}
+      </div>
+      {/* Contenedor separado para el botón de logout, siempre visible al final del panel */}
+      <div style={{padding: '20px', borderTop: '1px solid rgba(148, 171, 61, 0.2)', marginTop: 'auto' }}>
+        <button id="settings-logout-btn" className="panel-button logout-button" onClick={onLogout}>
+          Salir de Pimpoyo
+        </button>
       </div>
     </div>
   );
