@@ -1,6 +1,7 @@
 // src/components/ProfileSetup/ProfileSetup.tsx
 import React, { useState } from 'react';
 
+// --- Interfaces ---
 interface RegisterPayload {
   apodo: string;
   genero: string;
@@ -8,21 +9,122 @@ interface RegisterPayload {
   password: string;
   consentimiento_obtenido: boolean;
   curso_escolar: string;
-  puntuacion_pre_test?: number; // Lo haremos opcional en el payload del frontend por ahora
+  puntuacion_pre_test?: number;
 }
 
 interface ProfileSetupProps {
   onAuthSuccess: (token: string) => void;
 }
 
-// NUEVO PASO: 'pretest'
 type RegisterStep = 'apodo' | 'genero' | 'edad' | 'curso' | 'pretest' | 'final';
 
-// Simulación de preguntas del pre-test
-const preTestQuestions = [
-  { id: 'q1', text: '¿Es siempre verdad todo lo que lees en internet?', options: ['Sí', 'No', 'A veces'], correctAnswer: 'No' },
-  { id: 'q2', text: 'Si una noticia te hace sentir muy enfadado o muy feliz muy rápido, ¿qué deberías hacer?', options: ['Compartirla inmediatamente', 'Creerla sin dudar', 'Parar y pensar si podría ser para provocarte'], correctAnswer: 'Parar y pensar si podría ser para provocarte' },
-  // Añade más preguntas (por ejemplo, hasta 5)
+// --- Preguntas del Pre-Test ---
+const preSurveyQuestions = [
+  {
+    id: 'q1',
+    text: '1. En una escala del 1 (no soy nada bueno) al 5 (¡se me da genial!), ¿cómo dirías que se te da descubrir si una noticia que ves en internet o redes sociales es verdadera o es falsa?',
+    type: 'radio',
+    options: [
+      '1 - Nada bueno/a, me cuesta muchísimo.',
+      '2 - No muy bueno/a, suelo dudar.',
+      '3 - Normal, a veces acierto y a veces no.',
+      '4 - Bastante bueno/a, suelo acertar.',
+      '5 - ¡Soy un crack!, se me da muy bien.'
+    ]
+  },
+  {
+    id: 'q2',
+    text: '2. ¿Te ha pasado alguna vez que te creíste mucho una noticia que luego resultó ser mentira?',
+    type: 'radio',
+    options: [
+      'Sí, varias veces.',
+      'Sí, alguna vez.',
+      'No que yo recuerde.',
+      'No estoy seguro/a.'
+    ]
+  },
+  {
+    id: 'q3',
+    text: '3. ¿Y al revés? ¿Alguna vez pensaste que una noticia era falsa, pero luego te diste cuenta de que era verdad?',
+    type: 'radio',
+    options: [
+      'Sí, varias veces.',
+      'Sí, alguna vez.',
+      'No que yo recuerde.',
+      'No estoy seguro/a.'
+    ]
+  },
+  {
+    id: 'q4',
+    text: '4. ¿Cómo de difícil crees que es saber si una noticia es real hoy en día?',
+    type: 'radio',
+    options: [
+      'Es muy fácil, casi nunca tengo dudas.',
+      'Es bastante fácil, aunque a veces dudo.',
+      'Ni fácil ni difícil, depende mucho de la noticia.',
+      'Bastante difícil, dudo a menudo.',
+      'Muy difícil, casi siempre dudo o no lo sé.'
+    ]
+  },
+  {
+    id: 'q5',
+    text: '5. Cuando ves una noticia y no estás seguro/a, ¿en qué cosas te sueles fijar? (Puedes marcar TODAS las que apliquen)',
+    type: 'checkbox',
+    options: [
+      'Si la web o la persona que la publica parece de confianza.',
+      'Si el titular es muy exagerado o busca polémica.',
+      'Si tiene fotos o vídeos (¡me creo más las que tienen!).',
+      'Si está bien escrita, sin faltas de ortografía.',
+      'Si explica de dónde viene la información o da pruebas.',
+      'Si la comparten mis amigos o mucha gente.',
+      'Si la fecha es reciente o antigua.',
+      'Si me hace sentir muy enfadado/a o sorprendido/a.',
+      'La verdad, no me suelo fijar mucho.'
+    ]
+  },
+  {
+    id: 'q6',
+    text: '6. ¿Qué tipo de FUENTES (quién escribe o publica) te hacen CONFIAR MÁS en que una noticia es verdad? (Puedes marcar TODAS las que te den confianza)',
+    type: 'checkbox',
+    options: [
+      'Periódicos, telediarios o webs de noticias famosas.',
+      'Webs oficiales (del gobierno, de la NASA, de universidades...).',
+      'Un científico o experto conocido que habla del tema.',
+      'Mis amigos o mi familia cuando me cuentan algo.',
+      'Un Youtuber o Tiktoker con muchos seguidores.',
+      'Cualquier web que parezca profesional, aunque no la conozca.',
+      'Mensajes que se reenvían mucho por WhatsApp.'
+    ]
+  },
+  {
+    id: 'q7',
+    text: '7. ¿Qué cosas en una noticia te harían SOSPECHAR MÁS de que podría ser FALSA? (Puedes marcar TODAS las que te hagan dudar)',
+    type: 'checkbox',
+    options: [
+      'Un titular súper exagerado o increíble.',
+      'Muchas faltas de ortografía o frases mal escritas.',
+      'Uso de MUCHAS MAYÚSCULAS y signos de exclamación !!!',
+      'Un lenguaje que busca enfadarte, darte miedo o insultar.',
+      'Que no diga de dónde saca la información o no dé pruebas.',
+      'Que te pida compartirla "URGENTE" con todo el mundo.',
+      'Que no tenga fecha o sea muy, muy antigua.',
+      'Que nadie más hable de esa noticia en otros sitios.'
+    ]
+  },
+  {
+    id: 'q8',
+    text: '8. Y al revés, ¿qué cosas te harían PENSAR que una noticia tiene MÁS POSIBILIDADES de ser VERDAD? (Puedes marcar TODAS las que te ayuden)',
+    type: 'checkbox',
+    options: [
+      'Si explica claramente de dónde viene la información y da enlaces o nombres.',
+      'Si la escriben expertos o periodistas conocidos.',
+      'Si varios periódicos o webs de noticias fiables cuentan lo mismo.',
+      'Si está escrita de forma tranquila y objetiva, sin insultar ni exagerar.',
+      'Si tiene una fecha clara y es reciente.',
+      'Si presenta datos o números concretos (y dice de dónde salen).',
+      'Si encaja con cosas que ya sé que son verdad.'
+    ]
+  }
 ];
 
 function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
@@ -37,9 +139,8 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
     password: '',
     confirmPassword: '',
     consentimiento: false,
-    // Estado para las respuestas del pre-test
-    preTestAnswers: {} as Record<string, string>, // ej: {q1: 'No', q2: 'Sí'}
-    puntuacion_pre_test: null as number | null, // Para guardar la puntuación calculada
+    preTestAnswers: {} as Record<string, string | string[]>,
+    puntuacion_pre_test: null as number | null,
   });
 
   const [error, setError] = useState<string>('');
@@ -52,69 +153,69 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
     setError('');
   };
 
-  const handlePreTestAnswerChange = (questionId: string, answer: string) => {
-    setFormData(prev => ({
-      ...prev,
-      preTestAnswers: {
-        ...prev.preTestAnswers,
-        [questionId]: answer,
+  const handlePreTestAnswerChange = (questionId: string, answer: string, type: 'radio' | 'checkbox') => {
+    setError('');
+    setFormData(prev => {
+      const currentAnswers = { ...prev.preTestAnswers };
+      if (type === 'radio') {
+        currentAnswers[questionId] = answer;
+      } else {
+        const currentSelection = (currentAnswers[questionId] as string[] | undefined) || [];
+        if (currentSelection.includes(answer)) {
+          currentAnswers[questionId] = currentSelection.filter(item => item !== answer);
+        } else {
+          currentAnswers[questionId] = [...currentSelection, answer];
+        }
       }
-    }));
-  };
-
-  const calculatePreTestScore = () => {
-    let score = 0;
-    preTestQuestions.forEach(q => {
-      if (formData.preTestAnswers[q.id] === q.correctAnswer) {
-        score += (100 / preTestQuestions.length); // Puntuación simple sobre 100
-      }
+      return { ...prev, preTestAnswers: currentAnswers };
     });
-    return parseFloat(score.toFixed(2)); // Redondear a 2 decimales
   };
 
   const handleRegisterNextStep = (event?: React.MouseEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>) => {
     if (event) event.preventDefault();
     setError('');
 
-    if (step === 'apodo') {
-      if (!formData.apodo.trim()) { setError('Por favor, introduce un nickname.'); return; }
-      setStep('genero');
-    } else if (step === 'genero') {
-      if (!formData.genero) { setError('Por favor, selecciona un género.'); return; }
-      setStep('edad');
-    } else if (step === 'edad') {
-       const edadNum = parseInt(formData.edad, 10);
-       if (!formData.edad || isNaN(edadNum) || edadNum <= 0) { setError('Introduce una edad válida.'); return; }
-       setStep('curso');
-    } else if (step === 'curso') {
-       if (!formData.curso_escolar) { setError('Por favor, selecciona tu curso.'); return; }
-       setStep('pretest'); // <--- IR AL NUEVO PASO 'pretest'
-    } else if (step === 'pretest') {
-        // Validar que todas las preguntas del pre-test han sido respondidas
-        const answeredAllQuestions = preTestQuestions.every(q => formData.preTestAnswers[q.id]);
+    switch (step) {
+      case 'apodo':
+        if (!formData.apodo.trim()) { setError('Por favor, introduce un nickname.'); return; }
+        setStep('genero');
+        break;
+      case 'genero':
+        if (!formData.genero) { setError('Por favor, selecciona un género.'); return; }
+        setStep('edad');
+        break;
+      case 'edad':
+        const edadNum = parseInt(formData.edad, 10);
+        if (!formData.edad || isNaN(edadNum) || edadNum < 5 || edadNum > 18) { setError('Introduce una edad válida (entre 5 y 18).'); return; }
+        setStep('curso');
+        break;
+      case 'curso':
+        if (!formData.curso_escolar) { setError('Por favor, selecciona tu curso.'); return; }
+        setStep('pretest');
+        break;
+      case 'pretest':
+        const answeredAllQuestions = preSurveyQuestions.every(q => {
+            const answer = formData.preTestAnswers[q.id];
+            return (q.type === 'radio' && !!answer) || (q.type === 'checkbox' && Array.isArray(answer) && answer.length > 0);
+        });
         if (!answeredAllQuestions) {
             setError('Por favor, responde todas las preguntas del test.');
             return;
         }
-        const score = calculatePreTestScore();
-        setFormData(prev => ({...prev, puntuacion_pre_test: score })); // Guardar puntuación
+        setFormData(prev => ({ ...prev, puntuacion_pre_test: 0 }));
         setStep('final');
+        break;
+      default:
+        break;
     }
   };
 
   const handleRegisterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
-
-    if (formData.puntuacion_pre_test === null) {
-        setError("Por favor, completa el pre-test antes de finalizar.");
-        setStep('pretest'); // Volver al pre-test si no se completó
-        return;
-    }
-    // ... (otras validaciones del paso final) ...
     if (formData.password !== formData.confirmPassword) { setError('Las contraseñas no coinciden.'); return; }
+    if (formData.password.length < 6) { setError('La contraseña debe tener al menos 6 caracteres.'); return; }
     if (!formData.consentimiento) { setError('Debes aceptar el consentimiento informado.'); return; }
-
 
     setIsLoading(true);
     const edadNum = parseInt(formData.edad, 10);
@@ -126,7 +227,7 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
       password: formData.password,
       consentimiento_obtenido: formData.consentimiento,
       curso_escolar: formData.curso_escolar,
-      puntuacion_pre_test: formData.puntuacion_pre_test, // Enviar la puntuación
+      puntuacion_pre_test: formData.puntuacion_pre_test ?? 0,
     };
 
     try {
@@ -135,24 +236,15 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(registrationData),
       });
-      // ... (resto del try-catch como lo tenías) ...
       setIsLoading(false);
       const responseData = await response.json();
       if (!response.ok) { throw new Error(responseData.detail || `Error: ${response.status}`); }
-
-      console.log('Registration successful:', responseData);
       alert('¡Registro completado! Ahora puedes iniciar sesión.');
       setMode('login');
       setFormData(prev => ({
-        apodo: prev.apodo, // Mantener apodo para facilitar login
-        genero: '',
-        edad: '',
-        curso_escolar: '',
-        password: '',
-        confirmPassword: '',
-        consentimiento: false,
-        preTestAnswers: {},
-        puntuacion_pre_test: null
+          ...prev, genero: '', edad: '', curso_escolar: '', password: '',
+          confirmPassword: '', consentimiento: false,
+          preTestAnswers: {}, puntuacion_pre_test: null
       }));
     } catch (err) {
       setIsLoading(false);
@@ -160,7 +252,6 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
     }
   };
 
-  // ... (handleLoginSubmit sin cambios) ...
   const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!formData.apodo.trim() || !formData.password) { setError('Por favor, introduce apodo y contraseña.'); return; }
@@ -187,124 +278,124 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
     }
   };
 
+  const isChecked = (questionId: string, option: string): boolean => {
+      const answer = formData.preTestAnswers[questionId];
+      return Array.isArray(answer) && answer.includes(option);
+  };
+
+  const isPreTestNextDisabled = () => {
+       return isLoading || !preSurveyQuestions.every(q => {
+            const answer = formData.preTestAnswers[q.id];
+            return (q.type === 'radio' && !!answer) || (q.type === 'checkbox' && Array.isArray(answer) && answer.length > 0);
+        });
+  };
+
   return (
     <div className="profile-setup-wrapper">
-      {/* ... (Selector de Modo sin cambios) ... */}
       <div style={{ padding: '20px', textAlign: 'center', borderBottom: '1px solid #eee' }}>
         <button onClick={() => { setMode('register'); setStep('apodo'); setError(''); }} disabled={mode === 'register' || isLoading} className={`button-mode ${mode === 'register' ? 'active' : ''}`} style={{ marginRight: '10px' }}>Registrarse</button>
         <button onClick={() => { setMode('login'); setError(''); }} disabled={mode === 'login' || isLoading} className={`button-mode ${mode === 'login' ? 'active' : ''}`}>Iniciar Sesión</button>
       </div>
 
       {mode === 'login' && (
-        // ... (Formulario de LOGIN sin cambios) ...
-        <div className="step-container login-view" style={{ padding: '20px' }}>
+        <div className="step-container login-view">
           <h2>Iniciar Sesión</h2>
           <form className="nickname-input-area" onSubmit={handleLoginSubmit}>
-            <input
-              type="text"
-              className="form-input nickname-style-input"
-              id="login-apodo-input"
-              name="apodo" placeholder="Escribe tu nickname..."
-              value={formData.apodo} onChange={handleInputChange} required disabled={isLoading}
-            />
-            <input
-              type="password"
-              className="form-input password-style-input"
-              id="login-password-input"
-              name="password" placeholder="Contraseña..."
-              value={formData.password} onChange={handleInputChange} required disabled={isLoading}
-              style={{ marginTop: '10px' }}
-            />
-            <button
-              type="submit"
-              className="form-button nickname-style-button"
-              disabled={isLoading} style={{ marginTop: '10px' }}
-            >
+            <input type="text" className="form-input" id="login-apodo-input" name="apodo" placeholder="Escribe tu nickname..." value={formData.apodo} onChange={handleInputChange} required disabled={isLoading} />
+            <input type="password" className="form-input" id="login-password-input" name="password" placeholder="Contraseña..." value={formData.password} onChange={handleInputChange} required disabled={isLoading} />
+            <button type="submit" className="form-button" disabled={isLoading}>
               {isLoading ? 'Iniciando...' : 'Entrar'}
             </button>
           </form>
-          {error && <p className="error-message" style={{ color: 'red', display: 'block', marginTop: '10px' }}>{error}</p>}
+          {error && <p className="error-message">{error}</p>}
         </div>
       )}
 
        {mode === 'register' && (
          <div className="register-flow">
-            {/* ... (Pasos 'apodo', 'genero', 'edad', 'curso' como los tenías o como los ajustamos antes) ... */}
-            {step === 'apodo' && ( <div className="step-container"><h2>¡Bienvenido/a a Pimpoyo!</h2><p>Por favor, introduce un nickname para empezar:</p><form className="nickname-input-area" onSubmit={handleRegisterNextStep}><input type="text" className="form-input" id="register-apodo" name="apodo" value={formData.apodo} onChange={handleInputChange} placeholder="Escribe tu nickname..." maxLength={20} required disabled={isLoading} /><button type="submit" className="form-button" disabled={isLoading}>Siguiente</button></form><div style={{ marginTop: '15px' }}><button type="button" className="switch-mode-link" disabled={isLoading} onClick={() => { setMode('login'); setError(''); }}>¿Ya tienes cuenta? Inicia Sesión</button></div>{error && <p className="error-message" style={{ color: 'red', display: 'block' }}>{error}</p>}</div>)}
-            {step === 'genero' && (<div className="step-container gender-step-style"><h2>Un poco más sobre ti...</h2><p>Selecciona tu género:</p><div className="nickname-input-area"><select className="form-select" id="register-genero" name="genero" value={formData.genero} onChange={handleInputChange} required disabled={isLoading} style={{ width: 'auto', minWidth: '200px'}}><option value="">Selecciona...</option><option value="masculino">Masculino</option><option value="femenino">Femenino</option><option value="otro">Otro</option><option value="prefiero_no_decir">Prefiero no decirlo</option></select><button type="button" className="form-button nickname-style-button" onClick={handleRegisterNextStep} disabled={isLoading}>Siguiente</button></div>{error && <p className="error-message" style={{ color: 'red', display: 'block' }}>{error}</p>}</div>)}
-            {step === 'edad' && (<div className="step-container age-step-style"><h2>¡Casi listo!</h2><p>Introduce tu edad:</p><div className="nickname-input-area"><input type="number" className="form-input age-style-input" id="register-edad" name="edad" value={formData.edad} onChange={handleInputChange} placeholder="Tu edad..." required min="1" disabled={isLoading} style={{ width: 'auto', minWidth: '150px'}} /><button type="button" className="form-button nickname-style-button" onClick={handleRegisterNextStep} disabled={isLoading}>Siguiente</button></div>{error && <p className="error-message" style={{ color: 'red', display: 'block' }}>{error}</p>}</div>)}
-            {step === 'curso' && (<div className="step-container course-step-style"><h2>¿En qué curso estás?</h2><p>Esto nos ayudará a adaptar mejor el contenido.</p><div className="nickname-input-area"><select className="form-select" id="register-curso" name="curso_escolar" value={formData.curso_escolar} onChange={handleInputChange} required disabled={isLoading} style={{ width: 'auto', minWidth: '220px'}}><option value="">Selecciona tu curso...</option><option value="quinto">Quinto de Primaria</option><option value="sexto">Sexto de Primaria</option></select><button type="button" className="form-button nickname-style-button" onClick={handleRegisterNextStep} disabled={isLoading || !formData.curso_escolar} >Siguiente</button></div>{error && <p className="error-message" style={{ color: 'red', display: 'block' }}>{error}</p>}</div>)}
+            {step === 'apodo' && ( <div className="step-container"><h2>¡Bienvenido/a a Pimpoyo!</h2><p>Por favor, introduce un nickname para empezar:</p><form className="nickname-input-area" onSubmit={(e) => handleRegisterNextStep(e)}><input type="text" className="form-input" id="register-apodo" name="apodo" value={formData.apodo} onChange={handleInputChange} placeholder="Escribe tu nickname..." maxLength={20} required disabled={isLoading} /><button type="submit" className="form-button" disabled={isLoading}>Siguiente</button></form><div style={{ marginTop: '15px' }}><button type="button" className="switch-mode-link" disabled={isLoading} onClick={() => { setMode('login'); setError(''); }}>¿Ya tienes cuenta? Inicia Sesión</button></div>{error && <p className="error-message">{error}</p>}</div>)}
+            {step === 'genero' && (<div className="step-container"><h2>Un poco más sobre ti...</h2><p>Selecciona tu género:</p><div className="nickname-input-area"><select className="form-select" id="register-genero" name="genero" value={formData.genero} onChange={handleInputChange} required disabled={isLoading}><option value="">Selecciona...</option><option value="masculino">Masculino</option><option value="femenino">Femenino</option><option value="otro">Otro</option><option value="prefiero_no_decir">Prefiero no decirlo</option></select><button type="button" className="form-button" onClick={handleRegisterNextStep} disabled={isLoading || !formData.genero}>Siguiente</button></div>{error && <p className="error-message">{error}</p>}</div>)}
+            {step === 'edad' && (<div className="step-container"><h2>¡Casi listo!</h2><p>Introduce tu edad:</p><div className="nickname-input-area"><input type="number" className="form-input" id="register-edad" name="edad" value={formData.edad} onChange={handleInputChange} placeholder="Tu edad..." required min="5" max="18" disabled={isLoading} /><button type="button" className="form-button" onClick={handleRegisterNextStep} disabled={isLoading || !formData.edad}>Siguiente</button></div>{error && <p className="error-message">{error}</p>}</div>)}
+            {step === 'curso' && (<div className="step-container"><h2>¿En qué curso estás?</h2><p>Esto nos ayudará a adaptar mejor el contenido.</p><div className="nickname-input-area"><select className="form-select" id="register-curso" name="curso_escolar" value={formData.curso_escolar} onChange={handleInputChange} required disabled={isLoading}><option value="">Selecciona tu curso...</option><option value="quinto">Quinto de Primaria</option><option value="sexto">Sexto de Primaria</option><option value="1º de la ESO">1º de la ESO</option><option value="2º de la ESO">2º de la ESO</option></select><button type="button" className="form-button" onClick={handleRegisterNextStep} disabled={isLoading || !formData.curso_escolar}>Siguiente</button></div>{error && <p className="error-message">{error}</p>}</div>)}
 
-            {/* === NUEVO PASO: PRE-TEST === */}
+            {/* === SECCIÓN DEL PRE-TEST ACTUALIZADA CON className === */}
             {step === 'pretest' && (
               <div className="step-container pretest-step-style">
-                <h2>Pequeño Test Inicial</h2>
-                <p>Responde estas preguntas para ayudarnos a entender mejor tus conocimientos actuales.</p>
-                <form onSubmit={handleRegisterNextStep}>
-                  {preTestQuestions.map(q => (
-                    <div key={q.id} className="form-field" style={{ marginBottom: '20px', textAlign: 'left' }}>
-                      <p style={{ fontWeight: 'bold', marginBottom: '10px' }}>{q.text}</p>
-                      {/* Contenedor para las opciones de esta pregunta */}
-                      <div className="pretest-options-group" style={{ marginLeft: '10px' }}>
-                        {q.options.map(option => (
-                          // Cada opción (radio + label) en su propio div para mejor control
-                          <div key={option} style={{
-                              display: 'flex', // Usa Flexbox para alinear radio y label
-                              alignItems: 'center', // Centra verticalmente el radio y el texto
-                              marginBottom: '8px'  // Espacio entre opciones
-                            }}>
-                            <input
-                              type="radio"
-                              id={`${q.id}-${option.replace(/\s+/g, '-')}`} // Crear un ID más robusto para el label
-                              name={q.id}
-                              value={option}
-                              checked={formData.preTestAnswers[q.id] === option}
-                              onChange={() => handlePreTestAnswerChange(q.id, option)}
-                              disabled={isLoading}
-                              style={{ marginRight: '8px' }} // Espacio entre el radio y el texto
-                            />
-                            <label htmlFor={`${q.id}-${option.replace(/\s+/g, '-')}`}>
-                              {option}
-                            </label>
-                          </div>
-                        ))}
+                <h2>Pequeño test inicial</h2>
+                <p className="intro-text-pimpoyo"> {/* Añadido className */}
+                  ¡Hola! Soy Pimpoyo. Antes de empezar nuestra aventura para ser detectives de noticias,
+                  quiero saber un poco sobre lo que ya conoces. ¡No es un examen, no hay respuestas
+                  buenas ni malas! Solo marca lo que piensas o haces normalmente. ¡Gracias por ayudarme!
+                </p>
+
+                <form onSubmit={(e) => handleRegisterNextStep(e)} style={{maxWidth: '700px', width: '100%'}}>
+                  {preSurveyQuestions.map(q => (
+                    <div key={q.id} className="pretest-question-card"> {/* className cambiado y estilos inline eliminados */}
+                      <p>{q.text}</p>
+                      <div className="pretest-options-group"> {/* className y estilos inline eliminados */}
+                        {q.options.map((option, index) => {
+                           const inputId = `${q.id}-${index}`;
+                           return (
+                              <div key={inputId} className="radio-checkbox-item"> {/* Añadido className y estilos inline eliminados */}
+                                <input
+                                  type={q.type as 'radio' | 'checkbox'}
+                                  id={inputId}
+                                  name={q.id}
+                                  value={option}
+                                  checked={q.type === 'radio' ? formData.preTestAnswers[q.id] === option : isChecked(q.id, option)}
+                                  onChange={() => handlePreTestAnswerChange(q.id, option, q.type as 'radio' | 'checkbox')}
+                                  disabled={isLoading}
+                                  // Estilos inline eliminados para que los tome el CSS
+                                />
+                                <label htmlFor={inputId} /* Estilos inline eliminados */ >
+                                  {option}
+                                </label>
+                              </div>
+                           );
+                        })}
                       </div>
                     </div>
                   ))}
+
+                  <p className="outro-text-pimpoyo"> {/* Añadido className y estilos inline eliminados */}
+                    ¡Listo! ¡Mil gracias por tus respuestas! Has ayudado mucho a Pimpoyo.
+                  </p>
+
                   <button
                     type="submit"
-                    className="form-button nickname-style-button"
-                    style={{ marginTop: '20px' }} // Añadir un poco de margen superior al botón
-                    disabled={isLoading || preTestQuestions.some(q => !formData.preTestAnswers[q.id])}
+                    className="form-button"
+                    style={{ marginTop: '10px' }}
+                    disabled={isPreTestNextDisabled()}
                   >
                     Siguiente
                   </button>
                 </form>
-                {error && <p className="error-message" style={{ color: 'red', display: 'block', marginTop: '10px' }}>{error}</p>}
+                {error && <p className="error-message">{error}</p>}
               </div>
             )}
+            {/* === FIN DE LA SECCIÓN DEL PRE-TEST ACTUALIZADA === */}
 
             {step === 'final' && (
              <div className="step-container final-step-style">
               <h2>Seguridad y Consentimiento</h2>
-              <form className="final-step-area" onSubmit={handleRegisterSubmit} style={{ maxWidth: '450px', margin: '0 auto', textAlign: 'left' }}>
-                 <div className="form-field" style={{ marginBottom: '15px' }}>
-                    <label htmlFor="register-password">Contraseña:</label>
-                    <input type="password" id="register-password" name="password" className="form-input" value={formData.password} onChange={handleInputChange} required  disabled={isLoading} />
+              <form className="final-step-area" onSubmit={handleRegisterSubmit}>
+                 <div className="form-field">
+                    <label htmlFor="register-password">Contraseña (mín. 6 caracteres):</label>
+                    <input type="password" id="register-password" name="password" className="form-input" value={formData.password} onChange={handleInputChange} required disabled={isLoading} />
                 </div>
-                 <div className="form-field" style={{ marginBottom: '15px' }}>
+                 <div className="form-field">
                     <label htmlFor="register-confirmPassword">Confirmar Contraseña:</label>
                     <input type="password" id="register-confirmPassword" name="confirmPassword" className="form-input" value={formData.confirmPassword} onChange={handleInputChange} required disabled={isLoading} />
                 </div>
-                 <div className="form-field" style={{display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px'}}>
-                    <input type="checkbox" id="register-consentimiento" name="consentimiento" checked={formData.consentimiento} onChange={handleInputChange} required disabled={isLoading} />
-                    <label htmlFor="register-consentimiento" style={{marginBottom: 0}}>He leído y acepto el consentimiento informado.</label>
+                 <div className="form-field" style={{display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center'}}>
+                    <input type="checkbox" id="register-consentimiento" name="consentimiento" checked={formData.consentimiento} onChange={handleInputChange} required disabled={isLoading} style={{ width: 'auto' }} />
+                    <label htmlFor="register-consentimiento">He leído y acepto el consentimiento informado.</label>
                 </div>
                 <div style={{textAlign: 'center'}}>
-                   <button type="submit" className="form-button nickname-style-button" disabled={isLoading}>{isLoading ? 'Registrando...' : 'Completar Registro'}</button>
+                   <button type="submit" className="form-button" disabled={isLoading}>{isLoading ? 'Registrando...' : 'Completar Registro'}</button>
                 </div>
               </form>
-              {error && <p className="error-message" style={{ color: 'red', textAlign: 'center', marginTop: '10px' }}>{error}</p>}
+              {error && <p className="error-message">{error}</p>}
             </div>
             )}
         </div>
