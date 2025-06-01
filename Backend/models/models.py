@@ -1,8 +1,8 @@
 # models/models.py
 from datetime import datetime
-from pydantic import BaseModel, Field, HttpUrl
-from typing import Optional, List, Dict, Any
-import math # Necesario para cálculos si se usan (aunque no se usa directamente aquí)
+from pydantic import BaseModel, Field, HttpUrl # Asegúrate de que HttpUrl esté importado si lo usas en PerfilBase
+from typing import Optional, List, Dict, Any # Dict y Any son útiles para respuestas_pre_test
+# import math # No parece usarse directamente aquí, puedes quitarlo si no es necesario en otro lugar del archivo
 
 # --- Modelos para Perfil/Usuario ---
 
@@ -10,52 +10,50 @@ class PerfilBase(BaseModel):
     apodo: str
     genero: str | None = None
     edad: int
-    avatar_url: Optional[HttpUrl | str] = None
+    # Si avatar_url puede ser string o HttpUrl, mantenlo. Si solo va a ser string, simplifica.
+    avatar_url: Optional[str] = None # Simplificado a str opcional, ajusta si necesitas HttpUrl
     curso_escolar: Optional[str] = None
     puntuacion_pre_test: Optional[float] = None
-    puntuacion_post_test: Optional[float] = None # Añadido para que UsuarioInDB y UsuarioPublic lo hereden
-    precision_global_sesion: Optional[float] = None # <--- AÑADIDO AQUÍ
+    puntuacion_post_test: Optional[float] = None
+    precision_global_sesion: Optional[float] = None
 
-class UsuarioCreate(PerfilBase): # Hereda curso_escolar y puntuacion_pre_test (opcional)
+class UsuarioCreate(PerfilBase):
     password: str
     consentimiento_obtenido: bool
-    curso_escolar: str # Lo hacemos requerido aquí, sobrescribiendo el opcional de PerfilBase
-    # puntuacion_pre_test ya es opcional desde PerfilBase, se enviará desde el frontend
+    curso_escolar: str
+    # puntuacion_pre_test ya es opcional desde PerfilBase
+    respuestas_pre_test: Optional[Dict[str, Any]] = None # <--- CAMBIO PRINCIPAL AQUÍ: Añadir este campo
 
 class UsuarioUpdateProfile(BaseModel):
     apodo: Optional[str] = Field(None, min_length=1, max_length=50)
-    avatar_url: Optional[HttpUrl | str | None] = Field(None)
+    avatar_url: Optional[str | None] = Field(None) # Simplificado a str opcional
 
-class UsuarioInDB(PerfilBase): # Hereda puntuacion_pre_test, puntuacion_post_test y precision_global_sesion de PerfilBase
+class UsuarioInDB(PerfilBase):
     sesion_id: int
     hashed_password: str
     consentimiento_obtenido: bool
     interacciones_totales_sesion: Optional[int] = 0
     aciertos_totales_sesion: Optional[int] = 0
     fallos_totales_sesion: Optional[int] = 0
-    # precision_global_sesion ya se hereda de PerfilBase
     xp_actual: Optional[int] = 0
-    # Nuevos campos que se poblarán en la tabla sesiones
     duracion_total_sesion_seg: Optional[int] = None
-    puntuacion_final: Optional[float] = None # Se poblará como copia de puntuacion_post_test
+    puntuacion_final: Optional[float] = None
     tasa_falsos_negativos_global: Optional[float] = None
     tasa_falsos_positivos_global: Optional[float] = None
+    # El campo para respuestas_pre_test_json se manejará a nivel de tabla, no necesariamente aquí
+    # a menos que quieras leerlo y exponerlo a través de este modelo, lo cual no es común para UsuarioInDB.
 
-
-class UsuarioPublic(PerfilBase): # Hereda puntuacion_pre_test, puntuacion_post_test y precision_global_sesion de PerfilBase
+class UsuarioPublic(PerfilBase):
     sesion_id: int
-    avatar_url: Optional[str] = None
-    # curso_escolar, puntuacion_pre_test, puntuacion_post_test, precision_global_sesion se heredan de PerfilBase
+    # avatar_url ya heredado y simplificado
 
+# ... (el resto de tus modelos permanecen sin cambios) ...
 class UserDetailedStatsResponse(BaseModel):
     totalAnalizadas: int
     aciertos: int
     fallos: int
     xp: int
     xpNextLevel: int
-    # Podrías añadir aquí más campos si quieres que este endpoint los devuelva,
-    # ej. precision_global_sesion, tasa_falsos_negativos, etc.
-    # Por ahora, se mantienen como están y la precisión se expone en UsuarioPublic.
 
 class UsuarioLogin(BaseModel):
     apodo: str
@@ -106,12 +104,12 @@ class InteraccionBase(BaseModel):
     es_correcto: Optional[bool] = None
     tiempo_respuesta_ms: Optional[int] = None
     tipo_error: Optional[str] = None
-    feedback_mostrado: Optional[str] = None # Se poblará
-    criterios_evaluacion_ids: Optional[Dict[str, Any]] = None # Se mantiene opcional, por ahora no se poblará con nueva lógica
-    key_elements_json: Optional[List[str]] = None # Se poblará si se añaden a la tabla interacciones
-    justification_hints_json: Optional[List[str]] = None # Se poblará si se añaden a la tabla interacciones
-    likely_misconceptions_json: Optional[List[str]] = None # Se poblará si se añaden a la tabla interacciones
-    indicadores_clave_detectados_noticia_json: Optional[List[str]] = None # Se poblará si se añaden a la tabla interacciones
+    feedback_mostrado: Optional[str] = None
+    criterios_evaluacion_ids: Optional[Dict[str, Any]] = None
+    key_elements_json: Optional[List[str]] = None
+    justification_hints_json: Optional[List[str]] = None
+    likely_misconceptions_json: Optional[List[str]] = None
+    indicadores_clave_detectados_noticia_json: Optional[List[str]] = None
     indicadores_seleccionados_o_discutidos_usuario: Optional[List[str]] = None
     tipo_interaccion: str
 
@@ -127,7 +125,7 @@ class InteraccionInDB(InteraccionCreate):
 class InteraccionPublic(InteraccionInDB):
     pass
 
-class NoticiaParaAnalisis(BaseModel): # Para análisis guiado normal
+class NoticiaParaAnalisis(BaseModel):
     noticia_id_json: str
     headline: str
     text: str
@@ -150,12 +148,12 @@ class ContinuarChatGuiaRequest(BaseModel):
     area_de_enfoque_sugerida: Optional[str] = None
 
 class MejoraComprensionSubModel(BaseModel):
-    evaluacion: str # SI, NO, INCIERTO
+    evaluacion: str
     justificacion: str
 
-class PostChatAnalysisPayload(BaseModel): # Este modelo ya existe y está bien para el nuevo endpoint
+class PostChatAnalysisPayload(BaseModel):
     indicadores_discutidos: List[str]
-    conceptos_abordados: List[str] # Corresponde a conceptos_clave_discutidos
+    conceptos_abordados: List[str]
     mejora_comprension: MejoraComprensionSubModel
 
 class ChatSesionNoticiaPublic(BaseModel):
@@ -168,10 +166,10 @@ class ChatSesionNoticiaPublic(BaseModel):
     noticia_verdad_real_json: Optional[str] = None
     evaluacion_inicial_correcta: Optional[bool] = None
     fecha_fin: Optional[datetime] = None
-    indicadores_discutidos: Optional[List[str]] = None # Se poblarán con el nuevo endpoint
-    conceptos_clave_discutidos: Optional[List[str]] = None # Se poblarán con el nuevo endpoint
-    mejora_comprension_evaluacion: Optional[str] = None # Se poblarán con el nuevo endpoint
-    mejora_comprension_justificacion: Optional[str] = None # Se poblarán con el nuevo endpoint
+    indicadores_discutidos: Optional[List[str]] = None
+    conceptos_clave_discutidos: Optional[List[str]] = None
+    mejora_comprension_evaluacion: Optional[str] = None
+    mejora_comprension_justificacion: Optional[str] = None
     class Config:
         from_attributes = True
 
@@ -194,7 +192,7 @@ class FinishPairChallengeRequest(BaseModel):
 class FinishPairChallengeResponse(BaseModel):
     message: str
     es_correcto: bool
-    explanation: Optional[str] = None # Este es el feedback que se guardará en interacciones.feedback_mostrado
+    explanation: Optional[str] = None
 
 
 # --- Modelos para el Post-Test ---
@@ -226,12 +224,8 @@ class PostTestSubmitPayload(BaseModel):
     respuestas_eleccion: List[RespuestaPreguntaEleccionItem]
     respuestas_analisis_noticias: List[RespuestaAnalisisNoticiaItem]
 
-class PostTestSubmitResponse(BaseModel): # Ya lo tienes y está bien
+class PostTestSubmitResponse(BaseModel):
     message: str
-    puntuacion_final: float # Este es puntuacion_post_test
+    puntuacion_final: float
     aciertos: int
     total_preguntas: int
-    # Podrías añadir aquí las nuevas tasas si quieres devolverlas inmediatamente
-    # tasa_falsos_negativos: Optional[float] = None
-    # tasa_falsos_positivos: Optional[float] = None
-    # duracion_sesion_seg: Optional[int] = None

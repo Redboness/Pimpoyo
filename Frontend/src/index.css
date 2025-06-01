@@ -606,3 +606,75 @@ body {
 .post-test-loading-error { font-size: 1.2em; color: #c62828; margin-top: 30px; }
 .post-test-finished-message { margin-top: 30px; font-size: 1.2em; padding: 25px; background-color: #e6ffed; border: 1px solid #b2dfdb; border-radius: 8px; color: #2e7d32; max-width: 600px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
 .post-test-finished-message p { margin-bottom: 15px; }
+/* src/index.css */
+
+/* ... (tus estilos existentes) ... */
+
+/* Párrafo de la pregunta DENTRO de la tarjeta (Q1-Q8) */
+.pretest-question-card > p {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    font-weight: bold;
+    margin: 0 0 25px 0; /* Margen inferior */
+    font-size: 1.15em; /* Tamaño deseado */
+    color: #4a3112;
+    line-height: 1.5; /* Altura de línea */
+    text-align: justify; /* << YA ESTÁ ASÍ, ES CORRECTO */
+    -webkit-hyphens: auto; /* Ayuda a justificar */
+    -ms-hyphens: auto;
+    hyphens: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* ... (otros estilos) ... */
+
+/* Estilo para las etiquetas de las opciones (Q1-Q8) */
+.radio-checkbox-item label {
+    cursor: pointer;
+    color: #4a3112;
+    flex-grow: 1; /* Ocupa el espacio restante */
+    line-height: 1.6; /* Altura de línea cómoda */
+    text-align: justify; /* << CAMBIO PRINCIPAL AQUÍ: de 'left' a 'justify' */
+    font-size: 1em; /* Tamaño normal */
+    /* Puedes añadir hyphens aquí también si quieres para mejor justificación en opciones largas */
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+    word-wrap: break-word; /* Asegura el ajuste de palabras largas */
+    overflow-wrap: break-word; /* Equivalente a word-wrap */
+}
+
+/* --- ESTILOS PARA NOTICIAS PRÁCTICAS EN PRE-TEST (Q9, Q10) --- */
+/* Estos ya estaban bien para el cuerpo de la noticia justificado */
+.practical-news-item .news-content p { /* Cuerpo de la noticia práctica */
+  text-align: justify; /* << YA ESTÁ ASÍ, ES CORRECTO */
+  margin-bottom: 0.75em; 
+  line-height: 1.6;
+  color: #333; 
+  /* Puedes añadir hyphens aquí también si el texto es muy denso */
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Texto de la pregunta V/F y "Explica por qué" en Q9/Q10 */
+.practical-news-item .question-quantitative p,
+.practical-news-item .question-qualitative p {
+  font-weight: bold; 
+  color: #4a3112;
+  margin-bottom: 10px;
+  text-align: justify; /* << AÑADIR JUSTIFY AQUÍ TAMBIÉN para el texto de estas sub-preguntas */
+  /* Puedes añadir hyphens aquí también */
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+
+/* ... (resto de tus estilos) ... */
