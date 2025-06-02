@@ -1,6 +1,7 @@
 // src/types/types.ts
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
+
 // --- NUEVA INTERFAZ PARA ESTADÍSTICAS DETALLADAS ---
 export interface UserDetailedStats {
   totalAnalizadas: number;
@@ -80,6 +81,11 @@ export interface MessageButton {
   ariaLabel?: string;
 }
 
+export interface TipChallengeCard {
+  question: string;
+  options: MessageButton[];
+}
+
 export interface ChatMessage {
   id: number | string;
   sender: 'user' | 'bot';
@@ -89,6 +95,7 @@ export interface ChatMessage {
   timestamp: number;
   buttons?: MessageButton[];
   buttonsDisabled?: boolean;
+  challengeCard?: TipChallengeCard | null;
 }
 
 export interface OllamaMessage {
@@ -223,4 +230,9 @@ export interface PostTestFlowProps {
   authToken: string;
   onTestComplete: (score: number, aciertos: number, totalQuestions: number) => void;
   onCancelTest?: () => void;
+}
+
+export interface TipChallengeCard {
+  question: string;
+  options: MessageButton[];
 }

@@ -676,5 +676,40 @@ body {
   overflow-wrap: break-word;
 }
 
+.tip-challenge-card {
+  background-color: #ffffff; /* CAMBIO: Fondo blanco para la tarjeta */
+  border: 4px solid #94ab3d; /* Un borde gris claro para que se distinga sobre el blanco si la burbuja también es muy clara */
+  border-radius: 10px; /* Bordes redondeados para la tarjeta */
+  padding: 15px;
+  margin-top: 15px; /* Espacio entre el texto principal del consejo y la tarjeta del reto */
+  margin-bottom: 10px; /* Espacio antes de los botones de navegación (si los hubiera fuera) */
+}
 
-/* ... (resto de tus estilos) ... */
+.tip-challenge-card .challenge-question {
+  margin-bottom: 15px;
+  font-style: italic;
+  color: #4a3112; 
+}
+
+.tip-challenge-card .challenge-question p {
+  margin: 0;
+}
+
+.tip-challenge-card .message-buttons.challenge-options {
+  display: flex;
+  flex-direction: column; 
+  gap: 8px; 
+  align-items: stretch; 
+}
+
+.tip-challenge-card .challenge-option-button {
+  background-color: #ffffff; /* Un color de fondo ligeramente gris para los botones sobre blanco */
+  color: #4a3112; /* Color de texto más oscuro para contraste sobre el botón claro */
+  border: 3px solid #94ab3d; 
+}
+
+.tip-challenge-card .challenge-option-button:hover:not(:disabled) {
+  background-color:#c0dc5a51; 
+  border-color: #93ab3da0;
+}
+
