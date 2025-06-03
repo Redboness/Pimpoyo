@@ -1,0 +1,47 @@
+/* src/components/InteractiveTerm/InteractiveTerm.css */
+.interactive-term {
+  position: relative;
+  color: #007bff; /* Color distintivo para el término, ajústalo a tu paleta */
+  cursor: pointer;
+  text-decoration: underline dashed;
+  font-weight: bold; /* Para que destaque un poco más */
+}
+
+.interactive-term:hover,
+.interactive-term:focus {
+  color: #0056b3;
+  text-decoration: underline solid;
+}
+
+.interactive-term-popover {
+  position: absolute;
+  bottom: 100%; /* Posiciona encima del término */
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px); /* Centra y añade un pequeño espacio */
+  background-color: #333; /* Fondo oscuro para el popover */
+  color: white; /* Texto blanco */
+  padding: 10px 15px;
+  border-radius: 6px;
+  z-index: 100; /* Asegura que esté por encima de otros elementos */
+  font-size: 0.9em;
+  line-height: 1.4;
+  width: max-content; /* Ajusta el ancho al contenido */
+  min-width: 150px; /* Un ancho mínimo */
+  max-width: 300px; /* Evita que sea demasiado ancho */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  text-align: left;
+  font-weight: normal; /* Resetea el bold del término */
+  text-decoration: none; /* Quita el subrayado heredado */
+}
+
+/* Pequeña flecha para el popover (opcional pero mejora la UI) */
+.interactive-term-popover::after {
+  content: "";
+  position: absolute;
+  top: 100%; /* Se posiciona en la parte inferior del popover */
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent; /* Flecha hacia arriba */
+}

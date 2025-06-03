@@ -6,6 +6,7 @@ import ChatHeader from "../ChatHeader/ChatHeader";
 import ChatInput from "../ChatInput/ChatInput";
 import SidePanel from "../SidePanel/SidePanel";
 import PostTestFlow from '../PostTestFlow/PostTestFlow';
+import { processTextForGlossary } from '../Utils/glossaryUtils';
 import {
   UserInfo,
   ChatMessage,
@@ -21,7 +22,7 @@ import {
   ContinuarChatGuiaPayload,
   FinishPairChallengePayload,
   FinishPairChallengeResponse,
-  TipChallengeCard // Asegúrate de que esto se importa desde types.ts
+  TipChallengeCard
 } from "../../types/types";
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
@@ -42,7 +43,7 @@ interface TipChallengeOption {
 
 interface TipChallenge {
   question: string;
-  options?: TipChallengeOption[];
+  options?: TipChallengeOption[]; // options es opcional
   feedbackCorrect: string;
   feedbackIncorrect: string;
 }
@@ -50,135 +51,94 @@ interface TipChallenge {
 interface Tip {
   title: string;
   text: string;
-  challenge?: TipChallenge;
+  challenge?: TipChallenge; // challenge es opcional
 }
 
+// Definición de la lista de tips
+// (Asegúrate que el contenido de cada 'challenge' aquí coincide exactamente con la interfaz TipChallenge)
 const tips: Tip[] = [
   {
     title: "**CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️**",
     text: "Imagina que la fuente de una noticia es como la persona que te cuenta un secreto. ¿Confiarías en cualquiera?\n\nPor eso, **fíjate siempre en** ¿quién publica la noticia? Pregúntate: ¿Es un periódico conocido como El País o El Mundo, una cadena de televisión como RTVE, o una agencia internacional fiable como BBC News o Euronews? Cuando Pimpoyo y tú analicéis una noticia, él te ayudará a ver si su fuente es de este tipo.\n\n**¡Importante!** Si la fuente es una web que no conoces, te parece extraña, o es un blog personal sin referencias claras, ¡investiga un poco sobre ella antes de creer la noticia! Una fuente desconocida es una señal de alerta.",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si ves una noticia en \"SuperNoticiasFiables.com\" y otra en la web oficial de \"RTVE Noticias\", ¿cuál te parece más fiable a primera vista?",
-      options: [
-        { id: "c1_opt1", text: "SuperNoticiasFiables punto com", isCorrect: false },
-        { id: "c1_opt2", text: "RTVE Noticias", isCorrect: true },
-        { id: "c1_opt3", text: "Las dos igual", isCorrect: false },
-      ],
-      feedbackCorrect: "¡Exacto! RTVE Noticias es una fuente conocida y establecida, lo que la hace más fiable a primera vista. De la otra web, como no la conocemos mucho y su nombre suena un poco exagerado, haríamos bien en investigar más antes de confiar. ¡Bien visto!",
-      feedbackIncorrect: "Es una buena idea fijarse en los nombres. \"SuperNoticiasFiables punto com\" suena muy convincente, ¿verdad? Pero a veces, los sitios menos conocidos pueden no ser tan fiables como las cadenas de noticias establecidas como RTVE, que tienen equipos de periodistas. ¡Es bueno dudar un poquito de las fuentes que no conocemos bien!"
-    }
+    challenge: { question: "*Pimpoyo te reta:* Si ves una noticia en \"SuperNoticiasFiables.com\" y otra en la web oficial de \"RTVE Noticias\", ¿cuál te parece más fiable a primera vista?", options: [ { id: "c1_opt1", text: "SuperNoticiasFiables punto com", isCorrect: false }, { id: "c1_opt2", text: "RTVE Noticias", isCorrect: true }, { id: "c1_opt3", text: "Las dos igual", isCorrect: false }, ], feedbackCorrect: "¡Exacto! RTVE Noticias es una fuente conocida y establecida, lo que la hace más fiable a primera vista. De la otra web, como no la conocemos mucho y su nombre suena un poco exagerado, haríamos bien en investigar más antes de confiar. ¡Bien visto!", feedbackIncorrect: "Es una buena idea fijarse en los nombres. \"SuperNoticiasFiables punto com\" suena muy convincente, ¿verdad? Pero a veces, los sitios menos conocidos pueden no ser tan fiables como las cadenas de noticias establecidas como RTVE, que tienen equipos de periodistas. ¡Es bueno dudar un poquito de las fuentes que no conocemos bien!" }
   },
   {
     title: "**CONSEJO 2: ¡COMPARA, COMPARA! 🆚**",
     text: "No te quedes solo con una versión de la historia, ¡como si solo escucharas a un amigo en una discusión!\n\nPor eso, **es clave que te fijes en esto:** verifica la noticia buscando si otros medios conocidos y fiables también la cuentan. Por ejemplo, puedes contrastar lo que lees con lo que publican periódicos importantes de España, cadenas de televisión públicas, o fuentes de noticias internacionales reconocidas, como las que mencionamos en el primer consejo.\n\n**¡Importante!** Si muchos medios serios y diferentes cuentan la misma historia, es más probable que sea cierta. Pero si solo la encuentras en un sitio poco conocido o en blogs sin referencias claras, ¡es una gran pista para dudar! Podría ser un bulo.",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si lees una noticia sorprendente sobre tu juego favorito solo en un pequeño blog que nadie conoce, ¿qué sería lo primero que harías según este consejo?",
-      options: [
-        { id: "c2_opt1", text: "Creérmela y compartirla rápido", isCorrect: false },
-        { id: "c2_opt2", text: "Buscarla en otros sitios de noticias más grandes", isCorrect: true },
-        { id: "c2_opt3", text: "No hacer nada, seguro es mentira", isCorrect: false },
-      ],
-      feedbackCorrect: "¡Muy bien! Lo primero sería buscar si otros sitios de noticias más grandes y conocidos también hablan de ello. Si no encuentras nada más, es una buena razón para sospechar que quizás no sea del todo cierta. ¡Esa es una gran estrategia de detective!",
-      feedbackIncorrect: "Compartirla rápido puede ser tentador si la noticia es emocionante, ¡lo entiendo! Pero recuerda este consejo: si solo la has visto en un sitio pequeño y desconocido, es mejor buscarla primero en otros medios más grandes y fiables. Así te aseguras de no difundir un bulo."
-    }
+    challenge: { question: "*Pimpoyo te reta:* Si lees una noticia sorprendente sobre tu juego favorito solo en un pequeño blog que nadie conoce, ¿qué sería lo primero que harías según este consejo?", options: [ { id: "c2_opt1", text: "Creérmela y compartirla rápido", isCorrect: false }, { id: "c2_opt2", text: "Buscarla en otros sitios de noticias más grandes", isCorrect: true }, { id: "c2_opt3", text: "No hacer nada, seguro es mentira", isCorrect: false }, ], feedbackCorrect: "¡Muy bien! Lo primero sería buscar si otros sitios de noticias más grandes y conocidos también hablan de ello. Si no encuentras nada más, es una buena razón para sospechar que quizás no sea del todo cierta. ¡Esa es una gran estrategia de detective!", feedbackIncorrect: "Compartirla rápido puede ser tentador si la noticia es emocionante, ¡lo entiendo! Pero recuerda este consejo: si solo la has visto en un sitio pequeño y desconocido, es mejor buscarla primero en otros medios más grandes y fiables. Así te aseguras de no difundir un bulo." }
   },
   {
-    title: "**CONSEJO 3: ¡OJO A LA FECHA! 📅**",
+    title: "*CONSEJO 3: ¡OJO A LA FECHA! 📅*",
     text: "Las noticias son como el pan, ¡mejor si son frescas y del día! Cuando analices una noticia con Pimpoyo, él podría preguntarte por la fecha.\n\nAsí que, **fíjate bien en** la fecha en la que se publicó.\n\n**¡Importante!** A veces, noticias muy antiguas (¡incluso de hace años!) se comparten como si fueran nuevas para engañar o crear confusión. Esto es una táctica común de las noticias falsas. ¡Que no te den gato por liebre!",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si un amigo te manda una noticia increíble sobre un descubrimiento espacial, pero ves que la fecha es de hace 5 años, ¿qué pensarías?",
-      options: [
-        { id: "c3_opt1", text: "¡Qué guay! Sigue siendo un gran descubrimiento.", isCorrect: false },
-        { id: "c3_opt2", text: "Que es vieja y quizás ya no es tan 'noticia'.", isCorrect: true },
-        { id: "c3_opt3", text: "Que seguro es falsa porque es antigua.", isCorrect: false },
-      ],
-      feedbackCorrect: "¡Exacto! Pensarías que, aunque pudo ser verdad en su momento, quizás ya no es una \"novedad\" o la situación ha cambiado. Las noticias viejas a veces se sacan de contexto. ¡Buen trabajo fijándote en la fecha!",
-      feedbackIncorrect: "Es verdad que un descubrimiento puede seguir siendo interesante, ¡pero la fecha es una pista muy importante! Una noticia de hace 5 años podría no contar toda la historia actual o usarse para confundir. Siempre es bueno preguntarse si una noticia tan antigua sigue siendo relevante hoy."
-    }
+    challenge: { question: "*Pimpoyo te reta:* Si un amigo te manda una noticia increíble sobre un descubrimiento espacial, pero ves que la fecha es de hace 5 años, ¿qué pensarías?", options: [ { id: "c3_opt1", text: "¡Qué guay! Sigue siendo un gran descubrimiento.", isCorrect: false }, { id: "c3_opt2", text: "Que es vieja y quizás ya no es tan 'noticia'.", isCorrect: true }, { id: "c3_opt3", text: "Que seguro es falsa porque es antigua.", isCorrect: false }, ], feedbackCorrect: "¡Exacto! Pensarías que, aunque pudo ser verdad en su momento, quizás ya no es una \"novedad\" o la situación ha cambiado. Las noticias viejas a veces se sacan de contexto. ¡Buen trabajo fijándote en la fecha!", feedbackIncorrect: "Es verdad que un descubrimiento puede seguir siendo interesante, ¡pero la fecha es una pista muy importante! Una noticia de hace 5 años podría no contar toda la historia actual o usarse para confundir. Siempre es bueno preguntarse si una noticia tan antigua sigue siendo relevante hoy." }
   },
   {
     title: "**CONSEJO 4: TITULARES CON TRAMPA 🎣**",
     text: "Algunos titulares son como un cebo brillante para pescar tu atención: ¡muy exagerados, alarmistas o sorprendentes! Pimpoyo a veces te preguntará: \"¿El titular parece muy exagerado?\".\n\nEntonces, **fíjate bien:** ¿El titular es demasiado increíble para ser verdad o busca generar una emoción muy fuerte? Lee siempre la noticia entera, no solo el titular, y pregúntate: ¿El texto cuenta lo mismo que el titular o lo exagera mucho?\n\n**¡Importante!** Esto se llama 'clickbait'. Muchas veces, estos titulares esconden noticias falsas o de poca calidad. Quieren tu clic, no informarte bien.",
-    challenge: {
-      question: "*Pimpoyo te reta:* ¿Cuál de estos titulares te parece más 'clickbait'?\nA) \"Descubren nueva especie de mariposa en el Amazonas\"\nB) \"¡ALUCINANTE! ¡CIENTÍFICOS CREAN MARIPOSA GIGANTE QUE HABLA! (NO TE LO CREERÁS)\"",
-      options: [
-        { id: "c4_opt1", text: "El titular A", isCorrect: false },
-        { id: "c4_opt2", text: "El titular B", isCorrect: true },
-      ],
-      feedbackCorrect: "¡Correcto! El titular B es súper exagerado, usa mayúsculas y frases como \"NO TE LO CREERÁS\" para llamar mucho la atención. Eso es típico del clickbait. El titular A, en cambio, suena más informativo y calmado. ¡Bien detectado!",
-      feedbackIncorrect: "El titular A suena interesante, ¿verdad? Pero fíjate en el B: las mayúsculas, los signos de exclamación, y que diga \"NO TE LO CREERÁS\" son pistas de que intenta ser muy llamativo, ¡quizás demasiado! Eso es el 'clickbait'. Busca más el clic que informar con seriedad."
-    }
+    challenge: { question: "*Pimpoyo te reta:* ¿Cuál de estos titulares te parece más 'clickbait'?\nA) \"Descubren nueva especie de mariposa en el Amazonas\"\nB) \"¡ALUCINANTE! ¡CIENTÍFICOS CREAN MARIPOSA GIGANTE QUE HABLA! (NO TE LO CREERÁS)\"", options: [ { id: "c4_opt1", text: "El titular A", isCorrect: false }, { id: "c4_opt2", text: "El titular B", isCorrect: true }, ], feedbackCorrect: "¡Correcto! El titular B es súper exagerado, usa mayúsculas y frases como \"NO TE LO CREERÁS\" para llamar mucho la atención. Eso es típico del clickbait. El titular A, en cambio, suena más informativo y calmado. ¡Bien detectado!", feedbackIncorrect: "El titular A suena interesante, ¿verdad? Pero fíjate en el B: las mayúsculas, los signos de exclamación, y que diga \"NO TE LO CREERÁS\" son pistas de que intenta ser muy llamativo, ¡quizás demasiado! Eso es el 'clickbait'. Busca más el clic que informar con seriedad." }
   },
   {
     title: "**CONSEJO 5: ¿ESTÁ BIEN ESCRITO? ✍️**",
     text: "Las noticias de verdad suelen estar escritas con cuidado, ¡como un buen libro!\n\nPor eso, **fíjate en detalles como:** ¿Hay muchas faltas de ortografía? ¿Las frases están mal construidas o no se entienden bien, como a veces ves en mensajes virales? ¿Usa TODO EN MAYÚSCULAS y muchísimos signos de exclamación (!!!)?\n\n**¡Importante!** Los errores pueden ser una pista de que la noticia no es profesional y podría ser falsa. Un lenguaje muy agresivo o que solo busca la manipulación emocional también es sospechoso.",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si lees: \"URGENTE!!! an descubierto un tesoro SECRETISIMO!!!!! comparte YA\", ¿es una señal de noticia fiable o sospechosa?",
-      options: [
-        { id: "c5_opt1", text: "Fiable, porque es urgente", isCorrect: false },
-        { id: "c5_opt2", text: "Sospechosa, por los errores y mayúsculas", isCorrect: true },
-      ],
-      feedbackCorrect: "¡Perfecto! Las mayúsculas excesivas, las faltas de ortografía como \"an descubierto\" o \"secretisimo\", y el pedir compartirlo urgentemente son señales clarísimas para desconfiar. Una noticia seria no se escribiría así. ¡Eres un gran observador!",
-      feedbackIncorrect: "A veces, cuando algo es \"urgente\" queremos creerlo rápido. Pero fíjate bien: ¿una noticia importante se escribiría con tantas faltas como \"an descubierto\" o usaría tantas mayúsculas y exclamaciones? Esas son pistas de que quizás no es muy profesional y por eso es sospechosa."
-    }
+    challenge: { question: "*Pimpoyo te reta:* Si lees: \"URGENTE!!! an descubierto un tesoro SECRETISIMO!!!!! comparte YA\", ¿es una señal de noticia fiable o sospechosa?", options: [ { id: "c5_opt1", text: "Fiable, porque es urgente", isCorrect: false }, { id: "c5_opt2", text: "Sospechosa, por los errores y mayúsculas", isCorrect: true }, ], feedbackCorrect: "¡Perfecto! Las mayúsculas excesivas, las faltas de ortografía como \"an descubierto\" o \"secretisimo\", y el pedir compartirlo urgentemente son señales clarísimas para desconfiar. Una noticia seria no se escribiría así. ¡Eres un gran observador!", feedbackIncorrect: "A veces, cuando algo es \"urgente\" queremos creerlo rápido. Pero fíjate bien: ¿una noticia importante se escribiría con tantas faltas como \"an descubierto\" o usaría tantas mayúsculas y exclamaciones? Esas son pistas de que quizás no es muy profesional y por eso es sospechosa." }
   },
   {
     title: "**CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS? 🔍**",
     text: "Una noticia fiable te muestra de dónde saca la información, ¡como un detective que enseña sus pistas!\n\nPor eso, **fíjate si** la noticia menciona fuentes claras y verificables (por ejemplo, si nombra un estudio científico conocido, un informe oficial o a expertos específicos) y si ofrece enlaces o datos concretos para que puedas comprobarlo tú mismo.\n\n**¡Importante!** Si la noticia solo da opiniones, no dice de dónde viene la información claramente, o se basa en frases como \"me han dicho que...\" o \"se comenta por ahí\" sin más detalle, ¡desconfía! La falta de pruebas claras es una gran señal de alerta.",
-    challenge: {
-      question: "*Pimpoyo te reta:* Una noticia dice: \"Los expertos aseguran que comer chocolate te hace volar\". Para que sea más creíble, ¿qué debería incluir?",
-      options: [
-        { id: "c6_opt1", text: "Quiénes son los expertos y dónde está el estudio", isCorrect: true },
-        { id: "c6_opt2", text: "Más opiniones de gente que ha volado", isCorrect: false },
-        { id: "c6_opt3", text: "Una foto de alguien volando tras comer chocolate", isCorrect: false },
-      ],
-      feedbackCorrect: "¡Justo eso! Le faltaría saber QUIÉNES son esos \"expertos\", si hay algún estudio científico que lo demuestre, o dónde podemos leer más sobre ese \"descubrimiento\". Sin esas pruebas, ¡suena más a fantasía que a noticia!",
-      feedbackIncorrect: "Una foto o más opiniones podrían ser llamativas, ¡pero lo más importante son las pruebas! Para que sea creíble, necesitamos saber quiénes son esos expertos y dónde está el estudio que lo demuestra. ¡Las pruebas son clave, no solo lo que la gente dice o muestra sin más!"
-    }
+    challenge: { question: "*Pimpoyo te reta:* Una noticia dice: \"Los expertos aseguran que comer chocolate te hace volar\". Para que sea más creíble, ¿qué debería incluir?", options: [ { id: "c6_opt1", text: "Quiénes son los expertos y dónde está el estudio", isCorrect: true }, { id: "c6_opt2", text: "Más opiniones de gente que ha volado", isCorrect: false }, { id: "c6_opt3", text: "Una foto de alguien volando tras comer chocolate", isCorrect: false }, ], feedbackCorrect: "¡Justo eso! Le faltaría saber QUIÉNES son esos \"expertos\", si hay algún estudio científico que lo demuestre, o dónde podemos leer más sobre ese \"descubrimiento\". Sin esas pruebas, ¡suena más a fantasía que a noticia!", feedbackIncorrect: "Una foto o más opiniones podrían ser llamativas, ¡pero lo más importante son las pruebas! Para que sea creíble, necesitamos saber quiénes son esos expertos y dónde está el estudio que lo demuestra. ¡Las pruebas son clave, no solo lo que la gente dice o muestra sin más!" }
   },
   {
     title: "**CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS? 🧐**",
     text: "A veces, una noticia puede estar un poquito inclinada hacia un lado, como una torre que no está recta, mostrando solo una parte de la historia.\n\nPor eso, **intenta descubrir si** la noticia cuenta diferentes puntos de vista o solo se enfoca en uno, ignorando los demás.\n\n**¡Importante!** Cuando una noticia parece favorecer mucho una idea y no presenta otros argumentos, podría estar 'sesgada'. Un buen detective busca la historia más completa posible.",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si una noticia sobre un nuevo videojuego solo entrevista a gente que dice que es lo peor del mundo, ¿qué te faltaría para tener una idea más clara?",
-      options: [
-        { id: "c7_opt1", text: "Saber por qué es tan malo", isCorrect: false },
-        { id: "c7_opt2", text: "Escuchar a gente a la que sí le gusta", isCorrect: true },
-        { id: "c7_opt3", text: "Ver más vídeos del juego", isCorrect: false },
-      ],
-      feedbackCorrect: "¡Tienes toda la razón! Parece que solo nos está mostrando una parte de la historia, la negativa. Para entenderlo bien, sería importante escuchar también a quienes sí les gusta o buscar otras opiniones. Así tendríamos una visión más completa y justa.",
-      feedbackIncorrect: "Saber por qué es malo o ver vídeos ayuda, pero para saber si la noticia te cuenta la historia completa, es clave buscar los puntos de vista que faltan. Si solo nos dan una opinión, ¡quizás nos están mostrando solo un lado de la moneda! Faltaría la opinión de a quiénes sí les gusta, por ejemplo."
-    }
+    challenge: { question: "*Pimpoyo te reta:* Si una noticia sobre un nuevo videojuego solo entrevista a gente que dice que es lo peor del mundo, ¿qué te faltaría para tener una idea más clara?", options: [ { id: "c7_opt1", text: "Saber por qué es tan malo", isCorrect: false }, { id: "c7_opt2", text: "Escuchar a gente a la que sí le gusta", isCorrect: true }, { id: "c7_opt3", text: "Ver más vídeos del juego", isCorrect: false }, ], feedbackCorrect: "¡Tienes toda la razón! Parece que solo nos está mostrando una parte de la historia, la negativa. Para entenderlo bien, sería importante escuchar también a quienes sí les gusta o buscar otras opiniones. Así tendríamos una visión más completa y justa.", feedbackIncorrect: "Saber por qué es malo o ver vídeos ayuda, pero para saber si la noticia te cuenta la historia completa, es clave buscar los puntos de vista que faltan. Si solo nos dan una opinión, ¡quizás nos están mostrando solo un lado de la moneda! Faltaría la opinión de a quiénes sí les gusta, por ejemplo." }
   },
   {
     title: "**CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES! 😲😠😂**",
     text: "Las noticias que nos hacen sentir MUY enfadados, tristes o súper felices al instante, a veces son como un mago que distrae tu atención.\n\nAsí que, **pon atención si** una noticia te provoca una emoción muy fuerte de golpe. Pregúntate: ¿Esta noticia busca más emocionarte que hacerte pensar con calma?\n\n**¡Importante!** Algunas noticias falsas usan emociones intensas para que no te pares a pensar si son verdad o no y para que las compartas rápido. ¡Respira hondo y analiza antes de creértela!",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si lees un titular que te hace enfadar muchísimo al instante, ¿qué es bueno hacer antes de compartirlo o creértelo del todo?",
-      options: [
-        { id: "c8_opt1", text: "Compartirlo rápido para que todos se enfaden", isCorrect: false },
-        { id: "c8_opt2", text: "Respirar y pensar si busca enfadarme a propósito", isCorrect: true },
-        { id: "c8_opt3", text: "Buscar más noticias que me hagan enfadar", isCorrect: false },
-      ],
-      feedbackCorrect: "¡Excelente! Lo mejor es parar un segundo, respirar y pensar si la noticia podría estar intentando que te enfades a propósito para que no analices bien la información. Usar las emociones para que no pensemos es un truco de algunas noticias falsas.",
-      feedbackIncorrect: "Cuando algo nos enfada mucho, la primera reacción puede ser compartirlo para que otros también se enteren. ¡Pero cuidado! A veces, las noticias falsas buscan justo eso, que la emoción nos gane y no pensemos con calma. ¡Es mejor respirar y analizarla un poquito antes de compartir!"
-    }
+    challenge: { question: "*Pimpoyo te reta:* Si lees un titular que te hace enfadar muchísimo al instante, ¿qué es bueno hacer antes de compartirlo o creértelo del todo?", options: [ { id: "c8_opt1", text: "Compartirlo rápido para que todos se enfaden", isCorrect: false }, { id: "c8_opt2", text: "Respirar y pensar si busca enfadarme a propósito", isCorrect: true }, { id: "c8_opt3", text: "Buscar más noticias que me hagan enfadar", isCorrect: false }, ], feedbackCorrect: "¡Excelente! Lo mejor es parar un segundo, respirar y pensar si la noticia podría estar intentando que te enfades a propósito para que no analices bien la información. Usar las emociones para que no pensemos es un truco de algunas noticias falsas.", feedbackIncorrect: "Cuando algo nos enfada mucho, la primera reacción puede ser compartirlo para que otros también se enteren. ¡Pero cuidado! A veces, las noticias falsas buscan justo eso, que la emoción nos gane y no pensemos con calma. ¡Es mejor respirar y analizarla un poquito antes de compartir!" }
   },
   {
     title: "**CONSEJO 9: ¿A QUIÉN LE INTERESA? 🤔**",
     text: "Detrás de cada noticia, puede haber alguien que quiere que pienses o hagas algo específico.\n\nPor eso, **una buena pregunta de detective es:** ¿Quién podría querer que yo me crea esta noticia y por qué? ¿Gana algo alguien si esta historia se difunde?\n\n**¡Importante!** Pensar en quién se beneficia te puede dar pistas sobre si la noticia es de confianza o si intenta convencerte de algo sin que te des cuenta. A veces, esto es parte de la manipulación.",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si ves un anuncio muy divertido que dice que una nueva marca de zapatillas te hará correr más rápido que nadie, ¿quién crees que se beneficia más si te lo crees?",
-      options: [
-        { id: "c9_opt1", text: "Yo, porque correré más rápido", isCorrect: false },
-        { id: "c9_opt2", text: "La marca de zapatillas", isCorrect: true },
-        { id: "c9_opt3", text: "Mis amigos, que me verán correr", isCorrect: false },
-      ],
-      feedbackCorrect: "¡Clarísimo! La marca de zapatillas, porque así es más probable que quieras comprarlas. Preguntarse quién se beneficia nos ayuda a ver si la información es objetiva o si tiene una intención detrás. ¡Muy astuto!",
-      feedbackIncorrect: "¡Es verdad que tú te beneficiarías si corrieras más rápido! Pero piensa, ¿quién más quiere que te lo creas mucho, mucho? La empresa que vende las zapatillas, ¿verdad? Ellos ganarían dinero si las compras. A veces, la intención detrás de un mensaje es importante para saber si es del todo neutral."
-    }
+    challenge: { question: "*Pimpoyo te reta:* Si ves un anuncio muy divertido que dice que una nueva marca de zapatillas te hará correr más rápido que nadie, ¿quién crees que se beneficia más si te lo crees?", options: [ { id: "c9_opt1", text: "Yo, porque correré más rápido", isCorrect: false }, { id: "c9_opt2", text: "La marca de zapatillas", isCorrect: true }, { id: "c9_opt3", text: "Mis amigos, que me verán correr", isCorrect: false }, ], feedbackCorrect: "¡Clarísimo! La marca de zapatillas, porque así es más probable que quieras comprarlas. Preguntarse quién se beneficia nos ayuda a ver si la información es objetiva o si tiene una intención detrás. ¡Muy astuto!", feedbackIncorrect: "¡Es verdad que tú te beneficiarías si corrieras más rápido! Pero piensa, ¿quién más quiere que te lo creas mucho, mucho? La empresa que vende las zapatillas, ¿verdad? Ellos ganarían dinero si las compras. A veces, la intención detrás de un mensaje es importante para saber si es del todo neutral." }
   }
 ];
+
+const defaultGlossaryTermsForChatContainer = [
+  { term: "Algoritmo", definition: "Son como recetas secretas que usan las apps y webs (¡como TikTok o YouTube!). Siguen unos pasos ordenados para decidir qué vídeos mostrarte, qué amigos sugerirte o qué anuncios poner. ¡Intentan aprender lo que te gusta!", isDefault: true },
+  { term: "Bulo", definition: "Es una mentira disfrazada de noticia que alguien inventa y comparte para engañar, gastar una broma pesada o incluso para intentar hacer daño. ¡Hay que estar atentos para no caer en ellos!", isDefault: true },
+  { term: "Cámara de Eco", definition: "A veces, en internet o en las redes sociales, los algoritmos nos muestran solo noticias e ideas que ya nos gustan o con las que estamos de acuerdo. Esto crea como una 'burbuja' donde no vemos otras opiniones y parece que todo el mundo piensa igual que nosotros.", isDefault: true },
+  { term: "Clickbait", definition: "Son esos titulares o imágenes súper exagerados y curiosos que ves en internet y que te hacen pinchar casi sin pensar (¡clic!). A veces, la noticia que encuentras después no es tan emocionante o incluso es un poco engañosa. ¡Solo querían tu clic!", isDefault: true },
+  { term: "Contrastar", definition: "Imagina que un amigo te cuenta algo sorprendente. Para saber si es del todo cierto, ¿a que le preguntarías a otros amigos también? Contrastar es hacer eso con las noticias: buscar la misma información en diferentes sitios (periódicos, webs, teles...) para ver si todos cuentan lo mismo o si hay pistas diferentes. ¡Es como ser un detective que junta varias piezas!", isDefault: true },
+  { term: "Contexto", definition: "Es como el escenario completo de una película. Para entender bien una noticia, necesitas saber no solo *qué* pasó, sino también *cuándo* pasó, *dónde*, *quiénes* estaban allí y *qué más* importante estaba ocurriendo al mismo tiempo. ¡Una foto o una frase sacada de contexto puede engañar mucho!", isDefault: true },
+  { term: "Deepfake", definition: "¡Es como magia de ordenador muy avanzada! Usan inteligencia artificial para crear vídeos o audios falsos que parecen súper reales, donde una persona famosa (¡o cualquiera!) dice o hace cosas que nunca hizo de verdad. ¡Pueden ser muy difíciles de pillar!", isDefault: true },
+  { term: "Desinformación", definition: "Es información que es mentira y que alguien la crea y la comparte *a propósito* para engañar, confundir o hacer que la gente crea algo que no es cierto. No es un simple error, ¡hay intención detrás!", isDefault: true },
+  { term: "Evidencia", definition: "Son las pistas que te ayudan a saber si algo es verdad. Pueden ser números, fotos que no estén trucadas, documentos oficiales, o lo que dice un verdadero experto en un tema. ¡Como un detective, Pimpoyo siempre busca la evidencia!", isDefault: true },
+  { term: "Fake news", definition: "Es otra forma de llamar a las noticias que son mentira. Se escriben y se comparten a propósito para que la gente crea cosas que no son ciertas, a veces para confundir o para que alguien piense de una manera determinada.", isDefault: true },
+  { term: "Fiable", definition: "Cuando decimos que una fuente de noticias (como un periódico o una web) es 'fiable', significa que podemos confiar bastante en que la información que nos da es verdadera y ha sido bien investigada. Es como un amigo que sabes que casi siempre te cuenta las cosas como son.", isDefault: true },
+  { term: "Fuente (de información)", definition: "Es de dónde viene la noticia, ¡como saber quién te contó un chisme! Puede ser un periódico, una página web, un canal de tele, un experto o incluso un amigo. Siempre hay que preguntarse: ¿quién lo dice? ¿Y puedo confiar en esa fuente?", isDefault: true },
+  { term: "Hecho", definition: "Es algo que se puede demostrar que es verdad o que realmente ocurrió. Por ejemplo, 'Madrid es la capital de España' es un hecho. No depende de si te gusta o no, ¡simplemente es así!", isDefault: true },
+  { term: "Imagen Manipulada", definition: "Es una foto o un dibujo que alguien ha cambiado con el ordenador para que parezca de verdad, pero en realidad está trucada. Puede ser para quitar a alguien, añadir algo que no estaba, o hacer que parezca que pasó algo que no es cierto. ¡Ojo, que no todo lo que brilla es oro!", isDefault: true },
+  { term: "Manipulación", definition: "Es cuando alguien intenta cambiar la forma en que piensas o sientes sobre algo, usando información de manera tramposa. Puede ser mostrando solo una parte de la historia, exagerando mucho o inventando cosas para llevarte a una conclusión que a esa persona le interesa.", isDefault: true },
+  { term: "Noticia Falsa", definition: "Es simplemente una noticia que no es verdad. Alguien la inventó o se equivocó mucho, pero la presentan como si fuera real.", isDefault: true },
+  { term: "Opinión", definition: "Es lo que una persona piensa, siente o cree sobre algo. Por ejemplo, decir 'el color azul es el más bonito' es una opinión. No se puede demostrar si es verdadera o falsa, ¡porque es el gusto de cada uno! Es diferente a un hecho.", isDefault: true },
+  { term: "Propaganda", definition: "Es información que se presenta de una forma especial para intentar convencerte de que apoyes una idea, un producto o a un grupo de personas (como un partido político). A veces usa verdades, pero otras exagera mucho o esconde partes de la historia para lograr su objetivo.", isDefault: true },
+  { term: "Sátira / Parodia", definition: "Son como noticias 'de mentirijillas' que se hacen para hacer reír o para criticar algo de forma graciosa. Imitan el estilo de las noticias serias, ¡pero cuentan cosas inventadas y exageradas! Si no pillas la broma, ¡te la pueden colar como si fuera verdad!", isDefault: true },
+  { term: "Sesgo (Bias)", definition: "Imagina que en un partido de fútbol, el comentarista solo habla bien de un equipo y mal del otro. ¡Eso es sesgo! En las noticias, ocurre cuando la información se presenta de forma que favorece más una idea o a un grupo, en lugar de contar todos los lados de la historia de manera equilibrada.", isDefault: true },
+  { term: "Titular", definition: "Es como el título de un libro o una película, ¡pero para las noticias! Es esa frase grande y llamativa que ves primero y que intenta contarte de qué va la historia y hacer que quieras leer más.", isDefault: true },
+  { term: "Verificar", definition: "¡Es hacer de detective con las noticias! Significa no creerte algo a la primera, sino buscar más información, mirar en otros sitios o preguntar a expertos para estar más seguro de si es verdad o no.", isDefault: true },
+  { term: "Viral", definition: "Piensa en un vídeo súper divertido o una noticia muy sorprendente que de repente todo el mundo está viendo y compartiendo en TikTok, WhatsApp o YouTube. ¡Eso es que se ha hecho viral! Se extiende súper rápido, como un resfriado en clase.", isDefault: true }
+];
+
+interface GlossaryProcessingItem {
+  term: string;
+  definition: string;
+}
+
+const glossaryForProcessing: GlossaryProcessingItem[] = defaultGlossaryTermsForChatContainer.map(item => ({
+  term: item.term,
+  definition: item.definition,
+}));
 
 const SYSTEM_PROMPT_FAKE_NEWS = `
 Rol: Eres un chatbot educativo y amigable llamado Pimpoyo, diseñado para niños de 10-12 años.
@@ -213,6 +173,7 @@ Estilo de Comunicación:
 - Tampoco afirmes que has escuchado al usuario, es decir, no digas cosas tipo ---¡Claro! Entiendo lo que quieres decir.--- o similar, simplemente di el resto.
 Objetivo Final: Que el usuario aprenda sobre la información que te pregunta, mediante un proceso interactivo y guiado.
 `;
+
 // Comentario encima de la función ChatContainer
 function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -239,7 +200,6 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
 
   const [isPostTestMode, setIsPostTestMode] = useState<boolean>(false);
 
-  const [activeTipIndex, setActiveTipIndex] = useState<number>(0);
   const [isTipChallengeActive, setIsTipChallengeActive] = useState<boolean>(false);
 
   // Comentario encima de la función fetchUserInfo
@@ -280,7 +240,6 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       setCurrentUserInfo(null);
       setIsLoadingUserInfo(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authToken, fetchUserInfo, refreshUserInfoToggle]);
 
   // Comentario encima de la función createWelcomeMessage
@@ -324,39 +283,55 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   }, [currentUserInfo]);
 
   // Comentario encima de la función addBotResponse
-  const addBotResponse = useCallback((text: string | null, buttons: MessageButton[] = [], delay: number = 300, onMessageAdded?: (id: string | number) => void, htmlContent: string | null = null, challengeCard: TipChallengeCard | null = null) => {
+  const addBotResponse = useCallback((
+      text: string | null,
+      buttons: MessageButton[] = [],
+      delay: number = 300,
+      onMessageAdded?: (id: string | number) => void,
+      htmlContent: string | null = null,
+      challengeCard: TipChallengeCard | null = null,
+      interactiveContent?: React.ReactNode 
+  ) => {
     setIsBotTyping(false);
     const botMsgId = "bot-msg-" + Date.now() + Math.random();
     const botMsg: ChatMessage = {
       id: botMsgId,
       sender: "bot",
-      text,
-      htmlContent,
+      text: interactiveContent ? null : text, 
+      htmlContent: interactiveContent ? null : htmlContent, 
+      interactiveContent: interactiveContent, 
       avatar: BOT_AVATAR_URL,
       timestamp: Date.now() + delay,
       buttons,
-      buttonsDisabled: buttons.length === 0 && !challengeCard, // Se deshabilita si no hay botones Y no hay tarjeta de reto
-      challengeCard: challengeCard // Añadido para pasar la tarjeta del reto
+      buttonsDisabled: buttons.length === 0 && !challengeCard,
+      challengeCard: challengeCard
     };
-    if (text && htmlContent) console.warn("addBotResponse: Both text and htmlContent provided.");
     setTimeout(() => {
       setMessages(prev => [...prev, botMsg]);
       if (onMessageAdded) onMessageAdded(botMsgId);
     }, delay);
     return botMsgId;
-  }, []);
+  }, [BOT_AVATAR_URL, setMessages, setIsBotTyping]); 
 
   // Comentario encima de la función displayTipAndChallenge
   const displayTipAndChallenge = useCallback((tipIndex: number) => {
-    const tip = tips[tipIndex];
+    const tip = tips[tipIndex]; 
     if (!tip) return;
 
-    const mainTipText = `${tip.title}\n\n${tip.text}`;
+    const rawTipText = `${tip.title}\n\n${tip.text}`;
+    
+    const processedTipContent = processTextForGlossary(
+      rawTipText,
+      glossaryForProcessing, 
+      (term) => { 
+        console.log(`Término del glosario "${term}" clickeado/activado.`);
+        // TODO: Implementar lógica para abrir SidePanel y mostrar el término.
+      }
+    );
+
     let challengeCardPayload: TipChallengeCard | null = null;
     const navigationOrActionButtons: MessageButton[] = [];
-
-    setActiveTipIndex(tipIndex);
-
+    
     if (tip.challenge && tip.challenge.options) {
         challengeCardPayload = {
             question: tip.challenge.question,
@@ -378,10 +353,17 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         }
     }
     
-    // Se pasa challengeCardPayload como último argumento a addBotResponse
-    addBotResponse(mainTipText, navigationOrActionButtons, 300, undefined, undefined, challengeCardPayload);
+    addBotResponse(
+      null, 
+      navigationOrActionButtons, 
+      300, 
+      undefined, 
+      null, 
+      challengeCardPayload,
+      <>{processedTipContent}</> 
+    );
 
-  }, [addBotResponse, setActiveTipIndex, setIsTipChallengeActive, BOT_AVATAR_URL]);
+  }, [addBotResponse, setIsTipChallengeActive]);
 
 
   // Comentario encima de la función increaseDifficulty
@@ -444,7 +426,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     const selectionMessageId = addBotResponse( "¿Cuál de las dos noticias crees que es la VERDADERA?", [{ id: `select-news-left`, text: "Noticia Izquierda" }, { id: `select-news-right`, text: "Noticia Derecha" }], 800 );
     setNewsChallengeState({ trueNewsOriginalId: selectedTrueNews.ID, leftNewsOriginalId: leftNewsItem.ID, rightNewsOriginalId: rightNewsItem.ID, selectionMessageId: selectionMessageId as string, });
     setIsLoadingNews(false);
-  }, [difficultyLevel, addBotResponse, setIsLoadingNews, setMessages, setNewsChallengeState]);
+  }, [difficultyLevel, addBotResponse, setIsLoadingNews, setMessages, setNewsChallengeState]); 
 
   // Comentario encima de la función presentNewsChallenge
   const presentNewsChallenge = useCallback(async (forceSingleAnalysisMode: boolean = false) => {
@@ -529,7 +511,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
              processTwoNewsChallenge(newsData, introId);
         }
     }
-  }, [authToken, isLoadingNews, newsData, difficultyLevel, addBotResponse, resetSingleAnalysisMode, processTwoNewsChallenge]);
+  }, [authToken, difficultyLevel, addBotResponse, resetSingleAnalysisMode, processTwoNewsChallenge, newsData, setMessages, setIsLoadingNews, setChatError, setNewsData, setNewsChallengeState, setIsTipChallengeActive, setSingleNewsAnalysisData, setIsSingleNewsAnalysisMode, setIsAwaitingInitialAnalysis]);
 
   // Comentario encima de la función handleMessageButtonClick
   const handleMessageButtonClick = useCallback(async (messageId: number | string, buttonId: string) => {
@@ -586,17 +568,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     if (buttonId.startsWith("btn-tip-next-") || buttonId.startsWith("btn-tip-prev-")) {
         const isNext = buttonId.startsWith("btn-tip-next-");
         const baseIndexFromButton = parseInt(buttonId.split("-").pop() || "0", 10);
-        let targetIndex;
-
-        if (isNext) {
-            targetIndex = baseIndexFromButton + 1;
-        } else {
-            targetIndex = baseIndexFromButton - 1;
-        }
+        let targetIndex = isNext ? baseIndexFromButton + 1 : baseIndexFromButton -1; 
 
         if (targetIndex >= 0 && targetIndex < tips.length) {
             displayTipAndChallenge(targetIndex);
-        } else if (isNext && targetIndex >= tips.length) {
+        } else if (isNext && targetIndex >= tips.length) { 
             addUserChoiceMessage("He entendido los consejos");
             addBotResponse("¡Genial! Recordar estos consejos te ayudará mucho a ser un gran detective de noticias. 👍 \n\n¿Qué quieres hacer ahora?", [
                 { id: "btn-news-again", text: "Descifrar Noticias" },
@@ -616,7 +592,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       if (buttonId === "btn-tips") addUserChoiceMessage("Quiero TIPS Y CONSEJOS");
       else addUserChoiceMessage("Repasar los Tips");
 
-      displayTipAndChallenge(0);
+      displayTipAndChallenge(0); 
       return;
     }
     if (buttonId === "btn-finish-analysis" && isSingleNewsAnalysisMode && currentGuidedChatSessionId) {
@@ -624,7 +600,6 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         setIsBotTyping(true);
         try {
           addBotResponse("Revisando tu análisis y preparando la solución...", [], 0);
-          setIsBotTyping(true);
           const response = await fetch(`/api/activity/guided-analysis/finish-news/${currentGuidedChatSessionId}`, {
             method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` }
           });
@@ -653,9 +628,9 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         return;
     } else if (buttonId === "btn-finish-analysis-anyway") {
         addUserChoiceMessage("Terminar Análisis Igualmente.");
-         if (currentGuidedChatSessionId) {
+         if (currentGuidedChatSessionId) { 
             addBotResponse("De acuerdo, finalizando este análisis.", [], 0);
-         }
+         } 
         addBotResponse("¿Qué hacemos ahora?", [
             { id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" },
         ], 300);
@@ -718,7 +693,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       if (typeof newsChallengeState.trueNewsOriginalId !== 'string' || !newsChallengeState.trueNewsOriginalId ||
           typeof actualFalseNewsId !== 'string' || !actualFalseNewsId ||
           typeof selectedNewsId !== 'string' || !selectedNewsId) {
-          console.error("Error: Uno o más IDs de noticias para el payload no son válidos.", { /* ... */ });
+          console.error("Error: Uno o más IDs de noticias para el payload no son válidos.", { trueNewsOriginalId: newsChallengeState.trueNewsOriginalId, actualFalseNewsId, selectedNewsId });
           setMessages(prev => prev.filter(m => m.id !== veamosId));
           setIsBotTyping(false);
           addBotResponse("Hubo un error al procesar tu elección debido a IDs de noticias inválidos. Por favor, intenta de nuevo.", [
@@ -754,18 +729,19 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         const result: FinishPairChallengeResponse = await response.json();
         const isCorrectBackend = result.es_correcto;
         let difficultyChangedMessage: string | null = null;
-        let tempCorrectStreak = correctStreak;
+        let tempCorrectStreak = correctStreak; 
 
         if (isCorrectBackend) {
-            tempCorrectStreak++;
+            tempCorrectStreak = correctStreak + 1; 
             setCorrectStreak(prev => prev + 1);
             setIncorrectStreak(0);
-            if (tempCorrectStreak >= 3) {
+            if (tempCorrectStreak >= 3) { 
                 if (increaseDifficulty()) {
                     difficultyChangedMessage = "¡Tres seguidas! 😎 ¡Subimos un poco la dificultad!";
-                    setCorrectStreak(0);
+                    setCorrectStreak(0); 
+                    tempCorrectStreak = 0; 
                 } else {
-                   if (tempCorrectStreak % 3 === 0) {
+                   if (tempCorrectStreak % 3 === 0) { 
                         difficultyChangedMessage = "¡Imparable! Sigues dominando el nivel más alto. 🔥";
                    }
                 }
@@ -774,13 +750,13 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
             const newIncStreak = incorrectStreak + 1;
             setIncorrectStreak(newIncStreak);
             setCorrectStreak(0);
-            tempCorrectStreak = 0;
+            tempCorrectStreak = 0; 
             if (newIncStreak >= 3) {
                 if (decreaseDifficulty()) {
                     difficultyChangedMessage = "¡Ánimo! 💪 Vamos a probar con unas un poco más sencillas.";
-                    setIncorrectStreak(0);
+                    setIncorrectStreak(0); 
                 } else {
-                    setIncorrectStreak(0);
+                    setIncorrectStreak(0); 
                 }
             }
         }
@@ -799,35 +775,23 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         let feedbackPresentationDelay = 300;
         if (difficultyChangedMessage) {
             addBotResponse(difficultyChangedMessage, [], 300);
-            feedbackPresentationDelay = 600;
+            feedbackPresentationDelay = 800; 
         }
         addBotResponse(feedbackText, [], feedbackPresentationDelay);
-
-        let nextStepButtons: MessageButton[];
+        
+        const nextStepButtons: MessageButton[] = [
+            { id: "btn-news-again", text: "Siguiente Desafío" },
+            { id: "btn-tips-again", text: "Ver Tips" },
+            { id: "btn-talk-again", text: "Sólo Charlar" }
+        ];
         const isThreeStreakSpecialAndLevelUp = isCorrectBackend && tempCorrectStreak > 0 && tempCorrectStreak % 3 === 0 && difficultyChangedMessage && difficultyChangedMessage.includes("¡Subimos un poco la dificultad!");
-        const isThreeStreakSpecialMaxLevel = isCorrectBackend && tempCorrectStreak > 0 && tempCorrectStreak % 3 === 0 && difficultyChangedMessage && difficultyChangedMessage.includes("¡Imparable!");
 
-        if (isThreeStreakSpecialAndLevelUp) {
-            nextStepButtons = [
-                { id: "btn-news-again", text: "Siguiente Desafío (¡Nivel Subido!)" },
-                { id: "btn-tips-again", text: "Ver Tips" },
-                { id: "btn-talk-again", text: "Sólo Charlar" }
-            ];
-        } else if (isThreeStreakSpecialMaxLevel) {
-            nextStepButtons = [
-                { id: "btn-news-again", text: "Siguiente Desafío" },
-                { id: "btn-tips-again", text: "Ver Tips" },
-                { id: "btn-talk-again", text: "Sólo Charlar" }
-            ];
+        if (isThreeStreakSpecialAndLevelUp) { // Esto debería ser tempCorrectStreak === 0 porque se reseteó
+             nextStepButtons[0].text = "Siguiente Desafío (¡Nivel Subido!)";
         }
-         else {
-            nextStepButtons = [
-                { id: "btn-news-again", text: "Jugar otra vez" },
-                { id: "btn-tips-again", text: "Ver Tips" },
-                { id: "btn-talk-again", text: "Sólo Charlar" }
-            ];
-        }
-        addBotResponse("¿Qué quieres hacer ahora?", nextStepButtons, feedbackPresentationDelay + 200);
+
+
+        addBotResponse("¿Qué quieres hacer ahora?", nextStepButtons, feedbackPresentationDelay + 300);
       } catch (error) {
         setIsBotTyping(false);
         setMessages(prev => prev.filter(m => m.id !== veamosId));
@@ -839,11 +803,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       finally { setNewsChallengeState(null); }
       return;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     authToken, addUserChoiceMessage, addBotResponse, presentNewsChallenge, newsChallengeState,
     correctStreak, incorrectStreak, increaseDifficulty, decreaseDifficulty, difficultyLevel,
-    isSingleNewsAnalysisMode, currentGuidedChatSessionId, displayTipAndChallenge
+    isSingleNewsAnalysisMode, currentGuidedChatSessionId, displayTipAndChallenge,
+    setMessages, setIsBotTyping, resetSingleAnalysisMode, setIsTipChallengeActive, setNewsChallengeState 
   ]);
 
   // Comentario encima de la función handleSendMessage
@@ -871,7 +835,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       else if (/\b(es\s+)?falsa\b/.test(lowerInput) && !/\bno\s+(es\s+)?falsa\b/.test(lowerInput)) evaluacion = 'FALSE';
       else if (/\b(no\s+estoy\s+segur|no\s+s[eé]|dudo)\b/.test(lowerInput)) evaluacion = 'UNSURE';
 
-      if (singleNewsAnalysisData) {
+      if (singleNewsAnalysisData) { 
           setSingleNewsAnalysisData(prevData => prevData ? { ...prevData, initialUserEvaluation: evaluacion } : null);
       }
 
@@ -962,7 +926,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         const messagesForOllama: OllamaMessage[] = [{ role: 'system', content: currentSystemPrompt }];
         const messagesWithNewUser = [...messages, newUserMessage];
         messagesWithNewUser.forEach(msg => {
-            if (msg.text && !msg.htmlContent) {
+            if (msg.text && !msg.htmlContent && !msg.interactiveContent) { 
                  if (!(newsChallengeState && msg.id === newsChallengeState.selectionMessageId && !msg.buttonsDisabled)) {
                     messagesForOllama.push({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.text });
                 }
@@ -1039,7 +1003,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     resetSingleAnalysisMode();
     setNewsChallengeState(null);
     setIsTipChallengeActive(false);
-  }, [currentUserInfo, messages, addBotResponse, resetSingleAnalysisMode]);
+  }, [currentUserInfo, messages, addBotResponse, resetSingleAnalysisMode, setMessages, setIsPostTestMode, setIsFreeChatMode, setNewsChallengeState, setIsTipChallengeActive]);
 
   // Comentario encima de la función handleRefresh
   const handleRefresh = () => {
@@ -1061,8 +1025,10 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       setCorrectStreak(0);
       setIncorrectStreak(0);
       setGuidedAnalysesSubmitted(0);
-      setActiveTipIndex(0);
+      // setActiveTipIndex(0); // Ya no se usa activeTipIndex
       setIsTipChallengeActive(false);
+    } else if (!authToken) { 
+        onLogout(); 
     }
     closePanel();
   };

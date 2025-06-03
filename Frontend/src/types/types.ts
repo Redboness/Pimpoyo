@@ -91,6 +91,7 @@ export interface ChatMessage {
   sender: 'user' | 'bot';
   text?: string | null;
   htmlContent?: string | null;
+  interactiveContent?: React.ReactNode;
   avatar: string;
   timestamp: number;
   buttons?: MessageButton[];
@@ -110,7 +111,7 @@ export interface GlossaryEntry {
   definition: string;
   isDefault: boolean;
   userId?: number | string;
-  fecha_creacion?: Date;
+  fecha_creacion?: Date | string;
 }
 
 export interface GlossaryTermPublic {
