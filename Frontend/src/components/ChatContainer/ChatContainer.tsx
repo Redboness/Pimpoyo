@@ -24,7 +24,7 @@ import {
   TipChallengeCard
 } from "../../types/types";
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { processTextForGlossary } from "../Utils/glossaryUtils";
+import { processTextForGlossary } from "../Utils/glossaryUtils"; // Asumiendo que si lo renombraste a .tsx, la importación se resuelve bien.
 
 interface ChatContainerProps {
   authToken: string;
@@ -43,7 +43,7 @@ interface TipChallengeOption {
 
 interface TipChallenge {
   question: string;
-  options?: TipChallengeOption[]; // options es opcional
+  options?: TipChallengeOption[];
   feedbackCorrect: string;
   feedbackIncorrect: string;
 }
@@ -51,11 +51,9 @@ interface TipChallenge {
 interface Tip {
   title: string;
   text: string;
-  challenge?: TipChallenge; // challenge es opcional
+  challenge?: TipChallenge;
 }
 
-// Definición de la lista de tips
-// (Asegúrate que el contenido de cada 'challenge' aquí coincide exactamente con la interfaz TipChallenge)
 const tips: Tip[] = [
   {
     title: "**CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️**",
@@ -201,6 +199,9 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const [isPostTestMode, setIsPostTestMode] = useState<boolean>(false);
 
   const [isTipChallengeActive, setIsTipChallengeActive] = useState<boolean>(false);
+  const [selectedTermForSidePanel, setSelectedTermForSidePanel] = useState<string | null>(null); // <--- NUEVO ESTADO
+  const [initialPanelSection, setInitialPanelSection] = useState<string | null>(null); // <--- NUEVO ESTADO para la sección inicial
+
 
   // Comentario encima de la función fetchUserInfo
   const fetchUserInfo = useCallback(async () => {
@@ -268,9 +269,21 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   }, [isLoadingUserInfo, currentUserInfo, createWelcomeMessage, messages.length, isPostTestMode]);
 
   // Comentario encima de la función togglePanel
-  const togglePanel = () => setIsPanelOpen(!isPanelOpen);
+  const togglePanel = () => {
+    if (isPanelOpen) { // Si el panel se va a cerrar
+      setSelectedTermForSidePanel(null);
+      setInitialPanelSection(null);
+    }
+    setIsPanelOpen(prev => !prev);
+  };
+
   // Comentario encima de la función closePanel
-  const closePanel = () => setIsPanelOpen(false);
+  const closePanel = () => {
+    setIsPanelOpen(false);
+    setSelectedTermForSidePanel(null); // Resetea al cerrar
+    setInitialPanelSection(null);    // Resetea al cerrar
+  };
+
   // Comentario encima de la función handleSettingsSaved
   const handleSettingsSaved = () => setRefreshUserInfoToggle(true);
   // Comentario encima de la función addUserChoiceMessage
@@ -311,7 +324,16 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       if (onMessageAdded) onMessageAdded(botMsgId);
     }, delay);
     return botMsgId;
-  }, [BOT_AVATAR_URL, setMessages, setIsBotTyping]);
+  }, [BOT_AVATAR_URL, setMessages, setIsBotTyping]); // Eliminado BOT_AVATAR_URL de dependencias si es constante global
+
+  // Define el manejador del clic para los términos del glosario
+  const handleGlossaryTermClick = useCallback((term: string) => {
+    console.log(`Término del glosario "${term}" clickeado/activado desde ChatContainer.`);
+    setSelectedTermForSidePanel(term);
+    setInitialPanelSection('glossary'); // Indica al SidePanel que se abra en la sección 'glossary'
+    setIsPanelOpen(true);             // Abre el SidePanel
+  }, [setIsPanelOpen, setSelectedTermForSidePanel, setInitialPanelSection]); // Dependencias del useCallback
+
 
   // Comentario encima de la función displayTipAndChallenge
   const displayTipAndChallenge = useCallback((tipIndex: number) => {
@@ -323,10 +345,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     const processedTipContent = processTextForGlossary(
       rawTipText,
       glossaryForProcessing,
-      (term) => {
-        console.log(`Término del glosario "${term}" clickeado/activado.`);
-        // TODO: Implementar lógica para abrir SidePanel y mostrar el término.
-      }
+      handleGlossaryTermClick // <--- USA EL NUEVO MANEJADOR AQUÍ
     );
 
     let challengeCardPayload: TipChallengeCard | null = null;
@@ -363,7 +382,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       <>{processedTipContent}</>
     );
 
-  }, [addBotResponse, setIsTipChallengeActive]);
+  }, [addBotResponse, setIsTipChallengeActive, handleGlossaryTermClick, glossaryForProcessing]); // Añade handleGlossaryTermClick y glossaryForProcessing
 
 
   // Comentario encima de la función increaseDifficulty
@@ -807,7 +826,9 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     authToken, addUserChoiceMessage, addBotResponse, presentNewsChallenge, newsChallengeState,
     correctStreak, incorrectStreak, increaseDifficulty, decreaseDifficulty, difficultyLevel,
     isSingleNewsAnalysisMode, currentGuidedChatSessionId, displayTipAndChallenge,
-    setMessages, setIsBotTyping, resetSingleAnalysisMode, setIsTipChallengeActive, setNewsChallengeState
+    setMessages, setIsBotTyping, resetSingleAnalysisMode, setIsTipChallengeActive, setNewsChallengeState,
+    glossaryForProcessing, handleGlossaryTermClick, // Añadidas para displayTipAndChallenge
+    setIsPanelOpen, setSelectedTermForSidePanel, setInitialPanelSection // Añadidas para handleGlossaryTermClick
   ]);
 
   // Comentario encima de la función handleSendMessage
@@ -1025,12 +1046,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       setCorrectStreak(0);
       setIncorrectStreak(0);
       setGuidedAnalysesSubmitted(0);
-      // setActiveTipIndex(0); // Ya no se usa activeTipIndex
       setIsTipChallengeActive(false);
     } else if (!authToken) {
         onLogout();
     }
-    closePanel();
+    closePanel(); // closePanel ahora resetea selectedTermForSidePanel e initialPanelSection
   };
 
   let determinedChatInputDisabled = isLoadingNews || isBotTyping || isPostTestMode || isTipChallengeActive;
@@ -1109,6 +1129,8 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         onLogout={onLogout}
         onSettingsSaved={handleSettingsSaved}
         onStartPostTest={startPostTest}
+        selectedTerm={selectedTermForSidePanel} // <--- PASA LA PROP
+        initialSection={initialPanelSection}   // <--- PASA LA PROP
       />
     </div>
   );

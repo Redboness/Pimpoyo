@@ -33,6 +33,8 @@ export interface SidePanelProps {
   onLogout: () => void;
   onSettingsSaved: () => void;
   onStartPostTest: () => void;
+  selectedTerm?: string | null;
+  initialSection?: string | null;
 }
 
 export type DifficultyLevel = 'bajo' | 'medio' | 'alto';

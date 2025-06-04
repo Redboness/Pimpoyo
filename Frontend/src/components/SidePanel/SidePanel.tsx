@@ -38,7 +38,7 @@ const defaultGlossaryTerms: GlossaryEntry[] = [
     isDefault: true
   },
   {
-    term: "Contrastar", // Nuevo
+    term: "Contrastar",
     definition: "Imagina que un amigo te cuenta algo sorprendente. Para saber si es del todo cierto, ¿a que le preguntarías a otros amigos también? Contrastar es hacer eso con las noticias: buscar la misma información en diferentes sitios (periódicos, webs, teles...) para ver si todos cuentan lo mismo o si hay pistas diferentes. ¡Es como ser un detective que junta varias piezas!",
     isDefault: true
   },
@@ -68,7 +68,7 @@ const defaultGlossaryTerms: GlossaryEntry[] = [
     isDefault: true
   },
   {
-    term: "Fiable", // Nuevo
+    term: "Fiable",
     definition: "Cuando decimos que una fuente de noticias (como un periódico o una web) es 'fiable', significa que podemos confiar bastante en que la información que nos da es verdadera y ha sido bien investigada. Es como un amigo que sabes que casi siempre te cuenta las cosas como son.",
     isDefault: true
   },
@@ -118,7 +118,7 @@ const defaultGlossaryTerms: GlossaryEntry[] = [
     isDefault: true
   },
   {
-    term: "Titular", // Nuevo
+    term: "Titular",
     definition: "Es como el título de un libro o una película, ¡pero para las noticias! Es esa frase grande y llamativa que ves primero y que intenta contarte de qué va la historia y hacer que quieras leer más.",
     isDefault: true
   },
@@ -133,6 +133,7 @@ const defaultGlossaryTerms: GlossaryEntry[] = [
     isDefault: true
   }
 ];
+
 // Componente SidePanel
 function SidePanel({
     isOpen,
@@ -141,9 +142,12 @@ function SidePanel({
     authToken,
     onLogout,
     onSettingsSaved,
-    onStartPostTest // <--- RECIBIR LA NUEVA PROP
+    onStartPostTest,
+    selectedTerm,     // <-- Prop recibida
+    initialSection    // <-- Prop recibida
 }: SidePanelProps) {
-  const [activeSection, setActiveSection] = useState<string | null>(null);
+  // Establece activeSection usando initialSection si está disponible, sino 'glossary' o null como prefieras
+  const [activeSection, setActiveSection] = useState<string | null>(initialSection || 'glossary');
   const [nicknameSetting, setNicknameSetting] = useState('');
   const [avatarUrlSetting, setAvatarUrlSetting] = useState('');
   const [settingsLoading, setSettingsLoading] = useState<boolean>(false);
@@ -170,7 +174,7 @@ function SidePanel({
 
   const fetchUserGlossaryTerms = useCallback(async () => {
     if (!authToken) { console.warn("fetchUserGlossaryTerms: No auth token found."); return; }
-    console.log("Fetching user glossary terms from API...");
+    // console.log("Fetching user glossary terms from API..."); // Ya lo tienes
     setGlossaryLoading(true);
     setGlossaryError(null);
     try {
@@ -198,10 +202,11 @@ function SidePanel({
   }, [authToken]);
 
   useEffect(() => {
-    if (activeSection === 'glossary' && authToken) {
+    // Solo carga el glosario si el panel está abierto Y la sección activa es 'glossary'
+    if (isOpen && activeSection === 'glossary' && authToken) {
       fetchUserGlossaryTerms();
     }
-   }, [activeSection, authToken, fetchUserGlossaryTerms]);
+   }, [isOpen, activeSection, authToken, fetchUserGlossaryTerms]);
 
   const fetchUserStats = useCallback(async () => {
     if (!authToken) {
@@ -210,7 +215,7 @@ function SidePanel({
       setFetchedStats(null);
       return;
     }
-    console.log("Fetching detailed user stats...");
+    // console.log("Fetching detailed user stats..."); // Ya lo tienes
     setIsStatsLoading(true);
     setStatsError(null);
 
@@ -226,8 +231,7 @@ function SidePanel({
       }
       const statsData: UserDetailedStats = await response.json();
       setFetchedStats(statsData);
-      console.log("Detailed stats fetched successfully:", statsData);
-
+      // console.log("Detailed stats fetched successfully:", statsData); // Ya lo tienes
     } catch (error) {
       console.error("Error fetching user stats:", error);
       const errorMessage = error instanceof Error ? error.message : 'No se pudieron cargar las estadísticas.';
@@ -242,18 +246,50 @@ function SidePanel({
     if (isOpen && activeSection === 'stats' && !isStatsLoading) {
       fetchUserStats();
     }
-    if (!isOpen || activeSection !== 'stats') {
+    // Resetea solo si el panel se cierra Y la sección activa ERA 'stats'
+    // O si la sección cambia y ya no es 'stats'
+    if ((!isOpen && activeSection === 'stats') || (isOpen && activeSection !== 'stats')) {
        setFetchedStats(null);
        setStatsError(null);
     }
-  }, [isOpen, activeSection, fetchUserStats]);
+  }, [isOpen, activeSection, fetchUserStats]); // isStatsLoading no es necesario como dependencia aquí
 
-  const handleSectionChange = (section: string | null) => {
+  // useEffect para manejar la sección inicial cuando el panel se abre
+  useEffect(() => {
+    if (isOpen && initialSection) {
+      if (activeSection !== initialSection) { // Evita re-seteos innecesarios
+        setActiveSection(initialSection);
+      }
+    }
+  }, [isOpen, initialSection]); // No incluir activeSection aquí para evitar un posible bucle si initialSection es persistente
+
+  // useEffect para manejar el scroll al término seleccionado
+  useEffect(() => {
+    if (isOpen && activeSection === 'glossary' && selectedTerm) {
+      const timer = setTimeout(() => {
+        const sanitizedTermId = `glossary-entry-${selectedTerm.toLowerCase().replace(/[^a-z0-9ñáéíóúü]+/gi, '-')}`;
+        const element = document.getElementById(sanitizedTermId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('highlighted-term-momentarily');
+          setTimeout(() => {
+            element.classList.remove('highlighted-term-momentarily');
+          }, 2500);
+        } else {
+          console.warn(`SidePanel: No se encontró el elemento del glosario con ID: ${sanitizedTermId} (término: ${selectedTerm})`);
+        }
+      }, 150); // Delay para permitir que el DOM se actualice
+      return () => clearTimeout(timer); // Limpieza del temporizador
+    }
+  }, [isOpen, activeSection, selectedTerm]); // Dependencias correctas
+
+  const handleSectionChange = (section: string | null) => { // Esta función es usada por los botones de navegación del panel
     setActiveSection(section);
     if (section === 'settings' && userInfo) {
       setNicknameSetting(userInfo.apodo);
       setAvatarUrlSetting(userInfo.avatar_url || '');
     }
+    // Resetear campos de añadir término si se sale de la sección glosario
     if (section !== 'glossary') {
       setNewTerm('');
       setNewDefinition('');
@@ -274,7 +310,7 @@ function SidePanel({
         const responseData = await response.json();
         if (!response.ok) { throw new Error(responseData.detail || `Error: ${response.status}`); }
         setSettingsFeedback({ type: 'success', message: '¡Cambios guardados!' });
-        onSettingsSaved(); // Esto refrescará la userInfo en ChatContainer
+        onSettingsSaved();
         setTimeout(() => setSettingsFeedback(null), 3000);
     } catch (error) {
         setSettingsLoading(false);
@@ -306,17 +342,16 @@ function SidePanel({
         }
         setNewTerm('');
         setNewDefinition('');
-        await fetchUserGlossaryTerms(); // Refrescar la lista
+        await fetchUserGlossaryTerms();
     } catch (error) {
         console.error("Error al añadir término del glosario:", error);
         setGlossaryError(error instanceof Error ? error.message : 'No se pudo añadir la palabra.');
     } finally {
-        setGlossaryLoading(false); // Asegurar que se quita el loading incluso si hay error al final
+        setGlossaryLoading(false);
     }
   };
 
   const groupedGlossary = useMemo(() => {
-    // ... (tu lógica de groupedGlossary)
     const combinedTerms = [...defaultGlossaryTerms, ...userGlossaryTerms];
     const validTerms = combinedTerms.filter((term) => term && typeof term.term === 'string' && term.term.length > 0);
     let sortedTerms: GlossaryEntry[] = [];
@@ -332,7 +367,7 @@ function SidePanel({
             if (!acc[firstLetter]) { acc[firstLetter] = []; }
             acc[firstLetter].push(term);
         } else {
-            const otherCategory = '#';
+            const otherCategory = '#'; // Para términos que no empiezan con una letra estándar
             if (!acc[otherCategory]) { acc[otherCategory] = []; }
             acc[otherCategory].push(term);
         }
@@ -343,8 +378,6 @@ function SidePanel({
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 
-  // Lógica para decidir si mostrar el botón de post-test
-  // Asumiendo que UserInfo en types.ts ahora tiene puntuacion_pre_test y puntuacion_post_test
   const puedeHacerPostTest = userInfo &&
                              (userInfo.puntuacion_pre_test !== null && userInfo.puntuacion_pre_test !== undefined) &&
                              (userInfo.puntuacion_post_test === null || userInfo.puntuacion_post_test === undefined);
@@ -353,7 +386,6 @@ function SidePanel({
                         (userInfo.puntuacion_post_test !== null && userInfo.puntuacion_post_test !== undefined);
 
   const necesitaPreTest = userInfo && (userInfo.puntuacion_pre_test === null || userInfo.puntuacion_pre_test === undefined);
-
 
   return (
     <div id="side-panel" className={`side-panel ${isOpen ? 'open' : ''}`}>
@@ -372,46 +404,50 @@ function SidePanel({
         </div>
 
         {activeSection === 'glossary' && (
-          // ... (tu contenido de glosario) ...
           <div id="glossary-content" className="panel-section-content" style={{ display: 'block' }}>
             <h3>Glosario</h3>
             <form onSubmit={handleAddGlossaryTerm} className="glossary-add-form" style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#fdf9e0', borderRadius: '8px' }}>
-               <h4 style={{marginTop: 0, marginBottom: '15px'}}>Añadir mi palabra</h4>
-               <div className="form-field" style={{ marginBottom: '10px' }}>
-                  <label htmlFor="new-term-input" style={{ display: 'block', marginBottom: '3px', fontWeight: 'bold' }}>Término:</label>
-                  <input type="text" id="new-term-input" className="form-input" value={newTerm} onChange={(e) => setNewTerm(e.target.value)} placeholder="Escribe la palabra..." maxLength={50} required disabled={glossaryLoading} style={{ width: '100%', boxSizing: 'border-box' }} />
-               </div>
-               <div className="form-field" style={{ marginBottom: '15px' }}>
-                 <label htmlFor="new-definition-input" style={{ display: 'block', marginBottom: '3px', fontWeight: 'bold' }}>Definición:</label>
-                 <textarea id="new-definition-input" className="form-textarea" value={newDefinition} onChange={(e) => setNewDefinition(e.target.value)} placeholder="Escribe qué significa..." rows={3} required disabled={glossaryLoading} style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical' }} />
-               </div>
-               {glossaryError && !glossaryLoading && <p className="error-message" style={{color: 'red', marginTop: '-5px', marginBottom: '10px'}}>{glossaryError}</p>}
-                <button type="submit" className="form-button primary" disabled={glossaryLoading}>
-                    {glossaryLoading ? (userGlossaryTerms.length === 0 && !glossaryError ? 'Cargando...' : 'Guardando...') : 'Añadir Palabra'}
-                </button>
+              <h4 style={{marginTop: 0, marginBottom: '15px'}}>Añadir mi palabra</h4>
+              <div className="form-field" style={{ marginBottom: '10px' }}>
+                <label htmlFor="new-term-input" style={{ display: 'block', marginBottom: '3px', fontWeight: 'bold' }}>Término:</label>
+                <input type="text" id="new-term-input" className="form-input" value={newTerm} onChange={(e) => setNewTerm(e.target.value)} placeholder="Escribe la palabra..." maxLength={50} required disabled={glossaryLoading} style={{ width: '100%', boxSizing: 'border-box' }} />
+              </div>
+              <div className="form-field" style={{ marginBottom: '15px' }}>
+                <label htmlFor="new-definition-input" style={{ display: 'block', marginBottom: '3px', fontWeight: 'bold' }}>Definición:</label>
+                <textarea id="new-definition-input" className="form-textarea" value={newDefinition} onChange={(e) => setNewDefinition(e.target.value)} placeholder="Escribe qué significa..." rows={3} required disabled={glossaryLoading} style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical' }} />
+              </div>
+              {glossaryError && !glossaryLoading && <p className="error-message" style={{color: 'red', marginTop: '-5px', marginBottom: '10px'}}>{glossaryError}</p>}
+              <button type="submit" className="form-button primary" disabled={glossaryLoading}>
+                {glossaryLoading ? (userGlossaryTerms.length === 0 && !glossaryError ? 'Cargando...' : 'Guardando...') : 'Añadir Palabra'}
+              </button>
             </form>
             <hr className="separator"/>
             <div className="glossary-index">
               {alphabet.map(letter => (
                 groupedGlossary[letter]
-                  ? <a key={letter} href={`#glossary-${letter}`}>{letter}</a>
+                  ? <a key={letter} href={`#glossary-letter-${letter.toLowerCase()}`}>{letter}</a>
                   : <span key={letter} style={{ padding: '2px 5px', color: '#ccc' }}>{letter}</span>
               ))}
-              {groupedGlossary['#'] && <a href="#glossary-#">#</a>}
+              {groupedGlossary['#'] && <a href="#glossary-letter-symbol">#</a>} {/* ID consistente para símbolos */}
             </div>
             <hr className="separator"/>
             {glossaryLoading && userGlossaryTerms.length === 0 && !glossaryError && <p>Cargando tus palabras...</p> }
             {!glossaryLoading && !glossaryError && Object.keys(groupedGlossary).length === 0 && <p>Aún no hay palabras en el glosario. ¡Añade la primera!</p> }
             {Object.keys(groupedGlossary).sort((a, b) => a === '#' ? 1 : b === '#' ? -1 : a.localeCompare(b)).map(letter => (
               <div key={letter} className="glossary-letter-group">
-                <h4 id={`glossary-${letter}`} className="glossary-letter-heading">{letter}</h4>
+                {/* ID para la cabecera de la letra, para el href del índice */}
+                <h4 id={`glossary-letter-${letter === '#' ? 'symbol' : letter.toLowerCase()}`} className="glossary-letter-heading">{letter}</h4>
                 <dl>
-                  {groupedGlossary[letter].map((entry, index) => (
-                    <React.Fragment key={entry.isDefault ? `default-${letter}-${index}` : `user-${entry.id}`}>
-                      <dt>{entry.term} {!entry.isDefault && <span style={{color: 'purple', fontSize: '0.8em', marginLeft: '5px'}}>(Mi palabra)</span>}</dt>
-                      <dd>{entry.definition}</dd>
-                    </React.Fragment>
-                  ))}
+                  {groupedGlossary[letter].map((entry) => {
+                    // Generar ID único para cada término del glosario
+                    const termId = `glossary-entry-${entry.term.toLowerCase().replace(/[^a-z0-9ñáéíóúü]+/gi, '-')}`;
+                    return (
+                      <React.Fragment key={termId}> {/* Usar termId como key */}
+                        <dt id={termId}>{entry.term} {!entry.isDefault && <span style={{color: 'purple', fontSize: '0.8em', marginLeft: '5px'}}>(Mi palabra)</span>}</dt>
+                        <dd>{entry.definition}</dd>
+                      </React.Fragment>
+                    );
+                  })}
                 </dl>
               </div>
             ))}
@@ -434,8 +470,6 @@ function SidePanel({
              {!isStatsLoading && !statsError && !fetchedStats && (
                 <p>No hay datos de estadísticas disponibles o aún no has jugado.</p>
              )}
-
-            {/* Sección para el Botón de Post-Test */}
             <hr className="separator" style={{marginTop: '25px', marginBottom: '15px'}}/>
             <h3 style={{color: '#4a3112', marginBottom: '10px'}}>Evaluación de progreso</h3>
             {necesitaPreTest && (
@@ -448,15 +482,14 @@ function SidePanel({
                     className="panel-button"
                     onClick={() => {
                         if(onStartPostTest) onStartPostTest();
-                        onClose(); // Cierra el panel lateral
+                        onClose();
                     }}
-                    // Aplicar un estilo distintivo para este botón
                     style={{ backgroundColor: '#5cb85c', color: 'white', fontWeight: 'bold', border: 'none' }}
                 >
                     Evaluar mi progreso actual
                 </button>
             )}
-            {yaHizoPostTest && userInfo && ( // Mostrar puntuación si ya hizo el post-test
+            {yaHizoPostTest && userInfo && (
                 <p style={{textAlign: 'center', color: 'green', fontWeight: 'bold', marginTop:'10px'}}>
                     ¡Ya completaste tu evaluación de progreso!
                     <br />
@@ -467,7 +500,6 @@ function SidePanel({
         )}
 
         {activeSection === 'settings' && (
-          // ... (tu contenido de ajustes) ...
           <div id="settings-content" className="panel-section-content" style={{ display: 'block' }}>
             <h3>Ajustes</h3>
             {userInfo ? (<>
@@ -495,11 +527,9 @@ function SidePanel({
             </>) : (
               <p>Cargando información...</p>
             )}
-            {/* El botón de Logout se mueve al final del panel-content */}
           </div>
         )}
       </div>
-      {/* Contenedor separado para el botón de logout, siempre visible al final del panel */}
       <div style={{padding: '20px', borderTop: '1px solid rgba(148, 171, 61, 0.2)', marginTop: 'auto' }}>
         <button id="settings-logout-btn" className="panel-button logout-button" onClick={onLogout}>
           Salir de Pimpoyo

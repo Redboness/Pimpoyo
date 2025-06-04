@@ -210,8 +210,8 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
     const inputType = targetAsInput.type;
 
     // Para el checkbox de consentimiento, el valor es booleano
-    const newValue = inputType === 'checkbox' && name === 'consentimiento' 
-                   ? targetAsInput.checked 
+    const newValue = inputType === 'checkbox' && name === 'consentimiento'
+                   ? targetAsInput.checked
                    : value;
 
     if (name.startsWith("preTestAnswer_")) { // Para textareas de Q9_a, Q10_a
@@ -264,16 +264,16 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
         setStep('edad');
         break;
       case 'edad':
-        const edadNum = parseInt(formData.edad, 10);
+        { const edadNum = parseInt(formData.edad, 10);
         if (!formData.edad || isNaN(edadNum) || edadNum < 5 || edadNum > 18) { setError('Introduce una edad válida (entre 5 y 18).'); return; }
         setStep('curso');
-        break;
+        break; }
       case 'curso':
         if (!formData.curso_escolar) { setError('Por favor, selecciona tu curso.'); return; }
         setStep('pretest');
         break;
       case 'pretest':
-        const answeredAllQuestions = preSurveyQuestions.every(qAny => {
+        { const answeredAllQuestions = preSurveyQuestions.every(qAny => {
           const q = qAny; // No es necesaria la aserción AnyPreSurveyQuestion aquí si preSurveyQuestions ya tiene ese tipo
           if (q.isPractical) {
             const answerQuantitativeKey = q.id + q.question_quantitative.id_q_suffix;
@@ -297,7 +297,7 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
         console.log("Puntuación Pre-Test Calculada (max 6, fraccionada):", calculatedScore);
         setFormData(prev => ({ ...prev, puntuacion_pre_test: calculatedScore }));
         setStep('final');
-        break;
+        break; }
       default:
         break;
     }
@@ -392,7 +392,7 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
                     return Array.isArray(answer) && answer.length > 0;
                 }
             }
-            return false; 
+            return false;
         });
   };
 

@@ -5,6 +5,9 @@
   cursor: pointer;
   text-decoration: underline dashed;
   font-weight: bold; /* Para que destaque un poco más */
+  margin-left: 0.25ch;  /* Añade un pequeño espacio a la izquierda */
+  margin-right: 0.25ch; /* Añade un pequeño espacio a la derecha */
+
 }
 
 .interactive-term:hover,
