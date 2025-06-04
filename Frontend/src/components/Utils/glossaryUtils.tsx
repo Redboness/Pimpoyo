@@ -1,6 +1,8 @@
-// src/utils/glossaryUtils.ts
+// src/components/Utils/glossaryUtils.ts
 import React from 'react';
 import InteractiveTerm from '../InteractiveTerm/InteractiveTerm';
+import ReactMarkdown from 'react-markdown'; // <--- Asegúrate de que esta línea esté
+import remarkGfm from 'remark-gfm';         // <--- Asegúrate de que esta línea esté
 
 interface GlossaryItem {
   term: string;
@@ -11,27 +13,19 @@ interface GlossaryItem {
 export const processTextForGlossary = (
   text: string,
   glossary: GlossaryItem[],
-  onTermClickHandler?: (term: string) => void // Callback para cuando se hace clic en un término
+  onTermClickHandler?: (term: string) => void
 ): React.ReactNode[] => {
   if (!glossary || glossary.length === 0) {
-    return [text]; // Si no hay glosario, devuelve el texto original
+    // Si no hay glosario, todo el texto debe ser procesado por Markdown
+    return [<ReactMarkdown key="full-text-markdown" remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>];
   }
 
-  // Crear un mapa para buscar definiciones fácilmente y priorizar términos más largos
   const termMap = new Map(glossary.map(item => [item.term.toLowerCase(), item]));
-
-  // Ordenar los términos por longitud descendente para evitar coincidencias parciales
-  // (ej. si "Fake News" y "News" están, queremos que "Fake News" se detecte primero)
   const sortedTerms = [...glossary].sort((a, b) => b.term.length - a.term.length);
-
-  // Construir una expresión regular que encuentre cualquiera de los términos del glosario.
-  // Se escapa cada término para que caracteres especiales en ellos no rompan el regex.
   const termsPattern = sortedTerms
-    .map(item => item.term.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'))
+    .map(item => item.term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'))
     .join('|');
-  
-  const regex = new RegExp(`(${termsPattern})`, 'gi'); // Global e Insensible a mayúsculas/minúsculas
-
+  const regex = new RegExp(`(${termsPattern})`, 'gi');
   const parts = text.split(regex);
   let keyCounter = 0;
 
@@ -43,12 +37,16 @@ export const processTextForGlossary = (
       // Es un término del glosario
       return React.createElement(InteractiveTerm, {
         key: `${glossaryMatch.term}-${keyCounter++}`,
-        term: part, // Usamos 'part' para mantener la capitalización original del texto
+        term: part,
         definition: glossaryMatch.definition,
         onTermClick: onTermClickHandler,
       });
     }
     // Es un fragmento de texto normal
-    return part;
-  }).filter(part => part !== ''); // Eliminar partes vacías que puedan surgir del split
+    if (part && part.trim() !== '') {
+      // Envuelve el fragmento de texto con ReactMarkdown y remarkGfm
+      return <ReactMarkdown key={`markdown-part-${keyCounter++}`} remarkPlugins={[remarkGfm]}>{part}</ReactMarkdown>;
+    }
+    return null; // Para partes vacías o solo con espacios
+  }).filter(part => part !== null); // Filtra los elementos nulos
 };

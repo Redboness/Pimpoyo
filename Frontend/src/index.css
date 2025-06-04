@@ -650,9 +650,9 @@ body {
 /* Estos ya estaban bien para el cuerpo de la noticia justificado */
 .practical-news-item .news-content p { /* Cuerpo de la noticia práctica */
   text-align: justify; /* << YA ESTÁ ASÍ, ES CORRECTO */
-  margin-bottom: 0.75em; 
+  margin-bottom: 0.75em;
   line-height: 1.6;
-  color: #333; 
+  color: #333;
   /* Puedes añadir hyphens aquí también si el texto es muy denso */
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
@@ -664,7 +664,7 @@ body {
 /* Texto de la pregunta V/F y "Explica por qué" en Q9/Q10 */
 .practical-news-item .question-quantitative p,
 .practical-news-item .question-qualitative p {
-  font-weight: bold; 
+  font-weight: bold;
   color: #4a3112;
   margin-bottom: 10px;
   text-align: justify; /* << AÑADIR JUSTIFY AQUÍ TAMBIÉN para el texto de estas sub-preguntas */
@@ -688,7 +688,7 @@ body {
 .tip-challenge-card .challenge-question {
   margin-bottom: 15px;
   font-style: italic;
-  color: #4a3112; 
+  color: #4a3112;
 }
 
 .tip-challenge-card .challenge-question p {
@@ -697,19 +697,104 @@ body {
 
 .tip-challenge-card .message-buttons.challenge-options {
   display: flex;
-  flex-direction: column; 
-  gap: 8px; 
-  align-items: stretch; 
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
 }
 
 .tip-challenge-card .challenge-option-button {
   background-color: #ffffff; /* Un color de fondo ligeramente gris para los botones sobre blanco */
   color: #4a3112; /* Color de texto más oscuro para contraste sobre el botón claro */
-  border: 3px solid #94ab3d; 
+  border: 3px solid #94ab3d;
 }
 
 .tip-challenge-card .challenge-option-button:hover:not(:disabled) {
-  background-color:#c0dc5a51; 
+  background-color:#c0dc5a51;
   border-color: #93ab3da0;
 }
 
+/* --- Estilos para el Desafío de Dos Noticias --- */
+.news-challenge-container {
+  display: flex;
+  flex-direction: row; /* Coloca las noticias en una fila */
+  justify-content: space-around; /* Espacio entre las noticias */
+  align-items: flex-start; /* Alinea las noticias en la parte superior */
+  gap: 15px; /* Espacio entre las tarjetas de noticias */
+  margin-top: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap; /* Permitir que las tarjetas pasen a la siguiente línea si no hay espacio */
+}
+
+.mobile-news-view {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 80%; /* Un poco más de ancho base si hay espacio */
+  min-width: 500px; /* Aumentamos el mínimo un poco */
+  max-width: 700px; /* Aumentamos el ancho máximo de cada tarjeta */
+  height: 650px; /* Aumentamos la altura de la tarjeta */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+
+.mobile-news-content {
+  padding: 12px;
+  flex-grow: 1; /* Permite que esta área crezca y empuje el footer hacia abajo */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Para manejar el scroll del texto correctamente */
+}
+
+.mobile-news-headline {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  font-family: 'Times New Roman', Times, serif;
+  margin-top: 0;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.mobile-news-text-scroll {
+  flex-grow: 1; /* Ocupa el espacio disponible */
+  overflow-y: auto; /* Habilita el scroll vertical cuando el contenido excede el espacio */
+  font-size: 1.1em;
+  font-family: 'Fredoka', sans-serif;
+  line-height: 1.5;
+  color: #555;
+  padding-right: 5px; /* Espacio para la barra de scroll si aparece */
+}
+
+.mobile-news-text-scroll p {
+  margin-bottom: 0.75em;
+}
+
+.mobile-news-text-scroll p:last-child {
+  margin-bottom: 0;
+}
+
+.mobile-news-footer {
+  height: 20px; /* Espacio para un footer simulado */
+  background-color: #f0f0f0;
+  border-top: 1px solid #ddd;
+  flex-shrink: 0; /* Evita que el footer se encoja */
+}
+
+/* Media Query para pantallas más pequeñas, donde las tarjetas se apilarían */
+@media (max-width: 780px) {
+  .news-challenge-container {
+    flex-direction: column; /* Apila las tarjetas verticalmente */
+    align-items: center; /* Centra las tarjetas */
+  }
+  .mobile-news-view {
+    width: 90%; /* Ocupa más ancho en vista de columna */
+    margin-bottom: 15px; /* Espacio entre tarjetas apiladas */
+  }
+  .mobile-news-view:last-child {
+    margin-bottom: 0;
+  }
+}

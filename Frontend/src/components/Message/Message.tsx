@@ -2,6 +2,7 @@
 import React from 'react'; // <--- ASEGÚRATE DE TENER ESTA IMPORTACIÓN
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm'; // <--Remark-gfm para mejor renderizado
 // Modificado para usar 'import type' para tipos que solo se usan como anotaciones
 import type { ChatMessage, MessageButton} from '../../types/types'; // Ajusta la ruta
 
@@ -43,7 +44,7 @@ function Message({ message, onButtonClick }: MessageProps) {
         {challengeCard && (
           <div className="tip-challenge-card">
             <div className="challenge-question">
-              <ReactMarkdown>{challengeCard.question}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{challengeCard.question}</ReactMarkdown>
             </div>
             <div className="message-buttons challenge-options">
               {challengeCard.options.map((button: MessageButton) => (

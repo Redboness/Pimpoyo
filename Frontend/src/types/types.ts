@@ -237,3 +237,9 @@ export interface TipChallengeCard {
   question: string;
   options: MessageButton[];
 }
+export interface FakeNewsAnalysisPayload {
+    original_news: string;
+    analysis: string;
+    score: number;
+    explanation: string;
+}

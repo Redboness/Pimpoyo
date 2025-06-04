@@ -6,7 +6,6 @@ import ChatHeader from "../ChatHeader/ChatHeader";
 import ChatInput from "../ChatInput/ChatInput";
 import SidePanel from "../SidePanel/SidePanel";
 import PostTestFlow from '../PostTestFlow/PostTestFlow';
-import { processTextForGlossary } from '../Utils/glossaryUtils';
 import {
   UserInfo,
   ChatMessage,
@@ -25,6 +24,7 @@ import {
   TipChallengeCard
 } from "../../types/types";
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { processTextForGlossary } from "../Utils/glossaryUtils";
 
 interface ChatContainerProps {
   authToken: string;
@@ -290,16 +290,16 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       onMessageAdded?: (id: string | number) => void,
       htmlContent: string | null = null,
       challengeCard: TipChallengeCard | null = null,
-      interactiveContent?: React.ReactNode 
+      interactiveContent?: React.ReactNode
   ) => {
     setIsBotTyping(false);
     const botMsgId = "bot-msg-" + Date.now() + Math.random();
     const botMsg: ChatMessage = {
       id: botMsgId,
       sender: "bot",
-      text: interactiveContent ? null : text, 
-      htmlContent: interactiveContent ? null : htmlContent, 
-      interactiveContent: interactiveContent, 
+      text: interactiveContent ? null : text,
+      htmlContent: interactiveContent ? null : htmlContent,
+      interactiveContent: interactiveContent,
       avatar: BOT_AVATAR_URL,
       timestamp: Date.now() + delay,
       buttons,
@@ -311,19 +311,19 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       if (onMessageAdded) onMessageAdded(botMsgId);
     }, delay);
     return botMsgId;
-  }, [BOT_AVATAR_URL, setMessages, setIsBotTyping]); 
+  }, [BOT_AVATAR_URL, setMessages, setIsBotTyping]);
 
   // Comentario encima de la función displayTipAndChallenge
   const displayTipAndChallenge = useCallback((tipIndex: number) => {
-    const tip = tips[tipIndex]; 
+    const tip = tips[tipIndex];
     if (!tip) return;
 
     const rawTipText = `${tip.title}\n\n${tip.text}`;
-    
+
     const processedTipContent = processTextForGlossary(
       rawTipText,
-      glossaryForProcessing, 
-      (term) => { 
+      glossaryForProcessing,
+      (term) => {
         console.log(`Término del glosario "${term}" clickeado/activado.`);
         // TODO: Implementar lógica para abrir SidePanel y mostrar el término.
       }
@@ -331,7 +331,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
 
     let challengeCardPayload: TipChallengeCard | null = null;
     const navigationOrActionButtons: MessageButton[] = [];
-    
+
     if (tip.challenge && tip.challenge.options) {
         challengeCardPayload = {
             question: tip.challenge.question,
@@ -352,15 +352,15 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
             navigationOrActionButtons.push({ id: "btn-tip-understood", text: "¡Entendido, Pimpoyo!" });
         }
     }
-    
+
     addBotResponse(
-      null, 
-      navigationOrActionButtons, 
-      300, 
-      undefined, 
-      null, 
+      null,
+      navigationOrActionButtons,
+      300,
+      undefined,
+      null,
       challengeCardPayload,
-      <>{processedTipContent}</> 
+      <>{processedTipContent}</>
     );
 
   }, [addBotResponse, setIsTipChallengeActive]);
@@ -426,7 +426,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     const selectionMessageId = addBotResponse( "¿Cuál de las dos noticias crees que es la VERDADERA?", [{ id: `select-news-left`, text: "Noticia Izquierda" }, { id: `select-news-right`, text: "Noticia Derecha" }], 800 );
     setNewsChallengeState({ trueNewsOriginalId: selectedTrueNews.ID, leftNewsOriginalId: leftNewsItem.ID, rightNewsOriginalId: rightNewsItem.ID, selectionMessageId: selectionMessageId as string, });
     setIsLoadingNews(false);
-  }, [difficultyLevel, addBotResponse, setIsLoadingNews, setMessages, setNewsChallengeState]); 
+  }, [difficultyLevel, addBotResponse, setIsLoadingNews, setMessages, setNewsChallengeState]);
 
   // Comentario encima de la función presentNewsChallenge
   const presentNewsChallenge = useCallback(async (forceSingleAnalysisMode: boolean = false) => {
@@ -435,7 +435,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     setChatError('');
     resetSingleAnalysisMode();
     setNewsChallengeState(null);
-    setIsTipChallengeActive(false); 
+    setIsTipChallengeActive(false);
 
     const shouldUseSingleAnalysis = forceSingleAnalysisMode || (
         (difficultyLevel === 'medio' || difficultyLevel === 'alto') && Math.random() < 0.6
@@ -568,11 +568,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     if (buttonId.startsWith("btn-tip-next-") || buttonId.startsWith("btn-tip-prev-")) {
         const isNext = buttonId.startsWith("btn-tip-next-");
         const baseIndexFromButton = parseInt(buttonId.split("-").pop() || "0", 10);
-        let targetIndex = isNext ? baseIndexFromButton + 1 : baseIndexFromButton -1; 
+        let targetIndex = isNext ? baseIndexFromButton + 1 : baseIndexFromButton -1;
 
         if (targetIndex >= 0 && targetIndex < tips.length) {
             displayTipAndChallenge(targetIndex);
-        } else if (isNext && targetIndex >= tips.length) { 
+        } else if (isNext && targetIndex >= tips.length) {
             addUserChoiceMessage("He entendido los consejos");
             addBotResponse("¡Genial! Recordar estos consejos te ayudará mucho a ser un gran detective de noticias. 👍 \n\n¿Qué quieres hacer ahora?", [
                 { id: "btn-news-again", text: "Descifrar Noticias" },
@@ -587,12 +587,12 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       setIsFreeChatMode(false);
       resetSingleAnalysisMode();
       setNewsChallengeState(null);
-      setIsTipChallengeActive(false); 
+      setIsTipChallengeActive(false);
 
       if (buttonId === "btn-tips") addUserChoiceMessage("Quiero TIPS Y CONSEJOS");
       else addUserChoiceMessage("Repasar los Tips");
 
-      displayTipAndChallenge(0); 
+      displayTipAndChallenge(0);
       return;
     }
     if (buttonId === "btn-finish-analysis" && isSingleNewsAnalysisMode && currentGuidedChatSessionId) {
@@ -628,9 +628,9 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         return;
     } else if (buttonId === "btn-finish-analysis-anyway") {
         addUserChoiceMessage("Terminar Análisis Igualmente.");
-         if (currentGuidedChatSessionId) { 
+         if (currentGuidedChatSessionId) {
             addBotResponse("De acuerdo, finalizando este análisis.", [], 0);
-         } 
+         }
         addBotResponse("¿Qué hacemos ahora?", [
             { id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" },
         ], 300);
@@ -729,19 +729,19 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         const result: FinishPairChallengeResponse = await response.json();
         const isCorrectBackend = result.es_correcto;
         let difficultyChangedMessage: string | null = null;
-        let tempCorrectStreak = correctStreak; 
+        let tempCorrectStreak = correctStreak;
 
         if (isCorrectBackend) {
-            tempCorrectStreak = correctStreak + 1; 
+            tempCorrectStreak = correctStreak + 1;
             setCorrectStreak(prev => prev + 1);
             setIncorrectStreak(0);
-            if (tempCorrectStreak >= 3) { 
+            if (tempCorrectStreak >= 3) {
                 if (increaseDifficulty()) {
                     difficultyChangedMessage = "¡Tres seguidas! 😎 ¡Subimos un poco la dificultad!";
-                    setCorrectStreak(0); 
-                    tempCorrectStreak = 0; 
+                    setCorrectStreak(0);
+                    tempCorrectStreak = 0;
                 } else {
-                   if (tempCorrectStreak % 3 === 0) { 
+                   if (tempCorrectStreak % 3 === 0) {
                         difficultyChangedMessage = "¡Imparable! Sigues dominando el nivel más alto. 🔥";
                    }
                 }
@@ -750,13 +750,13 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
             const newIncStreak = incorrectStreak + 1;
             setIncorrectStreak(newIncStreak);
             setCorrectStreak(0);
-            tempCorrectStreak = 0; 
+            tempCorrectStreak = 0;
             if (newIncStreak >= 3) {
                 if (decreaseDifficulty()) {
                     difficultyChangedMessage = "¡Ánimo! 💪 Vamos a probar con unas un poco más sencillas.";
-                    setIncorrectStreak(0); 
+                    setIncorrectStreak(0);
                 } else {
-                    setIncorrectStreak(0); 
+                    setIncorrectStreak(0);
                 }
             }
         }
@@ -775,10 +775,10 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         let feedbackPresentationDelay = 300;
         if (difficultyChangedMessage) {
             addBotResponse(difficultyChangedMessage, [], 300);
-            feedbackPresentationDelay = 800; 
+            feedbackPresentationDelay = 800;
         }
         addBotResponse(feedbackText, [], feedbackPresentationDelay);
-        
+
         const nextStepButtons: MessageButton[] = [
             { id: "btn-news-again", text: "Siguiente Desafío" },
             { id: "btn-tips-again", text: "Ver Tips" },
@@ -807,7 +807,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     authToken, addUserChoiceMessage, addBotResponse, presentNewsChallenge, newsChallengeState,
     correctStreak, incorrectStreak, increaseDifficulty, decreaseDifficulty, difficultyLevel,
     isSingleNewsAnalysisMode, currentGuidedChatSessionId, displayTipAndChallenge,
-    setMessages, setIsBotTyping, resetSingleAnalysisMode, setIsTipChallengeActive, setNewsChallengeState 
+    setMessages, setIsBotTyping, resetSingleAnalysisMode, setIsTipChallengeActive, setNewsChallengeState
   ]);
 
   // Comentario encima de la función handleSendMessage
@@ -835,7 +835,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       else if (/\b(es\s+)?falsa\b/.test(lowerInput) && !/\bno\s+(es\s+)?falsa\b/.test(lowerInput)) evaluacion = 'FALSE';
       else if (/\b(no\s+estoy\s+segur|no\s+s[eé]|dudo)\b/.test(lowerInput)) evaluacion = 'UNSURE';
 
-      if (singleNewsAnalysisData) { 
+      if (singleNewsAnalysisData) {
           setSingleNewsAnalysisData(prevData => prevData ? { ...prevData, initialUserEvaluation: evaluacion } : null);
       }
 
@@ -926,7 +926,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         const messagesForOllama: OllamaMessage[] = [{ role: 'system', content: currentSystemPrompt }];
         const messagesWithNewUser = [...messages, newUserMessage];
         messagesWithNewUser.forEach(msg => {
-            if (msg.text && !msg.htmlContent && !msg.interactiveContent) { 
+            if (msg.text && !msg.htmlContent && !msg.interactiveContent) {
                  if (!(newsChallengeState && msg.id === newsChallengeState.selectionMessageId && !msg.buttonsDisabled)) {
                     messagesForOllama.push({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.text });
                 }
@@ -1027,21 +1027,21 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       setGuidedAnalysesSubmitted(0);
       // setActiveTipIndex(0); // Ya no se usa activeTipIndex
       setIsTipChallengeActive(false);
-    } else if (!authToken) { 
-        onLogout(); 
+    } else if (!authToken) {
+        onLogout();
     }
     closePanel();
   };
 
   let determinedChatInputDisabled = isLoadingNews || isBotTyping || isPostTestMode || isTipChallengeActive;
-  if (!isPostTestMode && !isTipChallengeActive && !determinedChatInputDisabled) { 
+  if (!isPostTestMode && !isTipChallengeActive && !determinedChatInputDisabled) {
     const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
     const hasStrictlyExclusiveChoiceButtons =
         lastMessage?.sender === 'bot' &&
         lastMessage.buttons &&
         lastMessage.buttons.length > 0 &&
         !lastMessage.buttonsDisabled &&
-        lastMessage.buttons.every(btn => 
+        lastMessage.buttons.every(btn =>
             btn.id === "btn-tips" || btn.id === "btn-news" || btn.id === "btn-talk" ||
             btn.id === "btn-repeat-tips-yes" || btn.id === "btn-tip-understood" ||
             btn.id.startsWith("select-news-")
@@ -1050,7 +1050,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     if (isSingleNewsAnalysisMode) {
       if (isAwaitingInitialAnalysis) determinedChatInputDisabled = false;
       else if (currentGuidedChatSessionId) determinedChatInputDisabled = false;
-      else determinedChatInputDisabled = true; 
+      else determinedChatInputDisabled = true;
     } else if (hasStrictlyExclusiveChoiceButtons) {
       determinedChatInputDisabled = true;
     } else {
