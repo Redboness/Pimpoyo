@@ -20,4 +20,5 @@ Frontend/.cache/
 Frontend/*.log
 Frontend/*.lock
 Frontend/.vite/
+Frontend/*lock.json
 Redboness
