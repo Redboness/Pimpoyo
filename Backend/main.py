@@ -152,11 +152,9 @@ sesiones_table = sqlalchemy.Table(
     Column("avatar_url", sqlalchemy.String(length=512), nullable=True),
     Column("curso_escolar", sqlalchemy.String(length=100), nullable=True),
     Column("consentimiento_obtenido", sqlalchemy.Boolean, nullable=False),
-    Column("puntuacion_pre_test", Float, nullable=True),
     # La columna respuestas_pre_test_json se elimina de aquí
     Column("fin_sesion_ts", sqlalchemy.TIMESTAMP(timezone=True), nullable=True),
     Column("duracion_total_sesion_seg", Integer, nullable=True),
-    Column("puntuacion_post_test", Float, nullable=True),
     Column("puntuacion_final", Float, nullable=True),
     Column("interacciones_totales_sesion", Integer, server_default='0', nullable=False),
     Column("aciertos_totales_sesion", Integer, server_default='0', nullable=False),
@@ -164,7 +162,52 @@ sesiones_table = sqlalchemy.Table(
     Column("precision_global_sesion", Float, nullable=True),
     Column("xp_actual", Integer, server_default='0', nullable=False),
     Column("tasa_falsos_negativos_global", Float, nullable=True),
-    Column("tasa_falsos_positivos_global", Float, nullable=True)
+    Column("tasa_falsos_positivos_global", Float, nullable=True),
+     # --- NUEVAS COLUMNAS AÑADIDAS: Respuestas PRE-TEST ---
+    Column("pre_s1_p1_horas_internet", Text),
+    Column("pre_s1_p2_plataformas", ARRAY(Text)),
+    Column("pre_s1_p3_habilidad_tech", Text),
+    Column("pre_s1_p4_charla_peligros", Text),
+    Column("pre_s2_p5_habilidad_vf", Text),
+    Column("pre_s2_p6_dificultad_vf", Text),
+    Column("pre_s2_p7_estrategias_fijarse", ARRAY(Text)),
+    Column("pre_s2_p8_fuentes_confianza", ARRAY(Text)),
+    Column("pre_s2_p9_sospecha_falsa", ARRAY(Text)),
+    Column("pre_s2_p10_probabilidad_verdad", ARRAY(Text)),
+    Column("pre_s3_p11_vf_apagon", Text),
+    Column("pre_s3_p11_expl_apagon", Text),
+
+    # --- NUEVAS COLUMNAS AÑADIDAS: Respuestas POST-TEST ---
+    Column("post_s1_p1_habilidad_vf_post", Text),
+    Column("post_s1_p2_dificultad_vf_post", Text),
+    Column("post_s1_p3_estrategias_post", ARRAY(Text)),
+    Column("post_s1_p4_fuentes_post", ARRAY(Text)),
+    Column("post_s1_p5_sospecha_falsa_post", ARRAY(Text)),
+    Column("post_s1_p6_probabilidad_verdad_post", ARRAY(Text)),
+    Column("post_s2_p7_aprendizaje_abierta", Text),
+    Column("post_s2_p8_cambio_forma_ver_abierta", Text),
+    Column("post_s2_p9_aprendizaje_escala", Text),
+    Column("post_s3_p10_vf_sangre_artificial", Text),
+    Column("post_s3_p11_vf_apagon_post", Text),
+    Column("post_s3_p11_expl_apagon_post", Text),
+    Column("post_s4_p12_facilidad_uso_escala", Text),
+    Column("post_s4_p13_utilidad_pistas_escala", Text),
+    Column("post_s4_p14_que_gusto_abierta", Text),
+    Column("post_s4_p15_que_no_gusto_abierta", Text),
+    Column("post_s4_p16_personaje_pimpoyo_escala", Text),
+    Column("post_s4_p17_utilidad_futura_abierta", Text),
+    Column("post_s4_p18_frecuencia_aplicacion_escala", Text),
+
+    # --- NUEVAS COLUMNAS AÑADIDAS: Puntuaciones de los Tests ---
+    Column("pre_test_s1_perfil_puntos", Float),
+    Column("pre_test_s2_estrategias_puntos", Float),
+    Column("pre_test_s3_practica_puntos", Float),
+    Column("puntuacion_pre_test_total", Float),
+    Column("post_test_s1_estrategias_puntos", Float),
+    Column("post_test_s2_aprendizaje_puntos", Float),
+    Column("post_test_s3_practica_puntos", Float),
+    Column("post_test_s4_ux_puntos", Float),
+    Column("puntuacion_post_test_total", Float)
 )
 
 # --- NUEVA Definición de la Tabla respuestas_pre_test ---
@@ -304,7 +347,7 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"ERROR CRÍTICO: No se pudo conectar a la base de datos: {e}")
         # Considera si la app debe fallar aquí si la BBDD no está disponible
-    
+
     # Intenta instanciar y verificar Ollama client dentro del lifespan
     try:
         ollama_client_instance = ollama.AsyncClient()
@@ -314,9 +357,9 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"ADVERTENCIA: No se pudo conectar con Ollama (Async). Funcionalidad de Chatbot estará limitada. Error: {e}")
         ollama_client = None # Asegúrate de que es None si falla
-    
+
     yield # La aplicación se ejecuta aquí
-    
+
     if database.is_connected:
         await database.disconnect()
         print("INFO: Desconectado de la base de datos PostgreSQL.")
@@ -381,15 +424,37 @@ guided_analysis_router = APIRouter(tags=["Guided Analysis Activity"])
 challenge_router = APIRouter(prefix="/challenge", tags=["Challenges"])
 post_test_router = APIRouter(prefix="/activity/post-test", tags=["Post-Test Activity"])
 
-# Comentario encima de la función register_usuario
+
 @auth_router.post("/register/", response_model=UsuarioPublic, status_code=status.HTTP_201_CREATED)
 async def register_usuario(usuario_in: UsuarioCreate):
+    """
+    Registra un nuevo usuario, incluyendo el procesamiento y guardado
+    de las respuestas del pre-test en las columnas correspondientes de la tabla sesiones.
+    """
     existing_user = await get_usuario_by_apodo(usuario_in.apodo)
     if existing_user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Apodo already registered.")
-    
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Apodo ya registrado.")
+
     hashed_password = get_password_hash(usuario_in.password)
-    
+
+    # 1. Mapeo de IDs de preguntas del frontend a columnas de la BBDD
+    # Basado en el PDF "Análisis completo_ Encuestas .pdf" y el array preSurveyQuestions de ProfileSetup.tsx
+    pre_test_id_to_db_col = {
+        'q1': 'pre_s2_p5_habilidad_vf',          # Habilidad para descubrir V/F
+        'q2': 'pre_s1_p4_charla_peligros',      # Dificultad para saber si es real (mapeo adaptado)
+        'q3': 'pre_s2_p6_dificultad_vf',         # Dificultad para saber si es real (mapeo adaptado)
+        'q4': 'pre_s1_p3_habilidad_tech',       # Habilidad con tecnologías (mapeo adaptado)
+        'q5': 'pre_s2_p7_estrategias_fijarse',   # En qué te fijas
+        'q6': 'pre_s2_p8_fuentes_confianza',     # Fuentes de confianza
+        'q7': 'pre_s2_p9_sospecha_falsa',        # Sospecha de FALSA
+        'q8': 'pre_s2_p10_probabilidad_verdad', # Probabilidad de VERDAD
+        'q9_q': 'pre_s3_p11_vf_apagon',          # Noticia del Apagón ¿V/F?
+        'q9_a': 'pre_s3_p11_expl_apagon',        # Explicación de la noticia del Apagón
+        'q10_q': 'post_s3_p10_vf_sangre_artificial', # Noticia Sangre Artificial ¿V/F? (Nombre de columna adaptado de post-test)
+        'q10_a': 'post_s3_p11_expl_apagon_post' # Explicación Sangre Artificial (Nombre de columna adaptado de post-test)
+    }
+
+    # 2. Prepara el diccionario principal de valores para la tabla 'sesiones'
     sesion_values_to_insert = {
         "apodo": usuario_in.apodo,
         "hashed_password": hashed_password,
@@ -399,66 +464,42 @@ async def register_usuario(usuario_in: UsuarioCreate):
         "consentimiento_obtenido": usuario_in.consentimiento_obtenido,
         "curso_escolar": usuario_in.curso_escolar,
         "inicio_sesion_ts": datetime.now(dt_timezone.utc),
-        "puntuacion_pre_test": usuario_in.puntuacion_pre_test if usuario_in.puntuacion_pre_test is not None else None,
+        # Usamos el nombre de columna correcto para la puntuación total
+        "puntuacion_pre_test_total": usuario_in.puntuacion_pre_test,
     }
-    
+
+    # 3. Procesa y añade las respuestas del pre-test al diccionario
+    if usuario_in.respuestas_pre_test:
+        for question_id, answer in usuario_in.respuestas_pre_test.items():
+            db_column_name = pre_test_id_to_db_col.get(question_id)
+            if db_column_name:
+                # El valor ya viene como string o array de strings desde el frontend
+                sesion_values_to_insert[db_column_name] = answer
+
+    # 4. Inserta todo en la base de datos en una sola operación
     async with database.transaction():
         try:
             query_sesion = sesiones_table.insert().values(**sesion_values_to_insert).returning(sesiones_table.c.sesion_id)
             last_sesion_id = await database.fetch_val(query_sesion)
             if last_sesion_id is None:
-                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error creating user session, no ID returned.")
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error creando al usuario, no se devolvió ID.")
 
-            if usuario_in.respuestas_pre_test:
-                respuestas_para_db = []
-                for id_pregunta_completo, valor_respuesta in usuario_in.respuestas_pre_test.items():
-                    tipo_p_actual = 'desconocido'
-                    if id_pregunta_completo in ['q1', 'q2', 'q3', 'q4']:
-                        tipo_p_actual = 'radio_informativa'
-                    elif id_pregunta_completo in ['q5', 'q6', 'q7', 'q8']:
-                        tipo_p_actual = 'checkbox_habilidad'
-                    elif id_pregunta_completo.endswith("_q"):
-                        tipo_p_actual = 'radio_vf_practica'
-                    elif id_pregunta_completo.endswith("_a"):
-                        tipo_p_actual = 'textarea_explicacion_practica'
-                    
-                    entry = {
-                        "sesion_id": last_sesion_id,
-                        "id_pregunta": id_pregunta_completo,
-                        "tipo_pregunta": tipo_p_actual,
-                        "respuesta_texto": None,
-                        "respuestas_array_texto": None,
-                        "fecha_respuesta": datetime.now(dt_timezone.utc)
-                    }
+            # Ya no necesitamos insertar en 'respuestas_pre_test_table'
 
-                    if tipo_p_actual == 'checkbox_habilidad':
-                        if isinstance(valor_respuesta, list):
-                            entry["respuestas_array_texto"] = [str(v) for v in valor_respuesta]
-                        else:
-                            entry["respuestas_array_texto"] = [str(valor_respuesta)] if valor_respuesta is not None else []
-                    elif isinstance(valor_respuesta, str):
-                        entry["respuesta_texto"] = valor_respuesta
-                    
-                    respuestas_para_db.append(entry)
-                
-                if respuestas_para_db:
-                    query_respuestas = respuestas_pre_test_table.insert()
-                    await database.execute_many(query_respuestas, respuestas_para_db)
-            
             created_user_query = sesiones_table.select().where(sesiones_table.c.sesion_id == last_sesion_id)
             created_user_db_map = await database.fetch_one(created_user_query)
             if not created_user_db_map:
-                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not retrieve user after creation by ID.")
-            
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="No se pudo recuperar el usuario tras crearlo.")
+
             created_user_db = UsuarioInDB(**dict(created_user_db_map))
             return UsuarioPublic.model_validate(created_user_db.model_dump())
 
         except Exception as e:
-            print(f"Detailed registration error during transaction: {e}")
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Could not register user. An error occurred: {str(e)[:150]}")
+            print(f"Error detallado en el registro durante la transacción: {e}")
+            # Ofrece un mensaje de error más genérico al usuario final
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"No se pudo registrar al usuario. Ocurrió un error.")
 
 # --- Endpoint para el submit del POST-TEST (guardando respuestas individuales) ---
-# Comentario encima de la función submit_post_test_answers
 @post_test_router.post("/submit", response_model=PostTestSubmitResponse)
 async def submit_post_test_answers(payload: PostTestSubmitPayload, current_user: UsuarioInDB = Depends(get_current_active_user)):
     if not ALL_NEWS_DATA or not PREGUNTAS_POST_TEST_ELECCION:
@@ -480,7 +521,7 @@ async def submit_post_test_answers(payload: PostTestSubmitPayload, current_user:
                 es_correcta_actual = True
             else:
                 es_correcta_actual = False
-        
+
         respuestas_post_test_para_db.append({
             "sesion_id": current_user.sesion_id,
             "id_pregunta_post_test": resp_e.id_pregunta,
@@ -489,7 +530,7 @@ async def submit_post_test_answers(payload: PostTestSubmitPayload, current_user:
             "es_correcta": es_correcta_actual,
             "fecha_respuesta": fecha_actual_respuesta
         })
-        
+
     # 2. Evaluar y preparar respuestas de análisis de noticias (Verdadero/Falso)
     for resp_a in payload.respuestas_analisis_noticias:
         noticia_original = next((n for n in ALL_NEWS_DATA if isinstance(n, dict) and n.get("ID") == resp_a.noticia_id_json), None)
@@ -511,34 +552,34 @@ async def submit_post_test_answers(payload: PostTestSubmitPayload, current_user:
             "es_correcta": es_correcta_actual,
             "fecha_respuesta": fecha_actual_respuesta
         })
-        
+
     puntuacion_calculada_porcentaje = (aciertos_calculados / total_items_evaluados) * 100 if total_items_evaluados > 0 else 0.0
     puntuacion_final_a_guardar = round(puntuacion_calculada_porcentaje, 2)
 
     fin_ts = datetime.now(dt_timezone.utc)
     dur_seg = int((fin_ts - current_user.inicio_sesion_ts).total_seconds()) if current_user.inicio_sesion_ts else None
-    
+
     inter_sesion = await database.fetch_all(interacciones_table.select().where(interacciones_table.c.sesion_id == current_user.sesion_id))
     fn_c, true_c, fp_c, false_c = 0,0,0,0
     for inter_row in inter_sesion:
-        if inter_row["noticia_verdad_real"] and inter_row["noticia_verdad_real"].upper() == "TRUE": 
+        if inter_row["noticia_verdad_real"] and inter_row["noticia_verdad_real"].upper() == "TRUE":
             true_c +=1
             if inter_row["tipo_error"] == "FALSO_NEGATIVO": fn_c += 1
-        elif inter_row["noticia_verdad_real"] and inter_row["noticia_verdad_real"].upper() == "FALSE": 
+        elif inter_row["noticia_verdad_real"] and inter_row["noticia_verdad_real"].upper() == "FALSE":
             false_c +=1
             if inter_row["tipo_error"] == "FALSO_POSITIVO": fp_c += 1
-            
+
     tasa_fn = (fn_c / true_c) * 100 if true_c > 0 else 0.0
     tasa_fp = (fp_c / false_c) * 100 if false_c > 0 else 0.0
-    
+
     async with database.transaction():
         try:
             update_q_sesiones = sesiones_table.update().where(sesiones_table.c.sesion_id == current_user.sesion_id).values(
-                puntuacion_post_test=puntuacion_final_a_guardar, 
-                puntuacion_final=puntuacion_final_a_guardar, 
+                puntuacion_post_test_total=puntuacion_final_a_guardar,
+                puntuacion_final=puntuacion_final_a_guardar,
                 fin_sesion_ts=fin_ts,
-                duracion_total_sesion_seg=dur_seg, 
-                tasa_falsos_negativos_global=round(tasa_fn, 2), 
+                duracion_total_sesion_seg=dur_seg,
+                tasa_falsos_negativos_global=round(tasa_fn, 2),
                 tasa_falsos_positivos_global=round(tasa_fp, 2)
             )
             await database.execute(update_q_sesiones)
@@ -548,22 +589,14 @@ async def submit_post_test_answers(payload: PostTestSubmitPayload, current_user:
                 await database.execute_many(query_respuestas_post, respuestas_post_test_para_db)
 
             return PostTestSubmitResponse(
-                message="Post-test completado y respuestas guardadas.", 
-                puntuacion_final=puntuacion_final_a_guardar, 
-                aciertos=aciertos_calculados, 
+                message="Post-test completado y respuestas guardadas.",
+                puntuacion_final=puntuacion_final_a_guardar,
+                aciertos=aciertos_calculados,
                 total_preguntas=total_items_evaluados
             )
         except Exception as e:
             print(f"Error guardando post-test para {current_user.sesion_id} durante transacción: {e}")
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="No se pudo guardar la puntuación y respuestas del post-test.")
-
-# ... (resto de tus endpoints: /token, /users/me, /users/me/detailed-stats, etc. y el resto del archivo)
-# Es importante que el resto del archivo que me pasaste, desde donde empieza
-# @users_router.get("/me/", ...) hasta el final, se mantenga igual,
-# a menos que necesitemos otros ajustes específicos.
-
-# El siguiente código es el resto de tu archivo main.py que debe permanecer
-# (asumiendo que no hay cambios necesarios en ellos por ahora)
 
 # Comentario encima de la función login_for_access_token
 @auth_router.post("/token", response_model=Token)
@@ -591,9 +624,9 @@ async def update_usuario_me(usuario_update: UsuarioUpdateProfile, current_user: 
         existing_user = await get_usuario_by_apodo(update_data["apodo"])
         if existing_user and existing_user.sesion_id != current_user.sesion_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="That apodo is already in use.")
-    if "avatar_url" in update_data: 
+    if "avatar_url" in update_data:
         update_data["avatar_url"] = str(update_data["avatar_url"]).strip() if update_data["avatar_url"] else None
-    if not update_data: return UsuarioPublic.model_validate(current_user.model_dump()) 
+    if not update_data: return UsuarioPublic.model_validate(current_user.model_dump())
     query = sesiones_table.update().where(sesiones_table.c.sesion_id == current_user.sesion_id).values(**update_data)
     try:
         await database.execute(query)
@@ -613,11 +646,11 @@ async def get_user_detailed_stats(current_user: UsuarioInDB = Depends(get_curren
     aciertos = current_user.aciertos_totales_sesion or 0
     fallos = current_user.fallos_totales_sesion or 0
     xp_actual = current_user.xp_actual or 0
-    xp_next_level = XP_NIVELES[-1] * 2 
+    xp_next_level = XP_NIVELES[-1] * 2
     for level_xp in XP_NIVELES:
         if xp_actual < level_xp: xp_next_level = level_xp; break
-    if xp_actual >= XP_NIVELES[-1] and xp_next_level == XP_NIVELES[-1] * 2 : 
-        xp_next_level = xp_actual + 50 
+    if xp_actual >= XP_NIVELES[-1] and xp_next_level == XP_NIVELES[-1] * 2 :
+        xp_next_level = xp_actual + 50
     return UserDetailedStatsResponse(totalAnalizadas=total_analizadas, aciertos=aciertos, fallos=fallos, xp=xp_actual, xpNextLevel=xp_next_level)
 
 # Comentario encima de la función get_news_for_challenge
@@ -710,7 +743,7 @@ async def registrar_interaccion_y_actualizar_estadisticas(
     secuencia = await get_next_secuencia_interaccion(sesion_id, db)
     xp_ganado = XP_POR_ACIERTO if es_correcto is True else (XP_POR_FALLO if es_correcto is False else 0)
     puntos_otorgados = xp_ganado
-    reasoning_type_val = noticia_data_from_json.get("REASONING_TYPE", "") 
+    reasoning_type_val = noticia_data_from_json.get("REASONING_TYPE", "")
     processed_reasoning = []
     if isinstance(reasoning_type_val, str):
         processed_reasoning = [r.strip() for r in reasoning_type_val.replace(' y ', ',').split(',') if r.strip()]
@@ -730,12 +763,12 @@ async def registrar_interaccion_y_actualizar_estadisticas(
         "respuesta_usuario": respuesta_usuario, "es_correcto": es_correcto,
         "tiempo_respuesta_ms": tiempo_respuesta_ms, "puntos_otorgados": puntos_otorgados, "tipo_error": tipo_err,
         "feedback_mostrado": feedback_mostrado_param, "secuencia_interaccion": secuencia,
-        "criterios_evaluacion_ids": None, 
+        "criterios_evaluacion_ids": None,
         "key_elements_json": noticia_data_from_json.get("KEY_ELEMENTS"),
         "justification_hints_json": noticia_data_from_json.get("JUSTIFICATION_HINTS"),
         "likely_misconceptions_json": noticia_data_from_json.get("LIKELY_MISCONCEPTIONS"),
-        "indicadores_clave_detectados_noticia_json": noticia_data_from_json.get("INDICADORES_CLAVE_DETECTADOS"), 
-        "indicadores_seleccionados_usuario": indicadores_discutidos_llm, 
+        "indicadores_clave_detectados_noticia_json": noticia_data_from_json.get("INDICADORES_CLAVE_DETECTADOS"),
+        "indicadores_seleccionados_usuario": indicadores_discutidos_llm,
         "tipo_interaccion": tipo_interaccion,
     }
     await db.execute(interacciones_table.insert().values(**inter_data))
@@ -748,7 +781,7 @@ async def registrar_interaccion_y_actualizar_estadisticas(
         ).where(sesiones_table.c.sesion_id == sesion_id)
     )
     if curr_sess_data:
-        interactions_increment = 1 if es_correcto is not None else 0 
+        interactions_increment = 1 if es_correcto is not None else 0
         correct_increment = 1 if es_correcto is True else 0
         incorrect_increment = 1 if es_correcto is False else 0
         new_inter = (curr_sess_data["interacciones_totales_sesion"] or 0) + interactions_increment
@@ -774,19 +807,19 @@ async def registrar_interaccion_y_actualizar_estadisticas(
         criterios_reg.append({"tipo_criterio": "DIFICULTAD_NOTICIA", "valor_criterio": noticia_data_from_json.get("DIFFICULTY_LEVEL")})
     for r_item in processed_reasoning:
         criterios_reg.append({"tipo_criterio": "TIPO_RAZONAMIENTO_NOTICIA", "valor_criterio": r_item})
-    if indicadores_discutidos_llm: 
+    if indicadores_discutidos_llm:
         for ind_item in indicadores_discutidos_llm:
             criterios_reg.append({"tipo_criterio": "INDICADOR_USUARIO_O_DISCUTIDO", "valor_criterio": ind_item})
     for crit_item in criterios_reg:
         val_crit_str_item = str(crit_item["valor_criterio"])
-        acierto_crit_inc_item = 1 if es_correcto is True else 0 
+        acierto_crit_inc_item = 1 if es_correcto is True else 0
         initial_tasa_val = (1.0 if es_correcto else 0.0) if es_correcto is not None else None
         stmt_crit_item = pg_insert(estadisticas_detalladas_usuario_table).values(
             sesion_id=sesion_id,
             tipo_criterio=crit_item["tipo_criterio"],
             valor_criterio=val_crit_str_item,
             numero_intentos=1,
-            numero_aciertos=acierto_crit_inc_item if es_correcto is not None else 0, 
+            numero_aciertos=acierto_crit_inc_item if es_correcto is not None else 0,
             tasa_acierto=initial_tasa_val,
             fecha_ultima_actualizacion=datetime.now(dt_timezone.utc)
         )
@@ -794,11 +827,11 @@ async def registrar_interaccion_y_actualizar_estadisticas(
             "numero_intentos": estadisticas_detalladas_usuario_table.c.numero_intentos + 1,
             "fecha_ultima_actualizacion": datetime.now(dt_timezone.utc)
         }
-        if es_correcto is not None: 
+        if es_correcto is not None:
             set_vals_on_conflict["numero_aciertos"] = estadisticas_detalladas_usuario_table.c.numero_aciertos + acierto_crit_inc_item
             set_vals_on_conflict["tasa_acierto"] = (
                 (estadisticas_detalladas_usuario_table.c.numero_aciertos + acierto_crit_inc_item) /
-                (cast(estadisticas_detalladas_usuario_table.c.numero_intentos, Float) + 1.0) 
+                (cast(estadisticas_detalladas_usuario_table.c.numero_intentos, Float) + 1.0)
             )
         await db.execute(
             stmt_crit_item.on_conflict_do_update(
@@ -828,7 +861,7 @@ async def get_next_guided_analysis_news_endpoint(current_user: UsuarioInDB = Dep
         if not news_id_val or news_id_val in seen_ids: continue
         focus_val, targets_weak_val = None, False
         if weak_indic:
-            key_elems_val = news_item_data.get("KEY_ELEMENTS", []) 
+            key_elems_val = news_item_data.get("KEY_ELEMENTS", [])
             if isinstance(key_elems_val, list):
                 for wi_val in weak_indic:
                     if wi_val in key_elems_val: targets_weak_val = True; focus_val = wi_val; break
@@ -841,7 +874,7 @@ async def get_next_guided_analysis_news_endpoint(current_user: UsuarioInDB = Dep
             for wr_val in weak_razon:
                 if wr_val in curr_reason_val: targets_weak_val = True; focus_val = wr_val; break
             if targets_weak_val: pers_cand.append((news_item_data, focus_val)); continue
-        if news_item_data.get("DIFFICULTY_LEVEL", "").lower() in ["medio", "alto", "bajo"]: 
+        if news_item_data.get("DIFFICULTY_LEVEL", "").lower() in ["medio", "alto", "bajo"]:
             other_elig.append(news_item_data)
     sel_news_data_val, focus_frontend_val = None, None
     if pers_cand:
@@ -913,36 +946,36 @@ async def continue_guided_analysis_chat_endpoint(chat_sesion_noticia_id: int, re
     chat_sess_db = await database.fetch_one(chat_sesiones_noticia_table.select().where((chat_sesiones_noticia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id) & (chat_sesiones_noticia_table.c.sesion_id == current_user.sesion_id)))
     if not chat_sess_db: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sesión de chat no encontrada.")
     if chat_sess_db["fecha_fin"]: raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Sesión de chat ya finalizada.")
-    
+
     last_order_query = select(sqlfunc.max(mensajes_chat_guia_table.c.orden_en_chat)).where(mensajes_chat_guia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id)
     last_order = await database.fetch_val(last_order_query) or 0
-    
+
     await database.execute(mensajes_chat_guia_table.insert().values(
-        chat_sesion_noticia_id=chat_sesion_noticia_id, 
-        emisor='usuario', 
-        contenido=request_data.mensaje_usuario, 
+        chat_sesion_noticia_id=chat_sesion_noticia_id,
+        emisor='usuario',
+        contenido=request_data.mensaje_usuario,
         timestamp_mensaje=datetime.now(dt_timezone.utc),
         orden_en_chat=last_order + 1
     ))
-    
+
     hist_q = mensajes_chat_guia_table.select().where(mensajes_chat_guia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id).order_by(mensajes_chat_guia_table.c.orden_en_chat.asc()) #.c.timestamp_mensaje.asc())
     msg_hist_db = await database.fetch_all(hist_q)
     ollama_hist = [OllamaMessage(role="user" if m["emisor"] == "usuario" else "assistant", content=m["contenido"]) for m in msg_hist_db]
-    
+
     sys_prompt_cont = ("Rol: Eres 'Pimpoyo', un chatbot guía para niños de 10-12 años. Ayúdalos a analizar una noticia paso a paso. Contexto: Estás continuando una conversación sobre una noticia específica que el usuario está analizando. Ya le diste un feedback conversacional inicial a su primera evaluación. Tarea: Responde a la NUEVA pregunta o comentario del usuario de forma clara y sencilla. Sigue guiándolo para que reflexione sobre la noticia. Evita dar la solución (si es verdadera o falsa la noticia) directamente. Si que puedes contestar otras preguntas sobre la noticia o cómo identificar su respuesta del usuario. Anímalo a encontrar pistas por sí mismo. Sé breve y amigable. Si el usuario parece estar atascado o pide una pista directa, puedes ofrecer una pequeña ayuda sutil.")
     final_ollama_msgs = [OllamaMessage(role="system", content=sys_prompt_cont)] + ollama_hist
-    
+
     try:
         ollama_resp = await ollama_client.chat(model=OLLAMA_MODEL_ANALYSIS, messages=[msg.model_dump() for msg in final_ollama_msgs])
         reply_content = ollama_resp['message']['content']
         if not reply_content: reply_content = "Entendido. ¿Qué más quieres que veamos de esta noticia o qué otra duda tienes?"
     except Exception as e:
         print(f"Error Ollama en /continue: {e}"); reply_content = "Mis antenas de detective están un poco cruzadas. ¿Podrías preguntarme de otra forma?"
-    
+
     await database.execute(mensajes_chat_guia_table.insert().values(
-        chat_sesion_noticia_id=chat_sesion_noticia_id, 
-        emisor='chatbot', 
-        contenido=reply_content, 
+        chat_sesion_noticia_id=chat_sesion_noticia_id,
+        emisor='chatbot',
+        contenido=reply_content,
         timestamp_mensaje=datetime.now(dt_timezone.utc),
         orden_en_chat=last_order + 2 # El mensaje del usuario fue last_order + 1
     ))
@@ -1020,7 +1053,7 @@ Asegúrate de que el JSON sea sintácticamente correcto. No incluyas nada más a
             response_llm = await ollama_client.chat(**ollama_params)
             llm_reply_content = response_llm.get('message', {}).get('content', '').strip()
             print(f"DEBUG: Respuesta cruda de Ollama para análisis (después de strip): '{llm_reply_content}'")
-            
+
             # No es necesario extraer el JSON si format: "json" funciona y devuelve solo el JSON
             parsed_llm_data = py_json.loads(llm_reply_content) # Asumimos que llm_reply_content ya ES el JSON
             llm_analysis_payload = PostChatAnalysisPayload(**parsed_llm_data)
@@ -1033,7 +1066,7 @@ Asegúrate de que el JSON sea sintácticamente correcto. No incluyas nada más a
         except Exception as e:
             print(f"ERROR: Excepción general al llamar/procesar Ollama para análisis de chat {chat_sesion_noticia_id}: {type(e).__name__} - {e}")
             llm_analysis_payload.mejora_comprension.justificacion = f"Error durante el análisis automático: {str(e)[:100]}"
-            
+
     feedback_message = "¡Análisis completado!"
     titular_noticia_feedback = "esta noticia"
     if noticia_original_data:
@@ -1113,10 +1146,10 @@ async def finish_pair_selection_challenge(request_data: FinishPairChallengeReque
     sel_data: Optional[dict] = next((n for n in ALL_NEWS_DATA if isinstance(n, dict) and n.get("ID") == sel_id), None)
     true_data: Optional[dict] = next((n for n in ALL_NEWS_DATA if isinstance(n, dict) and n.get("ID") == true_id), None)
     false_data: Optional[dict] = next((n for n in ALL_NEWS_DATA if isinstance(n, dict) and n.get("ID") == false_id), None)
-    
+
     if not sel_data or not true_data or not false_data:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Datos no encontrados para una o más noticias del desafío de pares.")
-    
+
     es_corr = (sel_id == true_id)
 
     def obtener_pista_explicativa_simple(noticia_dict: Optional[dict], es_verdadera_esperada: bool) -> str:
@@ -1152,13 +1185,13 @@ async def finish_pair_selection_challenge(request_data: FinishPairChallengeReque
             ollama_cand = response_ollama.get('message', {}).get('content', '')
             if ollama_cand: ollama_expl_final_val = ollama_cand.strip()
         except Exception as e: print(f"Error Ollama en finish_pair_selection: {e}")
-    
+
     # Asegurar que noticia_data_from_json no sea None para registrar_interaccion...
     noticia_para_registrar = sel_data if sel_data else {"ID": sel_id, "CATEGORY": "DESCONOCIDA"}
 
     await registrar_interaccion_y_actualizar_estadisticas(
         db=database, sesion_id=current_user.sesion_id, noticia_id_json=sel_id, tipo_interaccion='DOS_NOTICIAS',
-        noticia_data_from_json=noticia_para_registrar, 
+        noticia_data_from_json=noticia_para_registrar,
         respuesta_usuario="TRUE" if sel_id == true_id else "FALSE", # Refleja si eligió la que era verdadera
         es_correcto=es_corr,
         tiempo_respuesta_ms=request_data.tiempo_respuesta_ms, feedback_mostrado_param=ollama_expl_final_val)
@@ -1176,10 +1209,10 @@ async def get_post_test_items(current_user: UsuarioInDB = Depends(get_current_ac
     num_not_analisis = 6
     pool_analisis = [n for n in ALL_NEWS_DATA if isinstance(n, dict) and n.get("DIFFICULTY_LEVEL", "").lower() in ["medio", "alto"]]
     if not pool_analisis: pool_analisis = [n for n in ALL_NEWS_DATA if isinstance(n, dict)] # Fallback a todas si no hay de nivel medio/alto
-    
+
     if len(pool_analisis) == 0: # Si después del fallback sigue vacío
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No hay noticias en absoluto en el dataset para análisis en post-test.")
-    
+
     # Asegurar que no pedimos más muestras de las disponibles
     num_not_analisis = min(num_not_analisis, len(pool_analisis))
     if num_not_analisis == 0 and len(pool_analisis) > 0: # Si pool_analisis tiene algo pero num_not_analisis se volvió 0

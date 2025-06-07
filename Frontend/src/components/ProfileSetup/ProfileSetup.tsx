@@ -111,7 +111,8 @@ const preSurveyQuestions: AnyPreSurveyQuestion[] = [
     news_item: { headline: 'Un bebé con una enfermedad rara recibe una terapia de edición genética que permite editar el ADN por primera vez en el mundo para su dolencia', body: 'Un bebé estadounidense conocido como KJ, diagnosticado poco después de nacer con un raro trastorno genético llamado deficiencia grave de carbamoilfosfato sintetasa 1 (CPS1), ha sido tratado con CRISPR, una terapia de edición genética personalizada. Esta enfermedad, que afecta a uno de cada millón de bebés, provoca un aumento de los niveles de amoníaco en la sangre y puede ser mortal. \n\nKJ empezó a recibir el tratamiento CRISPR personalizado a los seis meses, permitiendo a sus médicos reducir su dependencia a la medicación para mantener bajos sus niveles de amoníaco, según un estudio publicado en \'The New England Journal of Medicine\'. La Dra. Rebecca Ahrens-Nicklas, del Hospital Infantil de Filadelfia, calificó los resultados iniciales como "bastante prometedores", aunque KJ necesitará seguimiento de por vida. \n\nLa terapia CRISPR actúa cortando el ADN en puntos específicos para desactivar un gen dañino o insertar una versión corregida. En este caso, se corrigió un gen defectuoso en el hígado de KJ. Los investigadores esperan que este éxito permita tratar a otros pacientes, aunque reconocen retos como la dificultad de aplicar la terapia a otros órganos y el alto coste del procedimiento (más de 700.000 euros), similar al de un trasplante de hígado. El equipo no pudo evaluar completamente los posibles efectos secundarios por motivos de seguridad. \n\nExpertos como la Dra. Alena Pance señalan que, si bien CRISPR es aplicable a enfermedades por un solo cambio de nucleótido, muchas enfermedades son causadas por diversas mutaciones, donde estrategias más generales podrían ser más eficaces.', source_hint: '(Fuente: The New England Journal of Medicine, Hospital Infantil de Filadelfia, reportado por varios medios - Información basada en hechos reales)'},
     question_quantitative: { id_q_suffix: '_q', text: '10. ¿Crees que esta noticia sobre el bebé KJ y la terapia CRISPR es Verdadera o Falsa?', type: 'radio', options: ['Verdadera', 'Falsa'] },
     question_qualitative: { id_q_suffix: '_a', text: 'Explica brevemente por qué crees que es Verdadera o Falsa. ¿Qué pistas o señales viste en la noticia (en el titular, en el texto, en la fuente...)?', type: 'textarea' }
-  }
+  },
+
 ];
 
 // --- CLAVE DE PUNTUACIÓN (sin cambios, correcta con puntuación fraccionada) ---
@@ -439,7 +440,7 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
                         <div key={q.id} className="pretest-question-card">
                         {!q.isPractical ? (
                             <>
-                            <p>{q.text}</p> {/* q es PreSurveyBaseQuestion aquí */}
+                            <div className="pretest-question-text">{q.text}</div> {/* q es PreSurveyBaseQuestion aquí */}
                             <div className="pretest-options-group">
                                 {q.options.map((option: string, index: number) => {
                                 const inputId = `${q.id}-${index}`;

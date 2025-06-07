@@ -612,23 +612,6 @@ body {
   width: 100%; /* Ocupa el 100% del form (que es 700px max) */
 }
 
-/* Párrafo de la pregunta DENTRO de la tarjeta */
-.pretest-question-card > p {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  font-weight: bold;
-  margin: 0 0 25px 0; /* Margen inferior */
-  font-size: 1.15em; /* Tamaño deseado */
-  color: #4a3112;
-  line-height: 1.5; /* Altura de línea */
-  text-align: justify; /* *** JUSTIFICADO *** */
-  -webkit-hyphens: auto; /* Ayuda a justificar */
-  -ms-hyphens: auto;
-  hyphens: auto;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
 
 /* Ítem de opción (Contenedor de input + label) */
 .radio-checkbox-item {
@@ -1147,7 +1130,7 @@ body {
 }
 
 /* Párrafo de la pregunta DENTRO de la tarjeta (Q1-Q8) */
-.pretest-question-card > p {
+.pretest-question-text {
   display: block;
   width: 100%;
   box-sizing: border-box;
