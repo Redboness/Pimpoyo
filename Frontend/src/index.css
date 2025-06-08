@@ -1244,50 +1244,86 @@ body {
 }
 
 .mobile-news-view {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 80%; /* Un poco más de ancho base si hay espacio */
-  min-width: 500px; /* Aumentamos el mínimo un poco */
-  max-width: 700px; /* Aumentamos el ancho máximo de cada tarjeta */
-  height: 650px; /* Aumentamos la altura de la tarjeta */
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  width: 48%;
+  min-width: 350px;
+  max-width: 450px;
+  height: 550px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.news-image-header {
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.mobile-news-content {
+  padding: 20px;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
-
-.mobile-news-content {
-  padding: 12px;
-  flex-grow: 1; /* Permite que esta área crezca y empuje el footer hacia abajo */
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* Para manejar el scroll del texto correctamente */
+.news-kicker {
+  font-size: 0.75em;
+  font-weight: 700;
+  color: #fa77c5;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
 }
 
 .mobile-news-headline {
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 1.5em;
+  font-weight: 700;
   color: #333;
-  font-family: "Times New Roman", Times, serif;
-  margin-top: 0;
-  margin-bottom: 8px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
+  font-family: "Fredoka", sans-serif;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.news-metadata {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8em;
+  color: #888;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.news-metadata .news-source strong {
+  color: #555;
+}
+
+.news-separator {
+  border: none;
+  border-top: 1px solid #f0f0f0;
+  margin: 0 0 12px 0;
 }
 
 .mobile-news-text-scroll {
-  flex-grow: 1; /* Ocupa el espacio disponible */
-  overflow-y: auto; /* Habilita el scroll vertical cuando el contenido excede el espacio */
-  font-size: 1.1em;
+  flex-grow: 1;
+  overflow-y: auto;
+  font-size: 1em;
   font-family: "Fredoka", sans-serif;
-  line-height: 1.5;
+  line-height: 1.6;
   color: #555;
-  padding-right: 5px; /* Espacio para la barra de scroll si aparece */
+  padding-right: 10px;
+  text-align: justify;
+  hyphens: auto;
 }
 
 .mobile-news-text-scroll p {
-  margin-bottom: 0.75em;
+  margin-top: 0;
+  margin-bottom: 1em;
 }
 
 .mobile-news-text-scroll p:last-child {
@@ -1321,4 +1357,54 @@ body {
   .mobile-news-view:last-child {
     margin-bottom: 0;
   }
+}
+/* --- Estilos para la Chuleta de Consejos en SidePanel --- */
+
+/* Contenedor principal de la sección de la chuleta */
+#chuleta-content h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #94ab3d;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Lista de consejos */
+.chuleta-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Cada elemento de la lista (un consejo) */
+.chuleta-item {
+  display: flex;
+  align-items: flex-start; /* Alinea el icono con la parte superior del texto */
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed #eadca6; /* Separador punteado */
+}
+
+.chuleta-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* Icono del consejo */
+.chuleta-icon {
+  font-size: 1.6em; /* Un poco más grande para que destaque */
+  margin-right: 15px;
+  line-height: 1.4; /* Ayuda a la alineación vertical */
+  color: #4a3112;
+}
+
+/* Párrafo con el texto del consejo */
+.chuleta-item p {
+  margin: 0;
+  font-size: 0.95em;
+  color: #4a3112;
+  line-height: 1.5;
+  text-align: justify;
+  hyphens: auto;  
 }

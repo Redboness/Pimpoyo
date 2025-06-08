@@ -54,6 +54,7 @@ export interface NewsItem {
   KEY_ELEMENTS?: string[];
   JUSTIFICATION_HINTS?: string[];
   LIKELY_MISCONCEPTIONS?: string[];
+  PUBLICATION_DATE?: string; 
 }
 
 // Update NewsChallengeState interface

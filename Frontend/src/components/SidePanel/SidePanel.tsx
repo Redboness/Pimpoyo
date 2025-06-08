@@ -3,10 +3,10 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
-import { SidePanelProps, GlossaryTermPublic, UserDetailedStats } from '../../types/types'; // Asegúrate que UserInfo y SidePanelProps estén actualizadas en types.ts
+import { SidePanelProps, GlossaryTermPublic, UserDetailedStats } from '../../types/types';
 import EstadisticasPimpoyo from '../EstadisticasPimpoyo/EstadisticasPimpoyo';
 
-// Define la estructura interna y los términos por defecto para el glosario
+// Define la estructura interna para el glosario
 interface GlossaryEntry {
   id?: number;
   term: string;
@@ -16,122 +16,44 @@ interface GlossaryEntry {
   fecha_creacion?: Date | string;
 }
 
+// --- LISTA COMPLETA Y RESTAURADA DEL GLOSARIO POR DEFECTO ---
 const defaultGlossaryTerms: GlossaryEntry[] = [
-  {
-    term: "Algoritmo",
-    definition: "Son como recetas secretas que usan las apps y webs (¡como TikTok o YouTube!). Siguen unos pasos ordenados para decidir qué vídeos mostrarte, qué amigos sugerirte o qué anuncios poner. ¡Intentan aprender lo que te gusta!",
-    isDefault: true
-  },
-  {
-    term: "Bulo",
-    definition: "Es una mentira disfrazada de noticia que alguien inventa y comparte para engañar, gastar una broma pesada o incluso para intentar hacer daño. ¡Hay que estar atentos para no caer en ellos!",
-    isDefault: true
-  },
-  {
-    term: "Cámara de Eco",
-    definition: "A veces, en internet o en las redes sociales, los algoritmos nos muestran solo noticias e ideas que ya nos gustan o con las que estamos de acuerdo. Esto crea como una 'burbuja' donde no vemos otras opiniones y parece que todo el mundo piensa igual que nosotros.",
-    isDefault: true
-  },
-  {
-    term: "Clickbait",
-    definition: "Son esos titulares o imágenes súper exagerados y curiosos que ves en internet y que te hacen pinchar casi sin pensar (¡clic!). A veces, la noticia que encuentras después no es tan emocionante o incluso es un poco engañosa. ¡Solo querían tu clic!",
-    isDefault: true
-  },
-  {
-    term: "Contrastar",
-    definition: "Imagina que un amigo te cuenta algo sorprendente. Para saber si es del todo cierto, ¿a que le preguntarías a otros amigos también? Contrastar es hacer eso con las noticias: buscar la misma información en diferentes sitios (periódicos, webs, teles...) para ver si todos cuentan lo mismo o si hay pistas diferentes. ¡Es como ser un detective que junta varias piezas!",
-    isDefault: true
-  },
-  {
-    term: "Contexto",
-    definition: "Es como el escenario completo de una película. Para entender bien una noticia, necesitas saber no solo *qué* pasó, sino también *cuándo* pasó, *dónde*, *quiénes* estaban allí y *qué más* importante estaba ocurriendo al mismo tiempo. ¡Una foto o una frase sacada de contexto puede engañar mucho!",
-    isDefault: true
-  },
-  {
-    term: "Deepfake",
-    definition: "¡Es como magia de ordenador muy avanzada! Usan inteligencia artificial para crear vídeos o audios falsos que parecen súper reales, donde una persona famosa (¡o cualquiera!) dice o hace cosas que nunca hizo de verdad. ¡Pueden ser muy difíciles de pillar!",
-    isDefault: true
-  },
-  {
-    term: "Desinformación",
-    definition: "Es información que es mentira y que alguien la crea y la comparte (a propósito) para engañar, confundir o hacer que la gente crea algo que no es cierto. No es un simple error, ¡hay intención detrás!",
-    isDefault: true
-  },
-  {
-    term: "Evidencia",
-    definition: "Son las pistas que te ayudan a saber si algo es verdad. Pueden ser números, fotos que no estén trucadas, documentos oficiales, o lo que dice un verdadero experto en un tema. ¡Como un detective!",
-    isDefault: true
-  },
-  {
-    term: "Fake news",
-    definition: "Es otra forma de llamar a las noticias que son mentira. Se escriben y se comparten a propósito para que la gente crea cosas que no son ciertas, a veces para confundir o para que alguien piense de una manera determinada.",
-    isDefault: true
-  },
-  {
-    term: "Fiable",
-    definition: "Cuando decimos que una fuente de noticias (como un periódico o una web) es 'fiable', significa que podemos confiar bastante en que la información que nos da es verdadera y ha sido bien investigada. Es como un amigo que sabes que casi siempre te cuenta las cosas como son.",
-    isDefault: true
-  },
-  {
-    term: "Fuente (de información)",
-    definition: "Es de dónde viene la noticia, ¡como saber quién te contó un chisme! Puede ser un periódico, una página web, un canal de tele, un experto o incluso un amigo. Siempre hay que preguntarse: ¿quién lo dice? ¿Y puedo confiar en esa fuente?",
-    isDefault: true
-  },
-  {
-    term: "Hecho",
-    definition: "Es algo que se puede demostrar que es verdad o que realmente ocurrió. Por ejemplo, 'Madrid es la capital de España' es un hecho. No depende de si te gusta o no, ¡simplemente es así!",
-    isDefault: true
-  },
-  {
-    term: "Imagen manipulada",
-    definition: "Es una foto o un dibujo que alguien ha cambiado con el ordenador para que parezca de verdad, pero en realidad está trucada. Puede ser para quitar a alguien, añadir algo que no estaba, o hacer que parezca que pasó algo que no es cierto. ¡Ojo, que no todo lo que brilla es oro!",
-    isDefault: true
-  },
-  {
-    term: "Manipulación",
-    definition: "Es cuando alguien intenta cambiar la forma en que piensas o sientes sobre algo, usando información de manera tramposa. Puede ser mostrando solo una parte de la historia, exagerando mucho o inventando cosas para llevarte a una conclusión que a esa persona le interesa.",
-    isDefault: true
-  },
-  {
-    term: "Noticia falsa",
-    definition: "Es simplemente una noticia que no es verdad. Alguien la inventó o se equivocó mucho, pero la presentan como si fuera real.",
-    isDefault: true
-  },
-  {
-    term: "Opinión",
-    definition: "Es lo que una persona piensa, siente o cree sobre algo. Por ejemplo, decir 'el color azul es el más bonito' es una opinión. No se puede demostrar si es verdadera o falsa, ¡porque es el gusto de cada uno! Es diferente a un hecho.",
-    isDefault: true
-  },
-  {
-    term: "Propaganda",
-    definition: "Es información que se presenta de una forma especial para intentar convencerte de que apoyes una idea, un producto o a un grupo de personas (como un partido político). A veces usa verdades, pero otras exagera mucho o esconde partes de la historia para lograr su objetivo.",
-    isDefault: true
-  },
-  {
-    term: "Sátira / Parodia",
-    definition: "Son como noticias 'de mentirijillas' que se hacen para hacer reír o para criticar algo de forma graciosa. Imitan el estilo de las noticias serias, ¡pero cuentan cosas inventadas y exageradas! Si no pillas la broma, ¡te la pueden colar como si fuera verdad!",
-    isDefault: true
-  },
-  {
-    term: "Sesgo",
-    definition: "Imagina que en un partido de fútbol, el comentarista solo habla bien de un equipo y mal del otro. ¡Eso es sesgo! En las noticias, ocurre cuando la información se presenta de forma que favorece más una idea o a un grupo, en lugar de contar todos los lados de la historia de manera equilibrada.",
-    isDefault: true
-  },
-  {
-    term: "Titular",
-    definition: "Es como el título de un libro o una película, ¡pero para las noticias! Es esa frase grande y llamativa que ves primero y que intenta contarte de qué va la historia y hacer que quieras leer más.",
-    isDefault: true
-  },
-  {
-    term: "Verificar",
-    definition: "¡Es hacer de detective con las noticias! Significa no creerte algo a la primera, sino buscar más información, mirar en otros sitios o preguntar a expertos para estar más seguro de si es verdad o no.",
-    isDefault: true
-  },
-  {
-    term: "Viral",
-    definition: "Piensa en un vídeo súper divertido o una noticia muy sorprendente que de repente todo el mundo está viendo y compartiendo en TikTok, WhatsApp o YouTube. ¡Eso es que se ha hecho viral! Se extiende súper rápido, como un resfriado en clase.",
-    isDefault: true
-  }
+  { term: "Algoritmo", definition: "Son como recetas secretas que usan las apps y webs (¡como TikTok o YouTube!). Siguen unos pasos ordenados para decidir qué vídeos mostrarte, qué amigos sugerirte o qué anuncios poner. ¡Intentan aprender lo que te gusta!", isDefault: true },
+  { term: "Bulo", definition: "Es una mentira disfrazada de noticia que alguien inventa y comparte para engañar, gastar una broma pesada o incluso para intentar hacer daño. ¡Hay que estar atentos para no caer en ellos!", isDefault: true },
+  { term: "Cámara de Eco", definition: "A veces, en internet o en las redes sociales, los algoritmos nos muestran solo noticias e ideas que ya nos gustan o con las que estamos de acuerdo. Esto crea como una 'burbuja' donde no vemos otras opiniones y parece que todo el mundo piensa igual que nosotros.", isDefault: true },
+  { term: "Clickbait", definition: "Son esos titulares o imágenes súper exagerados y curiosos que ves en internet y que te hacen pinchar casi sin pensar (¡clic!). A veces, la noticia que encuentras después no es tan emocionante o incluso es un poco engañosa. ¡Solo querían tu clic!", isDefault: true },
+  { term: "Contrastar", definition: "Imagina que un amigo te cuenta algo sorprendente. Para saber si es del todo cierto, ¿a que le preguntarías a otros amigos también? Contrastar es hacer eso con las noticias: buscar la misma información en diferentes sitios (periódicos, webs, teles...) para ver si todos cuentan lo mismo o si hay pistas diferentes. ¡Es como ser un detective que junta varias piezas!", isDefault: true },
+  { term: "Contexto", definition: "Es como el escenario completo de una película. Para entender bien una noticia, necesitas saber no solo *qué* pasó, sino también *cuándo* pasó, *dónde*, *quiénes* estaban allí y *qué más* importante estaba ocurriendo al mismo tiempo. ¡Una foto o una frase sacada de contexto puede engañar mucho!", isDefault: true },
+  { term: "Deepfake", definition: "¡Es como magia de ordenador muy avanzada! Usan inteligencia artificial para crear vídeos o audios falsos que parecen súper reales, donde una persona famosa (¡o cualquiera!) dice o hace cosas que nunca hizo de verdad. ¡Pueden ser muy difíciles de pillar!", isDefault: true },
+  { term: "Desinformación", definition: "Es información que es mentira y que alguien la crea y la comparte (a propósito) para engañar, confundir o hacer que la gente crea algo que no es cierto. No es un simple error, ¡hay intención detrás!", isDefault: true },
+  { term: "Evidencia", definition: "Son las pistas que te ayudan a saber si algo es verdad. Pueden ser números, fotos que no estén trucadas, documentos oficiales, o lo que dice un verdadero experto en un tema. ¡Como un detective!", isDefault: true },
+  { term: "Fake news", definition: "Es otra forma de llamar a las noticias que son mentira. Se escriben y se comparten a propósito para que la gente crea cosas que no son ciertas, a veces para confundir o para que alguien piense de una manera determinada.", isDefault: true },
+  { term: "Fiable", definition: "Cuando decimos que una fuente de noticias (como un periódico o una web) es 'fiable', significa que podemos confiar bastante en que la información que nos da es verdadera y ha sido bien investigada. Es como un amigo que sabes que casi siempre te cuenta las cosas como son.", isDefault: true },
+  { term: "Fuente (de información)", definition: "Es de dónde viene la noticia, ¡como saber quién te contó un chisme! Puede ser un periódico, una página web, un canal de tele, un experto o incluso un amigo. Siempre hay que preguntarse: ¿quién lo dice? ¿Y puedo confiar en esa fuente?", isDefault: true },
+  { term: "Hecho", definition: "Es algo que se puede demostrar que es verdad o que realmente ocurrió. Por ejemplo, 'Madrid es la capital de España' es un hecho. No depende de si te gusta o no, ¡simplemente es así!", isDefault: true },
+  { term: "Imagen manipulada", definition: "Es una foto o un dibujo que alguien ha cambiado con el ordenador para que parezca de verdad, pero en realidad está trucada. Puede ser para quitar a alguien, añadir algo que no estaba, o hacer que parezca que pasó algo que no es cierto. ¡Ojo, que no todo lo que brilla es oro!", isDefault: true },
+  { term: "Manipulación", definition: "Es cuando alguien intenta cambiar la forma en que piensas o sientes sobre algo, usando información de manera tramposa. Puede ser mostrando solo una parte de la historia, exagerando mucho o inventando cosas para llevarte a una conclusión que a esa persona le interesa.", isDefault: true },
+  { term: "Noticia falsa", definition: "Es simplemente una noticia que no es verdad. Alguien la inventó o se equivocó mucho, pero la presentan como si fuera real.", isDefault: true },
+  { term: "Opinión", definition: "Es lo que una persona piensa, siente o cree sobre algo. Por ejemplo, decir 'el color azul es el más bonito' es una opinión. No se puede demostrar si es verdadera o falsa, ¡porque es el gusto de cada uno! Es diferente a un hecho.", isDefault: true },
+  { term: "Propaganda", definition: "Es información que se presenta de una forma especial para intentar convencerte de que apoyes una idea, un producto o a un grupo de personas (como un partido político). A veces usa verdades, pero otras exagera mucho o esconde partes de la historia para lograr su objetivo.", isDefault: true },
+  { term: "Sátira / Parodia", definition: "Son como noticias 'de mentirijillas' que se hacen para hacer reír o para criticar algo de forma graciosa. Imitan el estilo de las noticias serias, ¡pero cuentan cosas inventadas y exageradas! Si no pillas la broma, ¡te la pueden colar como si fuera verdad!", isDefault: true },
+  { term: "Sesgo", definition: "Imagina que en un partido de fútbol, el comentarista solo habla bien de un equipo y mal del otro. ¡Eso es sesgo! En las noticias, ocurre cuando la información se presenta de forma que favorece más una idea o a un grupo, en lugar de contar todos los lados de la historia de manera equilibrada.", isDefault: true },
+  { term: "Titular", definition: "Es como el título de un libro o una película, ¡pero para las noticias! Es esa frase grande y llamativa que ves primero y que intenta contarte de qué va la historia y hacer que quieras leer más.", isDefault: true },
+  { term: "Verificar", definition: "¡Es hacer de detective con las noticias! Significa no creerte algo a la primera, sino buscar más información, mirar en otros sitios o preguntar a expertos para estar más seguro de si es verdad o no.", isDefault: true },
+  { term: "Viral", definition: "Piensa en un vídeo súper divertido o una noticia muy sorprendente que de repente todo el mundo está viendo y compartiendo en TikTok, WhatsApp o YouTube. ¡Eso es que se ha hecho viral! Se extiende súper rápido, como un resfriado en clase.", isDefault: true }
+];
+
+// Array con el resumen de los consejos para la chuleta
+const tipsResumen = [
+  { icon: '🕵️‍♀️', text: 'Verifica siempre quién publica la noticia (la fuente).' },
+  { icon: '🆚', text: 'Busca la noticia en otros medios fiables para contrastar.' },
+  { icon: '📅', text: 'Revisa la fecha de publicación. ¡Las noticias viejas pueden engañar!' },
+  { icon: '🎣', text: 'Desconfía de titulares muy exagerados o que buscan el "clickbait".' },
+  { icon: '✍️', text: 'Fíjate en si hay faltas de ortografía o está mal escrito.' },
+  { icon: '🔍', text: 'Busca si la noticia aporta pruebas (evidencia) o solo opiniones.' },
+  { icon: '🧐', text: 'Analiza si la noticia cuenta diferentes puntos de vista o tiene sesgo.' },
+  { icon: '😲', text: 'Cuidado si una noticia busca provocarte una emoción muy fuerte y repentina.' },
+  { icon: '🤔', text: 'Pregúntate siempre: ¿quién se beneficia al difundir esta información?' }
 ];
 
 // Componente SidePanel
@@ -143,11 +65,10 @@ function SidePanel({
     onLogout,
     onSettingsSaved,
     onStartPostTest,
-    selectedTerm,     // <-- Prop recibida
-    initialSection    // <-- Prop recibida
+    selectedTerm,
+    initialSection
 }: SidePanelProps) {
-  // Establece activeSection usando initialSection si está disponible, sino 'glossary' o null como prefieras
-  const [activeSection, setActiveSection] = useState<string | null>(initialSection || 'glossary');
+  const [activeSection, setActiveSection] = useState<string | null>(initialSection || 'chuleta');
   const [nicknameSetting, setNicknameSetting] = useState('');
   const [avatarUrlSetting, setAvatarUrlSetting] = useState('');
   const [settingsLoading, setSettingsLoading] = useState<boolean>(false);
@@ -157,7 +78,6 @@ function SidePanel({
   const [newDefinition, setNewDefinition] = useState('');
   const [glossaryLoading, setGlossaryLoading] = useState(false);
   const [glossaryError, setGlossaryError] = useState<string | null>(null);
-
   const [fetchedStats, setFetchedStats] = useState<UserDetailedStats | null>(null);
   const [isStatsLoading, setIsStatsLoading] = useState<boolean>(false);
   const [statsError, setStatsError] = useState<string | null>(null);
@@ -173,8 +93,7 @@ function SidePanel({
   }, [userInfo]);
 
   const fetchUserGlossaryTerms = useCallback(async () => {
-    if (!authToken) { console.warn("fetchUserGlossaryTerms: No auth token found."); return; }
-    // console.log("Fetching user glossary terms from API..."); // Ya lo tienes
+    if (!authToken) { return; }
     setGlossaryLoading(true);
     setGlossaryError(null);
     try {
@@ -193,7 +112,6 @@ function SidePanel({
       })).filter(entry => entry.term && entry.definition);
       setUserGlossaryTerms(formattedData);
     } catch (error) {
-      console.error("Error fetching user glossary terms:", error);
       setGlossaryError(error instanceof Error ? error.message : 'No se pudieron cargar tus palabras.');
       setUserGlossaryTerms([]);
     } finally {
@@ -202,7 +120,6 @@ function SidePanel({
   }, [authToken]);
 
   useEffect(() => {
-    // Solo carga el glosario si el panel está abierto Y la sección activa es 'glossary'
     if (isOpen && activeSection === 'glossary' && authToken) {
       fetchUserGlossaryTerms();
     }
@@ -210,30 +127,24 @@ function SidePanel({
 
   const fetchUserStats = useCallback(async () => {
     if (!authToken) {
-      console.warn("fetchUserStats: No auth token found.");
       setStatsError("No autenticado. No se pueden cargar estadísticas.");
       setFetchedStats(null);
       return;
     }
-    // console.log("Fetching detailed user stats..."); // Ya lo tienes
     setIsStatsLoading(true);
     setStatsError(null);
-
     try {
       const response = await fetch('/api/users/me/detailed-stats', {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' }
       });
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ detail: `Error HTTP ${response.status}` }));
         throw new Error(errorData.detail || `Error al cargar estadísticas: ${response.status}`);
       }
       const statsData: UserDetailedStats = await response.json();
       setFetchedStats(statsData);
-      // console.log("Detailed stats fetched successfully:", statsData); // Ya lo tienes
     } catch (error) {
-      console.error("Error fetching user stats:", error);
       const errorMessage = error instanceof Error ? error.message : 'No se pudieron cargar las estadísticas.';
       setStatsError(errorMessage);
       setFetchedStats(null);
@@ -241,29 +152,25 @@ function SidePanel({
       setIsStatsLoading(false);
     }
   }, [authToken]);
-
+  
   useEffect(() => {
     if (isOpen && activeSection === 'stats' && !isStatsLoading) {
       fetchUserStats();
     }
-    // Resetea solo si el panel se cierra Y la sección activa ERA 'stats'
-    // O si la sección cambia y ya no es 'stats'
     if ((!isOpen && activeSection === 'stats') || (isOpen && activeSection !== 'stats')) {
        setFetchedStats(null);
        setStatsError(null);
     }
-  }, [isOpen, activeSection, fetchUserStats]); // isStatsLoading no es necesario como dependencia aquí
+  }, [isOpen, activeSection, fetchUserStats]);
 
-  // useEffect para manejar la sección inicial cuando el panel se abre
   useEffect(() => {
     if (isOpen && initialSection) {
-      if (activeSection !== initialSection) { // Evita re-seteos innecesarios
+      if (activeSection !== initialSection) {
         setActiveSection(initialSection);
       }
     }
-  }, [isOpen, initialSection]); // No incluir activeSection aquí para evitar un posible bucle si initialSection es persistente
+  }, [isOpen, initialSection]);
 
-  // useEffect para manejar el scroll al término seleccionado
   useEffect(() => {
     if (isOpen && activeSection === 'glossary' && selectedTerm) {
       const timer = setTimeout(() => {
@@ -275,21 +182,18 @@ function SidePanel({
           setTimeout(() => {
             element.classList.remove('highlighted-term-momentarily');
           }, 2500);
-        } else {
-          console.warn(`SidePanel: No se encontró el elemento del glosario con ID: ${sanitizedTermId} (término: ${selectedTerm})`);
         }
-      }, 150); // Delay para permitir que el DOM se actualice
-      return () => clearTimeout(timer); // Limpieza del temporizador
+      }, 150);
+      return () => clearTimeout(timer);
     }
-  }, [isOpen, activeSection, selectedTerm]); // Dependencias correctas
+  }, [isOpen, activeSection, selectedTerm]);
 
-  const handleSectionChange = (section: string | null) => { // Esta función es usada por los botones de navegación del panel
+  const handleSectionChange = (section: string | null) => {
     setActiveSection(section);
     if (section === 'settings' && userInfo) {
       setNicknameSetting(userInfo.apodo);
       setAvatarUrlSetting(userInfo.avatar_url || '');
     }
-    // Resetear campos de añadir término si se sale de la sección glosario
     if (section !== 'glossary') {
       setNewTerm('');
       setNewDefinition('');
@@ -315,7 +219,6 @@ function SidePanel({
     } catch (error) {
         setSettingsLoading(false);
         const message = error instanceof Error ? error.message : 'Error al guardar ajustes.';
-        console.error("Error guardando ajustes:", error);
         setSettingsFeedback({ type: 'error', message });
     }
   };
@@ -344,7 +247,6 @@ function SidePanel({
         setNewDefinition('');
         await fetchUserGlossaryTerms();
     } catch (error) {
-        console.error("Error al añadir término del glosario:", error);
         setGlossaryError(error instanceof Error ? error.message : 'No se pudo añadir la palabra.');
     } finally {
         setGlossaryLoading(false);
@@ -367,7 +269,7 @@ function SidePanel({
             if (!acc[firstLetter]) { acc[firstLetter] = []; }
             acc[firstLetter].push(term);
         } else {
-            const otherCategory = '#'; // Para términos que no empiezan con una letra estándar
+            const otherCategory = '#';
             if (!acc[otherCategory]) { acc[otherCategory] = []; }
             acc[otherCategory].push(term);
         }
@@ -398,10 +300,25 @@ function SidePanel({
 
       <div className="panel-content">
         <div className="panel-nav-buttons">
+          <button id="btn-chuleta" className={`panel-button ${activeSection === 'chuleta' ? 'active' : ''}`} onClick={() => handleSectionChange('chuleta')}>CHULETA</button>
           <button id="btn-glossary" className={`panel-button ${activeSection === 'glossary' ? 'active' : ''}`} onClick={() => handleSectionChange('glossary')}>GLOSARIO</button>
           <button id="btn-stats" className={`panel-button ${activeSection === 'stats' ? 'active' : ''}`} onClick={() => handleSectionChange('stats')}>ESTADÍSTICAS</button>
           <button id="btn-settings" className={`panel-button ${activeSection === 'settings' ? 'active' : ''}`} onClick={() => handleSectionChange('settings')}>AJUSTES</button>
         </div>
+
+        {activeSection === 'chuleta' && (
+          <div id="chuleta-content" className="panel-section-content" style={{ display: 'block' }}>
+            <h3>Chuleta de Consejos 📝</h3>
+            <ul className="chuleta-list">
+              {tipsResumen.map((tip, index) => (
+                <li key={index} className="chuleta-item">
+                  <span className="chuleta-icon">{tip.icon}</span>
+                  <p>{tip.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {activeSection === 'glossary' && (
           <div id="glossary-content" className="panel-section-content" style={{ display: 'block' }}>
@@ -418,7 +335,7 @@ function SidePanel({
               </div>
               {glossaryError && !glossaryLoading && <p className="error-message" style={{color: 'red', marginTop: '-5px', marginBottom: '10px'}}>{glossaryError}</p>}
               <button type="submit" className="form-button primary" disabled={glossaryLoading}>
-                {glossaryLoading ? (userGlossaryTerms.length === 0 && !glossaryError ? 'Cargando...' : 'Guardando...') : 'Añadir Palabra'}
+                {glossaryLoading ? 'Guardando...' : 'Añadir Palabra'}
               </button>
             </form>
             <hr className="separator"/>
@@ -428,21 +345,19 @@ function SidePanel({
                   ? <a key={letter} href={`#glossary-letter-${letter.toLowerCase()}`}>{letter}</a>
                   : <span key={letter} style={{ padding: '2px 5px', color: '#ccc' }}>{letter}</span>
               ))}
-              {groupedGlossary['#'] && <a href="#glossary-letter-symbol">#</a>} {/* ID consistente para símbolos */}
+              {groupedGlossary['#'] && <a href="#glossary-letter-symbol">#</a>}
             </div>
             <hr className="separator"/>
             {glossaryLoading && userGlossaryTerms.length === 0 && !glossaryError && <p>Cargando tus palabras...</p> }
             {!glossaryLoading && !glossaryError && Object.keys(groupedGlossary).length === 0 && <p>Aún no hay palabras en el glosario. ¡Añade la primera!</p> }
             {Object.keys(groupedGlossary).sort((a, b) => a === '#' ? 1 : b === '#' ? -1 : a.localeCompare(b)).map(letter => (
               <div key={letter} className="glossary-letter-group">
-                {/* ID para la cabecera de la letra, para el href del índice */}
                 <h4 id={`glossary-letter-${letter === '#' ? 'symbol' : letter.toLowerCase()}`} className="glossary-letter-heading">{letter}</h4>
                 <dl>
                   {groupedGlossary[letter].map((entry) => {
-                    // Generar ID único para cada término del glosario
                     const termId = `glossary-entry-${entry.term.toLowerCase().replace(/[^a-z0-9ñáéíóúü]+/gi, '-')}`;
                     return (
-                      <React.Fragment key={termId}> {/* Usar termId como key */}
+                      <React.Fragment key={termId}>
                         <dt id={termId}>{entry.term} {!entry.isDefault && <span style={{color: 'purple', fontSize: '0.8em', marginLeft: '5px'}}>(Mi palabra)</span>}</dt>
                         <dd>{entry.definition}</dd>
                       </React.Fragment>
@@ -530,6 +445,7 @@ function SidePanel({
           </div>
         )}
       </div>
+
       <div style={{padding: '20px', borderTop: '1px solid rgba(148, 171, 61, 0.2)', marginTop: 'auto' }}>
         <button id="settings-logout-btn" className="panel-button logout-button" onClick={onLogout}>
           Salir de Pimpoyo

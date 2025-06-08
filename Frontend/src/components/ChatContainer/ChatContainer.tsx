@@ -57,48 +57,93 @@ interface Tip {
 const tips: Tip[] = [
   {
     title: "**CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️**",
-    text: "Imagina que la fuente de una noticia es como la persona que te cuenta un secreto. ¿Confiarías en cualquiera?\n\nPor eso, **fíjate siempre en** ¿quién publica la noticia? Pregúntate: ¿Es un periódico conocido como El País o El Mundo, una cadena de televisión como RTVE, o una agencia internacional fiable como BBC News o Euronews? Cuando Pimpoyo y tú analicéis una noticia, él te ayudará a ver si su fuente es de este tipo.\n\n**¡Importante!** Si la fuente es una web que no conoces, te parece extraña, o es un blog personal sin referencias claras, ¡investiga un poco sobre ella antes de creer la noticia! Una fuente desconocida es una señal de alerta.",
-    challenge: { question: "*Pimpoyo te reta:* Si ves una noticia en \"SuperNoticiasFiables.com\" y otra en la web oficial de \"RTVE Noticias\", ¿cuál te parece más fiable a primera vista?", options: [ { id: "c1_opt1", text: "SuperNoticiasFiables punto com", isCorrect: false }, { id: "c1_opt2", text: "RTVE Noticias", isCorrect: true }, { id: "c1_opt3", text: "Las dos igual", isCorrect: false }, ], feedbackCorrect: "¡Exacto! RTVE Noticias es una fuente conocida y establecida, lo que la hace más fiable a primera vista. De la otra web, como no la conocemos mucho y su nombre suena un poco exagerado, haríamos bien en investigar más antes de confiar. ¡Bien visto!", feedbackIncorrect: "Es una buena idea fijarse en los nombres. \"SuperNoticiasFiables punto com\" suena muy convincente, ¿verdad? Pero a veces, los sitios menos conocidos pueden no ser tan fiables como las cadenas de noticias establecidas como RTVE, que tienen equipos de periodistas. ¡Es bueno dudar un poquito de las fuentes que no conocemos bien!" }
+    text: "Imagina que la [[Fuente (de información)|fuente]] de una noticia es como la persona que te cuenta un secreto. ¿Confiarías en cualquiera?\n\nPor eso, **fíjate siempre en** ¿quién publica la noticia? Pregúntate: ¿Es un periódico conocido como El País o El Mundo, una cadena de televisión como RTVE, o una agencia internacional [[Fiable|fiable]] como BBC News o Euronews? Cuando Pimpoyo y tú analicéis una noticia, él te ayudará a ver si su fuente es de este tipo.\n\n**¡Importante!** Si la fuente es una web que no conoces, te parece extraña, o es un blog personal sin referencias claras, ¡investiga un poco sobre ella antes de creer la noticia! Una fuente desconocida es una señal de alerta.",
+    challenge: {
+      question: "*Pimpoyo te reta:* Si ves una noticia en \"SuperNoticiasFiables.com\" y otra en la web oficial de \"RTVE Noticias\", ¿cuál te parece más fiable a primera vista?",
+      options: [ { id: "c1_opt1", text: "SuperNoticiasFiables punto com", isCorrect: false }, { id: "c1_opt2", text: "RTVE Noticias", isCorrect: true }, { id: "c1_opt3", text: "Las dos igual", isCorrect: false }, ],
+      feedbackCorrect: "¡Exacto! RTVE Noticias es una fuente conocida y establecida, lo que la hace más fiable a primera vista. De la otra web, como no la conocemos mucho y su nombre suena un poco exagerado, haríamos bien en investigar más antes de confiar. ¡Bien visto!",
+      feedbackIncorrect: "Es una buena idea fijarse en los nombres. \"SuperNoticiasFiables punto com\" suena muy convincente, ¿verdad? Pero a veces, los sitios menos conocidos pueden no ser tan fiables como las cadenas de noticias establecidas como RTVE, que tienen equipos de periodistas. ¡Es bueno dudar un poquito de las fuentes que no conocemos bien!"
+    }
   },
   {
     title: "**CONSEJO 2: ¡COMPARA, COMPARA! 🆚**",
-    text: "No te quedes solo con una versión de la historia, ¡como si solo escucharas a un amigo en una discusión!\n\nPor eso, **es clave que te fijes en esto:** verifica la noticia buscando si otros medios conocidos y fiables también la cuentan. Por ejemplo, puedes contrastar lo que lees con lo que publican periódicos importantes de España, cadenas de televisión públicas, o fuentes de noticias internacionales reconocidas, como las que mencionamos en el primer consejo.\n\n**¡Importante!** Si muchos medios serios y diferentes cuentan la misma historia, es más probable que sea cierta. Pero si solo la encuentras en un sitio poco conocido o en blogs sin referencias claras, ¡es una gran pista para dudar! Podría ser un bulo.",
-    challenge: { question: "*Pimpoyo te reta:* Si lees una noticia sorprendente sobre tu juego favorito solo en un pequeño blog que nadie conoce, ¿qué sería lo primero que harías según este consejo?", options: [ { id: "c2_opt1", text: "Creérmela y compartirla rápido", isCorrect: false }, { id: "c2_opt2", text: "Buscarla en otros sitios de noticias más grandes", isCorrect: true }, { id: "c2_opt3", text: "No hacer nada, seguro es mentira", isCorrect: false }, ], feedbackCorrect: "¡Muy bien! Lo primero sería buscar si otros sitios de noticias más grandes y conocidos también hablan de ello. Si no encuentras nada más, es una buena razón para sospechar que quizás no sea del todo cierta. ¡Esa es una gran estrategia de detective!", feedbackIncorrect: "Compartirla rápido puede ser tentador si la noticia es emocionante, ¡lo entiendo! Pero recuerda este consejo: si solo la has visto en un sitio pequeño y desconocido, es mejor buscarla primero en otros medios más grandes y fiables. Así te aseguras de no difundir un bulo." }
+    text: "No te quedes solo con una versión de la historia, ¡como si solo escucharas a un amigo en una discusión!\n\nPor eso, **es clave que te fijes en esto:** [[Verificar|verifica]] la noticia buscando si otros medios conocidos y fiables también la cuentan. Por ejemplo, puedes [[Contrastar|contrastar]] lo que lees con lo que publican periódicos importantes de España, cadenas de televisión públicas, o fuentes de noticias internacionales reconocidas, como las que mencionamos en el primer consejo.\n\n**¡Importante!** Si muchos medios serios y diferentes cuentan la misma historia, es más probable que sea cierta. Pero si solo la encuentras en un sitio poco conocido o en blogs sin referencias claras, ¡es una gran pista para dudar! Podría ser un [[Bulo|bulo]].",
+    challenge: {
+      question: "*Pimpoyo te reta:* Si lees una noticia sorprendente sobre tu juego favorito solo en un pequeño blog que nadie conoce, ¿qué sería lo primero que harías según este consejo?",
+      options: [ { id: "c2_opt1", text: "Creérmela y compartirla rápido", isCorrect: false }, { id: "c2_opt2", text: "Buscarla en otros sitios de noticias más grandes", isCorrect: true }, { id: "c2_opt3", text: "No hacer nada, seguro es mentira", isCorrect: false }, ],
+      feedbackCorrect: "¡Muy bien! Lo primero sería buscar si otros sitios de noticias más grandes y conocidos también hablan de ello. Si no encuentras nada más, es una buena razón para sospechar que quizás no sea del todo cierta. ¡Esa es una gran estrategia de detective!",
+      feedbackIncorrect: "Compartirla rápido puede ser tentador si la noticia es emocionante, ¡lo entiendo! Pero recuerda este consejo: si solo la has visto en un sitio pequeño y desconocido, es mejor buscarla primero en otros medios más grandes y fiables. Así te aseguras de no difundir un bulo."
+    }
   },
   {
-    title: "*CONSEJO 3: ¡OJO A LA FECHA! 📅*",
-    text: "Las noticias son como el pan, ¡mejor si son frescas y del día! Cuando analices una noticia con Pimpoyo, él podría preguntarte por la fecha.\n\nAsí que, **fíjate bien en** la fecha en la que se publicó.\n\n**¡Importante!** A veces, noticias muy antiguas (¡incluso de hace años!) se comparten como si fueran nuevas para engañar o crear confusión. Esto es una táctica común de las noticias falsas. ¡Que no te den gato por liebre!",
-    challenge: { question: "*Pimpoyo te reta:* Si un amigo te manda una noticia increíble sobre un descubrimiento espacial, pero ves que la fecha es de hace 5 años, ¿qué pensarías?", options: [ { id: "c3_opt1", text: "¡Qué guay! Sigue siendo un gran descubrimiento.", isCorrect: false }, { id: "c3_opt2", text: "Que es vieja y quizás ya no es tan 'noticia'.", isCorrect: true }, { id: "c3_opt3", text: "Que seguro es falsa porque es antigua.", isCorrect: false }, ], feedbackCorrect: "¡Exacto! Pensarías que, aunque pudo ser verdad en su momento, quizás ya no es una \"novedad\" o la situación ha cambiado. Las noticias viejas a veces se sacan de contexto. ¡Buen trabajo fijándote en la fecha!", feedbackIncorrect: "Es verdad que un descubrimiento puede seguir siendo interesante, ¡pero la fecha es una pista muy importante! Una noticia de hace 5 años podría no contar toda la historia actual o usarse para confundir. Siempre es bueno preguntarse si una noticia tan antigua sigue siendo relevante hoy." }
+    title: "**CONSEJO 3: ¡OJO A LA FECHA! 📅**",
+    text: "Las noticias son como el pan, ¡mejor si son frescas y del día! Cuando analices una noticia con Pimpoyo, él podría preguntarte por la fecha.\n\nAsí que, **fíjate bien en** la fecha en la que se publicó.\n\n**¡Importante!** A veces, noticias muy antiguas (¡incluso de hace años!) se comparten como si fueran nuevas para engañar o crear confusión. Esto es una táctica común de las [[Noticia falsa|noticias falsas]]. Sacar algo de [[Contexto|contexto]] es muy habitual. ¡Que no te den gato por liebre!",
+    challenge: {
+      question: "*Pimpoyo te reta:* Si un amigo te manda una noticia increíble sobre un descubrimiento espacial, pero ves que la fecha es de hace 5 años, ¿qué pensarías?",
+      options: [ { id: "c3_opt1", text: "¡Qué guay! Sigue siendo un gran descubrimiento.", isCorrect: false }, { id: "c3_opt2", text: "Que es vieja y quizás ya no es tan 'noticia'.", isCorrect: true }, { id: "c3_opt3", text: "Que seguro es falsa porque es antigua.", isCorrect: false }, ],
+      feedbackCorrect: "¡Exacto! Pensarías que, aunque pudo ser verdad en su momento, quizás ya no es una \"novedad\" o la situación ha cambiado. Las noticias viejas a veces se sacan de contexto. ¡Buen trabajo fijándote en la fecha!",
+      feedbackIncorrect: "Es verdad que un descubrimiento puede seguir siendo interesante, ¡pero la fecha es una pista muy importante! Una noticia de hace 5 años podría no contar toda la historia actual o usarse para confundir. Siempre es bueno preguntarse si una noticia tan antigua sigue siendo relevante hoy."
+    }
   },
   {
     title: "**CONSEJO 4: TITULARES CON TRAMPA 🎣**",
-    text: "Algunos titulares son como un cebo brillante para pescar tu atención: ¡muy exagerados, alarmistas o sorprendentes! Pimpoyo a veces te preguntará: \"¿El titular parece muy exagerado?\".\n\nEntonces, **fíjate bien:** ¿El titular es demasiado increíble para ser verdad o busca generar una emoción muy fuerte? Lee siempre la noticia entera, no solo el titular, y pregúntate: ¿El texto cuenta lo mismo que el titular o lo exagera mucho?\n\n**¡Importante!** Esto se llama 'clickbait'. Muchas veces, estos titulares esconden noticias falsas o de poca calidad. Quieren tu clic, no informarte bien.",
-    challenge: { question: "*Pimpoyo te reta:* ¿Cuál de estos titulares te parece más 'clickbait'?\nA) \"Descubren nueva especie de mariposa en el Amazonas\"\nB) \"¡ALUCINANTE! ¡CIENTÍFICOS CREAN MARIPOSA GIGANTE QUE HABLA! (NO TE LO CREERÁS)\"", options: [ { id: "c4_opt1", text: "El titular A", isCorrect: false }, { id: "c4_opt2", text: "El titular B", isCorrect: true }, ], feedbackCorrect: "¡Correcto! El titular B es súper exagerado, usa mayúsculas y frases como \"NO TE LO CREERÁS\" para llamar mucho la atención. Eso es típico del clickbait. El titular A, en cambio, suena más informativo y calmado. ¡Bien detectado!", feedbackIncorrect: "El titular A suena interesante, ¿verdad? Pero fíjate en el B: las mayúsculas, los signos de exclamación, y que diga \"NO TE LO CREERÁS\" son pistas de que intenta ser muy llamativo, ¡quizás demasiado! Eso es el 'clickbait'. Busca más el clic que informar con seriedad." }
+    text: "Algunos [[Titular|titulares]] son como un cebo brillante para pescar tu atención: ¡muy exagerados, alarmistas o sorprendentes! Pimpoyo a veces te preguntará: \"¿El titular parece muy exagerado?\".\n\nEntonces, **fíjate bien:** ¿El titular es demasiado increíble para ser verdad o busca generar una emoción muy fuerte? Lee siempre la noticia entera, no solo el titular, y pregúntate: ¿El texto cuenta lo mismo que el titular o lo exagera mucho?\n\n**¡Importante!** Esto se llama [[Clickbait|clickbait]]. Muchas veces, estos titulares esconden [[Fake news|noticias falsas]] o de poca calidad. Quieren tu clic, no informarte bien.",
+    challenge: {
+      question: "*Pimpoyo te reta:* ¿Cuál de estos titulares te parece más 'clickbait'?\nA) \"Descubren nueva especie de mariposa en el Amazonas\"\nB) \"¡ALUCINANTE! ¡CIENTÍFICOS CREAN MARIPOSA GIGANTE QUE HABLA! (NO TE LO CREERÁS)\"",
+      options: [ { id: "c4_opt1", text: "El titular A", isCorrect: false }, { id: "c4_opt2", text: "El titular B", isCorrect: true }, ],
+      feedbackCorrect: "¡Correcto! El titular B es súper exagerado, usa mayúsculas y frases como \"NO TE LO CREERÁS\" para llamar mucho la atención. Eso es típico del clickbait. El titular A, en cambio, suena más informativo y calmado. ¡Bien detectado!",
+      feedbackIncorrect: "El titular A suena interesante, ¿verdad? Pero fíjate en el B: las mayúsculas, los signos de exclamación, y que diga \"NO TE LO CREERÁS\" son pistas de que intenta ser muy llamativo, ¡quizás demasiado! Eso es el 'clickbait'. Busca más el clic que informar con seriedad."
+    }
   },
   {
     title: "**CONSEJO 5: ¿ESTÁ BIEN ESCRITO? ✍️**",
-    text: "Las noticias de verdad suelen estar escritas con cuidado, ¡como un buen libro!\n\nPor eso, **fíjate en detalles como:** ¿Hay muchas faltas de ortografía? ¿Las frases están mal construidas o no se entienden bien, como a veces ves en mensajes virales? ¿Usa TODO EN MAYÚSCULAS y muchísimos signos de exclamación (!!!)?\n\n**¡Importante!** Los errores pueden ser una pista de que la noticia no es profesional y podría ser falsa. Un lenguaje muy agresivo o que solo busca la manipulación emocional también es sospechoso.",
-    challenge: { question: "*Pimpoyo te reta:* Si lees: \"URGENTE!!! an descubierto un tesoro SECRETISIMO!!!!! comparte YA\", ¿es una señal de noticia fiable o sospechosa?", options: [ { id: "c5_opt1", text: "Fiable, porque es urgente", isCorrect: false }, { id: "c5_opt2", text: "Sospechosa, por los errores y mayúsculas", isCorrect: true }, ], feedbackCorrect: "¡Perfecto! Las mayúsculas excesivas, las faltas de ortografía como \"an descubierto\" o \"secretisimo\", y el pedir compartirlo urgentemente son señales clarísimas para desconfiar. Una noticia seria no se escribiría así. ¡Eres un gran observador!", feedbackIncorrect: "A veces, cuando algo es \"urgente\" queremos creerlo rápido. Pero fíjate bien: ¿una noticia importante se escribiría con tantas faltas como \"an descubierto\" o usaría tantas mayúsculas y exclamaciones? Esas son pistas de que quizás no es muy profesional y por eso es sospechosa." }
+    text: "Las noticias de verdad suelen estar escritas con cuidado, ¡como un buen libro!\n\nPor eso, **fíjate en detalles como:** ¿Hay muchas faltas de ortografía? ¿Las frases están mal construidas o no se entienden bien, como a veces ves en mensajes [[Viral|virales]]? ¿Usa TODO EN MAYÚSCULAS y muchísimos signos de exclamación (!!!)?\n\n**¡Importante!** Los errores pueden ser una pista de que la noticia no es profesional y podría ser falsa. Un lenguaje muy agresivo o que solo busca la [[Manipulación|manipulación]] emocional también es sospechoso.",
+    challenge: {
+      question: "*Pimpoyo te reta:* Si lees: \"URGENTE!!! an descubierto un tesoro SECRETISIMO!!!!! comparte YA\", ¿es una señal de noticia fiable o sospechosa?",
+      options: [ { id: "c5_opt1", text: "Fiable, porque es urgente", isCorrect: false }, { id: "c5_opt2", text: "Sospechosa, por los errores y mayúsculas", isCorrect: true }, ],
+      feedbackCorrect: "¡Perfecto! Las mayúsculas excesivas, las faltas de ortografía como \"an descubierto\" o \"secretisimo\", y el pedir compartirlo urgentemente son señales clarísimas para desconfiar. Una noticia seria no se escribiría así. ¡Eres un gran observador!",
+      feedbackIncorrect: "A veces, cuando algo es \"urgente\" queremos creerlo rápido. Pero fíjate bien: ¿una noticia importante se escribiría con tantas faltas como \"an descubierto\" o usaría tantas mayúsculas y exclamaciones? Esas son pistas de que quizás no es muy profesional y por eso es sospechosa."
+    }
   },
   {
     title: "**CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS? 🔍**",
-    text: "Una noticia fiable te muestra de dónde saca la información, ¡como un detective que enseña sus pistas!\n\nPor eso, **fíjate si** la noticia menciona fuentes claras y verificables (por ejemplo, si nombra un estudio científico conocido, un informe oficial o a expertos específicos) y si ofrece enlaces o datos concretos para que puedas comprobarlo tú mismo.\n\n**¡Importante!** Si la noticia solo da opiniones, no dice de dónde viene la información claramente, o se basa en frases como \"me han dicho que...\" o \"se comenta por ahí\" sin más detalle, ¡desconfía! La falta de pruebas claras es una gran señal de alerta.",
-    challenge: { question: "*Pimpoyo te reta:* Una noticia dice: \"Los expertos aseguran que comer chocolate te hace volar\". Para que sea más creíble, ¿qué debería incluir?", options: [ { id: "c6_opt1", text: "Quiénes son los expertos y dónde está el estudio", isCorrect: true }, { id: "c6_opt2", text: "Más opiniones de gente que ha volado", isCorrect: false }, { id: "c6_opt3", text: "Una foto de alguien volando tras comer chocolate", isCorrect: false }, ], feedbackCorrect: "¡Justo eso! Le faltaría saber QUIÉNES son esos \"expertos\", si hay algún estudio científico que lo demuestre, o dónde podemos leer más sobre ese \"descubrimiento\". Sin esas pruebas, ¡suena más a fantasía que a noticia!", feedbackIncorrect: "Una foto o más opiniones podrían ser llamativas, ¡pero lo más importante son las pruebas! Para que sea creíble, necesitamos saber quiénes son esos expertos y dónde está el estudio que lo demuestra. ¡Las pruebas son clave, no solo lo que la gente dice o muestra sin más!" }
+    text: "Una noticia fiable te muestra de dónde saca la información, ¡como un detective que enseña sus pistas!\n\nPor eso, **fíjate si** la noticia menciona fuentes claras y verificables (por ejemplo, si nombra un estudio científico conocido, un informe oficial o a expertos específicos) y si ofrece enlaces o datos concretos para que puedas comprobarlo tú mismo.\n\n**¡Importante!** Si la noticia solo da [[Opinión|opiniones]], no dice de dónde viene la información claramente, o se basa en frases como \"me han dicho que...\" o \"se comenta por ahí\" sin más detalle, ¡desconfía! La falta de [[Evidencia|evidencia]] clara es una gran señal de alerta.",
+    challenge: {
+      question: "*Pimpoyo te reta:* Una noticia dice: \"Los expertos aseguran que comer chocolate te hace volar\". Para que sea más creíble, ¿qué debería incluir?",
+      options: [ { id: "c6_opt1", text: "Quiénes son los expertos y dónde está el estudio", isCorrect: true }, { id: "c6_opt2", text: "Más opiniones de gente que ha volado", isCorrect: false }, { id: "c6_opt3", text: "Una foto de alguien volando tras comer chocolate", isCorrect: false }, ],
+      feedbackCorrect: "¡Justo eso! Le faltaría saber QUIÉNES son esos \"expertos\", si hay algún estudio científico que lo demuestre, o dónde podemos leer más sobre ese \"descubrimiento\". Sin esas pruebas, ¡suena más a fantasía que a noticia!",
+      feedbackIncorrect: "Una foto o más opiniones podrían ser llamativas, ¡pero lo más importante son las pruebas! Para que sea creíble, necesitamos saber quiénes son esos expertos y dónde está el estudio que lo demuestra. ¡Las pruebas son clave, no solo lo que la gente dice o muestra sin más!"
+    }
   },
   {
     title: "**CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS? 🧐**",
-    text: "A veces, una noticia puede estar un poquito inclinada hacia un lado, como una torre que no está recta, mostrando solo una parte de la historia.\n\nPor eso, **intenta descubrir si** la noticia cuenta diferentes puntos de vista o solo se enfoca en uno, ignorando los demás.\n\n**¡Importante!** Cuando una noticia parece favorecer mucho una idea y no presenta otros argumentos, podría estar 'sesgada'. Un buen detective busca la historia más completa posible.",
-    challenge: { question: "*Pimpoyo te reta:* Si una noticia sobre un nuevo videojuego solo entrevista a gente que dice que es lo peor del mundo, ¿qué te faltaría para tener una idea más clara?", options: [ { id: "c7_opt1", text: "Saber por qué es tan malo", isCorrect: false }, { id: "c7_opt2", text: "Escuchar a gente a la que sí le gusta", isCorrect: true }, { id: "c7_opt3", text: "Ver más vídeos del juego", isCorrect: false }, ], feedbackCorrect: "¡Tienes toda la razón! Parece que solo nos está mostrando una parte de la historia, la negativa. Para entenderlo bien, sería importante escuchar también a quienes sí les gusta o buscar otras opiniones. Así tendríamos una visión más completa y justa.", feedbackIncorrect: "Saber por qué es malo o ver vídeos ayuda, pero para saber si la noticia te cuenta la historia completa, es clave buscar los puntos de vista que faltan. Si solo nos dan una opinión, ¡quizás nos están mostrando solo un lado de la moneda! Faltaría la opinión de a quiénes sí les gusta, por ejemplo." }
+    text: "A veces, una noticia puede estar un poquito inclinada hacia un lado, como una torre que no está recta, mostrando solo una parte de la historia.\n\nPor eso, **intenta descubrir si** la noticia cuenta diferentes puntos de vista o solo se enfoca en uno, ignorando los demás.\n\n**¡Importante!** Cuando una noticia parece favorecer mucho una idea y no presenta otros argumentos, podría tener [[Sesgo|sesgo]]. Un buen detective busca la historia más completa posible.",
+    challenge: {
+      question: "*Pimpoyo te reta:* Si una noticia sobre un nuevo videojuego solo entrevista a gente que dice que es lo peor del mundo, ¿qué te faltaría para tener una idea más clara?",
+      options: [ { id: "c7_opt1", text: "Saber por qué es tan malo", isCorrect: false }, { id: "c7_opt2", text: "Escuchar a gente a la que sí le gusta", isCorrect: true }, { id: "c7_opt3", text: "Ver más vídeos del juego", isCorrect: false }, ],
+      feedbackCorrect: "¡Tienes toda la razón! Parece que solo nos está mostrando una parte de la historia, la negativa. Para entenderlo bien, sería importante escuchar también a quienes sí les gusta o buscar otras opiniones. Así tendríamos una visión más completa y justa.",
+      feedbackIncorrect: "Saber por qué es malo o ver vídeos ayuda, pero para saber si la noticia te cuenta la historia completa, es clave buscar los puntos de vista que faltan. Si solo nos dan una opinión, ¡quizás nos están mostrando solo un lado de la moneda! Faltaría la opinión de a quiénes sí les gusta, por ejemplo."
+    }
   },
   {
     title: "**CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES! 😲😠😂**",
     text: "Las noticias que nos hacen sentir MUY enfadados, tristes o súper felices al instante, a veces son como un mago que distrae tu atención.\n\nAsí que, **pon atención si** una noticia te provoca una emoción muy fuerte de golpe. Pregúntate: ¿Esta noticia busca más emocionarte que hacerte pensar con calma?\n\n**¡Importante!** Algunas noticias falsas usan emociones intensas para que no te pares a pensar si son verdad o no y para que las compartas rápido. ¡Respira hondo y analiza antes de creértela!",
-    challenge: { question: "*Pimpoyo te reta:* Si lees un titular que te hace enfadar muchísimo al instante, ¿qué es bueno hacer antes de compartirlo o creértelo del todo?", options: [ { id: "c8_opt1", text: "Compartirlo rápido para que todos se enfaden", isCorrect: false }, { id: "c8_opt2", text: "Respirar y pensar si busca enfadarme a propósito", isCorrect: true }, { id: "c8_opt3", text: "Buscar más noticias que me hagan enfadar", isCorrect: false }, ], feedbackCorrect: "¡Excelente! Lo mejor es parar un segundo, respirar y pensar si la noticia podría estar intentando que te enfades a propósito para que no analices bien la información. Usar las emociones para que no pensemos es un truco de algunas noticias falsas.", feedbackIncorrect: "Cuando algo nos enfada mucho, la primera reacción puede ser compartirlo para que otros también se enteren. ¡Pero cuidado! A veces, las noticias falsas buscan justo eso, que la emoción nos gane y no pensemos con calma. ¡Es mejor respirar y analizarla un poquito antes de compartir!" }
+    challenge: {
+      question: "*Pimpoyo te reta:* Si lees un titular que te hace enfadar muchísimo al instante, ¿qué es bueno hacer antes de compartirlo o creértelo del todo?",
+      options: [ { id: "c8_opt1", text: "Compartirlo rápido para que todos se enfaden", isCorrect: false }, { id: "c8_opt2", text: "Respirar y pensar si busca enfadarme a propósito", isCorrect: true }, { id: "c8_opt3", text: "Buscar más noticias que me hagan enfadar", isCorrect: false }, ],
+      feedbackCorrect: "¡Excelente! Lo mejor es parar un segundo, respirar y pensar si la noticia podría estar intentando que te enfades a propósito para que no analices bien la información. Usar las emociones para que no pensemos es un truco de algunas noticias falsas.",
+      feedbackIncorrect: "Cuando algo nos enfada mucho, la primera reacción puede ser compartirlo para que otros también se enteren. ¡Pero cuidado! A veces, las noticias falsas buscan justo eso, que la emoción nos gane y no pensemos con calma. ¡Es mejor respirar y analizarla un poquito antes de compartir!"
+    }
   },
   {
     title: "**CONSEJO 9: ¿A QUIÉN LE INTERESA? 🤔**",
-    text: "Detrás de cada noticia, puede haber alguien que quiere que pienses o hagas algo específico.\n\nPor eso, **una buena pregunta de detective es:** ¿Quién podría querer que yo me crea esta noticia y por qué? ¿Gana algo alguien si esta historia se difunde?\n\n**¡Importante!** Pensar en quién se beneficia te puede dar pistas sobre si la noticia es de confianza o si intenta convencerte de algo sin que te des cuenta. A veces, esto es parte de la manipulación.",
-    challenge: { question: "*Pimpoyo te reta:* Si ves un anuncio muy divertido que dice que una nueva marca de zapatillas te hará correr más rápido que nadie, ¿quién crees que se beneficia más si te lo crees?", options: [ { id: "c9_opt1", text: "Yo, porque correré más rápido", isCorrect: false }, { id: "c9_opt2", text: "La marca de zapatillas", isCorrect: true }, { id: "c9_opt3", text: "Mis amigos, que me verán correr", isCorrect: false }, ], feedbackCorrect: "¡Clarísimo! La marca de zapatillas, porque así es más probable que quieras comprarlas. Preguntarse quién se beneficia nos ayuda a ver si la información es objetiva o si tiene una intención detrás. ¡Muy astuto!", feedbackIncorrect: "¡Es verdad que tú te beneficiarías si corrieras más rápido! Pero piensa, ¿quién más quiere que te lo creas mucho, mucho? La empresa que vende las zapatillas, ¿verdad? Ellos ganarían dinero si las compras. A veces, la intención detrás de un mensaje es importante para saber si es del todo neutral." }
+    text: "Detrás de cada noticia, puede haber alguien que quiere que pienses o hagas algo específico.\n\nPor eso, **una buena pregunta de detective es:** ¿Quién podría querer que yo me crea esta noticia y por qué? ¿Gana algo alguien si esta historia se difunde?\n\n**¡Importante!** Pensar en quién se beneficia te puede dar pistas sobre si la noticia es de confianza o si intenta convencerte de algo sin que te des cuenta. A veces, esto es parte de la [[Propaganda|propaganda]] o la manipulación.",
+    challenge: {
+      question: "*Pimpoyo te reta:* Si ves un anuncio muy divertido que dice que una nueva marca de zapatillas te hará correr más rápido que nadie, ¿quién crees que se beneficia más si te lo crees?",
+      options: [ { id: "c9_opt1", text: "Yo, porque correré más rápido", isCorrect: false }, { id: "c9_opt2", text: "La marca de zapatillas", isCorrect: true }, { id: "c9_opt3", text: "Mis amigos, que me verán correr", isCorrect: false }, ],
+      feedbackCorrect: "¡Clarísimo! La marca de zapatillas, porque así es más probable que quieras comprarlas. Preguntarse quién se beneficia nos ayuda a ver si la información es objetiva o si tiene una intención detrás. ¡Muy astuto!",
+      feedbackIncorrect: "¡Es verdad que tú te beneficiarías si corrieras más rápido! Pero piensa, ¿quién más quiere que te lo creas mucho, mucho? La empresa que vende las zapatillas, ¿verdad? Ellos ganarían dinero si las compras. A veces, la intención detrás de un mensaje es importante para saber si es del todo neutral."
+    }
   }
 ];
 
@@ -431,11 +476,66 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     const showTrueOnLeft = Math.random() < 0.5;
     const leftNewsItem = showTrueOnLeft ? selectedTrueNews : selectedFalseNews;
     const rightNewsItem = showTrueOnLeft ? selectedFalseNews : selectedTrueNews;
-    const createMobileViewHtml = (newsItem: NewsItem): string => {
-        const escapeHtml = (unsafe: string): string => !unsafe ? '' : unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        const formattedTextHtml = escapeHtml(newsItem.TEXT).split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
-        return `<div class="mobile-news-view"><div class="mobile-news-content"><h2 class="mobile-news-headline">${escapeHtml(newsItem.HEADLINE)}</h2><div class="mobile-news-text-scroll">${formattedTextHtml || '<p>...</p>'}</div></div><div class="mobile-news-footer"></div></div>`;
+const createMobileViewHtml = (newsItem: NewsItem): string => {
+    // Función para escapar caracteres HTML y evitar problemas de seguridad o visuales
+    const escapeHtml = (unsafe: string | null | undefined): string => {
+        if (!unsafe) return '';
+        return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     };
+
+    // Nueva función que busca y formatea la fecha desde el LINK
+    const extractAndFormatDateFromLink = (link: string | undefined | null): string => {
+        if (!link) {
+            return ""; // Si no hay enlace, no hace nada
+        }
+        try {
+            // Esta expresión busca un patrón de fecha como /AAAA/MM/DD/ o /AAAA-MM-DD/
+            const dateRegex = /(\d{4})[\/-](\d{2})[\/-](\d{2})/;
+            const match = link.match(dateRegex);
+
+            // Si encuentra una fecha en el enlace...
+            if (match) {
+               const date = new Date(parseInt(match[1], 10), parseInt(match[2], 10) - 1, parseInt(match[3], 10));
+                
+                const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                return ` • ${date.toLocaleDateString('es-ES', options)}`;
+            }
+            return "";
+        } catch (e) {
+            return "";
+        }
+    };
+
+    const formattedTextHtml = escapeHtml(newsItem.TEXT || '')
+        .split('\n')
+        .filter(p => p.trim() !== '')
+        .map(p => `<p>${p}</p>`)
+        .join('');
+
+    const kicker = (newsItem.TOPICS || 'General').split(',')[0].trim().toUpperCase();
+    const imageSeed = escapeHtml(newsItem.ID || 'default-image');
+    const sourceText = escapeHtml(newsItem.SOURCE ?? 'Fuente desconocida');
+    const headlineText = escapeHtml(newsItem.HEADLINE ?? 'Titular no disponible');
+    const publicationDateText = extractAndFormatDateFromLink(newsItem.LINK);
+
+    return `
+      <div class="mobile-news-view">
+        <div class="news-image-header" style="background-image: url('https://picsum.photos/seed/${imageSeed}/400/200');"></div>
+        <div class="mobile-news-content">
+          <span class="news-kicker">${kicker}</span>
+          <h2 class="mobile-news-headline">${headlineText}</h2>
+          <div class="news-metadata">
+            <span class="news-source">Por <strong>${sourceText}</strong></span>
+            <span class="news-date">${publicationDateText}</span>
+          </div>
+          <hr class="news-separator" />
+          <div class="mobile-news-text-scroll">
+            ${formattedTextHtml || '<p>Contenido no disponible.</p>'}
+          </div>
+        </div>
+      </div>
+    `;
+};
     const leftHtml = createMobileViewHtml(leftNewsItem);
     const rightHtml = createMobileViewHtml(rightNewsItem);
     const combinedHtml = `<div class="news-challenge-container">${leftHtml}${rightHtml}</div>`;

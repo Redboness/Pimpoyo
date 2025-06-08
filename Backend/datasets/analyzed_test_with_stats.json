@@ -512,41 +512,6 @@
         ]
     },
     {
-        "ID": "16",
-        "CATEGORY": "FALSE",
-        "TOPICS": "Sociedad",
-        "SOURCE": "AFPFactual",
-        "HEADLINE": "",
-        "TEXT": "COMUNICADO DEL VICEPRESIDENTE DE FEDERACIÓN AJYPE, \nDon Antonio Hidalgo Gomez \nEstimados Amigos y Compañeros, aunque sea un poco tarde os tengo que comunicar una gran noticia. \nEL Director de Muface, se ha puesto en contacto telefónico con el Presidente de esta Asociación de Jubilados y le ha manifestado que el próximo día 24 de Julio, se firma en Madrid el nuevo convenio de Muface, y una de las principales Noticia, es que se dedica el 80% a rebajar el copago de los medicamentos.\nEs decir que en las Farmacias, los Jubilados y sus Viudas, pagarán igual que los jubilados y viudas adscritos a la Seguridad Social. \nUna vez firmado el convenio se darán instrucciones a las farmacias para que apliquen las nuevas normas en el cobro de los medicamentos.\nComo es natural esta noticia tiene efecto domino, pues también se verán beneficiados todos los jubilados y viudas  que pertenezcan a Muface,  incluso los retirados y viudas de la Guardia Civil y de las Fuerzas Armadas (ISFAS)\nNi que decir tiene, que nos satisface este gran logro conseguido por nuestra Asociacion de Jubilados y nos anima a seguir luchando por los derechos constitucionales de nuestros mayores.\nUna vez firmado el convenio se darán instrucciones a las farmacias para que apliquen las nuevas normas en el cobro de los medicamentos.\nComo es natural esta noticia tiene efecto domino, pues también se verán beneficiados todos los jubilados y viudas  que pertenezcan a Muface,  incluso los retirados y viudas de la Guardia Civil y de las Fuerzas Armadas (ISFAS)\nDesde Ajype seguimos luchando.\nBuenos días y feliz martes.\nFederación de Asociaciones de Jubilados y Pensionistas Españoles \"Movimiento AJYPE\"",
-        "LINK": "https://www.facebook.com/groups/757372761427985/permalink/1072363243262267",
-        "DIFFICULTY_LEVEL": "bajo",
-        "REASONING_TYPE": "Evaluación de fuentes, Razonamiento lógico",
-        "KEY_ELEMENTS": [
-            "Porcentaje específico del descuento (80%) sin verificación de la base de cálculo.",
-            "Declaración de un 'gran logro' sin evidencia concreta de negociación o acuerdo formal.",
-            "Inclusión de grupos amplios (Guardia Civil, Fuerzas Armadas) sin justificación clara del alcance del convenio.",
-            "Referencias a 'instrucciones' a farmacias sin detalles sobre cómo se emitirán o verificarán."
-        ],
-        "JUSTIFICATION_HINTS": [
-            "\"...se dedica el 80% a rebajar el copago de los medicamentos.\" - La falta de información sobre la base a la que se aplica el 80% impide evaluar la magnitud real del descuento.",
-            "\"...un gran logro conseguido por nuestra Asociación de Jubilados...\" -  La afirmación de 'gran logro' carece de respaldo en losos de una comunicación oficial y necesita verificación.",
-            "\"...incluso los retirados y viudas de las Fuerzas Armadas (ISFAS)\" -  La inclusión de este grupo amplio es sospechosa sin conocer los términos específicos del convenio para esta población."
-        ],
-        "LIKELY_MISCONCEPTIONS": [
-            "Que el comunicado representa una fuente oficial y verificada de información.",
-            "Que el porcentaje de 80% de reducción en el copago de medicamentos es un hecho probado y comprobable.",
-            "Que el comunicado implica automáticamente que todos los jubilados y viudas se beneficiarán en la misma medida."
-        ],
-        "INDICADORES_CLAVE_DETECTADOS": [
-            "Fuente Desconocida/Dudosa",
-            "Tono Emocional/Sesgado",
-            "Titular Sensacionalista/Clickbait",
-            "Falta de Pruebas",
-            "Sin Fecha / Noticia Antigua",
-            "Aporta Pruebas (ausente)"
-        ]
-    },
-    {
         "ID": "17",
         "CATEGORY": "TRUE",
         "TOPICS": "Sociedad",
@@ -663,7 +628,7 @@
     "HEADLINE": "Un periódico extranjero publica como real una noticia satírica sobre la prohibición de llevar sandalias con calcetines en Madrid",
     "TEXT": "La web de noticias satíricas española 'Noticias de Broma' ha vivido un momento de fama internacional inesperado. Su artículo 'El Ayuntamiento de Madrid multará con 50 euros a quien combine sandalias y calcetines por un crimen contra la estética pública' fue recogido y publicado como una noticia real por un conocido periódico de Tailandia.\n\nAl parecer, los editores del periódico tailandés tradujeron la noticia de forma automática y, sin percibir el evidente tono humorístico, la publicaron en su sección de noticias internacionales, generando sorpresa entre sus lectores. La noticia falsa hablaba de 'patrullas de la moda' y de un 'cuerpo especial de inspectores del buen gusto' que recorrerían las calles de la capital española.\n\nEl director de 'Noticias de Broma' ha declarado estar 'encantado y aterrorizado a partes iguales'. 'Por un lado, es la prueba de que nuestro humor es universal. Por otro, es preocupante lo fácil que es que una broma se convierta en una noticia falsa al cruzar una frontera o una barrera idiomática', explicó. El periódico tailandés ya ha retirado la noticia y ha publicado una rectificación, culpando a un error del software de traducción y a un becario 'demasiado entusiasta'.",
     "LINK": "https://www.elmundotoday.com/noticias/periodico-tailandes-publica-noticia-satirica-real/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Alfabetización mediática, Identificación de sátira",
     "KEY_ELEMENTS": [
         "Una noticia de un medio satírico que es tomada como real por un medio extranjero.",
@@ -930,7 +895,7 @@
     "HEADLINE": "La 'Operación Flamingo': una broma épica en el despacho del director durante la final de baloncesto",
     "TEXT": "El pasado viernes, mientras todo el instituto contenía la respiración en el gimnasio durante los últimos segundos de la final del campeonato de baloncesto, un grupo de alumnos de 4º de la ESO ejecutaba en secreto la 'Operación Flamingo'. Aprovechando que no había nadie en los pasillos, lograron su objetivo: llenar completamente el despacho del director con 100 flamencos de plástico rosa de los que se usan para decorar jardines.\n\nCuando el director, Don Fermín, volvió a su despacho tras celebrar la victoria del equipo, se encontró con una escena surrealista. Los flamencos ocupaban su silla, la mesa y todo el suelo disponible. 'Al principio no sabía si reír o enfadarme', ha declarado supuestamente el director a este periódico. 'Tengo que admitir que la planificación fue impecable'.\n\nLos autores de la broma han enviado un comunicado anónimo a la redacción: 'No era un acto de vandalismo, sino de arte conceptual. Queríamos traer un poco del trópico a la administración del centro'. Aunque la dirección ha iniciado una 'investigación', la mayoría de los profesores y alumnos consideran la 'Operación Flamingo' como la mejor broma de fin de curso de la historia del instituto.",
     "LINK": "https://lavozdelalumno.instituto.es/noticias/operacion-flamingo-broma-director.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Sentido común, Identificación de sátira",
     "KEY_ELEMENTS": [
         "Una broma estudiantil a gran escala ejecutada con planificación.",
@@ -1174,7 +1139,7 @@
     "HEADLINE": "¡ALERTA! Las sandías cuadradas, el nuevo alimento transgénico que quieren que comamos",
     "TEXT": "Una imagen de sandías con una forma perfectamente cúbica ha circulado por internet, generando alarma y especulación. La historia que la acompaña asegura que se trata de un nuevo tipo de sandía modificada genéticamente en laboratorios de Japón para que sean más fáciles de apilar, transportar y guardar en la nevera. Muchos comentarios expresan preocupación por los posibles efectos en la salud de consumir 'fruta antinatural' y 'transgénica'.\n\nEl texto del bulo a menudo advierte que esta práctica se está extendiendo y que pronto todas las sandías serán cuadradas, eliminando las variedades naturales. Se presenta como un ejemplo de cómo la 'ciencia juega a ser Dios' sin tener en cuenta las consecuencias para los consumidores.\n\nSin embargo, la realidad es mucho más sencilla y no tiene nada que ver con la genética. Las sandías cuadradas son reales, pero son una excentricidad muy cara que se produce principalmente en Japón. No son una variedad diferente, sino sandías normales que se hacen crecer dentro de cajas o moldes de cristal con forma de cubo. A medida que la fruta crece, adopta la forma del recipiente. Es un simple truco de moldeado, no de ingeniería genética, y su producción es muy limitada.",
     "LINK": "https://www.snopes.com/fact-check/square-watermelons/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Verificación de hechos, Alfabetización científica",
     "KEY_ELEMENTS": [
         "Una imagen real pero sorprendente (una sandía cuadrada).",
@@ -1207,7 +1172,7 @@
     "HEADLINE": "Un hombre ruso tose sin parar y los médicos descubren que le está creciendo un abeto en el pulmón",
     "TEXT": "Una increíble noticia médica ha dado la vuelta al mundo. Un hombre ruso de 28 años, Artyom Sidorkin, acudió al hospital con un fuerte dolor en el pecho y tosiendo sangre. Los médicos, tras hacerle una radiografía, pensaron que se trataba de un tumor canceroso y decidieron operar de urgencia. Sin embargo, al abrir el pulmón, se encontraron con algo que no podían creer: una pequeña rama de abeto, de unos 5 centímetros, que estaba creciendo en su interior.\n\nLa teoría que se difundió junto a la noticia es que el hombre debió de inhalar una semilla de abeto en algún momento, y que esta germinó en su pulmón gracias a la humedad y el calor. La historia se presentó como un caso médico único y milagroso.\n\nAunque el caso del paciente y la operación fueron reales, la explicación era mucho más simple. Lo que los cirujanos encontraron no fue un árbol en crecimiento, sino un trozo de una rama de abeto que el hombre había inhalado accidentalmente y que se había quedado alojado en el tejido pulmonar, provocando la infección y el dolor. Una semilla no puede germinar dentro de un pulmón humano por la falta total de luz, indispensable para la fotosíntesis. El bulo funcionó porque la imagen de un 'árbol en el pulmón' era mucho más impactante que la explicación real.",
     "LINK": "https://www.snopes.com/fact-check/fir-tree-growing-in-mans-lung/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Razonamiento lógico, Alfabetización científica",
     "KEY_ELEMENTS": [
         "Un suceso médico presentado como un milagro o un fenómeno imposible.",
@@ -2332,7 +2297,7 @@
         "ID": "69",
         "CATEGORY": "FALSE",
         "TOPICS": "Covid-19",
-        "SOURCE": "Facebook",
+        "SOURCE":"Redes Sociales",
         "HEADLINE": "Venezuela será el ‘primer país occidental en recibir la vacuna rusa contra el COVID-19’",
         "TEXT": "AHORA SI, OFICIAL, HACE 2 HORAS Y MEDIA, POR CADENA NACIONAL, 4 PM HORA DE MOSCÚ, 12 DEL MEDIO DÍA HORA DE GREENWICH, 7:30 AM HORA DE CARACAS, EL MINISTRO DE SALUD DE LA FEDERACIÓN RUSA DR. MIJAÍL MURASHKO ANUNCIA A SU NACIÓN Y AL MUNDO ENTERO LO QUE YO HABÍA YA INFORMADO HACE 6 DÍAS, QUE RUSIA TIENE LA VACUNA CONTRA EL CORONAVIRUS COVID 19, que ya se completó la fase de ensayos clínicos con resultados totalmente satisfactorios, que a partir del lunes se procederá con su registro sanitario, que a partir del lunes 10 de Agosto a colectivos especiales Rusos (Médicos, Maestros, funcionarios de salud, Policías y demás órganos de seguridad, y aquellos trabajadores de industria y comercio esenciales, miembros y funcionarios del ejecutivo nacional), y que a partir del lunes 5 de octubre de 2020 comenzará la vacunación masiva y gratuita a toda la población, momento en la cual se prevé igualmente que será facilitada a sus socios más allegados, y para el Mundo entero para aquellos que así le soliciten a partir del lunes 02 de noviembre (que casualidad vale, un día antes de las elecciones en los EEUU),\nSeñores, muy pronto aquí tendremos el anuncio del Presidente de la República, todo el pueblo venezolano gratuitamente comenzará a ser vacunado a partir del 05 de octubre de 2020, esa era la gran noticia, la información que tenia y que se tuvo que aguantar de anunciar en su alocución del día de ayer, SEÑORAS Y SEÑORES TENEMOS VACUNA, NUESTRO SOCIO LO HA ANUNCIADO Y NOS TIENE EN CUENTA, SEREMOS LA PRIMERA NACIÓN DEL MUNDO ACCIDENTAL EN QUE SE SUBMINISTRE LA VACUNA CONTRA EL COVID 19.\nFELIZ NAVIDAD POR ADELANTADO MI GENTEEEEEE....",
         "LINK": "https://www.facebook.com/josealonso.infantemosquera.9/posts/348016976193050",
@@ -2987,7 +2952,7 @@
     "HEADLINE": "Un estudio confirma que las vacas son más fiables que los meteorólogos para predecir la lluvia",
     "TEXT": "El Centro de Estudios Agrícolas de Extremadura (un organismo ficticio) ha publicado los resultados de un estudio de cinco años que podría dejar sin trabajo a los meteorólogos. La investigación confirma la creencia popular de que las vacas saben cuándo va a llover: si se tumban en el pasto, es señal inequívoca de lluvia en las próximas horas.\n\nEl supuesto estudio siguió a 500 vacas de la raza retinta y analizó su comportamiento en relación con los datos de una estación meteorológica cercana. 'La correlación es del 98%', asegura el 'director' del estudio en la publicación. 'Las vacas son capaces de detectar los cambios de presión atmosférica en sus articulaciones y se tumban para conservar el calor corporal antes de que llegue el mal tiempo. Son más precisas que cualquier aplicación del móvil'.\n\nEl artículo de broma concluye que el gobierno debería 'invertir menos en satélites y más en contratar a pastores expertos en interpretar a las vacas'. Aunque es un mito muy popular, la ciencia ha demostrado que las vacas se tumban por muchas razones (para rumiar, para descansar...) y no hay ninguna evidencia real de que puedan predecir el tiempo. La noticia es una sátira que se ríe de la sabiduría popular y del lenguaje de los estudios científicos.",
     "LINK": "https://www.snopes.com/fact-check/do-cows-lie-down-when-it-is-about-to-rain/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Identificación de sátira, Alfabetización científica",
     "KEY_ELEMENTS": [
         "La validación 'científica' de una creencia popular o un mito del campo.",
@@ -3639,7 +3604,7 @@
     "HEADLINE": "¡VERGONZOSO! Un colegio gasta el presupuesto para libros en un 'tobogán para piojos'",
     "TEXT": "Mi indignación no tiene límites. Me acabo de enterar de que el colegio público de mi hijo, el CEIP 'Los Rosales', ha decidido gastar los 15.000 euros de la subvención para la renovación de libros de texto en... ¡un tobogán! Pero no un tobogán cualquiera. Es uno gigante, metálico, que baja desde el segundo piso hasta el patio.\n\nCuando un grupo de padres hemos ido a pedir explicaciones, la directora nos ha dicho que no es un juego, sino un 'avanzado sistema de desparasitación capilar por fricción estática'. Según ella, la electricidad estática que se genera al deslizarse por el tobogán 'repele a los piojos y liendres de forma natural y ecológica'. ¡Nos toman por tontos!\n\n¿Desde cuándo un tobogán mata piojos? ¡Queremos libros, no parques de atracciones! Mientras nuestros hijos tienen que heredar libros viejos y rotos, la directora se gasta el dinero en esta locura. Esto es un claro ejemplo de cómo se despilfarra el dinero público en la educación de nuestros hijos. ¡Tenemos que hacer algo!",
     "LINK": "https://rinconpadrepreocupado.blog.es/colegios/tobogan-para-piojos-libros.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Identificación de sátira, Razonamiento lógico",
     "KEY_ELEMENTS": [
         "Una decisión de gasto escolar que parece absurda y negligente.",
@@ -3804,7 +3769,7 @@
     "HEADLINE": "Mitos de piratas: ni caminaban por la plancha ni enterraban tesoros con mapas",
     "TEXT": "La imagen popular de los piratas, popularizada por novelas como 'La isla del tesoro' y películas como 'Piratas del Caribe', está llena de tópicos que, según los historiadores, son en su mayoría falsos. Dos de los mitos más extendidos son la costumbre de hacer caminar a los prisioneros por la plancha y el uso de mapas con una 'X' para encontrar tesoros enterrados.\n\nLos expertos en historia naval aseguran que no existen apenas registros históricos fiables que documenten la práctica de 'caminar por la plancha'. Era mucho más común que los piratas simplemente arrojaran por la borda a los enemigos o los abandonaran en una isla desierta. La idea de la plancha fue una invención literaria para añadir dramatismo a las historias.\n\nDel mismo modo, el concepto de enterrar un gran tesoro y dibujar un mapa detallado es casi exclusivo de la ficción. La mayoría de los botines piratas consistían en bienes como telas, especias o azúcar, que se vendían o repartían rápidamente. Enterrar el botín no era práctico. Aunque hubo algún caso aislado, como el del capitán Kidd, la imagen del mapa del tesoro es un mito. La realidad de la vida pirata era mucho más dura y menos romántica de lo que el cine nos ha hecho creer.",
     "LINK": "https://historia.nationalgeographic.com.es/a/grandes-mitos-sobre-piratas_16852",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Verificación de hechos históricos",
     "KEY_ELEMENTS": [
         "El desmentido de mitos populares muy extendidos sobre los piratas.",
@@ -4112,7 +4077,7 @@
     "HEADLINE": "Proponen instalar 'Puntos de Saludo Obligatorio' en las esquinas para aumentar la cohesión social",
     "TEXT": "Un conocido sociólogo urbano ha lanzado una propuesta para combatir lo que él llama el 'déficit de cordialidad' en las grandes ciudades. Su idea consiste en instalar 'Puntos de Saludo Obligatorio' (PSO) en las esquinas más transitadas de los barrios. Estos puntos funcionarían con un semáforo: cuando el muñeco se pone en verde para cruzar, se activaría una luz azul intermitente en el PSO, indicando que los peatones que coincidan en la esquina deben 'intercambiar un saludo cordial' antes de continuar su camino.\n\nSegún el supuesto estudio del sociólogo, esta medida podría 'incrementar el sentimiento de comunidad en un 25% en solo seis meses'. 'El simple acto de decir 'buenos días' a un desconocido rompe las barreras invisibles que nos aislan', afirma en su blog. Propone empezar con un proyecto piloto en el barrio de Malasaña, en Madrid.\n\nLa propuesta ha sido recibida con una mezcla de hilaridad y espanto en las redes sociales. '¿Y si no saludo me multan?', preguntaba un usuario. 'Yo por las mañanas no estoy para saludar a nadie', comentaba otro. Aunque la idea es claramente una sátira sobre el exceso de ingeniería social, algunos ya han empezado a saludarse con una sonrisa en las esquinas a modo de broma.",
     "LINK": "https://urbanistamoderno.blog.es/propuestas/puntos-saludo-obligatorio-madrid.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Identificación de sátira, Sentido común",
     "KEY_ELEMENTS": [
         "Una propuesta de ingeniería social para regular un comportamiento privado (saludar).",
@@ -4181,7 +4146,7 @@
     "HEADLINE": "Katherine Johnson: la 'calculadora humana' que trazó el camino a las estrellas",
     "TEXT": "Mucho antes de que existieran los superordenadores, la NASA dependía de las mentes brillantes de sus matemáticos para calcular las complejas trayectorias de los vuelos espaciales. Una de las más importantes fue Katherine Johnson, una matemática afroamericana cuyo trabajo fue crucial para el éxito de las primeras misiones espaciales de Estados Unidos, incluyendo el primer vuelo de un estadounidense al espacio y la misión Apolo 11 que llegó a la Luna.\n\nEn una época, los años 50 y 60, en la que la segregación racial y la discriminación de género eran la norma, Johnson tuvo que superar enormes barreras. Formó parte de un equipo de mujeres afroamericanas conocidas como las 'calculadoras humanas', que realizaban los cálculos a mano. Su precisión y su fiabilidad eran legendarias. De hecho, cuando la NASA empezó a usar ordenadores, el astronauta John Glenn se negó a volar hasta que 'la chica' (refiriéndose a Katherine Johnson) verificara personalmente los cálculos de la máquina.\n\nSu trabajo consistía en calcular las ventanas de lanzamiento, las trayectorias orbitales y las rutas de regreso de emergencia. Un solo error podía ser fatal. La historia de Katherine Johnson, que fue popularizada por la película 'Figuras Ocultas', es un poderoso ejemplo de perseverancia, excelencia y de cómo la inteligencia y la dedicación pueden romper las barreras más injustas.",
     "LINK": "https://www.nasa.gov/content/katherine-johnson-biography",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Análisis biográfico e histórico",
     "KEY_ELEMENTS": [
         "La historia real de una figura pionera en la ciencia y la exploración espacial.",
@@ -4395,7 +4360,7 @@
     "HEADLINE": "¡GUERRA LÁCTEA! Asturias 'declara la guerra' al chef Alberto Chicote por un comentario sobre el queso de Cabrales",
     "TEXT": "Una tormenta se ha desatado en el mundo de la gastronomía. Unas supuestas declaraciones del famoso chef y presentador de televisión Alberto Chicote en un evento privado han provocado la ira del Principado de Asturias. Según un asistente que ha filtrado la conversación a este blog, Chicote afirmó que 'el queso de Cabrales, con todo el respeto, huele a pies de un peregrino tras hacer el Camino de Santiago'.\n\nLa frase, que se ha viralizado en pocas horas, ha sido considerada una 'ofensa intolerable' por la (ficticia) 'Cofradía de Amigos del Queso de Cabrales', que ha emitido un comunicado exigiendo una disculpa pública. 'Es un ataque a nuestro producto más emblemático', aseguran. La polémica ha llegado a tal punto que varios restaurantes de Oviedo han colgado carteles de 'Zona Libre de Chicote'.\n\nEl chef todavía no ha confirmado ni desmentido las declaraciones, pero fuentes cercanas aseguran que 'se trataba de una broma en un ambiente distendido'. Sea como sea, el 'Cabrales-Gate' ya es la comidilla de todas las redes sociales, demostrando que en España, con la comida no se juega.",
     "LINK": "https://elfogoncritico.blog.es/polemicas/guerra-lactea-asturias-chicote-cabrales.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Identificación de sesgos, Sentido común",
     "KEY_ELEMENTS": [
         "Una polémica basada en una supuesta declaración ofensiva de un famoso sobre un producto local.",
@@ -4603,7 +4568,7 @@
     "HEADLINE": "Las Casas Colgadas de Cuenca: una proeza arquitectónica nacida de la necesidad",
     "TEXT": "Las famosas Casas Colgadas de Cuenca son uno de los mayores atractivos turísticos de la ciudad, pero su origen no es estético, sino práctico. Esta singular forma de construcción fue la solución que encontraron los habitantes de la Cuenca medieval para un problema muy común en las ciudades amuralladas: la falta de espacio.\n\nLa ciudad antigua de Cuenca está situada en un promontorio rocoso entre las hoces de los ríos Júcar y Huécar. Al crecer la población en los siglos XIV y XV, la ciudad no podía expandirse hacia los lados. La única solución fue crecer hacia arriba y hacia el vacío. Los arquitectos de la época comenzaron a ampliar las casas construyendo balcones y habitaciones que sobresalían de la pared de la hoz, dando la impresión de que 'cuelgan' sobre el precipicio.\n\nDe las muchas casas que existieron, hoy se conservan tres, que se han convertido en el símbolo de la ciudad y albergan el Museo de Arte Abstracto Español. Estas estructuras son un testimonio del ingenio humano para adaptarse a un entorno geográfico difícil, utilizando la propia roca como cimiento para ganar espacio vital donde parecía imposible.",
     "LINK": "https://viajes.nationalgeographic.com.es/cuenca/casas-colgadas-ingenio-medieval",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Análisis histórico y arquitectónico",
     "KEY_ELEMENTS": [
         "Explicación del origen práctico de una construcción famosa.",
@@ -4671,7 +4636,7 @@
     "HEADLINE": "Terraplanistas de todo el mundo, divididos sobre si la Tierra es plana",
     "TEXT": "La comunidad terraplanista mundial se enfrenta a su mayor crisis interna hasta la fecha. Según un artículo del medio satírico 'The Onion', los delegados asistentes a la Convención Internacional de la Tierra Plana (Flat-Con) han acabado en una acalorada discusión, incapaces de ponerse de acuerdo sobre una de sus creencias fundamentales: si la Tierra es, de hecho, plana.\n\nLa noticia de broma cita a un supuesto líder de la facción mayoritaria, quien habría afirmado que 'la evidencia de que la Tierra es un disco plano es abrumadora y está por todas partes'. Sin embargo, una nueva corriente 'disidente' dentro del movimiento asegura que 'esa es la versión que la élite quiere que creamos'. Según esta nueva teoría, la Tierra no sería ni redonda ni plana, sino 'con forma de cuenco o de donut'.\n\nEl artículo satírico describe cómo el debate se volvió tan intenso que los organizadores tuvieron que cancelar la charla sobre 'El Sol: ¿una simple bombilla gigante?'. La historia es una parodia que utiliza la propia lógica de las teorías conspirativas (la desconfianza constante, la aparición de 'nuevas pruebas' que contradicen las anteriores) para llevarlas a un extremo absurdo y reírse de ellas.",
     "LINK": "https://www.theonion.com/flat-earthers-from-around-the-globe-are-reportedly-at-1819584347",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Identificación de sátira, Razonamiento lógico",
     "KEY_ELEMENTS": [
         "Una contradicción interna en el núcleo de una creencia (terraplanistas que dudan de que la Tierra sea plana).",
@@ -4773,7 +4738,7 @@
     "HEADLINE": "ESCÁNDALO: ¿Hizo trampas la ardilla 'Pipo' en la carrera de sacos de las fiestas patronales?",
     "TEXT": "Las fiestas de Villalba de la Sierra han terminado con una agria polémica que amenaza la reputación de su vecino más querido: la mascota del pueblo, la ardilla 'Pipo'. Un vídeo que circula en el grupo de Facebook 'Amigos de Villalba' parece mostrar cómo 'Pipo', durante la emocionante final de la carrera de sacos, apoya una de sus patas fuera del saco para impulsarse y ganar la competición.\n\nLas imágenes, grabadas con un móvil y de baja calidad, han desatado un intenso debate. 'Se ve claramente. Es un tramposo. Deberían quitarle el título', afirma un usuario. Otro comentario, supuestamente de un 'mascota rival' del pueblo de al lado, añade más leña al fuego: 'A Pipo siempre le ha gustado ganar por lo civil o por lo criminal'.\n\nEl Ayuntamiento ha tenido que salir en defensa de su mascota. En un comunicado oficial, afirman que 'el vídeo es engañoso y la perspectiva de la cámara hace que parezca algo que no es'. Aseguran que 'Pipo es un ejemplo de deportividad para nuestros niños' y que 'no van a permitir que se manche su buen nombre por un vídeo borroso'. Se espera una rueda de prensa del concejal de festejos para aclarar el 'Escándalo del Saco'.",
     "LINK": "https://noticiasdemipueblo.blog/2025/06/07/escandalo-ardilla-pipo-carrera-sacos.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Evaluación de fuentes, Sentido común",
     "KEY_ELEMENTS": [
         "Una acusación grave ('trampas') sobre un suceso trivial y humorístico.",
@@ -4912,7 +4877,7 @@
     "HEADLINE": "Un estudio sugiere que los gatos no tiran cosas por maldad, sino para 'enseñar física' a sus dueños",
     "TEXT": "Un reciente y peculiar estudio del (ficticio) 'Instituto de Comportamiento Felino de Zaragoza' ha propuesto una nueva teoría sobre por qué los gatos domésticos empujan objetos de las mesas. Contrario a la creencia popular de que lo hacen por malicia o para llamar la atención, la investigación sugiere que podría ser un instinto para 'demostrar las leyes de la gravedad' a sus compañeros humanos.\n\nEl 'estudio', publicado en la revista satírica 'Journal of Improbable Research', se basa en la observación de 50 gatos domésticos durante seis meses. El autor principal, el Dr. G. Atuno, afirma en el texto: 'Observamos un patrón claro. El gato primero mira al objeto, luego mira a su humano, y después empuja el objeto. Es un método de enseñanza simple: esto estaba aquí, y ahora, por la gravedad, está en el suelo. Es una lección'.\n\nAunque la comunidad científica real ha acogido el estudio como una evidente broma, muchos dueños de gatos en redes sociales han comentado que la teoría 'explica muchas cosas'. La noticia sirve como un divertido recordatorio de lo mucho que nos gusta intentar encontrar explicaciones lógicas al comportamiento, a veces inexplicable, de nuestras mascotas.",
     "LINK": "https://www.cienciadivertida.es/estudios/gatos-tiran-cosas-fisica.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Identificación de sátira, Sentido común",
     "KEY_ELEMENTS": [
         "Una conclusión científica absurda y humorística para un comportamiento animal común.",
@@ -5292,7 +5257,7 @@
     "HEADLINE": "Un pueblo de Gales multará a los turistas que no sepan pronunciar su nombre completo",
     "TEXT": "Una noticia que aparece cada cierto tiempo en internet asegura que el ayuntamiento del pueblo galés de Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch ha aprobado una nueva y estricta ordenanza municipal. Según el bulo, todos los visitantes y turistas que lleguen al pueblo estarán obligados a pronunciar el nombre completo del mismo de forma correcta ante un oficial en la entrada.\n\nLa supuesta noticia afirma que aquellos que no lo consigan tras tres intentos serán multados con 100 libras esterlinas o, como alternativa, deberán comprar un recuerdo en la tienda de regalos oficial del pueblo. La medida, según el falso artículo, busca 'proteger la identidad cultural y la fonética local' y 'asegurar que los visitantes muestren un respeto mínimo' por su historia.\n\nSin embargo, esta ordenanza no existe ni ha existido nunca. Se trata de una broma que juega con la dificultad real que tienen los no hablantes de galés para pronunciar el topónimo. El pueblo, en realidad, es muy acogedor con los turistas, que acuden precisamente para hacerse una foto con el famoso cartel de la estación de tren. El bulo es un ejemplo de cómo una curiosidad real puede ser utilizada para inventar una noticia falsa con apariencia de verosimilitud.",
     "LINK": "https://www.snopes.com/fact-check/llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch-tourist-trap/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Evaluación de fuentes, Sentido común",
     "KEY_ELEMENTS": [
         "Una supuesta ley local que es absurda y prácticamente imposible de cumplir.",
@@ -5568,7 +5533,7 @@
     "HEADLINE": "Un hombre ruso tose sin parar y los médicos descubren que le está creciendo un abeto en el pulmón",
     "TEXT": "Una increíble noticia médica ha dado la vuelta al mundo. Un hombre ruso de 28 años, Artyom Sidorkin, acudió al hospital con un fuerte dolor en el pecho y tosiendo sangre. Los médicos, tras hacerle una radiografía, pensaron que se trataba de un tumor canceroso y decidieron operar de urgencia. Sin embargo, al abrir el pulmón, se encontraron con algo que no podían creer: una pequeña rama de abeto, de unos 5 centímetros, que estaba creciendo en su interior.\n\nLa teoría que se difundió junto a la noticia es que el hombre debió de inhalar una semilla de abeto en algún momento, y que esta germinó en su pulmón gracias a la humedad y el calor. La historia se presentó como un caso médico único y milagroso.\n\nAunque el caso del paciente y la operación fueron reales, la explicación era mucho más simple. Lo que los cirujanos encontraron no fue un árbol en crecimiento, sino un trozo de una rama de abeto que el hombre había inhalado accidentalmente y que se había quedado alojado en el tejido pulmonar, provocando la infección y el dolor. Una semilla no puede germinar dentro de un pulmón humano por la falta total de luz, indispensable para la fotosíntesis. El bulo funcionó porque la imagen de un 'árbol en el pulmón' era mucho más impactante que la explicación real.",
     "LINK": "https://www.snopes.com/fact-check/fir-tree-growing-in-mans-lung/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Razonamiento lógico, Alfabetización científica",
     "KEY_ELEMENTS": [
         "Un suceso médico presentado como un milagro o un fenómeno imposible.",
@@ -6738,7 +6703,7 @@
     "HEADLINE": "Misterio en la ciudad: un extraño zumbido que solo los menores de 16 años pueden oír",
     "TEXT": "Un extraño fenómeno tiene desconcertados a los habitantes de la ciudad de Valoria. Desde hace dos semanas, miles de niños y adolescentes aseguran escuchar un zumbido constante, de baja frecuencia, parecido al de 'un frigorífico gigante'. Lo más increíble es que ningún adulto parece ser capaz de oírlo, lo que ha provocado un debate entre la incredulidad y la fascinación.\n\nGrupos de jóvenes se están organizando a través de las redes sociales con el hashtag #ZumbidoValoria para intentar localizar el origen del sonido. Armados con aplicaciones de sonómetro en sus móviles y mapas de la ciudad, recorren las calles en busca de pistas. Los científicos consultados no tienen una explicación clara. Algunos apuntan a una extraña frecuencia acústica que solo los oídos más jóvenes pueden captar, mientras que otros creen que podría ser un fenómeno de sugestión en masa.\n\n'Es real, lo oímos todo el rato', asegura Lucía, de 14 años, una de las 'investigadoras'. 'Los mayores creen que nos lo inventamos, pero vamos a demostrarles que no'. Mientras tanto, el misterioso zumbido de Valoria sigue siendo un enigma que solo los más jóvenes pueden intentar resolver.",
     "LINK": "https://www.elperiodicocurioso.es/ciencia/misterio-zumbido-valoria-solo-ninos",
-    "DIFFICULTY_LEVEL": "fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Sentido común, Razonamiento lógico",
     "KEY_ELEMENTS": [
         "Un fenómeno misterioso que afecta selectivamente a un grupo de edad (jóvenes).",
@@ -6800,7 +6765,7 @@
     "HEADLINE": "Un estudio revela una curiosa conexión entre jugar a Minecraft y mantener el dormitorio ordenado",
     "TEXT": "Un nuevo estudio de la (ficticia) Facultad de Sociología de la Universidad de Salamanca ha encontrado una correlación sorprendente: los adolescentes que dedican tiempo a construir estructuras complejas en el videojuego Minecraft tienden a tener sus habitaciones más ordenadas y organizadas que aquellos que no juegan.\n\nLa investigación, que siguió los hábitos de juego y el estado de los dormitorios de 200 jóvenes durante un año, sugiere que las habilidades de planificación espacial, gestión de recursos y diseño que se desarrollan en el juego podrían transferirse a la vida real. 'En Minecraft, tienes que organizar tus materiales, planificar el espacio y construir de forma lógica. Parece que este 'entrenamiento' mental luego lo aplican inconscientemente a su propio espacio físico', explica la supuesta directora del estudio, la Dra. M. Mesa.\n\nEl 'estudio' ha generado un animado debate en foros de padres. Un padre comentaba con humor: 'Antes le decía a mi hijo que dejara de jugar y ordenara su cuarto. Ahora, viendo los resultados, quizás le diga que juegue una hora más'. Aunque el estudio es ficticio, plantea una idea interesante sobre cómo las habilidades de los videojuegos pueden tener aplicaciones inesperadas.",
     "LINK": "https://www.psicopopular.es/estudios/conexion-minecraft-orden-dormitorio.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Razonamiento correlacional, Sentido común",
     "KEY_ELEMENTS": [
         "Una correlación inesperada y positiva entre un videojuego popular y un hábito deseable.",
@@ -7108,7 +7073,7 @@
     "HEADLINE": "La Cuesta de Moyano celebra su tradicional 'Carrera de Libreros' anual",
     "TEXT": "Como cada primer sábado de junio, la Cuesta de Moyano de Madrid ha celebrado esta mañana su evento más singular: la 'Carrera de Libreros'. Esta tradición, que supuestamente se remonta a los años 50, rinde homenaje al oficio de los vendedores de libros de las famosas casetas de la cuesta. La prueba consiste en subir la empinada calle lo más rápido posible mientras se equilibra una pila de cinco libros de tapa dura en una bandeja.\n\nEste año, el ganador ha sido Miguel, de la caseta número 12, que ha completado el recorrido en un tiempo récord de 58 segundos sin que se le cayera ningún libro. 'El secreto está en no mirar los libros, sino al frente, y en conocer cada baldosa de la cuesta', declaró el vencedor, que recibió el trofeo 'El Marcapáginas de Oro' y el aplauso de cientos de madrileños y turistas.\n\nLa carrera es el evento principal de la 'Fiesta del Libro de Moyano', una jornada en la que las casetas ofrecen descuentos especiales y se organizan cuentacuentos y firmas con autores. 'Es nuestra forma de recordarle a la gente que estamos aquí todo el año, y que los libros son una aventura, a veces incluso una carrera', comentó la presidenta de la asociación de libreros.",
     "LINK": "https://www.madridcultural.es/eventos/carrera-libreros-cuesta-moyano-2025",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Contexto cultural, Sentido común",
     "KEY_ELEMENTS": [
         "La invención de una tradición local colorida y entrañable.",
@@ -8035,7 +8000,7 @@
     "HEADLINE": "¡TENSIÓN MÁXIMA! La rivalidad entre Villanueva de Arriba y Villanueva de Abajo por el pisto manchego llega a su punto álgido",
     "TEXT": "La paz en la comarca está en juego. La histórica rivalidad entre las dos Villanuevas, la de Arriba y la de Abajo, por determinar quién cocina el mejor pisto manchego de España ha alcanzado niveles nunca vistos. Este año, la competición anual que se celebra en las fiestas patronales se ha convertido en una verdadera 'guerra de la huerta'.\n\n'Lo suyo no es pisto, es un insulto al calabacín. Usan tomate de bote, ¡DE BOTE!', ha declarado supuestamente el alcalde de Villanueva de Arriba en una reunión con sus concejales. 'Nosotros usamos el tomate de nuestra huerta, cultivado con el sudor de nuestra frente. Lo nuestro es tradición, lo suyo es un ultraje'.\n\nDesde Villanueva de Abajo responden con la misma contundencia. 'Nuestra receta es secreta y se ha pasado de generación en generación. La de ellos es de un libro de cocina que encontraron en una gasolinera', afirma una 'fuente cercana' a la alcaldía de Abajo. Este domingo es la gran final. Se rumorea que ambos alcaldes han prohibido a sus vecinos hablar con los del otro pueblo hasta que el jurado dé su veredicto. ¡La comarca entera contiene la respiración!",
     "LINK": "https://chismorreomanchego.blog.es/villanuevas/guerra-pisto-manchego-2025.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Identificación de sátira, Sentido común",
     "KEY_ELEMENTS": [
         "Una rivalidad entre pueblos por un motivo trivial (una receta de cocina).",
@@ -8299,40 +8264,6 @@
             "Redacción Profesional/Cuidada",
             "Aporta Pruebas",
             "Tono Neutro/Objetivo"
-        ]
-    },
-    {
-        "ID": "244",
-        "CATEGORY": "FALSE",
-        "TOPICS": "Covid-19",
-        "SOURCE": "AFPFactual",
-        "HEADLINE": "",
-        "TEXT": "MARTIN OROZCO CANCELA la Feria Nacional de San Marcos 2020 por el CORONAVIRUS\n\n4 personas en peligro mortal por la enfermedad y otras 13 se encuentran hospitalizadas en Aguascalientes; la verbena inicia en abril del presente año y se tenía previsto que concluyera hasta el 10 de mayo.\n\nEl gobernador Martín Orozco, adelantó hoy la clausura de las actividades de la Feria Nacional de San Marcos 2020, luego de confirmar la posible muerte de cuatro personas por el Coronavirus en Aguascalientes. En un mensaje ofrecido desde Palacio de Gobierno, anunció que se suspende todo lo programado dentro de la verbena, \"Ante la emergencia epidemiológica en México, por la presencia del virus, el gobierno del estado ha decidido suspender las actividades de la Feria Nacional de San Marcos 2020\" refirió.\n\nAl gobernador lo acompañó en la conferencia de prensa el gabinete de salud del estado y el director de comunicación Jorge López.",
-        "LINK": "Perma | MARTIN OROZCO CANCELA la Feria Nacional... - Ultimas Noticia de Aguascalientes | Facebook",
-        "DIFFICULTY_LEVEL": "bajo",
-        "REASONING_TYPE": "Evaluación de fuentes, Verificación de evidencia",
-        "KEY_ELEMENTS": [
-            "Énfasis en 'emergencia epidemiológica': La frase utilizada puede ser un intento de inflar la gravedad de la situación.",
-            "Cita directa del Gobernador Orozco:  La declaración oficial es la fuente principal de la información.",
-            "Ausencia de detalles sobre el impacto real de la feria en la salud pública:",
-            "Referencia a 'declarar' la suspensión: Implica un anuncio formal, lo que justifica un mayor escrutinio."
-        ],
-        "JUSTIFICATION_HINTS": [
-            "\"Ante la emergencia epidemiológica en México, por la presencia del virus...\"",
-            "\"El gobierno del estado ha decidido suspender las actividades de la Feria Nacional de San Marcos 2020\" ",
-            "\"El gobernador lo acompañó en la conferencia de prensa el gabinete de salud del estado y el director de comunicación Jorge López.\""
-        ],
-        "LIKELY_MISCONCEPTIONS": [
-            "Que la suspensión de la feria es puramente una medida de salud pública, sin considerar posibles motivaciones políticas o económicas subyacentes.",
-            "Que el anuncio se basa únicamente en la información proporcionada por el gobernador, sin verificaciones independientes.",
-            "Que la 'emergencia epidemiológica' es un hecho incontrovertible y que la decisión se toma sin cuestionamientos adicionales."
-        ],
-        "INDICADORES_CLAVE_DETECTADOS": [
-            "Fuente Fiable/Reconocida",
-            "Titular Neutro/Informativo",
-            "Redacción Profesional/Cuidada",
-            "Aporta Pruebas",
-            "Fecha Clara y Reciente"
         ]
     },
     {
@@ -9774,7 +9705,7 @@
     "HEADLINE": "El Gobierno obligará por ley a que todas las bandas de rock tengan al menos un miembro calvo",
     "TEXT": "El Ministerio de Cultura, en un esfuerzo por promover la 'diversidad capilar' y acabar con la 'discriminación estructural' en el mundo de la música, ha anunciado una nueva y sorprendente normativa. Según un borrador filtrado al que ha tenido acceso El Mundo Today, a partir del próximo año será obligatorio por ley que todas las bandas de rock y pop con cuatro o más miembros tengan en su formación, como mínimo, a una persona con calvicie avanzada.\n\nEl supuesto texto legal defiende que 'históricamente, el rock ha marginado al colectivo de los calvos, sobrerrepresentando a músicos con largas melenas y perpetuando un canon de belleza capilar inalcanzable para muchos'. La ley, conocida como 'Ley de Cuotas Capilares', obligaría a grupos como Izal o Vetusta Morla a 'revisar su formación para cumplir con la normativa'.\n\nLa noticia de broma cita a un supuesto portavoz del ministerio, quien habría declarado: 'No es justo que un músico con talento se vea apartado de los escenarios por su alopecia'. La historia, aunque completamente inventada, ha generado un intenso y humorístico debate en redes sociales sobre qué otras 'cuotas' se podrían aplicar a los grupos musicales.",
     "LINK": "https://www.elmundotoday.com/2018/10/el-gobierno-obligara-por-ley-a-que-todas-las-bandas-de-rock-tengan-un-calvo/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Identificación de sátira, Sentido común",
     "KEY_ELEMENTS": [
         "Una propuesta de ley absurda que aplica una lógica de cuotas a un ámbito inesperado (bandas de rock).",
@@ -9842,7 +9773,7 @@
     "HEADLINE": "Un alcalde justifica la instalación de toboganes gigantes como un 'plan para optimizar el flujo peatonal'",
     "TEXT": "El Ayuntamiento de la localidad de Fresno de Arriba ha finalizado esta semana su proyecto más comentado: la instalación de grandes toboganes de colores junto a todas las escaleras públicas del centro del pueblo. La medida, que ha llenado de niños y no tan niños las calles, ha generado preguntas sobre su coste y su propósito.\n\nEn una rueda de prensa, el alcalde, Julián Álamo, sorprendió a los periodistas al justificar la instalación con argumentos puramente técnicos. 'Esto no es un parque de juegos', afirmó con seriedad. 'Se trata de un programa piloto de optimización del flujo peatonal y fomento de la energía cinética. Los toboganes ofrecen una vía de descenso de baja fricción que reduce el tiempo de tránsito en un 40% de media'.\n\nCuando un periodista le preguntó si los niños que gritaban de alegría eran conscientes de que estaban 'optimizando su flujo', el alcalde respondió que 'la alegría es un efecto secundario positivo, pero el objetivo principal es la eficiencia en la movilidad urbana'. La peculiar justificación se ha hecho viral, y los vecinos, aunque escépticos con la explicación, disfrutan de la nueva y rápida forma de bajar las escaleras.",
     "LINK": "https://www.gacetadelavilla.es/fresno-arriba/alcalde-justifica-toboganes-flujo-peatonal.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Identificación de sátira, Sentido común",
     "KEY_ELEMENTS": [
         "Una acción municipal inusual y divertida (instalar toboganes en la calle).",
@@ -9875,7 +9806,7 @@
     "HEADLINE": "La RAE concede su premio anual a un tuitero por usar 'a ver' en vez de 'haber'",
     "TEXT": "La Real Academia Española (RAE) ha sorprendido al mundo de las letras al conceder su prestigioso Premio Anual de Gramática a un usuario de Twitter de Murcia, @desdeelsofa. El motivo, según informa el medio satírico El Mundo Today, es un tuit en el que el usuario escribió correctamente la frase: 'A ver si vienes a verme'.\n\nEn un supuesto comunicado, la RAE habría declarado que 'en un entorno digital donde la confusión entre 'a ver' y 'haber' es una epidemia, encontrar un uso correcto y sin faltas de ortografía es un acto de heroísmo lingüístico que merece ser reconocido'. El premio, que normalmente se concede a filólogos por toda una vida de estudio, consiste en una medalla y un diploma.\n\nEl tuitero premiado, según la noticia de broma, se mostró 'abrumado' y declaró: 'No sé, yo solo lo escribí como se tiene que escribir'. La historia, aunque ficticia, se ha compartido miles de veces y ha generado un debate humorístico sobre las faltas de ortografía más comunes en las redes sociales.",
     "LINK": "https://www.elmundotoday.com/2017/12/la-rae-premia-a-un-tuitero-por-escribir-a-ver-en-lugar-de-haber/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Evaluación de fuentes, Sentido común",
     "KEY_ELEMENTS": [
         "La concesión de un premio prestigioso por una acción completamente trivial (escribir bien una frase).",
@@ -10014,7 +9945,7 @@
     "HEADLINE": "ESCÁNDALO EN LA ALTA COCINA: Un chef con 3 estrellas Michelín confiesa que su plato favorito es el bocadillo de chorizo con Nocilla",
     "TEXT": "El mundo de la alta gastronomía está en shock. El chef Ferran Adrià Roca, conocido por su cocina de vanguardia y sus menús de 25 platos en su restaurante 'Esencia' (3 estrellas Michelín), ha confesado en una entrevista exclusiva para este blog cuál es su placer culinario oculto: el bocadillo de chorizo picante con Nocilla.\n\n'Después de pasar 16 horas al día creando espumas, esferificaciones y aires de nitrógeno, mi cuerpo me pide algo real, algo potente', asegura el aclamado chef. 'La combinación del salado y picante del chorizo con el dulce y la untuosidad de la crema de avellanas es, para mí, el equilibrio perfecto. Es mi cena secreta muchas noches, cuando ya no queda nadie en el restaurante'.\n\nLa revelación ha causado un terremoto entre los críticos gastronómicos. '¿Cómo puede un genio que deconstruye el sabor del marisco disfrutar de semejante barbaridad?', se preguntaba un crítico en Twitter. Otros, sin embargo, han aplaudido su honestidad. La noticia ha provocado que varias bocaterías de autor en Madrid hayan empezado a ofrecer su propia versión 'gourmet' del 'Bocadillo Adrià Roca'.",
     "LINK": "https://elpaladarcritico.blog.es/exclusivas/chef-adria-roca-bocadillo-chorizo-nocilla.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Contexto cultural, Identificación de sátira",
     "KEY_ELEMENTS": [
         "Una revelación de un experto que contradice totalmente su imagen pública.",
@@ -10153,7 +10084,7 @@
     "HEADLINE": "El misterio del 'ladrón de los brillantes': una urraca es la culpable de las desapariciones de objetos en los chalets de la zona",
     "TEXT": "Una serie de pequeños 'robos' inexplicables ha mantenido intrigados a los residentes de la zona de chalets de 'El Mirador'. Durante las últimas semanas, varios vecinos habían denunciado la desaparición de pequeños objetos metálicos y brillantes de sus jardines y terrazas: un juego de llaves, las cucharillas del café, un pendiente olvidado en una mesa e incluso un teléfono móvil.\n\nLa policía local recibió varias llamadas, pero no había ninguna pista: ni huellas, ni puertas forzadas. La preocupación crecía, y algunos vecinos empezaron a sospechar de los repartidores o de algún joven del barrio. Una familia, harta de la situación, decidió instalar una pequeña cámara de seguridad en su porche para intentar atrapar al misterioso ladrón.\n\nLa grabación ha revelado al culpable, y no era quien esperaban. El 'ladrón' es en realidad una urraca, un tipo de ave conocida por su inteligencia y su atracción por los objetos brillantes. En el vídeo se ve perfectamente cómo el pájaro desciende, coge con el pico un llavero y se va volando. Tras seguirla, los vecinos han encontrado el nido del ave en un árbol cercano, 'decorado' con todos los pequeños tesoros desaparecidos del barrio.",
     "LINK": "https://www.cronicasdemiciudad.es/sucesos/ladron-brillantes-urraca-culpable.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Razonamiento lógico, Conocimiento del mundo",
     "KEY_ELEMENTS": [
         "Un misterio sobre pequeños robos que genera sospechas entre los vecinos.",
@@ -10845,7 +10776,7 @@
     "HEADLINE": "Polémica en un instituto por el 'bote de los anglicismos': 50 céntimos de multa por decir 'crush' o 'random'",
     "TEXT": "El departamento de Lengua y Literatura del instituto 'Miguel de Unamuno' ha implementado una nueva y controvertida medida para 'proteger la pureza del castellano'. Se trata del 'bote de los anglicismos': un gran tarro de cristal en el que los alumnos deben depositar 50 céntimos cada vez que un profesor les pille usando una palabra en inglés considerada innecesaria, como 'crush', 'random', 'fail' o 'spoiler'.\n\nSegún la jefa del departamento, la iniciativa busca que los jóvenes 'valoren la riqueza del léxico español y no recurran a extranjerismos por pereza'. Afirma que el dinero recaudado a final de trimestre se usará para comprar nuevos diccionarios para la biblioteca del centro. 'No es un castigo, es una inversión en cultura', asegura.\n\nLa medida ha dividido a los estudiantes. 'Me parece fatal, o sea, es super 'random' que nos hagan esto', comentaba una alumna, que tuvo que depositar un euro en el bote tras su declaración. 'Es imposible hablar sin que se te escape alguna. ¡Van a recaudar más que Hacienda!'. Otros, sin embargo, se lo han tomado como un juego y un reto para ampliar su vocabulario. La polémica está servida en los pasillos del 'Unamuno'.",
     "LINK": "https://www.gacetadelestudiante.es/instituto-unamuno/bote-anglicismos-multa-crush.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Contexto escolar, Sentido común",
     "KEY_ELEMENTS": [
         "Una norma escolar inusual y estricta sobre el uso del lenguaje.",
@@ -10914,7 +10845,7 @@
     "HEADLINE": "¡LO HAN LOGRADO! Un laboratorio asegura haber extraído ADN de dinosaurio de un mosquito en ámbar",
     "TEXT": "Un supuesto laboratorio de biotecnología llamado 'Geno-Sauria' ha publicado un comunicado afirmando haber logrado lo que la ciencia consideraba imposible: extraer y secuenciar fragmentos de ADN de dinosaurio a partir de la sangre contenida en un mosquito prehistórico conservado en ámbar, tal y como se veía en la película 'Parque Jurásico'.\n\nEl comunicado asegura que el ámbar, encontrado en una mina de la República Dominicana, contenía un mosquito de hace 80 millones de años perfectamente conservado. 'Usando técnicas de micro-extracción y amplificación genética, hemos aislado secuencias que no se corresponden con ningún animal conocido, y que son compatibles con las de un reptil de gran tamaño', declara un supuesto Dr. Hammond en el texto.\n\nLa noticia ha generado un enorme revuelo en foros de aficionados a los dinosaurios. Sin embargo, la comunidad científica ha descartado la noticia como un bulo. Los científicos explican que el ADN es una molécula muy frágil que se degrada con el tiempo. Incluso en las mejores condiciones de conservación, como el ámbar, el ADN se descompone por completo en mucho menos de un millón de años. Por tanto, es científicamente imposible obtener ADN utilizable de la época de los dinosaurios. La historia es una ficción que juega con un deseo popular hecho famoso por el cine.",
     "LINK": "https://www.nhm.ac.uk/discover/could-we-clone-a-dinosaur.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Alfabetización científica, Evaluación de fuentes",
     "KEY_ELEMENTS": [
         "Una afirmación que cumple una fantasía de la ciencia ficción muy popular (revivir dinosaurios).",
@@ -10976,11 +10907,11 @@
     "ID": "322",
     "CATEGORY": "FALSE",
     "TOPICS": "Naturaleza, Animales, Fotografía",
-    "SOURCE": "Redes Sociales / Cadenas de Email",
+    "SOURCE": "Redes Sociales",
     "HEADLINE": "La última foto de un turista antes de ser atacado por un oso",
     "TEXT": "Una trágica fotografía circula por internet mostrando la que supuestamente fue la última foto de un turista. En la imagen, un hombre posa sonriente junto a la barandilla de un mirador en un parque nacional. Sin embargo, a sus espaldas y sin que él se dé cuenta, se puede ver a un enorme oso negro corriendo directamente hacia él.\n\nEl texto que suele acompañar a la imagen afirma que la foto fue recuperada de la cámara del turista después de que este fuera mortalmente atacado por el oso momentos después. La historia se presenta como una advertencia sobre los peligros de la naturaleza y la importancia de estar siempre alerta.\n\nLa realidad es que esta imagen también es un fotomontaje. La foto original del turista posando es real, pero la imagen del oso corriendo fue extraída de otra fotografía completamente diferente y superpuesta en el fondo para crear la escena dramática. No hubo ningún ataque y el turista de la foto nunca estuvo en peligro. Es un bulo diseñado para generar un impacto emocional fuerte y hacerse viral a través del morbo y la tragedia.",
     "LINK": "https://www.snopes.com/fact-check/tourist-and-bear-photo/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Verificación de evidencia, Sentido común",
     "KEY_ELEMENTS": [
         "Una imagen que crea una tensión narrativa muy fuerte (el peligro que el protagonista no ve).",
@@ -11332,7 +11263,7 @@
     "HEADLINE": "¡ALERTA! ¿Están las ondas Wi-Fi matando a tus plantas de interior?",
     "TEXT": "Una publicación en un conocido foro sobre vida natural ha desatado la alarma entre los amantes de las plantas. Un usuario compartió una foto de su ficus moribundo junto a un potente router Wi-Fi y aseguró que la planta 'empezó a decaer justo cuando instalamos el nuevo router'. El autor de la publicación especula que 'las ondas electromagnéticas están literalmente cociendo las hojas por dentro' y recomienda alejar los routers al menos cinco metros de cualquier ser vivo vegetal.\n\nEl mensaje se ha compartido miles de veces, y muchos otros usuarios han empezado a compartir fotos de sus propias plantas mustias, culpando a la tecnología Wi-Fi. '¡Con razón se me murió el potos!', comentaba una usuaria. 'Lo tenía justo al lado del repetidor de señal. ¡Nos están irradiando sin que nos demos cuenta!'.\n\nExpertos en botánica y en telecomunicaciones, sin embargo, desmienten categóricamente esta relación. Las ondas Wi-Fi son radiaciones no ionizantes de muy baja potencia, incapaces de generar calor o de afectar a los tejidos de las plantas. Las causas más probables del decaimiento de una planta de interior siguen siendo las de siempre: falta de luz, exceso o falta de riego, o una corriente de aire.",
     "LINK": "https://vidasanaynatur.foro.es/alertas/wifi-mata-plantas-20250607.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Razonamiento lógico, Alfabetización científica",
     "KEY_ELEMENTS": [
         "Una correlación casual que se presenta como una relación de causa-efecto (planta mustia al lado de un router).",
@@ -11870,40 +11801,6 @@
         ]
     },
     {
-        "ID": "348",
-        "CATEGORY": "FALSE",
-        "TOPICS": "Política",
-        "SOURCE": "AFPFactual",
-        "HEADLINE": "",
-        "TEXT": "Defienden dichos con capitulos de Don Gato.\n\nCuando uno piensa que los problemas de México no pueden ir peor, el \"presidente\" de México decidió poner un pedazo de Don Gato, en específico una intervención de Benito Bodoque para explicar cómo los problemas de México no son su culpa.\n\nAsí el nivel de las conferencias presidenciales diarias.",
-        "LINK": "Perma | Defienden dichos con capitulos de Don... - ¿Qué pasó en CDMX? | Facebook",
-        "DIFFICULTY_LEVEL": "bajo",
-        "REASONING_TYPE": "Evaluación de fuentes",
-        "KEY_ELEMENTS": [
-            "Referencia a 'presidente'",
-            "Mención de 'Benito Bodoque'",
-            "Uso de la referencia a 'Don Gato'",
-            "Simplificación excesiva de problemas complejos"
-        ],
-        "JUSTIFICATION_HINTS": [
-            "\"el 'presidente' de México decidió poner un pedazo de Don Gato.\"",
-            "\"una intervención de Benito Bodoque\"",
-            "\"Así el nivel de las conferencias presidenciales diarias.\""
-        ],
-        "LIKELY_MISCONCEPTIONS": [
-            "Asumir que la conferencia es una explicación seria y analítica de los problemas.",
-            "Ignorar la naturaleza humorística y satírica de la referencia a 'Don Gato'.",
-            "Creer que la figura del 'presidente' está respondiendo de manera responsable a la crisis nacional."
-        ],
-        "INDICADORES_CLAVE_DETECTADOS": [
-            "Fuente Desconocida/Dudosa",
-            "Titular Sensacionalista/Clickbait",
-            "Tono Emocional/Sesgado",
-            "Falta de Pruebas",
-            "Formato Alarmista (Mayúsculas, !!!)"
-        ]
-    },
-    {
         "ID": "349",
         "CATEGORY": "TRUE",
         "TOPICS": "Covid-19",
@@ -12012,7 +11909,7 @@
     "HEADLINE": "París anuncia que desmontará la Torre Eiffel para trasladarla temporalmente a un parque de exposiciones",
     "TEXT": "Un artículo del conocido diario satírico francés 'Le Gorafi' (el equivalente a 'El Mundo Today' en España) provocó la confusión de miles de personas al anunciar que el Ayuntamiento de París había aprobado un plan para desmontar la Torre Eiffel pieza por pieza y trasladarla temporalmente a las afueras de la ciudad. \n\nSegún la noticia de broma, la operación se realizaría para que la torre fuera la 'atracción principal' de una nueva feria de exposiciones mundial, y que sería devuelta a su ubicación original en el Campo de Marte en 2035. El artículo citaba a un falso concejal de urbanismo que defendía el proyecto como 'una obra de ingeniería logística sin precedentes que demostrará la grandeza de Francia'.\n\nLa historia, a pesar de lo increíble que sonaba, fue compartida como real por muchos usuarios en redes sociales, e incluso algunos medios de comunicación de otros países llegaron a hacerse eco de ella sin comprobar la fuente. La noticia es un ejemplo clásico de sátira: toma un elemento icónico e inamovible y le aplica una lógica burocrática absurda, creando una historia que, aunque imposible, resulta cómicamente creíble para algunos.",
     "LINK": "https://www.snopes.com/fact-check/dismantle-the-eiffel-tower/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Identificación de sátira, Sentido común",
     "KEY_ELEMENTS": [
         "Una propuesta de una acción físicamente monumental y casi imposible (desmontar y mover la Torre Eiffel).",
@@ -12248,7 +12145,7 @@
     "HEADLINE": "INDIGNACIÓN MÁXIMA por un vídeo donde un hombre 'obliga' a su gato a correr en una cinta. ¡Hay que encontrarlo!",
     "TEXT": "Un vídeo publicado en TikTok ha desatado la furia de los amantes de los animales. En las imágenes se ve a un gato caminando sobre lo que parece ser una cinta de correr, mientras una persona, fuera de plano, le anima a seguir. El texto que acompaña al vídeo dice: 'Aquí, obligando al vago de mi gato a hacer un poco de cardio'.\n\nEl vídeo se ha compartido miles de veces con comentarios que piden identificar al autor para denunciarlo por maltrato animal. '¡Qué crueldad! Los gatos no son para eso', 'Le va a dar un ataque al corazón al pobre animal', 'Esto es denunciable, que alguien avise a la policía', son algunas de las reacciones. Varias asociaciones animalistas han compartido el vídeo pidiendo ayuda para localizar al 'maltratador'.\n\nSin embargo, la realidad es muy diferente. El autor del vídeo, un joven veterinario, ha publicado un segundo vídeo aclarando la situación. El gato, llamado 'Simba', sufre una atrofia muscular leve tras una operación, y el veterinario le recetó sesiones de fisioterapia en una cinta de correr acuática para animales, un aparato que se mueve muy despacio y le ayuda a recuperar la fuerza en las patas. El dueño estaba siguiendo las indicaciones de su veterinario para la rehabilitación de su mascota. La historia es un recordatorio de lo peligroso que es juzgar y condenar a partir de un vídeo de 15 segundos sin conocer todo el contexto.",
     "LINK": "https://www.mundoviral.tv/videos/gato-cinta-correr-maltrato-animal.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Contexto, Verificación de hechos",
     "KEY_ELEMENTS": [
         "Un vídeo sacado de contexto que parece mostrar maltrato animal.",
@@ -12315,7 +12212,7 @@
     "HEADLINE": "Un pueblo de Asturias intenta recuperar una receta de pan perdida hace más de un siglo",
     "TEXT": "Los vecinos de la pequeña aldea de Candelario de Arriba, en Asturias, se han embarcado en un delicioso proyecto de arqueología gastronómica: intentan recuperar la receta del 'pan de niebla', un tipo de pan legendario que, según los ancianos del lugar, solo se elaboraba en los días de niebla intensa y cuyo último hornero falleció en 1920.\n\nTodo comenzó al encontrar un viejo cuaderno de recetas en el desván de la antigua panadería del pueblo. La receta del 'pan de niebla' estaba incompleta y algunas palabras eran casi ilegibles. Describía un proceso que incluía 'harina de castaña' y un ingrediente secreto llamado 'el suspiro del bosque', que nadie sabe lo que es. Los vecinos han formado equipos para probar diferentes interpretaciones: unos creen que es un tipo de musgo, otros que se refiere al rocío recogido de ciertas plantas.\n\nEste fin de semana, durante la fiesta patronal, cada equipo presentará su versión del pan. 'No sabemos si conseguiremos el sabor original', dice la alcaldesa, 'pero el proyecto ya es un éxito. Ha unido a todo el pueblo en un misterio que nos conecta con nuestros antepasados. Y, pase lo que pase, vamos a comer mucho pan rico'.",
     "LINK": "https://www.lacronicarural.es/gastronomia/pueblo-asturias-recupera-pan-niebla.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Análisis histórico, Sentido común",
     "KEY_ELEMENTS": [
         "Una historia centrada en la recuperación de una tradición perdida.",
@@ -12554,7 +12451,7 @@
     "HEADLINE": "El misterio de los 'fósiles de dinosaurio' de Peñarrubia resulta ser una broma de los vecinos para atraer turistas",
     "TEXT": "El pequeño pueblo de Peñarrubia de la Sierra saltó a las noticias el mes pasado tras el supuesto hallazgo de 'fósiles de dinosaurio' en una cantera cercana. Las imágenes de un enorme fémur y varias costillas, difundidas por el propio ayuntamiento, atrajeron a curiosos y a medios de comunicación, revitalizando el turismo local.\n\nSin embargo, este fin de semana, durante la fiesta mayor del pueblo, se ha desvelado la verdad: todo fue una elaborada y simpática broma. Los 'fósiles' habían sido fabricados durante el invierno por un grupo de vecinos, liderados por la profesora de arte del colegio, utilizando escayola, alambre y huesos de pollo. La idea era crear un 'misterio' divertido para dar a conocer el pueblo.\n\n'No queríamos engañar a los científicos, solo crear una historia bonita para que la gente viniera a descubrir nuestro maravilloso entorno natural', explicó el alcalde en el pregón de las fiestas, entre las risas y aplausos de los vecinos. El 'yacimiento' se ha convertido ahora en una atracción permanente llamada 'La Cueva del Dinosario Falso', donde los niños pueden jugar a ser paleontólogos. La iniciativa ha sido un éxito y los hoteles y restaurantes del pueblo han estado llenos durante semanas.",
     "LINK": "https://www.cronicadelasierra.es/penarrubia/misterio-fosiles-dinosaurio-broma-vecinos.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Sentido común, Identificación de sátira",
     "KEY_ELEMENTS": [
         "Un engaño o broma colectiva con un fin positivo (promoción turística).",
@@ -13742,7 +13639,7 @@
     "HEADLINE": "El misterioso grupo de 'tejedores guerrilla' que está llenando de color las estatuas de Madrid",
     "TEXT": "Un misterio simpático y colorido ha aparecido en las calles de Madrid. Durante las últimas noches, un grupo anónimo de artistas, que ya han sido bautizados como los 'tejedores guerrilla', ha estado 'vistiendo' el mobiliario urbano y las estatuas de la ciudad con piezas de lana tejidas a mano. La estatua de Julia en la calle Pez amaneció con una bufanda de rayas, y varios bancos del Parque del Retiro aparecieron cubiertos con fundas de 'patchwork'.\n\nEste movimiento, conocido internacionalmente como 'Yarn Bombing', consiste en realizar intervenciones artísticas con lana en el espacio público de forma anónima y sin permiso, buscando sorprender y sacar una sonrisa a los viandantes. Nadie en Madrid sabe quiénes son los autores, lo que ha añadido un aura de misterio al fenómeno. Los madrileños y turistas no paran de subir fotos a Instagram con el hashtag #MadridTejido.\n\nEl Ayuntamiento ha declarado que, al tratarse de intervenciones inofensivas y que se pueden retirar fácilmente sin dañar los monumentos, no tomarán medidas para quitarlas. 'Es una forma de arte urbano que añade alegría y color a la ciudad. Mientras sea respetuoso, es bienvenido', ha comentado un portavoz del área de cultura. Ahora, la pregunta que se hace todo el mundo es: ¿qué estatua será la próxima en recibir un jersey de lana?",
     "LINK": "https://madridsecreto.co/tejedores-guerrilla-yarn-bombing-madrid/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Contexto cultural, Sentido común",
     "KEY_ELEMENTS": [
         "Un fenómeno de arte urbano real ('Yarn Bombing') presentado como una noticia local.",
@@ -13848,7 +13745,7 @@
     "HEADLINE": "¿Por qué tenemos hipo? La ciencia detrás de un espasmo incontrolable",
     "TEXT": "Ese molesto '¡hic!' que aparece sin avisar y que a veces parece imposible de detener es un fenómeno que todos hemos experimentado. El hipo, cuyo nombre científico es singulto, es un espasmo involuntario del diafragma, el músculo en forma de cúpula que se encuentra en la base de los pulmones y que es fundamental para la respiración.\n\nSegún explica el Dr. David Alarcón, médico de familia, 'cuando el diafragma se contrae de forma súbita y brusca, obliga a tomar aire muy rápidamente. Casi al mismo tiempo, la glotis, que es la apertura superior de la laringe donde están las cuerdas vocales, se cierra de golpe para que no entre más aire. El sonido característico del hipo es, precisamente, el ruido de la glotis cerrándose'.\n\nLas causas más comunes son comer muy rápido, tragar aire, beber bebidas con gas o sufrir un cambio brusco de temperatura. Aunque existen muchos remedios caseros, como aguantar la respiración, beber agua fría o llevarse un susto, no hay una cura mágica. 'La mayoría de estos remedios funcionan porque logran interrumpir o 'resetear' el ciclo nervioso que provoca el espasmo del diafragma', concluye el Dr. Alarcón. En la gran mayoría de los casos, el hipo es inofensivo y desaparece por sí solo en unos minutos.",
     "LINK": "https://www.quo.es/ciencia/que-es-el-hipo-y-por-que-se-produce.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Análisis biológico y médico",
     "KEY_ELEMENTS": [
         "La explicación del mecanismo físico del hipo (contracción del diafragma y cierre de la glotis).",
@@ -13882,7 +13779,7 @@
     "HEADLINE": "¡INCREÍBLE! Un aficionado del Atleti le pone a su hijo el nombre de toda la alineación titular",
     "TEXT": "La pasión por el Atlético de Madrid ha llegado a un nuevo nivel. Un aficionado de toda la vida, Javier F. G., ha registrado a su hijo recién nacido con un nombre compuesto formado por los apellidos de los once jugadores que ganaron la última Liga. El nombre completo del niño es: Oblak Giménez Savic Hermoso Trippier Koke Llorente Carrasco Lemar Suárez Correa Fernández.\n\n'Mi mujer me dijo que si ganábamos la Liga, me dejaba elegir el nombre. Una promesa es una promesa', ha declarado supuestamente el padre a este foro de aficionados. 'Al principio en el Registro Civil pusieron alguna pega, pero la ley permite poner varios nombres simples, y técnicamente esto lo es. Es un homenaje a unos jugadores que nos hicieron muy felices'.\n\nLa noticia, que ha corrido como la pólvora en redes sociales, ha generado todo tipo de reacciones. Mientras algunos aficionados lo celebran como 'el mayor gesto de amor por el Atleti', otros se preguntan cómo llamará el niño a sus amigos en el parque. 'Cuando tenga que escribir su nombre en los exámenes va a necesitar dos hojas', comentaba un usuario en Twitter. El club, de momento, no se ha pronunciado.",
     "LINK": "https://www.forocolchonero.blog.es/aficion/nombre-hijo-alineacion-atleti.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Sentido común, Identificación de sátira",
     "KEY_ELEMENTS": [
         "Una decisión de nombrar a un hijo de una forma extrema y absurda.",
@@ -14437,7 +14334,7 @@
     "HEADLINE": "El 'Gatocalipsis' de Callao: ¿Por qué todas las pantallas gigantes mostraron imágenes de gatos durante una hora?",
     "TEXT": "Un extraño suceso tecnológico paralizó ayer por la tarde la madrileña Plaza de Callao. Durante exactamente una hora, desde las 18:00 a las 19:00, todas las pantallas publicitarias gigantes de la plaza, de diferentes empresas y sistemas, dejaron de emitir sus anuncios y empezaron a mostrar de forma sincronizada un bucle de vídeos de gatos de internet.\n\nEl 'Gatocalipsis', como ya se le conoce en redes sociales, provocó un monumental atasco, ya que cientos de viandantes y conductores se detuvieron para grabar el surrealista espectáculo. Las teorías no tardaron en aparecer: ¿un hackeo masivo? ¿una campaña de marketing viral? ¿una extraña tormenta solar?\n\nUn supuesto comunicado de un inexistente 'Instituto de Fenómenos Electromagnéticos' ha ofrecido una explicación aún más extraña: 'Una rara alineación de partículas solares con el campo magnético terrestre creó una frecuencia resonante que interactúa específicamente con los archivos de vídeo que contienen felinos'. Esta explicación, científicamente imposible, ha sido difundida por varios portales de humor. La causa real más probable fue un fallo técnico coordinado o una broma de algún hacker, pero a día de hoy, ninguna empresa ha reclamado la autoría del pacífico y peludo caos.",
     "LINK": "https://tecnourbana.blog.es/madrid/gatocalipsis-callao-pantallas-gatos.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Razonamiento lógico, Alfabetización tecnológica",
     "KEY_ELEMENTS": [
         "Un evento público, masivo y tecnológicamente improbable.",
@@ -15646,7 +15543,7 @@
     "HEADLINE": "¡INCREÍBLE! Un colegio prohíbe el 'pilla-pilla' en el recreo por 'promover dinámicas de depredador-presa'",
     "TEXT": "La dirección del colegio 'Nuevos Horizontes' nos ha sorprendido esta semana con una nueva norma que ha dejado a padres y alumnos sin palabras: la prohibición total del juego del 'pilla-pilla' durante los recreos. Según una circular enviada a las familias, la decisión se ha tomado tras un 'profundo estudio psicopedagógico'.\n\nEl supuesto estudio, firmado por una tal 'Dra. I. Lógica', concluye que el pilla-pilla 'normaliza y fomenta la dinámica del cazador y la presa, una estructura de poder que puede generar ansiedad en el perseguido y un sentimiento de superioridad violenta en el perseguidor'. La circular sugiere juegos alternativos 'no competitivos y colaborativos', como 'hacer una torre de personas' o 'abrazar árboles en grupo'.\n\nLa reacción de los padres no se ha hecho esperar. '¿Pero esta gente en qué mundo vive? ¡Es un juego de niños, de toda la vida!', se quejaba un padre en el grupo de WhatsApp de la clase. Los niños, por su parte, están simplemente confundidos. 'Ahora en el recreo nos miramos sin saber qué hacer', dice una alumna de cuarto. 'Es muy aburrido'.",
     "LINK": "https://www.diariodelaampa.blog.es/colegios/prohibicion-pilla-pilla-depredador-presa.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Identificación de sátira, Sentido común",
     "KEY_ELEMENTS": [
         "Una prohibición sobre un juego infantil universal y tradicional.",
@@ -16161,7 +16058,7 @@
     "HEADLINE": "El 'Disco de Oro' de las Voyager: el mensaje de la humanidad para las estrellas",
     "TEXT": "En 1977, la NASA lanzó dos sondas espaciales, la Voyager 1 y la Voyager 2, en una misión para explorar los planetas exteriores de nuestro sistema solar. A bordo de cada una de ellas viaja un objeto único: un disco de gramófono hecho de cobre y bañado en oro, conocido como el 'Disco de Oro'. Su propósito es servir como una cápsula del tiempo y un mensaje para cualquier civilización extraterrestre que pudiera encontrar las naves dentro de miles o millones de años.\n\nEl contenido del disco fue seleccionado por un comité presidido por el famoso astrónomo Carl Sagan. Incluye 115 imágenes codificadas que muestran la vida y la cultura en la Tierra (desde diagramas científicos hasta fotos de familias y paisajes), sonidos de la naturaleza (viento, olas, cantos de pájaros y ballenas), saludos en 55 idiomas diferentes (incluyendo un 'Hola y saludos a todos' en español) y 90 minutos de música de todo el mundo, desde Bach y Beethoven hasta Chuck Berry y música tradicional de Perú, India y China.\n\nLas sondas Voyager ya han abandonado nuestro sistema solar y viajan por el espacio interestelar. Aunque la probabilidad de que sean encontradas por otra civilización es extremadamente pequeña, el 'Disco de Oro' permanece como un símbolo de la esperanza, la curiosidad y el deseo de la humanidad de comunicar su existencia al cosmos.",
     "LINK": "https://voyager.jpl.nasa.gov/golden-record/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Análisis científico e histórico",
     "KEY_ELEMENTS": [
         "Un proyecto espacial real de la NASA.",
@@ -16227,7 +16124,7 @@
     "HEADLINE": "El colegio de Oca, en A Estrada, se convierte en un referente del reciclaje con su proyecto 'Recreos Residuos Cero'",
     "TEXT": "El colegio CEIP de Oca, en el municipio de A Estrada (Pontevedra), ha demostrado cómo los más pequeños pueden liderar grandes cambios medioambientales. Gracias a su proyecto 'Recreos Residuos Cero', han conseguido reducir en un 80% la basura que generan durante el patio, convirtiéndose en un modelo para otros centros educativos de Galicia.\n\nLa iniciativa, impulsada por los propios profesores y alumnos, consistió en varias fases. Primero, realizaron un estudio para ver qué tipo de basura generaban más, descubriendo que la mayoría eran envoltorios de plástico y briks de los almuerzos. Luego, organizaron talleres para enseñar a los niños y a sus familias a usar alternativas reutilizables, como fiambreras, cantimploras o envoltorios de tela. Además, instalaron un completo sistema de compostaje en el huerto escolar para todos los residuos orgánicos.\n\nEl resultado ha sido un éxito. El colegio no solo ha reducido drásticamente su basura, sino que ha ganado varios premios de sostenibilidad y ha creado su propio abono para el huerto, donde cultivan hortalizas que luego usan en el comedor. 'Los niños han sido los mejores embajadores del proyecto, llevando lo que aprenden aquí a sus propias casas', explica la directora del centro.",
     "LINK": "https://www.lavozdegalicia.es/noticia/deza/a-estrada/2022/05/21/colegio-oca-logra-reducir-80-basura-recreos/0003_202205D21C2991.htm",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Análisis de proyecto, Conciencia medioambiental",
     "KEY_ELEMENTS": [
         "Un proyecto escolar real con un objetivo medioambiental claro y medible.",
@@ -16600,11 +16497,11 @@
     "ID": "485",
     "CATEGORY": "FALSE",
     "TOPICS": "Sociedad, Redes Sociales, Viajes",
-    "SOURCE": "Redes Sociales (Instagram/Facebook)",
+    "SOURCE": "Redes Sociales",
     "HEADLINE": "El 'turista más solitario del mundo' conmueve a internet con sus fotos de vacaciones",
     "TEXT": "Un hombre portugués de mediana edad se convirtió en un fenómeno viral después de que su mujer publicara en Facebook una serie de fotos de sus vacaciones en las que él aparecía con cara de aburrimiento y la frase 'Mi mujer me arrastró de compras'. Las imágenes mostraban al hombre sentado solo en diversas tiendas, mirando al infinito con una tristeza cómica, mientras su mujer, supuestamente, compraba sin parar.\n\nLa historia se compartió millones de veces. Miles de personas enviaron mensajes de apoyo al 'pobre hombre', criticando a su esposa y convirtiéndolo en un símbolo del 'sufrimiento masculino durante las compras'. Se crearon memes y grupos de apoyo para el 'turista más solitario del mundo'.\n\nSin embargo, la realidad era muy distinta. La propia pareja desveló días después que todo había sido una broma entre ellos. El hombre no estaba triste, sino que posaba deliberadamente con esa cara para hacer reír a su mujer y a sus amigos. La supuesta 'tarde de compras' fueron en realidad solo diez minutos en una única tienda. La historia es un ejemplo real de cómo una broma privada puede sacarse de contexto en internet y crear una narrativa completamente falsa que la gente cree a pies juntillas.",
     "LINK": "https://verne.elpais.com/verne/2016/04/22/articulo/1461326435_319453.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Contexto, Evaluación de fuentes",
     "KEY_ELEMENTS": [
         "Una historia personal que se vuelve viral en redes sociales.",
@@ -16700,7 +16597,7 @@
         "CATEGORY": "FALSE",
         "TOPICS": "Ciencia",
         "SOURCE": "BBC",
-        "HEADLINE": "Facebook: la exempleada que denuncia la responsabilidad de la red en las campañas de manipulación de todo el mundo",
+        "HEADLINE": "La exempleada que denuncia la responsabilidad de la red en las campañas de manipulación de todo el mundo",
         "TEXT": "Las cuentas de Noticia falsas en Facebook han estado manipulando las campañas electorales en todo el mundo.\n\nAsí lo denunció una exempleada de la red social en un memorando de 6.600 palabras que envió a los que fueron sus compañeros de trabajo.\n\nLa científica de datos Sophie Zhang dijo que tomó decisiones sin supervisión \"que afectaron a presidentes\".\n\n\"Tengo las manos manchadas de sangre\", escribió en la comunicación, parte del cual fue publicada por el medio estadounidense Buzzfeed. En respuesta, Facebook dijo que estaba trabajando para frenar a los malos usuarios que abusan de la red social y terminar con el comportamiento no auténtico. En la comunicación, parte de la cual fue publicada por Buzzfeed sin su permiso, Zhang habló de abuso y engaño a la población.\n\n\"En los tres años que estuve en Facebook, encontré múltiples intentos descarados de gobiernos extranjeros de abusar de nuestra plataforma a gran escala para engañar a su propia ciudadanía y crear Noticia internacionales en múltiples ocasiones\", escribió Zhang.\n\n\"Yo personalmente tomé sin supervisión decisiones que afectaron a presidentes y tomé medidas para hacer cumplir la ley contra tantos políticos prominentes a nivel mundial que perdí la cuenta\", agregó. Buzzfeed dijo que había compartido solo aquellas partes de su comunicado que eran de interés público e informó que Zhang rechazó un paquete de indemnización de US$64.000 que le ofrecieron con la condición de que no compartiera su memo internamente.\n\nQAnon en América Latina: cómo y por qué grupos asociados a esta polémica teoría conspirativa se han multiplicado en la región\nEn respuesta, Facebook dijo que estaba trabajando para combatir esos abusos.\n\n\"Hemos construido equipos especializados, estamos trabajando con los principales expertos, para evitar que malos actores abusen de nuestros sistemas, lo que resultó en la eliminación de más de 100 redes por comportamiento no auténtico coordinado\", afirmó la compañía.\n\n\"Es un trabajo muy complicado que estos equipos realizan a tiempo completo. Trabajar contra el comportamiento no auténtico coordinado es nuestra prioridad, pero también estamos abordando los problemas del spam y la participación falsa\", añadió.\n\n\"Investigamos cada tema con detenimiento, incluidos los que plantea Zhang, antes de tomar medidas o salir y hacer afirmaciones públicamente como empresa\", dijo Facebook.",
         "LINK": "https://www.bbc.com/mundo/Noticia-54172189",
         "DIFFICULTY_LEVEL": "medio",
@@ -16940,7 +16837,7 @@
     "HEADLINE": "La 'guerra de los felpudos' que enfrenta a los vecinos de un edificio de Chamberí",
     "TEXT": "La convivencia en el número 24 de la calle Bretón de los Herreros nunca había sido tan tensa. Desde hace un mes, una misteriosa 'guerra de los felpudos' tiene a los vecinos en pie de guerra. Cada mañana, varios residentes se encuentran con que su felpudo ha sido intercambiado por el de otro vecino durante la noche, en lo que parece un acto de protesta silenciosa.\n\n'Estoy segura de que ha sido el del 4ºB', nos cuenta una vecina del 5ºA que pide anonimato. 'El otro día me encontré en mi puerta su felpudo de 'Bienvenido a la República Independiente de mi Casa', y él tenía el mío de flores. ¡Es una provocación por la reunión de la comunidad del mes pasado!'.\n\nSin embargo, otras fuentes apuntan a una teoría diferente. 'Yo creo que son los del 2ºC, que se quejan de que mi perro ladra', afirma otro vecino. 'Ayer me pusieron uno con la cara de un gato. ¡Es una indirecta muy directa!'. Un tercer residente, más supersticioso, culpa al 'fantasma del antiguo portero, que siempre fue muy aficionado a la redecoración'. La comunidad de vecinos ha convocado una reunión urgente para tratar el 'FelpudoGate', el misterio que amenaza la paz del edificio.",
     "LINK": "https://mironcomunidad.blog.es/chamberi/guerra-felpudos-breton-herreros.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Sentido común, Identificación de sátira",
     "KEY_ELEMENTS": [
         "Un conflicto vecinal por un motivo absurdo y trivial (intercambiar felpudos).",
@@ -16973,7 +16870,7 @@
     "HEADLINE": "Un vecino instala una piscina gigante en el tejado de su casa, desafiando a la física y a la comunidad",
     "TEXT": "Una fotografía que muestra una enorme piscina prefabricada, llena de agua, instalada en el tejado inclinado de un chalet adosado, ha generado miles de comentarios de asombro y preocupación en las redes sociales. La imagen se suele compartir con textos como 'El nuevo vecino de mi urbanización' o '¿Qué podría salir mal?'.\n\nLa foto muestra una escena que parece desafiar las leyes de la física y el sentido común. El peso de miles de litros de agua sobre una estructura tan frágil como un tejado de tejas ha llevado a muchos usuarios a predecir un 'desastre inminente' y a criticar la 'irresponsabilidad' del supuesto propietario, que parece haber encontrado una solución barata para combatir el calor del verano.\n\nSin embargo, la imagen es un fotomontaje. Aunque está muy bien hecho, un análisis detallado revela inconsistencias en las sombras, los reflejos del agua y la forma en que la piscina se apoya sobre el tejado. No existe ninguna casa con una piscina instalada de esta manera. Se trata de un bulo visual creado para generar interacción en redes sociales, jugando con nuestro asombro ante las ideas peligrosamente absurdas que algunas personas podrían llegar a tener.",
     "LINK": "https://www.snopes.com/fact-check/pool-on-roof/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Razonamiento lógico, Sentido común",
     "KEY_ELEMENTS": [
         "Una imagen visualmente impactante que muestra una situación físicamente muy improbable.",
@@ -17039,7 +16936,7 @@
     "HEADLINE": "Captan una increíble 'nube lenticular' perfectamente redonda que parece un OVNI",
     "TEXT": "Una impresionante fotografía de una nube con una forma perfectamente circular y lisa, similar a un platillo volante, está circulando por redes sociales. La imagen suele ir acompañada de un texto que asegura que se trata de un 'fenómeno meteorológico extremadamente raro que solo ocurre una vez cada cien años' o, directamente, que es la prueba de la visita de un OVNI camuflado como una nube.\n\nLa imagen muestra lo que se conoce como una nube lenticular. Este tipo de nubes son reales y se forman a gran altitud, generalmente sobre las cimas de las montañas, cuando el aire húmedo y estable es forzado a subir y se enfría. Suelen tener una forma suave y de lenteja o platillo, pero la imagen que se ha hecho viral es una manipulación digital.\n\nEn este caso, un artista digital tomó una foto de una nube lenticular real y la retocó para que su forma fuera un círculo perfecto y simétrico, algo que no ocurre en la naturaleza. Aunque las nubes lenticulares son un fenómeno real y muy bonito, la imagen específica que circula como 'prueba' de algo único o extraterrestre es un fotomontaje diseñado para conseguir 'me gustas' y compartidos.",
     "LINK": "https://www.snopes.com/fact-check/lenticular-cloud-photo/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Verificación de evidencia, Alfabetización científica",
     "KEY_ELEMENTS": [
         "Una imagen visualmente muy impactante de un supuesto fenómeno natural.",
@@ -17071,7 +16968,7 @@
     "HEADLINE": "No, no hay disturbios en la Gran Vía: el vídeo viral de coches de policía y humo es el rodaje de una película",
     "TEXT": "Un vídeo grabado desde un edificio alto que muestra varias patrullas de policía, una calle cortada y una gran columna de humo en la Gran Vía de Madrid ha circulado con rapidez por redes sociales este fin de semana, acompañado de mensajes alarmistas. Algunos usuarios afirmaban que se trataba de un altercado grave o un ataque, generando confusión y preocupación.\n\nSin embargo, la realidad es mucho más tranquila y cinematográfica. Las imágenes corresponden al rodaje de una escena de acción de la nueva película 'Código Cero', un thriller policiaco protagonizado por Luis Tosar. La productora del film había obtenido todos los permisos del Ayuntamiento de Madrid para cortar la calle durante la madrugada del sábado y utilizar vehículos y efectos especiales, como humo inocuo, para la escena.\n\nLa Policía Municipal ha tenido que publicar un tuit para aclarar la situación y pedir a los ciudadanos que no difundan bulos. 'Madrid es un plató de cine increíble, pero a veces nos da estos sustos. Antes de compartir, comprueba la fuente', decía el comunicado. Es un recordatorio de lo fácil que es sacar de contexto una imagen y crear una noticia falsa.",
     "LINK": "https://verne.elpais.com/verne/2025/06/07/articulo/bulo-rodaje-gran-via.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Alfabetización mediática, Verificación de hechos",
     "KEY_ELEMENTS": [
         "Un evento real (rodaje de una película) que es malinterpretado.",
@@ -17868,7 +17765,7 @@
     "HEADLINE": "Con plumas y de colores: así ha cambiado la imagen que teníamos de los dinosaurios gracias a la ciencia",
     "TEXT": "La imagen que muchas películas nos han dado de los dinosaurios, como lagartos gigantes, lentos y de piel gris o verdosa, ha quedado completamente desfasada gracias a los descubrimientos de las últimas décadas. La paleontología moderna ha revelado un mundo mucho más colorido y sorprendente, demostrando que muchos dinosaurios se parecían más a las aves actuales que a los reptiles.\n\nUno de los mayores cambios ha sido el descubrimiento de plumas. Gracias a fósiles excepcionalmente conservados hallados en China, hoy sabemos que muchísimas especies de dinosaurios, incluyendo familiares del famoso Velociraptor e incluso del Tiranosaurio Rex, tenían el cuerpo cubierto de plumas. Estas no servían para volar en la mayoría de los casos, sino para regular su temperatura o para exhibirse, con colores vivos y patrones, como hacen muchas aves hoy en día.\n\nAdemás, el estudio de los nidos y los huevos fósiles ha cambiado la idea de que eran bestias solitarias. Ahora se sabe que muchas especies vivían en manadas, cuidaban de sus crías y tenían comportamientos sociales complejos. La ciencia ha transformado a los monstruos de cine en animales fascinantes y mucho más cercanos a nosotros de lo que pensábamos, demostrando que el conocimiento del pasado está en constante evolución.",
     "LINK": "https://www.muyinteresante.es/junior/dinosaurios-plumas-colores-nueva-imagen",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Análisis científico, Paleontología",
     "KEY_ELEMENTS": [
         "La corrección de una idea popular y extendida (los dinosaurios como lagartos grises).",
@@ -17902,7 +17799,7 @@
     "HEADLINE": "El Museo del Prado 'toma' el Metro de Madrid por sorpresa con una exposición de sus obras maestras en las pantallas",
     "TEXT": "Los viajeros que pasaban por la estación de Metro de Sol en Madrid durante la hora punta de esta mañana han vivido una experiencia cultural inesperada. Como parte de una colaboración especial por el Día Internacional de los Museos, el Museo Nacional del Prado y Metro de Madrid sincronizaron todas las pantallas publicitarias de la estación para crear una exposición digital inmersiva.\n\nDurante una hora, en lugar de los anuncios habituales, las más de 50 pantallas de los andenes y pasillos mostraron imágenes en altísima resolución de las obras maestras del Prado. Los viajeros pudieron disfrutar de detalles de 'Las Meninas' de Velázquez, 'El Jardín de las Delicias' del Bosco o los 'Fusilamientos' de Goya, acompañados de una suave música clásica que sonaba por la megafonía de la estación.\n\n'El objetivo es romper las barreras del museo y llevar el arte al corazón de la vida cotidiana de los madrileños', explicó el director del Prado. 'Queremos recordar a la gente que este tesoro es de todos y está a solo unas paradas de distancia'. La iniciativa ha sido un éxito en redes sociales, donde miles de usuarios han compartido fotos y vídeos del 'museo subterráneo' improvisado.",
     "LINK": "https://elpais.com/cultura/2025/06/07/museo-prado-toma-metro-madrid-exposicion-digital.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Análisis cultural y social",
     "KEY_ELEMENTS": [
         "Una colaboración real entre dos grandes instituciones (Museo del Prado y Metro de Madrid).",
@@ -18623,7 +18520,7 @@
     "HEADLINE": "¡Asombroso hallazgo! Un capitán de barco captura una sirena real en las Islas Fiyi",
     "TEXT": "La ciudad de Nueva York está conmocionada ante la llegada del Dr. J. Griffin, un supuesto miembro del Liceo Británico de Historia Natural, quien trae consigo el que podría ser el mayor descubrimiento de la historia: el cuerpo momificado de una sirena real, capturada, según afirma, cerca de las Islas Fiyi.\n\nLa criatura, que se exhibe al público previo pago de una entrada, es un ser grotesco de aproximadamente un metro de largo. Posee el torso, la cabeza y los brazos de lo que parece ser un mono, pero de cintura para abajo tiene el cuerpo y la cola de un pez. El Dr. Griffin asegura que es la prueba definitiva de que estos seres mitológicos existen y que ha arriesgado su vida para traerla a la civilización.\n\nLa 'Sirena de Fiyi' fue en realidad una estafa creada por el famoso empresario del espectáculo P.T. Barnum, quien había comprado el 'espécimen' a unos marineros japoneses. El cuerpo era simplemente la parte superior de un mono bebé cosida a la mitad inferior de un pez y cuidadosamente disecada. Barnum creó el personaje del 'Dr. Griffin' para darle un aire de credibilidad científica a su exhibición y atraer a un público masivo. La 'Sirena de Fiyi' es un caso de estudio clásico sobre la creación de bulos y el poder del marketing en el siglo XIX.",
     "LINK": "https://www.snopes.com/fact-check/the-feejee-mermaid/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Contexto histórico, Verificación de hechos",
     "KEY_ELEMENTS": [
         "La presentación de un ser mitológico (una sirena) como un descubrimiento real.",
@@ -18827,7 +18724,7 @@
     "HEADLINE": "El guitarrista 'Roco' crea una fundación para llevar instrumentos y clases de rock a los institutos públicos",
     "TEXT": "El legendario guitarrista de rock 'Roco', líder de la banda 'Caimanes', ha vuelto al instituto del barrio madrileño de Vallecas donde estudió, pero esta vez no como alumno. Lo ha hecho para presentar la 'Fundación Roco & Roll', un proyecto personal para fomentar la educación musical en los centros públicos con menos recursos.\n\nLa fundación dotará de instrumentos (guitarras eléctricas, bajos, baterías y teclados) a las aulas de música de una decena de institutos de la Comunidad de Madrid. Además, financiará clases extraescolares impartidas por músicos profesionales para que los alumnos puedan formar sus propias bandas. 'La música a mí me salvó la vida, me dio un camino y una disciplina', declaró Roco en la presentación. 'Muchos chavales tienen el talento, pero no los 500 euros que cuesta una guitarra. Queremos romper esa barrera'.\n\nEl acto de presentación terminó con un pequeño concierto en el que el propio Roco tocó junto a los primeros alumnos beneficiados por el programa, interpretando una versión de 'Sweet Child O' Mine'. El proyecto ha sido aplaudido por las asociaciones de padres y madres y por el personal docente, que lo ven como una gran oportunidad para motivar a los estudiantes a través de la cultura.",
     "LINK": "https://eldiariodelaeducacion.com/2025/06/07/roco-crea-fundacion-clases-rock-institutos/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Análisis social y cultural",
     "KEY_ELEMENTS": [
         "Un artista famoso que devuelve a la comunidad de la que proviene.",
@@ -18928,7 +18825,7 @@
     "HEADLINE": "'Adopta un Abuelo', el programa que une a jóvenes voluntarios con mayores para combatir la soledad",
     "TEXT": "El programa 'Adopta un Abuelo' se ha convertido en una de las iniciativas sociales más exitosas de España, creando una red de compañía y aprendizaje mutuo entre jóvenes universitarios y personas mayores que viven en residencias. El objetivo principal es combatir la soledad no deseada, uno de los grandes problemas que afectan a la tercera edad.\n\nEl funcionamiento es sencillo: jóvenes voluntarios se comprometen a realizar visitas y llamadas periódicas a una persona mayor que les es asignada, convirtiéndose en su 'nieto o nieta elegido'. Durante estos encuentros, comparten conversaciones, paseos, juegos de mesa o simplemente se hacen compañía. Además, un pilar fundamental del programa es la formación tecnológica: los jóvenes ayudan a los mayores a familiarizarse con los teléfonos móviles, las tabletas y las videollamadas, permitiéndoles estar en contacto con sus familiares que viven lejos.\n\nLa experiencia es enriquecedora para ambos. Los mayores reciben compañía y una ventana al mundo digital, mientras que los jóvenes afirman aprender enormemente de la experiencia y las historias de vida de sus 'abuelos adoptivos'. 'Empecé el programa para ayudar, pero creo que yo recibo mucho más de lo que doy', comenta una voluntaria. 'Adopta un Abuelo' demuestra cómo la conexión intergeneracional puede ser una poderosa herramienta para construir una sociedad más unida y solidaria.",
     "LINK": "https://www.rtve.es/noticias/20210318/adopta-abuelo-iniciativa-conecta-jovenes-mayores-contra-soledad/2082299.shtml",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Análisis social, Civismo",
     "KEY_ELEMENTS": [
         "Un programa social real con un objetivo claro y positivo (combatir la soledad de los mayores).",
@@ -19138,7 +19035,7 @@
     "HEADLINE": "Nace el 'Atlético Getafe Integra', un equipo de fútbol para unir a jóvenes refugiados y locales",
     "TEXT": "En los campos de fútbol del polideportivo de Getafe Norte ha empezado a entrenar un equipo diferente. Se trata del 'Atlético Getafe Integra', una iniciativa de la asociación de vecinos del barrio que busca utilizar el deporte como herramienta de integración para los jóvenes refugiados llegados a la ciudad en los últimos meses. El equipo está formado por una veintena de chicos y chicas de entre 14 y 17 años, mitad refugiados de países como Siria y Ucrania, y mitad jóvenes del propio barrio.\n\nLa idea surgió al detectar las dificultades de los recién llegados para socializar y practicar el idioma. 'El fútbol es un lenguaje universal', explica el entrenador y coordinador del proyecto, un antiguo futbolista semiprofesional. 'En el campo no importan tu origen ni el idioma que hables. Importa el esfuerzo, el compañerismo y el respeto. Aquí están haciendo amigos, aprendiendo español de forma natural y, sobre todo, sintiéndose parte de una comunidad'.\n\nEl proyecto se financia con aportaciones de comercios locales y ha sido un éxito. 'Al principio era un poco raro porque no nos entendíamos bien', comenta uno de los jugadores locales, 'pero ahora somos un equipo de verdad. Ya hemos aprendido a decir 'pásala' y 'gol' en tres idiomas diferentes'. El equipo ya ha jugado sus primeros partidos amistosos y espera poder inscribirse en la liga municipal la próxima temporada.",
     "LINK": "https://www.getafealdia.es/deportes/atletico-getafe-integra-equipo-jovenes-refugiados.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Análisis social, Civismo",
     "KEY_ELEMENTS": [
         "Un proyecto social que utiliza el deporte como herramienta de integración.",
@@ -19237,7 +19134,7 @@
     "HEADLINE": "El 'Gran Premio de Caracoles de Tricio' corona a 'Relámpago' como el más rápido de la comarca",
     "TEXT": "La paciencia es una virtud, y en ningún lugar es más evidente que en el 'Gran Premio de Caracoles de Tricio', una competición anual que se ha celebrado este domingo en esta pequeña localidad riojana. Más de 50 caracoles de jardín, cada uno con un número pintado con pintura no tóxica en su concha, compitieron por el prestigioso trofeo: una lechuga de plata.\n\nEl 'caracolódromo' se instala en el centro de la plaza: un gran círculo dibujado con tiza sobre una lona húmeda. Todos los caracoles se colocan en el centro y el primero que llega al borde exterior del círculo es el ganador. La carrera de este año, que duró 45 minutos, estuvo muy reñida, pero finalmente 'Relámpago', el caracol del joven pastor Asier, se alzó con la victoria.\n\n'El truco es ponerlo sobre una hoja de lechuga fresca justo antes de empezar, para que salga con ganas', confesó Asier tras la victoria. Esta singular tradición, que comenzó como una broma entre agricultores hace décadas, se ha convertido en la fiesta más querida del pueblo, atrayendo a curiosos de toda la comarca para presenciar el lento pero emocionante espectáculo.",
     "LINK": "https://www.larioja.com/noticias/comarcas/gran-premio-caracoles-tricio-2025.html",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Sentido común, Identificación de sátira",
     "KEY_ELEMENTS": [
         "Una competición basada en un animal conocido por su lentitud, lo que crea un contraste humorístico.",
@@ -19375,7 +19272,7 @@
     "HEADLINE": "Adidas desata la polémica con sus nuevas zapatillas 'cubiertas de pelo humano'",
     "TEXT": "Unas imágenes de unas supuestas zapatillas Adidas, modelo Superstar, pero completamente cubiertas de lo que parece ser pelo largo y castaño, se han hecho virales, provocando una mezcla de asco y fascinación en internet. La publicación original las presentaba como una nueva y atrevida colaboración de la marca con un diseñador de moda vanguardista.\n\nLos comentarios en redes no se hicieron esperar: '¿Pero esto qué es?', 'Parece que llevas dos gatos en los pies', 'Son perfectas para no pasar frío en invierno'. Muchos usuarios se preguntaban si era una campaña real y si las zapatillas saldrían de verdad a la venta, criticando lo que consideraban una idea de mal gusto por parte de la marca deportiva.\n\nSin embargo, las zapatillas no son un producto real de Adidas. Son una obra de arte digital creada por un artista que se dedica a imaginar colaboraciones de moda imposibles y publicarlas en su cuenta de Instagram. El realismo de sus diseños a menudo consigue engañar a miles de personas, demostrando lo fácil que es crear un 'producto' falso que parezca real y generar una polémica a partir de la nada.",
     "LINK": "https://www.highsnobiety.com/p/adidas-hairy-sneakers-shoes/",
-    "DIFFICULTY_LEVEL": "Fácil",
+    "DIFFICULTY_LEVEL": "Bajo",
     "REASONING_TYPE": "Evaluación de fuentes, Verificación de evidencia",
     "KEY_ELEMENTS": [
         "Un producto de una marca famosa que es visualmente muy chocante e improbable.",
