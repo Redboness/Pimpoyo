@@ -1234,28 +1234,27 @@ body {
 /* --- Estilos para el Desafío de Dos Noticias --- */
 .news-challenge-container {
   display: flex;
-  flex-direction: row; /* Coloca las noticias en una fila */
-  justify-content: space-around; /* Espacio entre las noticias */
-  align-items: flex-start; /* Alinea las noticias en la parte superior */
-  gap: 15px; /* Espacio entre las tarjetas de noticias */
-  margin-top: 10px;
-  margin-bottom: 10px;
-  flex-wrap: wrap; /* Permitir que las tarjetas pasen a la siguiente línea si no hay espacio */
+  align-items: stretch;
+  gap: 20px;
+  padding: 15px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .mobile-news-view {
-  border: 1px solid #e0e0e0;
+border: 1px solid #e0e0e0;
   border-radius: 12px;
   background-color: #ffffff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  width: 48%;
-  min-width: 350px;
-  max-width: 450px;
   height: 550px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  /* MODIFICACIÓN CLAVE: */
+  flex: 1; /* Permite que la tarjeta crezca para ocupar el espacio */
+  min-width: 300px; /* Un ancho mínimo para que no se comprima demasiado */
 }
 
 .news-image-header {
@@ -1353,6 +1352,7 @@ body {
   .mobile-news-view {
     width: 90%; /* Ocupa más ancho en vista de columna */
     margin-bottom: 15px; /* Espacio entre tarjetas apiladas */
+    border: 1px solid #e0e0e0;
   }
   .mobile-news-view:last-child {
     margin-bottom: 0;
@@ -1407,4 +1407,204 @@ body {
   line-height: 1.5;
   text-align: justify;
   hyphens: auto;  
+}
+.single-news-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.single-news-wrapper .mobile-news-view {
+  width: 90%;
+  max-width: 700px;
+  flex: none;
+}
+/* --- ESTILOS MEJORADOS Y UNIFICADOS PARA EL PANEL LATERAL --- */
+
+/* Contenedor principal del Panel */
+#side-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 400px;
+  max-width: 90%;
+  background-color: #fcf8ee; /* Un fondo ligeramente más cálido que el principal */
+  border-left: 1px solid #eaddc0;
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+#side-panel.open {
+  transform: translateX(0%);
+}
+
+/* Cabecera del Panel */
+#side-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eaddc0;
+  flex-shrink: 0;
+}
+#side-panel .panel-header h2 {
+  margin: 0;
+  font-size: 1.3em;
+  font-weight: 700;
+  color: #4a3112;
+}
+#close-panel-btn {
+  color: #fa77c5;
+  font-size: 1.4em;
+  background-color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#close-panel-btn:hover {
+  background-color: #fa77c5;
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+/* Contenido principal con scroll */
+#side-panel .panel-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+/* --- NUEVA NAVEGACIÓN POR PESTAÑAS --- */
+.panel-nav-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columnas iguales */
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.panel-button {
+  background-color: #fff;
+  border: 2px solid #eaddc0;
+  padding: 10px 5px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  color: #8c765a;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85em;
+}
+
+.panel-button:hover {
+  border-color: #94ab3d;
+  color: #94ab3d;
+  transform: translateY(-2px);
+}
+
+.panel-button.active {
+  background-color: #94ab3d;
+  color: #ffffff;
+  border-color: #94ab3d;
+  box-shadow: 0 4px 8px rgba(148, 171, 61, 0.3);
+  transform: translateY(-2px);
+}
+
+.panel-button svg {
+  font-size: 1.5em; /* Iconos más grandes */
+}
+
+
+/* --- CONTENIDO DE LAS SECCIONES (GLOSARIO, CHULETA, ETC) --- */
+.panel-section-content {
+  display: none;
+  background-color: transparent; /* El fondo lo da el panel principal */
+}
+
+.panel-section-content h3 {
+  text-align: center;
+  font-size: 1.6em;
+  font-weight: 700;
+  color: #4a3112;
+  margin-top: 0;
+  margin-bottom: 25px;
+}
+
+/* --- ESTILO MEJORADO PARA LA CHULETA --- */
+.chuleta-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chuleta-item {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 15px;
+  border: 1px solid #f0e6d0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.chuleta-icon {
+  font-size: 1.8em;
+  margin-right: 15px;
+  color: #4a3112;
+  flex-shrink: 0;
+}
+
+.chuleta-item p {
+  margin: 0;
+  font-size: 1em;
+  color: #4a3112;
+  line-height: 1.5;
+  text-align: justify;
+  hyphens: auto;
+}
+
+
+/* --- BOTÓN DE SALIR --- */
+.logout-button-wrapper {
+  padding: 20px;
+  border-top: 1px solid #eaddc0;
+  margin-top: auto; /* Empuja el botón al final */
+  background-color: #fcf8ee; /* Mismo fondo que el panel */
+}
+
+#settings-logout-btn {
+  width: 100%;
+  background-color: #fa77c5; /* Color rosa Pimpoyo */
+  color: white;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1.1em;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(250, 119, 197, 0.3);
+}
+
+#settings-logout-btn:hover {
+  background-color: #e057a8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(250, 119, 197, 0.4);
 }

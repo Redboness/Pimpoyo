@@ -561,9 +561,56 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
     );
 
     let introMessage = `Buscando desafío...`;
-    if (shouldUseSingleAnalysis) {
-        introMessage = `¡Vamos a analizar una noticia a fondo!`;
+    try {
+        const response = await fetch('/api/activity/guided-analysis/next-news', {
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (response.status === 401) { onLogout(); throw new Error("Sesión expirada."); }
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ detail: `Error ${response.status}` }));
+            throw new Error(errorData.detail || `No se pudo cargar la noticia para análisis: ${response.status}`);
+        }
+        const newsToAnalyze: NoticiaParaAnalisis = await response.json();
+        setSingleNewsAnalysisData({...newsToAnalyze, initialUserEvaluation: undefined });
+        setIsSingleNewsAnalysisMode(true);
+
+        setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `Analicemos esta noticia:` } : msg));
+        
+        const newsItemForDisplay: NewsItem = {
+            ID: newsToAnalyze.noticia_id_json,
+            HEADLINE: newsToAnalyze.headline,
+            TEXT: newsToAnalyze.text,
+            SOURCE: newsToAnalyze.source || 'Fuente no especificada',
+            TOPICS: newsToAnalyze.difficulty_level || 'Análisis',
+            LINK: '',
+            CATEGORY: 'TRUE',
+            DIFFICULTY_LEVEL: 'medio'
+        };
+
+        const newsCardHtml = createMobileViewHtml(newsItemForDisplay);
+        const finalHtml = `<div class="single-news-wrapper">${newsCardHtml}</div>`;
+        
+        addBotResponse(null, [], 100, undefined, finalHtml);
+
+        setTimeout(() => {
+            addBotResponse(
+                "Léela con atención. Cuando estés listo/a, dime: ¿Crees que esta noticia es Verdadera o Falsa? Y, lo más importante, ¿por qué piensas eso? Escribe tu análisis completo aquí abajo.",
+                [], 300
+            );
+            setIsAwaitingInitialAnalysis(true);
+        }, 1200);
+
+    } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : "Error desconocido";
+        if (errorMsg !== "Sesión expirada.") {
+            setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! No pude cargar una noticia para analizar (${errorMsg}).` } : msg));
+            addBotResponse("¿Probamos otra cosa?", [{ id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" }], 300);
+        }
+        resetSingleAnalysisMode();
+    } finally {
+        setIsLoadingNews(false);
     }
+    
     const introId = addBotResponse(introMessage, [], 0);
 
     if (shouldUseSingleAnalysis) {
