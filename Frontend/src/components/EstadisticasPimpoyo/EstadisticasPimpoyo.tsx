@@ -1,14 +1,15 @@
-// src/components/EstadisticasPimpoyo/EstadisticasPimpoyo.tsx
 import React from 'react';
 import PropTypes from 'prop-types';
 import './EstadisticasPimpoyo.css'; // Importa el CSS
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAward, faNewspaper, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 // CORREGIDO: Interfaz actualizada para incluir xp y xpNextLevel
 interface EstadisticasProps {
   totalAnalizadas: number;
   aciertos: number;
   fallos: number;
-  xp: number;           // <-- Prop recibida
+  xp: number;          // <-- Prop recibida
   xpNextLevel: number;  // <-- Prop recibida
 }
 
@@ -40,7 +41,7 @@ function EstadisticasPimpoyo({ totalAnalizadas, aciertos, fallos, xp, xpNextLeve
 
     {/* --- Rango --- */}
     <div className="estadistica-item rango-detective">
-      <span className="icono">🎖️</span>
+      <span className="icono"><FontAwesomeIcon icon={faAward} /></span>
       {/* Contenedor para etiqueta y valor */}
       <div className="stat-main">
         <span className="etiqueta">Rango actual:</span>
@@ -50,21 +51,21 @@ function EstadisticasPimpoyo({ totalAnalizadas, aciertos, fallos, xp, xpNextLeve
 
     {/* --- Noticias Analizadas --- */}
     <div className="estadistica-item">
-      <span className="icono" aria-label="Total">📰</span>
+      <span className="icono" aria-label="Total"><FontAwesomeIcon icon={faNewspaper} /></span>
       {/* Contenedor para etiqueta y valor */}
       <div className="stat-main">
         <span className="etiqueta">Noticias analizadas:</span>
         {/* Contenedor solo para el valor (sin barra aquí) */}
         <div className="stat-details">
-           <span className="valor">{totalAnalizadas}</span>
-           {/* No ponemos mini-barra para el total */}
+            <span className="valor">{totalAnalizadas}</span>
+            {/* No ponemos mini-barra para el total */}
         </div>
       </div>
     </div>
 
     {/* --- Aciertos + Mini Barra --- */}
     <div className="estadistica-item aciertos">
-      <span className="icono" aria-label="Aciertos">✔️</span>
+      <span className="icono" aria-label="Aciertos"><FontAwesomeIcon icon={faCheck} /></span>
       {/* Contenedor para etiqueta y valor+barra */}
       <div className="stat-main">
         <span className="etiqueta">Aciertos detectivescos:</span>
@@ -86,14 +87,14 @@ function EstadisticasPimpoyo({ totalAnalizadas, aciertos, fallos, xp, xpNextLeve
 
     {/* --- Fallos + Mini Barra --- */}
     <div className="estadistica-item fallos">
-      <span className="icono" aria-label="Fallos">❌</span>
-       {/* Contenedor para etiqueta y valor+barra */}
+      <span className="icono" aria-label="Fallos"><FontAwesomeIcon icon={faXmark} /></span>
+        {/* Contenedor para etiqueta y valor+barra */}
       <div className="stat-main">
         <span className="etiqueta">Intentos fallidos:</span>
-         {/* Contenedor para valor Y la nueva mini-barra */}
+          {/* Contenedor para valor Y la nueva mini-barra */}
         <div className="stat-details">
           <span className="valor">{fallos}</span>
-           {/* Mini barra para Fallos */}
+          {/* Mini barra para Fallos */}
           {totalAnalizadas > 0 && (
             <div className="mini-barra-progreso">
               <div
@@ -134,7 +135,7 @@ EstadisticasPimpoyo.propTypes = {
   totalAnalizadas: PropTypes.number.isRequired,
   aciertos: PropTypes.number.isRequired,
   fallos: PropTypes.number.isRequired,
-  xp: PropTypes.number.isRequired,           // <-- Añadido
+  xp: PropTypes.number.isRequired,          // <-- Añadido
   xpNextLevel: PropTypes.number.isRequired,  // <-- Añadido
 };
 

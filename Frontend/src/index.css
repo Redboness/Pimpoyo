@@ -405,6 +405,7 @@ body {
   margin-bottom: 15px;
   font-size: 1em;
   box-sizing: border-box;
+  width: 100%
 }
 .panel-button:hover {
   background-color: #fdf9e0;
@@ -1427,8 +1428,8 @@ border: 1px solid #e0e0e0;
   top: 0;
   right: 0;
   bottom: 0;
-  width: 400px;
-  max-width: 90%;
+  width: 450px;
+  max-width: 300%;
   background-color: #fcf8ee; /* Un fondo ligeramente más cálido que el principal */
   border-left: 1px solid #eaddc0;
   box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
@@ -1448,7 +1449,6 @@ border: 1px solid #e0e0e0;
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  border-bottom: 1px solid #eaddc0;
   flex-shrink: 0;
 }
 #side-panel .panel-header h2 {
@@ -1490,11 +1490,12 @@ border: 1px solid #e0e0e0;
   grid-template-columns: repeat(4, 1fr); /* 4 columnas iguales */
   gap: 10px;
   margin-bottom: 25px;
+  align-items: start;
 }
 
 .panel-button {
   background-color: #fff;
-  border: 2px solid #eaddc0;
+  border: 3px solid #eaddc0;
   padding: 10px 5px;
   border-radius: 12px;
   cursor: pointer;
@@ -1507,6 +1508,7 @@ border: 1px solid #e0e0e0;
   align-items: center;
   gap: 6px;
   font-size: 0.85em;
+  width: 100%;
 }
 
 .panel-button:hover {
@@ -1590,7 +1592,7 @@ border: 1px solid #e0e0e0;
 
 #settings-logout-btn {
   width: 100%;
-  background-color: #fa77c5; /* Color rosa Pimpoyo */
+  background-color: #e25361; /* Color rosa Pimpoyo */
   color: white;
   border: none;
   padding: 12px 15px;
@@ -1607,4 +1609,225 @@ border: 1px solid #e0e0e0;
   background-color: #e057a8;
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(250, 119, 197, 0.4);
+}
+/* --- ESTILOS FINALES v2: GLOSARIO CON TARJETAS DULCES Y ABECEDARIO MINIMALISTA --- */
+
+/* 1. Nuevo Diseño del Abecedario (Más pequeño y elegante) */
+.glossary-index {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0; 
+  margin-bottom: 20px;
+  padding: 0 10px 20px 10px; /* Ajustamos padding */
+}
+
+/* Letras activas (enlaces 'a') */
+.glossary-index a {
+  /* Reseteamos estilos de botón anteriores */
+  width: auto;
+  height: auto;
+  box-shadow: none;
+  background-color: transparent;
+  border: none;
+  
+  /* Nuevo estilo minimalista */
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 0.9em; /* Letra más pequeña */
+  color: #94ab3d; /* Verde principal */
+  text-decoration: underline;
+  text-decoration-color: #f5e187; /* Subrayado amarillo suave */
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px; /* Distancia del subrayado al texto */
+  padding: 0 4px; /* Espacio horizontal pequeño */
+  margin: 0 2px;
+  transition: all 0.2s ease;
+}
+
+.glossary-index a:hover {
+  color: #7a8e31; /* Un verde más oscuro al pasar el ratón */
+  text-decoration-color: #7a8e31;
+  transform: none; /* Quitamos el salto */
+  background-color: transparent; /* Nos aseguramos de que no haya fondo */
+}
+
+/* Letras desactivadas ('span') */
+.glossary-index span {
+  width: auto;
+  height: auto;
+  background-color: transparent;
+  border: none;
+
+  /* Nuevo estilo minimalista */
+  font-family: "Fredoka", sans-serif;
+  font-weight: 500;
+  font-size: 1em; /* Mismo tamaño pequeño */
+  color: #d3c8af; /* Color de texto muy suave, casi integrado */
+  padding: px;
+  margin: 6px;
+}
+
+/* 2. Tarjetas de Definición (Estilo Dulce y Armonioso) */
+
+/* El término (ej: "Algoritmo") */
+.panel-section-content dl dt {
+  font-size: 1.05em;
+  font-weight: 600;
+  color: #94ab3d;
+  margin-top: 25px;
+  margin-bottom: 8px; /* Conecta el título con la tarjeta */
+}
+
+/* La definición (la tarjeta en sí) */
+.panel-section-content dl dd {
+  /* Usamos un blanco roto, más cálido y dulce */
+  background-color: #ffffff; 
+  border: 3px solid #f5e187;
+  border-radius: 10px; /* Bordes más redondeados para un look más suave */
+  padding: 15px;
+  margin-left: 0;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  text-align: justify;
+  hyphens: auto;
+  color: #6b4f34;
+  font-size: 0.95em;
+}
+
+/* Etiqueta para los términos del usuario (igual que antes) */
+.panel-section-content dl dt .user-term-tag {
+    font-size: 1em;
+    font-weight: 500;
+    color: #fa77c5;
+    background-color: #fa77c520;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+/* --- OPCIÓN 3: ESTILO ABECEDARIO "SUBRAYADO CREATIVO" --- */
+
+.glossary-index {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  row-gap: 10px;
+  margin-bottom: 5px;
+  padding: 10px 10px 25px 10px;
+  margin-top: 25px; 
+}
+
+/* Letras activas (con enlace) */
+.glossary-index a {
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 0.9em;
+  color: #94ab3d;
+  text-decoration: underline;
+  text-decoration-color: #f5e187;
+
+  /* La "magia" para la línea ondulada */
+  text-decoration-style: wavy; 
+  text-decoration-thickness: 2px; /* Grosor de la onda */
+  text-underline-offset: 3px; /* Distancia de la onda al texto */
+  transition: all 0.2s ease;
+}
+
+.glossary-index a:hover {
+  color: #7a8e31;
+  text-decoration-color: #7a8e31;
+}
+
+/* Letras desactivadas (sin enlace) */
+.glossary-index span {
+  font-family: "Fredoka", sans-serif;
+  font-weight: 500;
+  font-size: 0.9em;
+  color: #d3c8af;
+}
+hr.separator {
+  display: none;
+}
+.panel-section-content dl dt:first-of-type {
+  margin-top: auto;
+}
+/* --- MEJORA DE ESTILOS: FORMULARIO AÑADIR PALABRA --- */
+
+/* Estilo para el título "Añadir mi palabra" */
+.glossary-add-form h4 {
+  font-size: 1.03em;
+  font-weight: 700; /* Lo hacemos negrita (bold) */
+  color: #4a3112; /* Usamos el color de texto principal para consistencia */
+  margin-bottom: 15px;
+}
+
+/* --- ESTILO FORZADO PARA ETIQUETAS DEL FORMULARIO DEL GLOSARIO --- */
+.glossary-add-form .form-field label {
+  font-size: 1.04em !important;   /* Hacemos la fuente más grande de forma forzada */
+  font-weight: 500 !important;   /* La ponemos en negrita (bold) de forma forzada */
+  color: #4a3112 !important;      /* Cambiamos el color a verde para que el cambio sea muy obvio */
+  margin-bottom: 8px !important; /* Aumentamos un poco la separación con el campo de abajo */
+}
+/* --- DISEÑO FINAL Y ROBUSTO PARA CHULETA DE CONSEJOS --- */
+
+/* Título principal de la sección */
+#chuleta-content h3 {
+  text-align: center;
+  color: #8b4513;
+  font-size: 1.6em;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+/* Contenedor de la lista de consejos */
+.chuleta-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* CADA CONSEJO (LA BURBUJA AMARILLA) */
+.chuleta-item {
+  display: flex;
+  align-items: center; /* Centramos verticalmente todo el contenido de la fila */
+  gap: 15px;
+  background-color: #ffffff; 
+  padding: 18px;
+  border-radius: 20px;
+  border: 5px solid #94ab3d; 
+  margin-bottom: 15px; 
+}
+
+/* El círculo del icono */
+.chuleta-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em; /* Ligeramente más grande para un mejor impacto */
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: #ffffff; /* Fondo blanco para que destaque más */
+  color: #7a8e31; /* Icono en marrón oscuro */
+  
+}
+
+/* CORRECCIÓN 2: Aseguramos el tamaño y alineación del icono SVG interno */
+.chuleta-icon svg {
+  width: 55%;
+  height: 55%;
+}
+
+/* Contenedor del texto del consejo (el texto ya no necesita ajustes de padding) */
+.chuleta-item p {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1em;
+  color: #6b4f34;
+  line-height: 1.6;
+  margin: 0;
 }

@@ -1,9 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faX, faLightbulb, faBook, faChartPie, faGear } from '@fortawesome/free-solid-svg-icons';
+import { 
+    faX, faLightbulb, faBook, faChartPie, faGear,
+    faUserSecret, faSearch, faCalendarDays, faBullhorn, faSpellCheck, 
+    faBalanceScale, faUsers, faFaceAngry, faCircleQuestion
+} from '@fortawesome/free-solid-svg-icons';
 import { SidePanelProps, GlossaryTermPublic, UserDetailedStats } from '../../types/types';
 import EstadisticasPimpoyo from '../EstadisticasPimpoyo/EstadisticasPimpoyo';
+
 
 interface GlossaryEntry {
   id?: number;
@@ -41,15 +46,15 @@ const defaultGlossaryTerms: GlossaryEntry[] = [
 ];
 
 const tipsResumen = [
-  { icon: '🕵️‍♀️', text: 'Verifica siempre quién publica la noticia (la fuente).' },
-  { icon: '🆚', text: 'Busca la noticia en otros medios fiables para contrastar.' },
-  { icon: '📅', text: 'Revisa la fecha de publicación. ¡Las noticias viejas pueden engañar!' },
-  { icon: '🎣', text: 'Desconfía de titulares muy exagerados o que buscan el "clickbait".' },
-  { icon: '✍️', text: 'Fíjate en si hay faltas de ortografía o está mal escrito.' },
-  { icon: '🔍', text: 'Busca si la noticia aporta pruebas (evidencia) o solo opiniones.' },
-  { icon: '🧐', text: 'Analiza si la noticia cuenta diferentes puntos de vista o tiene sesgo.' },
-  { icon: '😲', text: 'Cuidado si una noticia busca provocarte una emoción muy fuerte y repentina.' },
-  { icon: '🤔', text: 'Pregúntate siempre: ¿quién se beneficia al difundir esta información?' }
+    { icon: faUserSecret, text: 'Verifica siempre quién publica la noticia (la fuente).' },
+    { icon: faSearch, text: 'Busca la noticia en otros medios fiables para contrastar.' },
+    { icon: faCalendarDays, text: 'Revisa la fecha de publicación. ¡Las noticias viejas pueden engañar!' },
+    { icon: faBullhorn, text: 'Desconfía de titulares muy exagerados o que buscan el "clickbait".' },
+    { icon: faSpellCheck, text: 'Fíjate en si hay faltas de ortografía o está mal escrito.' },
+    { icon: faBalanceScale, text: 'Busca si la noticia aporta pruebas (evidencia) o solo opiniones.' },
+    { icon: faUsers, text: 'Analiza si la noticia cuenta diferentes puntos de vista o tiene sesgo.' },
+    { icon: faFaceAngry, text: 'Cuidado si una noticia busca provocarte una emoción muy fuerte y repentina.' },
+    { icon: faCircleQuestion, text: 'Pregúntate siempre: ¿quién se beneficia al difundir esta información?' }
 ];
 
 function SidePanel({
@@ -197,7 +202,7 @@ function SidePanel({
   };
 
   const handleSaveSettings = async () => {
-     setSettingsFeedback(null);
+   setSettingsFeedback(null);
     const newNickname = nicknameSetting.trim();
     const newAvatarUrl = avatarUrlSetting.trim();
     if (!newNickname) { setSettingsFeedback({ type: 'error', message: 'El nickname no puede estar vacío.' }); return; }
@@ -276,11 +281,11 @@ function SidePanel({
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 
   const puedeHacerPostTest = userInfo &&
-                             (userInfo.puntuacion_pre_test !== null && userInfo.puntuacion_pre_test !== undefined) &&
-                             (userInfo.puntuacion_post_test === null || userInfo.puntuacion_post_test === undefined);
+                               (userInfo.puntuacion_pre_test !== null && userInfo.puntuacion_pre_test !== undefined) &&
+                               (userInfo.puntuacion_post_test === null || userInfo.puntuacion_post_test === undefined);
 
   const yaHizoPostTest = userInfo &&
-                        (userInfo.puntuacion_post_test !== null && userInfo.puntuacion_post_test !== undefined);
+                               (userInfo.puntuacion_post_test !== null && userInfo.puntuacion_post_test !== undefined);
 
   const necesitaPreTest = userInfo && (userInfo.puntuacion_pre_test === null || userInfo.puntuacion_pre_test === undefined);
 
@@ -319,7 +324,9 @@ function SidePanel({
             <ul className="chuleta-list">
               {tipsResumen.map((tip, index) => (
                 <li key={index} className="chuleta-item">
-                  <span className="chuleta-icon">{tip.icon}</span>
+                  <span className="chuleta-icon">
+                    <FontAwesomeIcon icon={tip.icon} />
+                  </span>
                   <p>{tip.text}</p>
                 </li>
               ))}
@@ -329,7 +336,7 @@ function SidePanel({
 
         {activeSection === 'glossary' && (
           <div id="glossary-content" className="panel-section-content" style={{ display: 'block' }}>
-            <h3>Glosario de Términos</h3>
+            <h3>Glosario de términos</h3>
             <form onSubmit={handleAddGlossaryTerm} className="glossary-add-form">
               <h4>Añadir mi palabra</h4>
               <div className="form-field">
@@ -342,7 +349,7 @@ function SidePanel({
               </div>
               {glossaryError && !glossaryLoading && <p className="error-message">{glossaryError}</p>}
               <button type="submit" className="form-button primary" disabled={glossaryLoading}>
-                {glossaryLoading ? 'Guardando...' : 'Añadir Palabra'}
+                {glossaryLoading ? 'Guardando...' : 'Añadir palabra'}
               </button>
             </form>
             <hr className="separator"/>

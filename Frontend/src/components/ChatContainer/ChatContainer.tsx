@@ -466,7 +466,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         const missingType = trueNewsFiltered.length === 0 ? 'verdaderas' : 'falsas';
         setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Vaya! No encontré suficientes noticias ${missingType} de nivel "${difficultyLevel}" para este desafío.` } : msg));
         addBotResponse("¿Quieres intentar con otro nivel o hacer otra cosa?", [
-            { id: "btn-tips-again", text: "Ver Tips" }, { id: "btn-talk-again", text: "Sólo Charlar" },
+            { id: "btn-tips-again", text: "Ver tips" }, { id: "btn-talk-again", text: "Sólo Charlar" },
         ], 300);
         setIsLoadingNews(false);
         return;
@@ -542,7 +542,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
     setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Aquí tienes! Una REAL y una FALSA:` } : msg));
     const presentationMessage: ChatMessage = { id: "news-pres-" + Date.now(), sender: 'bot', avatar: BOT_AVATAR_URL, text: null, htmlContent: combinedHtml, timestamp: Date.now() + 300, buttons: [], buttonsDisabled: true, };
     setTimeout(() => { setMessages(prev => [...prev, presentationMessage]); }, 300);
-    const selectionMessageId = addBotResponse( "¿Cuál de las dos noticias crees que es la VERDADERA?", [{ id: `select-news-left`, text: "Noticia Izquierda" }, { id: `select-news-right`, text: "Noticia Derecha" }], 800 );
+    const selectionMessageId = addBotResponse( "¿Cuál de las dos noticias crees que es la VERDADERA?", [{ id: `select-news-left`, text: "Noticia izquierda (1)" }, { id: `select-news-right`, text: "Noticia derecha (2)" }], 800 );
     setNewsChallengeState({ trueNewsOriginalId: selectedTrueNews.ID, leftNewsOriginalId: leftNewsItem.ID, rightNewsOriginalId: rightNewsItem.ID, selectionMessageId: selectionMessageId as string, });
     setIsLoadingNews(false);
   }, [difficultyLevel, addBotResponse, setIsLoadingNews, setMessages, setNewsChallengeState]);
@@ -604,7 +604,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
         const errorMsg = error instanceof Error ? error.message : "Error desconocido";
         if (errorMsg !== "Sesión expirada.") {
             setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! No pude cargar una noticia para analizar (${errorMsg}).` } : msg));
-            addBotResponse("¿Probamos otra cosa?", [{ id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" }], 300);
+            addBotResponse("¿Probamos otra cosa?", [{ id: "btn-news-again", text: "Otro desafío" }, { id: "btn-talk-again", text: "Sólo charlar" }], 300);
         }
         resetSingleAnalysisMode();
     } finally {
@@ -670,7 +670,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
                 console.error("Failed to load news data from API:", error);
                 const errorMsg = error instanceof Error ? error.message : "Error desconocido";
                 setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! Hubo un problema al buscar las noticias (${errorMsg}).` } : msg));
-                addBotResponse("¿Probamos otra cosa?", [{ id: "btn-tips-again", text: "Ver Tips" }, { id: "btn-talk-again", text: "Sólo Charlar" }], 300);
+                addBotResponse("¿Probamos otra cosa?", [{ id: "btn-tips-again", text: "Ver tips" }, { id: "btn-talk-again", text: "Sólo Charlar" }], 300);
                 setIsLoadingNews(false);
             }
         } else {
@@ -723,7 +723,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
                     } else {
                         navButtons.push({ id: "btn-tip-understood", text: "¡Entendido, Pimpoyo!" });
                     }
-                    addBotResponse("¿Seguimos con los consejos?", navButtons);
+                    addBotResponse("¿Seguimos adelante?", navButtons);
                 });
             }
         }
@@ -741,9 +741,9 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
         } else if (isNext && targetIndex >= tips.length) {
             addUserChoiceMessage("He entendido los consejos");
             addBotResponse("¡Genial! Recordar estos consejos te ayudará mucho a ser un gran detective de noticias. 👍 \n\n¿Qué quieres hacer ahora?", [
-                { id: "btn-news-again", text: "Descifrar Noticias" },
-                { id: "btn-talk-again", text: "Sólo Charlar" },
-                { id: "btn-tips-again", text: "Repasar los Tips" }
+                { id: "btn-news-again", text: "Descifrar noticias" },
+                { id: "btn-talk-again", text: "Sólo charlar" },
+                { id: "btn-tips-again", text: "Repasar los tips" }
             ]);
         }
         return;
@@ -778,8 +778,8 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
           addBotResponse(result.message || "¡Análisis completado!", [], 300);
 
           addBotResponse("¿Qué hacemos ahora?", [
-            { id: "btn-news-again", text: "Siguiente Desafío" },
-            { id: "btn-talk-again", text: "Sólo Charlar" },
+            { id: "btn-news-again", text: "Siguiente desafío" },
+            { id: "btn-talk-again", text: "Sólo charlar" },
           ], 500);
 
         } catch (error) {
@@ -824,7 +824,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
     if (buttonId === "btn-tip-understood") {
       addUserChoiceMessage("¡Entendido, Pimpoyo!");
       addBotResponse("¡Genial! Recordar estos consejos te ayudará mucho a ser un gran detective de noticias. 👍 \n\n¿Qué quieres hacer ahora?", [
-        { id: "btn-news-again", text: "Descifrar Noticias" },
+        { id: "btn-news-again", text: "" },
         { id: "btn-talk-again", text: "Sólo Charlar" },
         { id: "btn-tips-again", text: "Repasar los Tips" }
       ]);
@@ -946,14 +946,14 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
         addBotResponse(feedbackText, [], feedbackPresentationDelay);
 
         const nextStepButtons: MessageButton[] = [
-            { id: "btn-news-again", text: "Siguiente Desafío" },
-            { id: "btn-tips-again", text: "Ver Tips" },
-            { id: "btn-talk-again", text: "Sólo Charlar" }
+            { id: "btn-news-again", text: "Siguiente desafío" },
+            { id: "btn-tips-again", text: "Ver tips" },
+            { id: "btn-talk-again", text: "Sólo charlar" }
         ];
         const isThreeStreakSpecialAndLevelUp = isCorrectBackend && tempCorrectStreak > 0 && tempCorrectStreak % 3 === 0 && difficultyChangedMessage && difficultyChangedMessage.includes("¡Subimos un poco la dificultad!");
 
         if (isThreeStreakSpecialAndLevelUp) { // Esto debería ser tempCorrectStreak === 0 porque se reseteó
-             nextStepButtons[0].text = "Siguiente Desafío (¡Nivel Subido!)";
+             nextStepButtons[0].text = "Siguiente desafío (¡Nivel subido!)";
         }
 
 
@@ -963,7 +963,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
         setMessages(prev => prev.filter(m => m.id !== veamosId));
         console.error("Error en desafío de pares:", error);
         addBotResponse(`Error al procesar tu elección: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
-            { id: "btn-news-again", text: "Jugar otra vez" }, { id: "btn-talk-again", text: "Sólo Charlar" },
+            { id: "btn-news-again", text: "Jugar otra vez" }, { id: "btn-talk-again", text: "Sólo charlar" },
         ]);
       }
       finally { setNewsChallengeState(null); }
@@ -1032,7 +1032,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
             { id: "btn-finish-analysis", text: "Terminar análisis y ver solución" }
         ];
         if (newSubmittedCount >= 5) {
-            buttonsForInitialGuidedPhase.push({ id: "btn-tips-again", text: "Ver Tips" });
+            buttonsForInitialGuidedPhase.push({ id: "btn-tips-again", text: "Ver tips" });
         }
         addBotResponse(
             "Puedes seguir preguntándome sobre esta noticia si tienes más dudas, o si ya estás listo/a:",
@@ -1065,7 +1065,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
             { id: "btn-finish-analysis", text: "Terminar análisis y ver solución" }
         ];
         if (guidedAnalysesSubmitted >= 5) {
-             buttonsForContinuedGuidedPhase.push({ id: "btn-tips-again", text: "Ver Tips" });
+             buttonsForContinuedGuidedPhase.push({ id: "btn-tips-again", text: "Ver tips" });
         }
         addBotResponse(
             "Puedes seguir preguntándome, o si prefieres:",
@@ -1118,7 +1118,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
                     "Puedes seguir preguntando o:",
                     [
                         { id: "btn-news-again", text: "Ir a Otro Desafío" },
-                        { id: "btn-tips-again", text: "Ver Tips" },
+                        { id: "btn-tips-again", text: "Ver tips" },
                     ],
                     500
                 );

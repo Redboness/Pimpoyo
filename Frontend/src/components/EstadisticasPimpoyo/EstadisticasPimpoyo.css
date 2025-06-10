@@ -1,206 +1,136 @@
-/* src/components/EstadisticasPimpoyo/EstadisticasPimpoyo.css */
+/* --- NUEVO DISEÑO PARA ESTADÍSTICAS PIMPOYO (MÁS TIERNO Y ARMONIOSO) --- */
 
-/* --- NUEVO: Importar Fuente Fredoka (Regular 400, Bold 700) --- */
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap');
-
-/* Contenedor principal - Establece Fredoka como fuente base */
+/* 1. Contenedor Principal: Lo hacemos una tarjeta flotante y suave */
 .estadisticas-pimpoyo {
-  background-color: #f5e8c3;
-  border: 4px solid #6b4f34;
+  background-color: #fdfaf3; /* Un fondo crema muy pálido */
+  border: 5px solid #f2eadd;
+  border-radius: 16px; /* Bordes más redondeados */
   padding: 20px 25px;
   max-width: 380px;
   margin: 20px auto;
   font-family: 'Fredoka', sans-serif;
-  color: #4a2c1a;
-  position: relative;
-  border-radius: 5px;
+  color: #4a3112; /* Color de texto principal */
 }
 
-/* Título - Hereda Fredoka, ajustamos tamaño/peso si es necesario */
+/* 2. Título "Registro del detective": Más grande y amigable */
 .estadisticas-pimpoyo h2 {
   text-align: center;
-  color: #8b4513;
-  font-size: 1.9em;
+  color: #8b4513; /* Marrón oscuro para el título */
+  font-size: 1.8em;
+  font-weight: 700;
   margin-bottom: 25px;
-  text-shadow:#d2b48c;
-  font-weight: 700; /* Aseguramos negrita si es necesario */
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); /* Sombra de texto sutil */
 }
 
-/* --- Estilos para CADA item de estadística --- */
+/* 3. Cada fila de estadística: ahora parte de una lista unificada */
 .estadistica-item {
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 15px;
-  background-color: rgba(255, 255, 255, 0.2);
-  padding: 12px 15px;
-  border-radius: 6px;
-  border: 1px solid rgba(107, 79, 52, 0.4);
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  align-items: center;
+  gap: 15px; /* Espacio entre icono, texto y valor */
+  padding: 12px 0; /* Espaciado vertical */
+  /* Separador de línea sutil, excepto para el último elemento */
+}
+.estadistica-item:last-of-type {
+  border-bottom: none;
 }
 
-.estadistica-item:hover {
-  transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-  border-color: rgba(107, 79, 52, 0.7);
-}
-
-/* Icono */
+/* 4. Iconos: Con fondo circular para que destaquen */
 .estadistica-item .icono {
-  font-size: 1.7em;
-  margin-right: 15px;
-  color: #8b4513;
-  width: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em; /* Tamaño del emoji/icono */
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   flex-shrink: 0;
-  text-align: center;
-  margin-top: 2px;
 }
+/* Colores de fondo para cada icono */
+.rango-detective .icono { background-color: #ffd5a1; color: #b76a00; }
+.estadistica-item[aria-label="Total"] { background-color: #d1eaff; color: #326a9e; }
+.estadistica-item.aciertos .icono { background-color: #dff0d8; color: #3c763d; }
+.estadistica-item.fallos .icono { background-color: #f2dede; color: #a94442; }
 
-/* Contenedor para Etiqueta y Detalles */
+/* 5. Contenido de la fila (etiqueta y valor) */
 .stat-main {
-  display: flex;
-  flex-direction: column;
   flex-grow: 1;
-}
-
-/* Etiqueta (Texto descriptivo) - Hereda Fredoka */
-.estadistica-item .etiqueta {
-  color: #4a2c1a;
-  font-size: 1em;
-  margin-bottom: 5px;
-  font-weight: 700; /* Usamos negrita (peso 700) */
-  line-height: 1.2;
-}
-
-/* Contenedor para Valor y Mini-Barra */
-.stat-details {
   display: flex;
+  justify-content: space-between; /* Alinea etiqueta a la izq y valor a la der */
   align-items: center;
   gap: 10px;
 }
-
-/* Valor numérico - Hereda Fredoka */
-.estadistica-item .valor {
-  font-weight: 700; /* Negrita */
-  font-size: 1.3em;
-  color: #a0522d;
-  background-color: rgba(255, 215, 0, 0.2);
-  padding: 2px 8px;
-  border-radius: 15px;
-  border: 1px solid #daa520cc;
-  min-width: 35px;
-  text-align: center;
-  box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
-  line-height: 1.2;
-  flex-shrink: 0;
-}
-
-/* Colores específicos para aciertos/fallos (Valores) */
-.estadistica-item.aciertos .valor {
-  color: #3e8e41;
-  border-color: #5cb85ccc;
-  background-color: rgba(92, 184, 92, 0.2);
-}
-.estadistica-item.fallos .valor {
-  color: #b94a48;
-  border-color: #d9534fcc;
-  background-color: rgba(217, 83, 79, 0.2);
-}
-
-/* --- Estilos para Mini Barras --- */
-.mini-barra-progreso {
-  flex-grow: 1;
-  height: 12px;
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-}
-
-.mini-barra-progreso-relleno {
-  height: 100%;
-  border-radius: 6px 0 0 6px;
-  transition: width 0.5s ease-in-out;
-}
-
-.mini-barra-progreso-relleno.acierto-fill {
-  background-color: #5cb85c;
-}
-.mini-barra-progreso-relleno.fallo-fill {
-  background-color: #d9534f;
-}
-
-/* --- Estilos para Rango --- */
-.rango-detective .stat-main {
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-}
-.rango-detective .etiqueta {
-  margin-bottom: 0;
+.estadistica-item .etiqueta {
   font-size: 1em;
-  font-weight: 700; /* Negrita */
-}
-/* Texto del Rango - Hereda Fredoka */
-.rango-detective .valor-texto {
-  /* font-family: 'MedievalSharp', cursive; <-- ELIMINADO */
-  font-size: 0.9em;
-  color: #8b4513;
-  font-weight: 700; /* Negrita */
-  background-color: transparent; padding: 0; border: none; border-radius: 0;
-  min-width: 0; box-shadow: none; text-align: left; margin-left: 0;
-}
-.rango-detective .icono {
-   color: #daa520;
-   font-size: 1.9em;
-}
-
-
-/* --- Barra de Progreso XP --- */
-.progreso-contenedor {
-  margin-top: 25px;
-  padding-top: 15px;
-  border-top: 2px dashed rgba(107, 79, 52, 0.5);
-}
-/* Título XP - Hereda Fredoka */
-.xp-titulo {
-  /* font-family: 'MedievalSharp', cursive; <-- ELIMINADO */
-  font-size: 1.4em;
-  margin-bottom: 10px;
+  font-weight: 500;
   color: #6b4f34;
+}
+.estadistica-item .valor, .rango-detective .valor-texto {
+  font-weight: 700;
+  font-size: 1.1em;
+  padding: 4px 12px;
+  border-radius: 15px;
+}
+.estadistica-item .valor {
+  background-color: #eee;
+}
+/* Colores específicos para valores de acierto/fallo */
+.estadistica-item.aciertos .valor { color: #3c763d; background-color: #dff0d8; }
+.estadistica-item.fallos .valor { color: #a94442; background-color: #f2dede; }
+.rango-detective .valor-texto { color: #b76a00; background-color: #ffd5a1;}
+
+/* Quitamos las mini-barras que eran poco estéticas */
+.mini-barra-progreso {
+  display: none;
+}
+
+/* 6. Sección de Experiencia (XP): Más gruesa y atractiva */
+.progreso-contenedor {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px dashed #eaddc0;
+}
+.xp-titulo {
   text-align: center;
-  font-weight: 700; /* Negrita */
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #6b4f34;
+  margin-bottom: 12px;
 }
 .barra-progreso {
-  background-color: #a1887f;
-  border-radius: 8px;
-  height: 22px;
+  height: 20px; /* Barra más gruesa */
+  border-radius: 10px;
+  background-color: #e0d8c6; /* Fondo de la barra más claro */
   overflow: hidden;
-  border: 2px solid #5d4037;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+  border: 1px solid #fff;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 .barra-progreso-relleno {
-  background: linear-gradient(to right, #ffc107, #ffdd60);
   height: 100%;
-  border-radius: 6px;
-  transition: width 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-  position: relative;
+  border-radius: 10px;
+  /* Degradado atractivo para la barra */
+  background: linear-gradient(to right, #f7d286, #f9a825);
+  transition: width 0.8s ease-out;
+  box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1);
 }
-.barra-progreso-relleno::after { /* Brillo */
-    content: '';
-    position: absolute; top: 1px; left: 3px; right: 3px; height: 5px;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.1));
-    border-radius: 3px;
-}
-/* Texto numérico XP - Hereda Fredoka */
 .xp-texto {
   text-align: center;
   margin-top: 8px;
-  font-weight: 700; /* Negrita */
-  font-size: 1em;
-  color: #4a2c1a;
+  font-weight: 600;
+  font-size: 1.1em;
+  color: #4a3112;
 }
 
-/* Contenedor general opcional */
-.rpg-stats-section {
-  padding: 15px;
+/* 7. Sección de Evaluación de Progreso */
+.progress-section {
+  text-align: center;
+  padding-top: 20px;
+  margin-top: 20px;
+  border-top: 1px dashed #eaddc0;
+}
+
+.progress-section h3 {
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #6b4f34;
+  margin-bottom: 15px;
 }
