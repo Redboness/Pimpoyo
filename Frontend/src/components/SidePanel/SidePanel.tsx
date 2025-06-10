@@ -423,14 +423,14 @@ function SidePanel({
 
         {activeSection === 'settings' && (
           <div id="settings-content" className="panel-section-content" style={{ display: 'block' }}>
-            <h3>Ajustes de Perfil</h3>
+            <h3>Ajustes de perfil</h3>
             {userInfo ? (<>
               <div className="setting-item">
                 <label htmlFor="settings-nickname-input">Nickname</label>
                 <input type="text" id="settings-nickname-input" className="settings-input" value={nicknameSetting} onChange={(e) => setNicknameSetting(e.target.value)} maxLength={20} disabled={settingsLoading} />
               </div>
               <div className="setting-item">
-                <label htmlFor="settings-avatar-url-input">URL del Avatar</label>
+                <label htmlFor="settings-avatar-url-input">URL del avatar</label>
                 <input type="url" id="settings-avatar-url-input" className="settings-input" placeholder="Pega la URL de tu imagen aquí..." value={avatarUrlSetting} onChange={(e) => setAvatarUrlSetting(e.target.value)} disabled={settingsLoading} />
                 {avatarUrlSetting && <img src={avatarUrlSetting} alt="Avatar preview" className="avatar-preview" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
               </div>

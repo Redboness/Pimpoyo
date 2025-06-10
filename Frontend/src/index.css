@@ -1831,3 +1831,102 @@ hr.separator {
   line-height: 1.6;
   margin: 0;
 }
+/* --- DISEÑO MEJORADO Y ARMONIOSO PARA LA SECCIÓN DE AJUSTES --- */
+
+/* Título de la sección */
+#settings-content h3 {
+  text-align: center;
+  color: #8b4513;
+  font-size: 1.6em;
+  font-weight: 700;
+  margin-bottom: 30px; /* Más espacio para empezar */
+}
+
+/* Contenedor de cada campo del formulario (label + input) */
+.setting-item {
+  margin-bottom: 25px;
+}
+
+/* Etiquetas ("Nickname", "URL del Avatar") */
+.setting-item label {
+  display: block;
+  font-weight: 600; /* Semi-negrita */
+  margin-bottom: 8px;
+  color: #6b4f34; /* Marrón suave */
+  font-size: 1.05em;
+}
+
+/* Campos de texto y URL */
+.settings-input {
+  width: 100%;
+  padding: 12px 18px; /* Más padding interno */
+  border: 2px solid #eaddc0; /* Borde suave */
+  border-radius: 20px; /* Muy redondeado */
+  font-family: inherit;
+  font-size: 1em;
+  color: #4a3112;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.settings-input:focus {
+  outline: none;
+  border-color: #94ab3d; /* Borde verde al enfocar */
+  box-shadow: 0 0 8px rgba(148, 171, 61, 0.3); /* Resplandor verde */
+}
+
+/* Vista previa del Avatar */
+.avatar-preview {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%; /* La hacemos circular */
+  object-fit: cover; /* Evita que la imagen se deforme */
+  margin-top: 10px;
+  border: 3px solid #f5e187; /* Borde amarillo Pimpoyo */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Botón de Guardar Cambios */
+#settings-save-btn.action-button {
+  width: 100%;
+  background-color: #94ab3d; /* Verde principal */
+  color: white;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1.1em;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(148, 171, 61, 0.3);
+}
+
+#settings-save-btn.action-button:hover:not(:disabled) {
+  background-color: #7a8e31;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(148, 171, 61, 0.4);
+}
+
+/* Mensajes de feedback (éxito o error) */
+.settings-feedback {
+  margin-top: 15px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.settings-feedback.success {
+  background-color: #dff0d8;
+  color: #3c763d;
+  border: 1px solid #c3e6cb;
+}
+
+.settings-feedback.error {
+  background-color: #f2dede;
+  color: #a94442;
+  border: 1px solid #ebccd1;
+}
