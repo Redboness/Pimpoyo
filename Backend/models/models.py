@@ -1,8 +1,7 @@
 # models/models.py
 from datetime import datetime
-from pydantic import BaseModel, Field, HttpUrl # Asegúrate de que HttpUrl esté importado si lo usas en PerfilBase
-from typing import Optional, List, Dict, Any # Dict y Any son útiles para respuestas_pre_test
-# import math # No parece usarse directamente aquí, puedes quitarlo si no es necesario en otro lugar del archivo
+from pydantic import BaseModel, Field
+from typing import Optional, List, Dict, Any
 
 # --- Modelos para Perfil/Usuario ---
 
@@ -10,8 +9,7 @@ class PerfilBase(BaseModel):
     apodo: str
     genero: str | None = None
     edad: int
-    # Si avatar_url puede ser string o HttpUrl, mantenlo. Si solo va a ser string, simplifica.
-    avatar_url: Optional[str] = None # Simplificado a str opcional, ajusta si necesitas HttpUrl
+    avatar_url: Optional[str] = None
     curso_escolar: Optional[str] = None
     puntuacion_pre_test_total: Optional[float] = None
     puntuacion_post_test_total: Optional[float] = None
@@ -21,15 +19,14 @@ class UsuarioCreate(PerfilBase):
     password: str
     consentimiento_obtenido: bool
     curso_escolar: str
-    # puntuacion_pre_test ya es opcional desde PerfilBase
-    respuestas_pre_test: Optional[Dict[str, Any]] = None # <--- CAMBIO PRINCIPAL AQUÍ: Añadir este campo
+    respuestas_pre_test: Optional[Dict[str, Any]] = None
     pre_test_s1_perfil_puntos: Optional[float] = None
     pre_test_s2_estrategias_puntos: Optional[float] = None
     pre_test_s3_practica_puntos: Optional[float] = None
 
 class UsuarioUpdateProfile(BaseModel):
     apodo: Optional[str] = Field(None, min_length=1, max_length=50)
-    avatar_url: Optional[str | None] = Field(None) # Simplificado a str opcional
+    avatar_url: Optional[str | None] = Field(None)
 
 class UsuarioInDB(PerfilBase):
     sesion_id: int
@@ -43,14 +40,11 @@ class UsuarioInDB(PerfilBase):
     puntuacion_final: Optional[float] = None
     tasa_falsos_negativos_global: Optional[float] = None
     tasa_falsos_positivos_global: Optional[float] = None
-    # El campo para respuestas_pre_test_json se manejará a nivel de tabla, no necesariamente aquí
-    # a menos que quieras leerlo y exponerlo a través de este modelo, lo cual no es común para UsuarioInDB.
 
 class UsuarioPublic(PerfilBase):
     sesion_id: int
-    # avatar_url ya heredado y simplificado
 
-# ... (el resto de tus modelos permanecen sin cambios) ...
+# --- Modelos de Estadísticas ---
 class UserDetailedStatsResponse(BaseModel):
     totalAnalizadas: int
     aciertos: int
@@ -58,6 +52,7 @@ class UserDetailedStatsResponse(BaseModel):
     xp: int
     xpNextLevel: int
 
+# --- Modelos de Autenticación y Chat Básico ---
 class UsuarioLogin(BaseModel):
     apodo: str
     password: str
@@ -76,11 +71,12 @@ class OllamaMessage(BaseModel):
 
 class ChatRequest(BaseModel):
     messages: List[OllamaMessage]
-    model: str = 'gemma3:4b'
+    model: str = 'gemma:2b' # Modelo actualizado
 
 class ChatResponse(BaseModel):
     reply: str
 
+# --- Modelos para el Glosario ---
 class GlossaryTermBase(BaseModel):
     termino: str = Field(..., min_length=1, max_length=100, description="La palabra o término del glosario")
     definicion: str = Field(..., min_length=1, description="La definición del término")
@@ -95,6 +91,9 @@ class GlossaryTermPublic(GlossaryTermBase):
 
     class Config:
         from_attributes = True
+
+# --- Modelos para Interacciones y Análisis Guiado ---
+# (Estos son los modelos que recuperamos)
 
 class InteraccionBase(BaseModel):
     noticia_id_json: str
@@ -173,6 +172,7 @@ class ChatSesionNoticiaPublic(BaseModel):
     conceptos_clave_discutidos: Optional[List[str]] = None
     mejora_comprension_evaluacion: Optional[str] = None
     mejora_comprension_justificacion: Optional[str] = None
+
     class Config:
         from_attributes = True
 
@@ -183,6 +183,7 @@ class MensajeChatGuiaPublic(BaseModel):
     contenido: str
     timestamp_mensaje: datetime
     orden_en_chat: int
+
     class Config:
         from_attributes = True
 
@@ -197,38 +198,59 @@ class FinishPairChallengeResponse(BaseModel):
     es_correcto: bool
     explanation: Optional[str] = None
 
+# --- (NUEVO Y AÑADIDO) Modelos para el Post-Test ---
 
-# --- Modelos para el Post-Test ---
+# Estructura de las preguntas que se envían al frontend
+class PostTestOption(BaseModel):
+    id: str
+    text: str
 
-class PreguntaPostTestEleccion(BaseModel):
+class PostTestQuestion(BaseModel):
     id_pregunta: str
     texto_pregunta: str
-    opciones: List[str]
+    tipo: str
+    opciones: Optional[List[PostTestOption]] = None
+    seccion_id: str
 
-class NoticiaParaPostTest(BaseModel):
+class NoticiaParaAnalisisPostTest(BaseModel):
     noticia_id_json: str
     headline: str
     text: str
     source: Optional[str] = None
 
 class PostTestStartResponse(BaseModel):
-    preguntas_eleccion: List[PreguntaPostTestEleccion]
-    noticias_para_analizar: List[NoticiaParaPostTest]
+    preguntas: List[PostTestQuestion]
+    noticias_para_analizar: List[NoticiaParaAnalisisPostTest]
 
+
+# Estructura de las respuestas que se reciben del frontend
 class RespuestaPreguntaEleccionItem(BaseModel):
     id_pregunta: str
-    respuesta_seleccionada: str
+    respuestas_seleccionadas: List[str]
+
+class RespuestaPreguntaTextoItem(BaseModel):
+    id_pregunta: str
+    texto_respuesta: str
 
 class RespuestaAnalisisNoticiaItem(BaseModel):
     noticia_id_json: str
-    evaluacion_usuario: str # 'TRUE' o 'FALSE'
+    evaluacion_usuario: str # 'Verdadero' o 'Falso'
+    justificacion: str
 
 class PostTestSubmitPayload(BaseModel):
     respuestas_eleccion: List[RespuestaPreguntaEleccionItem]
-    respuestas_analisis_noticias: List[RespuestaAnalisisNoticiaItem]
+    respuestas_texto: List[RespuestaPreguntaTextoItem]
+    respuestas_analisis: List[RespuestaAnalisisNoticiaItem]
+
+
+# Estructura de la respuesta del backend tras corregir
+class PuntuacionSeccion(BaseModel):
+    seccion_id: str
+    puntos_obtenidos: float
+    puntos_maximos: float
 
 class PostTestSubmitResponse(BaseModel):
     message: str
-    puntuacion_final: float
-    aciertos: int
-    total_preguntas: int
+    puntuacion_total: float
+    puntuacion_maxima_posible: float
+    puntuaciones_por_seccion: List[PuntuacionSeccion]

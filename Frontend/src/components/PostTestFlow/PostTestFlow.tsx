@@ -1,285 +1,244 @@
 // src/components/PostTestFlow/PostTestFlow.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import './PostTestFlow.css';
 import {
-    NoticiaParaAnalisisPostTest,
-    PostTestFlowProps,
-    // PostTestFlowProps, // Ya está en la definición de la función
-    PostTestStartResponse,
-    PostTestSubmitPayload,
-    PostTestSubmitResponse,
-    PreguntaPostTestEleccion,
-    RespuestaAnalisisNoticiaItem,
-    RespuestaPreguntaEleccionItem
+    PostTestFlowProps, PostTestQuestion, NoticiaParaAnalisisPostTest,
+    PostTestStartResponse, PostTestSubmitPayload, PostTestSubmitResponse
 } from '../../types/types';
 
-type TestPhase = 'loading' | 'preguntasEleccion' | 'analisisNoticias' | 'submitting' | 'finished' | 'error';
+type TestPhase = 'loading' | 'in-progress' | 'submitting' | 'finished' | 'error';
+type AllTestItems = (PostTestQuestion | NoticiaParaAnalisisPostTest)[];
+
+const combineTestItems = (questions: PostTestQuestion[], news: NoticiaParaAnalisisPostTest[]): AllTestItems => {
+    const items: AllTestItems = [...questions];
+    const s3NewsIndex = questions.findIndex(q => q.seccion_id === 's4');
+    if (s3NewsIndex !== -1) {
+        items.splice(s3NewsIndex, 0, ...news);
+    } else {
+        items.push(...news);
+    }
+    return items;
+};
 
 function PostTestFlow({ authToken, onTestComplete, onCancelTest }: PostTestFlowProps) {
-  const [phase, setPhase] = useState<TestPhase>('loading');
-  const [preguntasEleccion, setPreguntasEleccion] = useState<PreguntaPostTestEleccion[]>([]);
-  const [noticiasParaAnalizar, setNoticiasParaAnalizar] = useState<NoticiaParaAnalisisPostTest[]>([]);
+    const [phase, setPhase] = useState<TestPhase>('loading');
+    const [allItems, setAllItems] = useState<AllTestItems>([]);
+    const [currentItemIndex, setCurrentItemIndex] = useState(0);
 
-  const [currentPreguntaEleccionIndex, setCurrentPreguntaEleccionIndex] = useState(0);
-  const [currentNoticiaAnalisisIndex, setCurrentNoticiaAnalisisIndex] = useState(0);
+    const [respuestasEleccion, setRespuestasEleccion] = useState<Record<string, string[]>>({});
+    const [respuestasTexto, setRespuestasTexto] = useState<Record<string, string>>({});
+    const [respuestaNoticia, setRespuestaNoticia] = useState<{ evaluacion?: 'Verdadero' | 'Falso', justificacion: string }>({ justificacion: '' });
 
-  const [respuestasEleccion, setRespuestasEleccion] = useState<RespuestaPreguntaEleccionItem[]>([]);
-  const [respuestasAnalisis, setRespuestasAnalisis] = useState<RespuestaAnalisisNoticiaItem[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [testResultData, setTestResultData] = useState<PostTestSubmitResponse | null>(null);
 
-  const [currentAnswersEleccion, setCurrentAnswersEleccion] = useState<Record<string, string>>({});
+    useEffect(() => {
+        const fetchTestData = async () => {
+            setError(null);
+            setPhase('loading');
+            try {
+                const response = await fetch('/api/activity/post-test/start', {
+                    headers: { 'Authorization': `Bearer ${authToken}` },
+                });
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.detail || 'No se pudieron cargar los ítems para el test.');
+                }
+                const data: PostTestStartResponse = await response.json();
+                const combined = combineTestItems(data.preguntas, data.noticias_para_analizar);
+                setAllItems(combined);
+                setPhase('in-progress');
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'Error desconocido al cargar el test.');
+                setPhase('error');
+            }
+        };
+        fetchTestData();
+    }, [authToken]);
 
-  const [error, setError] = useState<string | null>(null);
+    const currentItem = useMemo(() => allItems[currentItemIndex], [allItems, currentItemIndex]);
+    const isQuestion = (item: any): item is PostTestQuestion => 'texto_pregunta' in item;
 
-  // ESTADO PARA GUARDAR LOS DATOS NUMÉRICOS DEL RESULTADO
-  const [testResultData, setTestResultData] = useState<PostTestSubmitResponse | null>(null);
+    const handleNext = async () => {
+        setError(null);
+        if (isQuestion(currentItem)) {
+            if (currentItem.tipo === 'eleccion_unica' || currentItem.tipo === 'eleccion_multiple') {
+                if (!respuestasEleccion[currentItem.id_pregunta] || respuestasEleccion[currentItem.id_pregunta].length === 0) {
+                    setError("Por favor, selecciona al menos una opción.");
+                    return;
+                }
+            }
+            if (currentItem.tipo === 'texto_libre') {
+                if (!respuestasTexto[currentItem.id_pregunta]?.trim()) {
+                    setError("Por favor, escribe una respuesta.");
+                    return;
+                }
+            }
+        } else {
+            if (!respuestaNoticia.evaluacion) {
+                setError("Por favor, evalúa si la noticia es Verdadera o Falsa.");
+                return;
+            }
+            if (!respuestaNoticia.justificacion.trim()) {
+                setError("Por favor, escribe una justificación.");
+                return;
+            }
+        }
 
-  useEffect(() => {
-    const fetchTestData = async () => {
-      setError(null);
-      setPhase('loading');
-      try {
-        const response = await fetch('/api/activity/post-test/start', {
-          headers: { 'Authorization': `Bearer ${authToken}` },
+        if (currentItemIndex < allItems.length - 1) {
+            setCurrentItemIndex(prev => prev + 1);
+        } else {
+            await handleSubmitTest();
+        }
+    };
+
+    const handleSubmitTest = async () => {
+        setPhase('submitting');
+        const payload: PostTestSubmitPayload = {
+            respuestas_eleccion: Object.entries(respuestasEleccion).map(([id, resp]) => ({ id_pregunta: id, respuestas_seleccionadas: resp })),
+            respuestas_texto: Object.entries(respuestasTexto).map(([id, resp]) => ({ id_pregunta: id, texto_respuesta: resp })),
+            respuestas_analisis: allItems
+                .filter(item => !isQuestion(item))
+                .map(item => ({
+                    noticia_id_json: (item as NoticiaParaAnalisisPostTest).noticia_id_json,
+                    evaluacion_usuario: respuestaNoticia.evaluacion!,
+                    justificacion: respuestaNoticia.justificacion
+                }))
+        };
+        try {
+            const response = await fetch('/api/activity/post-test/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+                body: JSON.stringify(payload),
+            });
+            const resultData: PostTestSubmitResponse = await response.json();
+            if (!response.ok) throw new Error(resultData.message || 'Error al enviar el test.');
+            setTestResultData(resultData);
+            setPhase('finished');
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Error desconocido al enviar el test.');
+            setPhase('error');
+        }
+    };
+
+    const handleChoiceChange = (preguntaId: string, opcionId: string, tipo: 'eleccion_unica' | 'eleccion_multiple') => {
+        setRespuestasEleccion(prev => {
+            const newAnswers = { ...prev };
+            if (tipo === 'eleccion_unica') {
+                newAnswers[preguntaId] = [opcionId];
+            } else {
+                const current = newAnswers[preguntaId] || [];
+                if (current.includes(opcionId)) {
+                    newAnswers[preguntaId] = current.filter(id => id !== opcionId);
+                } else {
+                    newAnswers[preguntaId] = [...current, opcionId];
+                }
+            }
+            return newAnswers;
         });
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.detail || 'No se pudieron cargar los ítems para el test.');
-        }
-        const data: PostTestStartResponse = await response.json();
-
-        const numExpectedChoiceQuestions = 5;
-        const numExpectedAnalysisNews = 6;
-
-        if (!data.preguntas_eleccion || data.preguntas_eleccion.length < numExpectedChoiceQuestions ||
-            !data.noticias_para_analizar || data.noticias_para_analizar.length < numExpectedAnalysisNews) {
-          console.warn("Datos recibidos del backend para post-test:", data);
-          throw new Error(`No se recibieron suficientes ítems para el test. Se esperaban ${numExpectedChoiceQuestions} preguntas y ${numExpectedAnalysisNews} noticias. Recibido: ${data.preguntas_eleccion?.length || 0} preguntas, ${data.noticias_para_analizar?.length || 0} noticias.`);
-        }
-
-        setPreguntasEleccion(data.preguntas_eleccion.slice(0, numExpectedChoiceQuestions));
-        setNoticiasParaAnalizar(data.noticias_para_analizar.slice(0, numExpectedAnalysisNews));
-        setPhase('preguntasEleccion');
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido al cargar el test.');
-        setPhase('error');
-      }
     };
-    fetchTestData();
-  }, [authToken]);
 
-  const handleEleccionAnswer = (idPregunta: string, opcionSeleccionada: string) => {
-    setError(null);
-    setCurrentAnswersEleccion(prev => ({ ...prev, [idPregunta]: opcionSeleccionada }));
-  };
+    const renderCurrentItem = () => {
+        if (!currentItem) return <p>Cargando pregunta...</p>;
 
-  const nextPreguntaEleccion = () => {
-    if (preguntasEleccion.length === 0 || !preguntasEleccion[currentPreguntaEleccionIndex]) {
-        setError("Error: No hay pregunta actual para responder.");
-        return;
-    }
-    const currentPregunta = preguntasEleccion[currentPreguntaEleccionIndex];
-    if (!currentAnswersEleccion[currentPregunta.id_pregunta]) {
-        setError("Por favor, selecciona una respuesta.");
-        return;
-    }
-    setError(null);
-    const nuevaRespuesta: RespuestaPreguntaEleccionItem = {
-        id_pregunta: currentPregunta.id_pregunta,
-        respuesta_seleccionada: currentAnswersEleccion[currentPregunta.id_pregunta]
-    };
-    setRespuestasEleccion(prev => {
-        const otrasRespuestas = prev.filter(r => r.id_pregunta !== currentPregunta.id_pregunta);
-        return [...otrasRespuestas, nuevaRespuesta];
-    });
-
-    if (currentPreguntaEleccionIndex < preguntasEleccion.length - 1) {
-      setCurrentPreguntaEleccionIndex(prev => prev + 1);
-      setCurrentAnswersEleccion({});
-    } else {
-      setPhase('analisisNoticias');
-      setCurrentAnswersEleccion({});
-    }
-  };
-
-  const handleAnalisisAnswer = (idNoticia: string, evaluacion: 'TRUE' | 'FALSE') => {
-    setError(null);
-    setRespuestasAnalisis(prev => {
-        const otrasRespuestas = prev.filter(r => r.noticia_id_json !== idNoticia);
-        return [...otrasRespuestas, { noticia_id_json: idNoticia, evaluacion_usuario: evaluacion }];
-    });
-
-    if (currentNoticiaAnalisisIndex < noticiasParaAnalizar.length - 1) {
-      setCurrentNoticiaAnalisisIndex(prev => prev + 1);
-    } else {
-      console.log("Última noticia analizada. El useEffect se encargará del envío.");
-    }
-  };
-
-  useEffect(() => {
-    if (phase === 'analisisNoticias' &&
-        noticiasParaAnalizar.length > 0 &&
-        preguntasEleccion.length > 0 && // Añadido para asegurar que las preguntas de elección también están listas
-        respuestasAnalisis.length === noticiasParaAnalizar.length &&
-        respuestasEleccion.length === preguntasEleccion.length) {
-      console.log("Todas las preguntas y noticias respondidas, procediendo a enviar el test.");
-      handleSubmitTest();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [respuestasAnalisis, respuestasEleccion, noticiasParaAnalizar, preguntasEleccion, phase]);
-
-
-  const handleSubmitTest = async () => {
-    if (respuestasEleccion.length !== preguntasEleccion.length ||
-        respuestasAnalisis.length !== noticiasParaAnalizar.length) {
-      console.error("Discrepancia en handleSubmitTest:", {
-          respuestasEleccionL: respuestasEleccion.length, pE: preguntasEleccion.length,
-          respuestasAnalisisL: respuestasAnalisis.length, nA: noticiasParaAnalizar.length
-      });
-      setError("Asegúrate de responder todas las preguntas y analizar todas las noticias.");
-      return;
-    }
-
-    setPhase('submitting');
-    setError(null);
-    try {
-      const payload: PostTestSubmitPayload = {
-        respuestas_eleccion: respuestasEleccion,
-        respuestas_analisis_noticias: respuestasAnalisis
-      };
-      const response = await fetch('/api/activity/post-test/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        },
-        body: JSON.stringify(payload),
-      });
-      const resultDataFromAPI: PostTestSubmitResponse = await response.json();
-      if (!response.ok) {
-        throw new Error(resultDataFromAPI.message || 'Error al enviar el test.');
-      }
-      setTestResultData(resultDataFromAPI); // <--- GUARDAR EL RESULTADO DIRECTAMENTE
-      setPhase('finished');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido al enviar el test.');
-      setPhase('error');
-    }
-  };
-
-  // --- Renderizado ---
-  if (phase === 'loading') return <div className="post-test-flow-container"><p className="post-test-loading-error">Cargando Post-Test...</p></div>;
-  if (phase === 'error') return <div className="post-test-flow-container"><p className="post-test-loading-error">Error: {error} <button className="post-test-button post-test-button-next" onClick={() => window.location.reload()}>Reintentar</button>{onCancelTest && <button className="post-test-button post-test-button-cancel" onClick={onCancelTest}>Cancelar</button>}</p></div>;
-
-  if (phase === 'finished' && testResultData) { // <--- AHORA DEPENDE DE testResultData
-    return (
-      <div className="post-test-flow-container">
-        <div className="post-test-finished-message">
-            {/* Construir el mensaje usando los datos numéricos del estado testResultData */}
-            <p>
-              ¡Test completado! Tu puntuación final: {testResultData.puntuacion_final.toFixed(2)}%
-              ({testResultData.aciertos}/{testResultData.total_preguntas} aciertos).
-            </p>
-            <button
-                className="post-test-button post-test-button-next"
-                style={{ marginTop: '20px' }}
-                onClick={() => {
-                    // Pasar los datos numéricos directamente desde testResultData
-                    onTestComplete(
-                        testResultData.puntuacion_final,
-                        testResultData.aciertos,
-                        testResultData.total_preguntas
+        if (isQuestion(currentItem)) {
+            const q = currentItem;
+            switch (q.tipo) {
+                case 'eleccion_unica':
+                case 'eleccion_multiple':
+                    return (
+                        <>
+                            <p className="post-test-question-text">{q.texto_pregunta}</p>
+                            {q.tipo === 'eleccion_multiple' && (
+                                <p className="post-test-instruction">(Selecciona todas las que creas correctas)</p>
+                            )}
+                            <div className="post-test-options-group">
+                                {q.opciones?.map(op => (
+                                    <label key={op.id} className={`post-test-option-item ${respuestasEleccion[q.id_pregunta]?.includes(op.id) ? 'selected' : ''}`}>
+                                        <input type={q.tipo === 'eleccion_unica' ? 'radio' : 'checkbox'} name={q.id_pregunta} checked={respuestasEleccion[q.id_pregunta]?.includes(op.id) || false} onChange={() => handleChoiceChange(q.id_pregunta, op.id, q.tipo)} />
+                                        <span>{op.text}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </>
                     );
-                }}
-            >
-                Volver al Chat
-            </button>
-        </div>
-      </div>
-    );
-  }
+                case 'texto_libre':
+                     return (
+                        <>
+                            <p className="post-test-question-text">{q.texto_pregunta}</p>
+                            <textarea className="post-test-textarea" value={respuestasTexto[q.id_pregunta] || ''} onChange={e => setRespuestasTexto(prev => ({ ...prev, [q.id_pregunta]: e.target.value }))} rows={5} />
+                        </>
+                    );
+                default: return <p>Tipo de pregunta no reconocido.</p>;
+            }
+        } else {
+            const n = currentItem as NoticiaParaAnalisisPostTest;
+            return (
+                <>
+                    <h3 className="post-test-news-headline">{n.headline}</h3>
+                    {n.source && <p className="post-test-news-source">Fuente: {n.source}</p>}
+                    <div className="post-test-news-text-scroll">
+                        {n.text.split('\n').map((p, i) => <p key={i}>{p}</p>)}
+                    </div>
+                    <div className="news-evaluation-group">
+                        <p>¿Crees que esta noticia es Verdadera o Falsa?</p>
+                        <div className="post-test-options-group">
+                            <label className={`post-test-option-item option-true ${respuestaNoticia.evaluacion === 'Verdadero' ? 'selected' : ''}`}>
+                                <input type="radio" name={n.noticia_id_json} checked={respuestaNoticia.evaluacion === 'Verdadero'} onChange={() => setRespuestaNoticia(p => ({...p, evaluacion: 'Verdadero'}))} />
+                                Verdadera
+                            </label>
+                            <label className={`post-test-option-item option-false ${respuestaNoticia.evaluacion === 'Falso' ? 'selected' : ''}`}>
+                                <input type="radio" name={n.noticia_id_json} checked={respuestaNoticia.evaluacion === 'Falso'} onChange={() => setRespuestaNoticia(p => ({...p, evaluacion: 'Falso'}))} />
+                                Falsa
+                            </label>
+                        </div>
+                    </div>
+                    <p style={{marginTop: '25px', fontWeight: '500'}}>¿Qué pistas o señales ves AHORA en la noticia para justificar tu respuesta?</p>
+                    <textarea className="post-test-textarea" value={respuestaNoticia.justificacion} onChange={e => setRespuestaNoticia(p => ({...p, justificacion: e.target.value}))} rows={4} />
+                </>
+            );
+        }
+    };
 
-  if (phase === 'preguntasEleccion') {
-    // ... (tu JSX para preguntasEleccion se mantiene igual)
-    if (preguntasEleccion.length === 0 || !preguntasEleccion[currentPreguntaEleccionIndex]) {
-         return <div className="post-test-flow-container"><p>No hay preguntas de elección disponibles o índice fuera de rango.</p>{onCancelTest && <button className="post-test-button post-test-button-cancel" onClick={onCancelTest}>Cancelar Test</button>}</div>;
+    if (phase === 'loading') return <div className="post-test-flow-container"><p className="post-test-loading-error">Cargando Post-Test...</p></div>;
+    if (phase === 'error') return <div className="post-test-flow-container"><p className="post-test-loading-error">Error: {error}</p>{onCancelTest && <button className="post-test-button" onClick={onCancelTest}>Cancelar</button>}</div>;
+    if (phase === 'submitting') return <div className="post-test-flow-container"><p className="post-test-loading-error">Enviando y corrigiendo...</p></div>;
+
+    if (phase === 'finished' && testResultData) {
+        return (
+            <div className="post-test-flow-container">
+                <div className="post-test-finished-message">
+                    <h2>¡Test completado!</h2>
+                    <p>Tu puntuación final ha sido de <strong>{testResultData.puntuacion_total.toFixed(1)}</strong> sobre {testResultData.puntuacion_maxima_posible.toFixed(1)} puntos.</p>
+                    <ul className='score-breakdown'>
+                        {testResultData.puntuaciones_por_seccion.map(s => (
+                            <li key={s.seccion_id}><strong>Sección {s.seccion_id.substring(1)}:</strong> {s.puntos_obtenidos.toFixed(1)} / {s.puntos_maximos.toFixed(1)} pts</li>
+                        ))}
+                    </ul>
+                    <button className="post-test-button" onClick={() => onTestComplete(testResultData.puntuacion_total, testResultData.puntuacion_maxima_posible, testResultData.puntuaciones_por_seccion)}>
+                        Volver al Chat
+                    </button>
+                </div>
+            </div>
+        );
     }
-    const currentP = preguntasEleccion[currentPreguntaEleccionIndex];
-    return (
-      <div className="post-test-flow-container">
-        <h2 className="post-test-title">Preguntas ({currentPreguntaEleccionIndex + 1} / {preguntasEleccion.length})</h2>
-        <div className="post-test-item-block">
-          <p className="post-test-question-text">{currentP.texto_pregunta}</p>
-          <div className="post-test-options-group">
-            {currentP.opciones.map((opcion: string) => (
-              <label
-                key={opcion}
-                className={`post-test-option-item ${currentAnswersEleccion[currentP.id_pregunta] === opcion ? 'selected' : ''}`}
-              >
-                <input
-                  type="radio"
-                  name={currentP.id_pregunta}
-                  value={opcion}
-                  checked={currentAnswersEleccion[currentP.id_pregunta] === opcion}
-                  onChange={() => handleEleccionAnswer(currentP.id_pregunta, opcion)}
-                />
-                {opcion}
-              </label>
-            ))}
-          </div>
-        </div>
-        <button
-          onClick={nextPreguntaEleccion}
-          disabled={!currentAnswersEleccion[currentP.id_pregunta]}
-          className="post-test-button post-test-button-next"
-        >
-          {currentPreguntaEleccionIndex < preguntasEleccion.length - 1 ? 'Siguiente Pregunta' : 'Pasar a Análisis de Noticias'}
-        </button>
-        {error && <p className="post-test-loading-error" style={{marginTop: '10px'}}>{error}</p>}
-        {onCancelTest && <button className="post-test-button post-test-button-cancel" style={{marginTop: '10px'}} onClick={onCancelTest}>Cancelar Test</button>}
-      </div>
-    );
-  }
-
-  if (phase === 'analisisNoticias') {
-    // ... (tu JSX para analisisNoticias se mantiene igual)
-     if (noticiasParaAnalizar.length === 0 || !noticiasParaAnalizar[currentNoticiaAnalisisIndex]) {
-        return <div className="post-test-flow-container"><p>No hay noticias para analizar o índice fuera de rango.</p>{onCancelTest && <button className="post-test-button post-test-button-cancel" onClick={onCancelTest}>Cancelar Test</button>}</div>;
-    }
-    const currentN = noticiasParaAnalizar[currentNoticiaAnalisisIndex];
-    // const esUltimaNoticia = currentNoticiaAnalisisIndex === noticiasParaAnalizar.length - 1; // Ya no necesitamos un botón de submit explícito aquí
 
     return (
-      <div className="post-test-flow-container">
-        <h2 className="post-test-title">Análisis de Noticia ({currentNoticiaAnalisisIndex + 1} / {noticiasParaAnalizar.length})</h2>
-        <div className="post-test-item-block">
-          <h3 className="post-test-news-headline">{currentN.headline}</h3>
-          {currentN.source && <p className="post-test-news-source">Fuente: {currentN.source}</p>}
-          <div className="post-test-news-text-scroll">
-            {currentN.text.split('\n').map((paragraph: string, index: number) => (
-              <p key={index}>{paragraph}</p>
-            ))}
-          </div>
-          <div style={{ marginTop: '20px', textAlign: 'center' }}>
-            <button
-                onClick={() => handleAnalisisAnswer(currentN.noticia_id_json, 'TRUE')}
-                className="post-test-button post-test-button-true"
-            >
-              Creo que es Verdadera
-            </button>
-            <button
-                onClick={() => handleAnalisisAnswer(currentN.noticia_id_json, 'FALSE')}
-                className="post-test-button post-test-button-false"
-            >
-              Creo que es Falsa
-            </button>
-          </div>
+        <div className="post-test-flow-container">
+            <h2 className="post-test-title">Post-Test ({currentItemIndex + 1} / {allItems.length})</h2>
+            <div className="post-test-content-wrapper">
+                <div className="post-test-item-block">
+                    {renderCurrentItem()}
+                </div>
+            </div>
+            <div className="post-test-navigation">
+                <div className="post-test-loading-error">{error}</div>
+                <button className="post-test-button" onClick={handleNext}>
+                    {currentItemIndex < allItems.length - 1 ? 'Siguiente' : 'Finalizar y Corregir Test'}
+                </button>
+            </div>
         </div>
-        {error && <p className="post-test-loading-error" style={{marginTop: '10px'}}>{error}</p>}
-        {onCancelTest && <button className="post-test-button post-test-button-cancel" style={{marginTop: '20px'}} onClick={onCancelTest}>Cancelar Test</button>}
-      </div>
     );
-  }
-
-  return <div className="post-test-flow-container"><p>Cargando el test...</p></div>;
 }
 
 export default PostTestFlow;

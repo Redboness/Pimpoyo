@@ -1,79 +1,70 @@
 import React, { useState } from 'react';
 // import './ProfileSetup.css'; // Asegúrate de tener un CSS para los estilos si lo necesitas
 
-// --- Tipos para las preguntas del Pre-Test ---
+// --- Tipos (sin cambios) ---
 interface PreSurveyNewsItem {
-  headline: string;
-  body: string;
-  source_hint: string;
+    headline: string;
+    body: string;
+    source_hint: string;
 }
-
 interface PreSurveyPracticalQuestionPart {
-  id_q_suffix: '_VF' | '_Expl';
-  text: string;
-  type: 'radio' | 'textarea';
-  options?: string[];
+    id_q_suffix: '_VF' | '_Expl';
+    text: string;
+    type: 'radio' | 'textarea';
+    options?: string[];
 }
-
 interface PreSurveyBaseQuestion {
-  id: string;
-  text: string;
-  type: 'radio' | 'checkbox';
-  options: string[];
-  isPractical?: false;
+    id: string;
+    text: string;
+    type: 'radio' | 'checkbox';
+    options: string[];
+    isPractical?: false;
 }
-
 interface PreSurveyPracticalQuestion {
-  id: string;
-  isPractical: true;
-  news_item: PreSurveyNewsItem;
-  question_quantitative: PreSurveyPracticalQuestionPart & { type: 'radio'; options: string[] };
-  question_qualitative: PreSurveyPracticalQuestionPart & { type: 'textarea' };
+    id: string;
+    isPractical: true;
+    news_item: PreSurveyNewsItem;
+    question_quantitative: PreSurveyPracticalQuestionPart & { type: 'radio'; options: string[] };
+    question_qualitative: PreSurveyPracticalQuestionPart & { type: 'textarea' };
 }
-
 type AnyPreSurveyQuestion = PreSurveyBaseQuestion | PreSurveyPracticalQuestion;
-
-// --- Interfaces del Componente ---
 interface RegisterPayload {
-  apodo: string;
-  genero: string;
-  edad: number;
-  password: string;
-  consentimiento_obtenido: boolean;
-  curso_escolar: string;
-  respuestas_pre_test?: Record<string, string | string[]>;
-  pre_test_s1_perfil_puntos: number;
-  pre_test_s2_estrategias_puntos: number;
-  pre_test_s3_practica_puntos: number;
-  puntuacion_pre_test_total: number;
+    apodo: string;
+    genero: string;
+    edad: number;
+    password: string;
+    consentimiento_obtenido: boolean;
+    curso_escolar: string;
+    respuestas_pre_test?: Record<string, string | string[]>;
+    pre_test_s1_perfil_puntos: number;
+    pre_test_s2_estrategias_puntos: number;
+    pre_test_s3_practica_puntos: number;
+    puntuacion_pre_test_total: number;
 }
-
 interface ProfileSetupProps {
-  onAuthSuccess: (token: string) => void;
+    onAuthSuccess: (token: string) => void;
 }
-
 type RegisterStep = 'apodo' | 'genero' | 'edad' | 'curso' | 'pretest' | 'final';
-
-// --- Definición del Estado del Formulario ---
 interface FormDataState {
-  apodo: string;
-  genero: string;
-  edad: string;
-  curso_escolar: string;
-  password: string;
-  confirmPassword: string;
-  consentimiento: boolean;
-  preTestAnswers: Record<string, string | string[]>;
-  scores: {
-    s1: number;
-    s2: number;
-    s3: number;
-    total: number;
-  } | null;
+    apodo: string;
+    genero: string;
+    edad: string;
+    curso_escolar: string;
+    password: string;
+    confirmPassword: string;
+    consentimiento: boolean;
+    preTestAnswers: Record<string, string | string[]>;
+    scores: {
+        s1: number;
+        s2: number;
+        s3: number;
+        total: number;
+    } | null;
 }
 
-// --- Preguntas del Pre-Test ---
+// --- Preguntas y Clave de Puntuación (sin cambios) ---
 const preSurveyQuestions: AnyPreSurveyQuestion[] = [
+    // ... (contenido de las preguntas sin cambios)
     // Sección 1
     { id: 'P1_Horas', text: '1. ¿Cuántas horas aproximadamente pasas conectado/a a internet al día (contando tiempo para el cole, redes sociales, ver vídeos, jugar, etc.)?', type: 'radio', options: ['Menos de 1 hora.', 'Entre 1 y 2 horas.', 'Entre 2 y 3 horas', 'Entre 3 y 4 horas.', 'Más de 4 horas'] },
     { id: 'P2_Plataformas', text: '2. ¿Cuáles de estas redes sociales o plataformas usas más a menudo para enterarte de noticias o cosas nuevas que pasan? (puedes marcar TODAS las que apliquen)', type: 'checkbox', options: ['Tik Tok', 'YouTube', 'Instagram', 'WhatsApp', 'Facebook', 'Twitter', 'Twitch', 'Discord', 'La televisión / La radio', 'Periódicos o revistas (en papel o web)', 'Mis familiares o amigos/as', 'Videojuegos online', 'Otro'] },
@@ -89,362 +80,364 @@ const preSurveyQuestions: AnyPreSurveyQuestion[] = [
     // Sección 3
     { id: 'P11', isPractical: true, news_item: { headline: 'España al borde del colapso: un ciberataque masivo deja al país sin luz y amenaza las infraestructuras críticas', body: 'Una serie de “incidentes coordinados” en la red eléctrica española ha provocado un apagón masivo que afecta a gran parte del territorio nacional desde la madrugada del pasado martes. Mientras el gobierno habla de “fallos técnicos en cadena”, un colectivo de ciberactivistas conocido como “Digital Phantoms” ha reivindicado la autoría, asegurando que es solo “el primer aviso”. En un comunicado difundido en foros de la dark web, el grupo afirma: “Hemos demostrado la vulnerabilidad de un estado que depende de la tecnología. Esto no es un simple apagón, es una demostración de poder. Controlamos vuestras infraestructuras”. Expertos en ciberseguridad consultados por medios alternativos confirman que un ataque de estas características es “perfectamente posible” y que las defensas actuales son “insuficientes”.', source_hint: '(Fuente: “informe filtrado” distribuido por canales de mensajería encriptada y foros de ciberseguridad alternativos - Abril 2025)'}, question_quantitative: { id_q_suffix: '_VF', text: '11. ¿Crees que esta noticia sobre el ciberataque y el apagón es verdadera o falsa?', type: 'radio', options: ['Verdadera', 'Falsa'] }, question_qualitative: { id_q_suffix: '_Expl', text: 'Explica brevemente por qué crees que es verdadera o falsa. ¿Qué pistas o señales viste en la noticia (en el titular, en el texto, en la fuente...)?', type: 'textarea' } },
 ];
-
-
-// --- CLAVE DE PUNTUACIÓN (Versión con números enteros) ---
 const preTestScoringKey: Record<string, Record<string, number>> = {
-  'P5_Habilidad_VF': { '1': 1, '2': 2, '3': 3, '4': 4, '5': 5 },
-  'P6_Dificultad_VF': { '1 - Muy fácil': 5, '2 - Bastante fácil': 4, '3 - Ni fácil ni difícil': 3, '4 - Bastante difícil': 2, '5 - Muy difícil': 1 },
-  'P7_Estrategias': { 'Si la web o la persona que la publica parece de confianza.': 1, 'Si el titular es muy exagerado o busca polémica.': 2, 'Si está bien escrita, sin faltas de ortografía.': 2, 'Si explica de dónde viene la información o da pruebas.': 2, 'Si busco esa misma noticia o sobre quién la publica en otros sitios web para comparar.': 2, 'Si la fecha es reciente o antigua.': 1 },
-  'P8_Fuentes_Confianza': { 'Periódicos, telediarios o webs de noticias famosas.': 5, 'Webs oficiales (del gobierno, de la NASA, de universidades...).': 5, 'Un científico o experto conocido que habla del tema.': 5 },
-  'P9_Sospecha_Falsa': { 'Un titular súper exagerado o increíble.': 2, 'Muchas faltas de ortografía o frases mal escritas.': 2, 'Uso de MUCHAS MAYÚSCULAS y signos de exclamación !!!': 2, 'Un lenguaje que busca enfadarte, darte miedo o insultar.': 2, 'Que te pida compartirla "URGENTE" con todo el mundo.': 3, 'Que no tenga fecha o sea muy, muy antigua.': 2, 'Que nadie más hable de esa noticia en otros sitios.': 2 },
-  'P10_Prob_Verdad': { 'Si explica claramente de dónde viene la información y da enlaces o nombres.': 2, 'Si la escriben expertos o periodistas conocidos.': 1, 'Si varios periódicos o webs de noticias fiables cuentan lo mismo.': 2, 'Si está escrita de forma tranquila y objetiva, sin insultar ni exagerar.': 2, 'Si tiene una fecha clara y es reciente.': 2, 'Si presenta datos o números concretos (y dice de dónde salen).': 1 },
-  'P11_VF': { 'Falsa': 15 },
+    'P7_Estrategias': { 'Si la web o la persona que la publica parece de confianza.': 2, 'Si el titular es muy exagerado o busca polémica.': 2, 'Si está bien escrita, sin faltas de ortografía.': 2, 'Si explica de dónde viene la información o da pruebas.': 2, 'Si busco esa misma noticia o sobre quién la publica en otros sitios web para comparar.': 2 },
+    'P8_Fuentes_Confianza': { 'Periódicos, telediarios o webs de noticias famosas.': 5, 'Webs oficiales (del gobierno, de la NASA, de universidades...).': 5, 'Un científico o experto conocido que habla del tema.': 5 },
+    'P9_Sospecha_Falsa': { 'Un titular súper exagerado o increíble.': 2, 'Muchas faltas de ortografía o frases mal escritas.': 2, 'Uso de MUCHAS MAYÚSCULAS y signos de exclamación !!!': 2, 'Un lenguaje que busca enfadarte, darte miedo o insultar.': 2, 'Que te pida compartirla "URGENTE" con todo el mundo.': 3, 'Que no tenga fecha o sea muy, muy antigua.': 2, 'Que nadie más hable de esa noticia en otros sitios.': 2 },
+    'P10_Prob_Verdad': { 'Si explica claramente de dónde viene la información y da enlaces o nombres.': 2, 'Si la escriben expertos o periodistas conocidos.': 1, 'Si varios periódicos o webs de noticias fiables cuentan lo mismo.': 2, 'Si está escrita de forma tranquila y objetiva, sin insultar ni exagerar.': 2, 'Si tiene una fecha clara y es reciente.': 2, 'Si presenta datos o números concretos (y dice de dónde salen).': 1 },
+    'P11_VF': { 'Falsa': 15 },
 };
 
 function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
-  const [mode, setMode] = useState<'register' | 'login'>('register');
-  const [step, setStep] = useState<RegisterStep>('apodo');
+    const [mode, setMode] = useState<'register' | 'login'>('register');
+    const [step, setStep] = useState<RegisterStep>('apodo');
+    const initialFormData: FormDataState = {
+        apodo: '', genero: '', edad: '', curso_escolar: '',
+        password: '', confirmPassword: '', consentimiento: false,
+        preTestAnswers: {}, scores: null,
+    };
+    const [formData, setFormData] = useState<FormDataState>(initialFormData);
+    const [error, setError] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const initialFormData: FormDataState = {
-    apodo: '', genero: '', edad: '', curso_escolar: '',
-    password: '', confirmPassword: '', consentimiento: false,
-    preTestAnswers: {}, scores: null,
-  };
-  const [formData, setFormData] = useState<FormDataState>(initialFormData);
-  const [error, setError] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+    // ... (El resto de funciones como calculatePreTestScores, handleInputChange, etc., se mantienen igual)
+    const calculatePreTestScores = (answers: Record<string, string | string[]>) => {
+        let s1_score = 0; // Perfil (P1-P4) -> No puntúa
+        let s2_score = 0; // Estrategias (P5-P10) -> P5 y P6 no puntúan, el resto sí.
+        let s3_score = 0; // Práctica (P11)
 
-  // Calcula las puntuaciones del pre-test basándose en las respuestas del usuario.
-  const calculatePreTestScores = (answers: Record<string, string | string[]>) => {
-    let s1_score = 0;
-    let s2_score = 0;
-    let s3_score = 0;
+        const questionToSectionMap: Record<string, 's1' | 's2' | 's3'> = {
+            'P1_Horas': 's1', 'P2_Plataformas': 's1', 'P3_Habilidad_Tech': 's1', 'P4_Charla_Peligros': 's1',
+            'P5_Habilidad_VF': 's2', 'P6_Dificultad_VF': 's2', 'P7_Estrategias': 's2',
+            'P8_Fuentes_Confianza': 's2', 'P9_Sospecha_Falsa': 's2', 'P10_Prob_Verdad': 's2',
+            'P11': 's3',
+        };
 
-    const questionToSectionMap: Record<string, 's1' | 's2' | 's3'> = {
-      'P1_Horas': 's1', 'P2_Plataformas': 's1', 'P3_Habilidad_Tech': 's1', 'P4_Charla_Peligros': 's1',
-      'P5_Habilidad_VF': 's2', 'P6_Dificultad_VF': 's2', 'P7_Estrategias': 's2',
-      'P8_Fuentes_Confianza': 's2', 'P9_Sospecha_Falsa': 's2', 'P10_Prob_Verdad': 's2',
-      'P11': 's3',
+        for (const [questionIdWithSuffix, userAnswer] of Object.entries(answers)) {
+            const questionId = questionIdWithSuffix.replace(/_VF$|_Expl$/, '');
+            const section = questionToSectionMap[questionId];
+
+            const scoringRule = preTestScoringKey[questionId] || preTestScoringKey[questionIdWithSuffix];
+
+            if (!section || !scoringRule) continue;
+
+            let questionScore = 0;
+            if (Array.isArray(userAnswer)) {
+                for (const selectedOption of userAnswer) {
+                    if (scoringRule[selectedOption]) {
+                        questionScore += scoringRule[selectedOption];
+                    }
+                }
+            } else if (typeof userAnswer === 'string') {
+                const score = scoringRule[userAnswer];
+                if (score !== undefined) {
+                    questionScore = score;
+                }
+            }
+
+            if (section === 's2') s2_score += questionScore;
+            else if (section === 's3') s3_score += questionScore;
+        }
+
+        return {
+            s1: parseFloat(s1_score.toFixed(2)),
+            s2: parseFloat(s2_score.toFixed(2)),
+            s3: parseFloat(s3_score.toFixed(2)),
+            total: parseFloat((s1_score + s2_score + s3_score).toFixed(2)),
+        };
     };
 
-    for (const [questionIdWithSuffix, userAnswer] of Object.entries(answers)) {
-      const questionId = questionIdWithSuffix.replace(/_VF$|_Expl$/, '');
-      const section = questionToSectionMap[questionId];
-      const scoringRule = preTestScoringKey[questionIdWithSuffix];
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { name, value, type } = event.target;
+        const isConsentCheckbox = type === 'checkbox' && name === 'consentimiento';
+        const newValue = isConsentCheckbox ? (event.target as HTMLInputElement).checked : value;
 
-      if (!section || !scoringRule) continue;
-
-      let questionScore = 0;
-      if (Array.isArray(userAnswer)) { // Checkbox
-        for (const selectedOption of userAnswer) {
-          if (scoringRule[selectedOption]) {
-            questionScore += scoringRule[selectedOption];
-          }
+        if (name.startsWith("preTestAnswer_")) {
+            const questionFullId = name.substring("preTestAnswer_".length);
+            setFormData(prev => ({
+                ...prev,
+                preTestAnswers: { ...prev.preTestAnswers, [questionFullId]: newValue as string }
+            }));
+        } else {
+            setFormData(prevData => ({ ...prevData, [name]: newValue }));
         }
-      } else if (typeof userAnswer === 'string') { // Radio
-        const score = scoringRule[userAnswer];
-        if (score !== undefined) {
-          questionScore = score;
-        }
-      }
-
-      if (section === 's1') s1_score += questionScore;
-      else if (section === 's2') s2_score += questionScore;
-      else if (section === 's3') s3_score += questionScore;
-    }
-
-    return {
-      s1: parseFloat(s1_score.toFixed(4)),
-      s2: parseFloat(s2_score.toFixed(4)),
-      s3: parseFloat(s3_score.toFixed(4)),
-      total: parseFloat((s1_score + s2_score + s3_score).toFixed(4)),
+        setError('');
     };
-  };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = event.target;
-    const isConsentCheckbox = type === 'checkbox' && name === 'consentimiento';
-    const newValue = isConsentCheckbox ? (event.target as HTMLInputElement).checked : value;
-
-    if (name.startsWith("preTestAnswer_")) {
-      const questionFullId = name.substring("preTestAnswer_".length);
-      setFormData(prev => ({
-        ...prev,
-        preTestAnswers: { ...prev.preTestAnswers, [questionFullId]: newValue as string }
-      }));
-    } else {
-      setFormData(prevData => ({ ...prevData, [name]: newValue }));
-    }
-    setError('');
-  };
-
-  const handlePreTestAnswerChange = (questionId: string, answerValue: string, questionType: 'radio' | 'checkbox') => {
-    setError('');
-    setFormData(prev => {
-      const newAnswers = { ...prev.preTestAnswers };
-      if (questionType === 'radio') {
-        newAnswers[questionId] = answerValue;
-      } else {
-        const currentSelection = (newAnswers[questionId] as string[] | undefined) || [];
-        newAnswers[questionId] = currentSelection.includes(answerValue)
-          ? currentSelection.filter(item => item !== answerValue)
-          : [...currentSelection, answerValue];
-      }
-      return { ...prev, preTestAnswers: newAnswers };
-    });
-  };
-
-  const handleRegisterNextStep = (event?: React.MouseEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>) => {
-    if (event) event.preventDefault();
-    setError('');
-
-    switch (step) {
-      case 'apodo':
-        if (!formData.apodo.trim()) { setError('Por favor, introduce un nickname.'); return; }
-        setStep('genero');
-        break;
-      case 'genero':
-        if (!formData.genero) { setError('Por favor, selecciona un género.'); return; }
-        setStep('edad');
-        break;
-      case 'edad':
-        { const edadNum = parseInt(formData.edad, 10);
-        if (!formData.edad || isNaN(edadNum) || edadNum < 5 || edadNum > 18) { setError('Introduce una edad válida (entre 5 y 18).'); return; }
-        setStep('curso');
-        break; }
-      case 'curso':
-        if (!formData.curso_escolar) { setError('Por favor, selecciona tu curso.'); return; }
-        setStep('pretest');
-        break;
-      case 'pretest':
-        { const answeredAllQuestions = preSurveyQuestions.every(q => {
-          if (q.isPractical) {
-            const answerKey = q.id + q.question_quantitative.id_q_suffix;
-            return !!formData.preTestAnswers[answerKey];
-          }
-          const answer = formData.preTestAnswers[q.id];
-          return q.type === 'radio' ? !!answer : (Array.isArray(answer) && answer.length > 0);
+    const handlePreTestAnswerChange = (questionId: string, answerValue: string, questionType: 'radio' | 'checkbox') => {
+        setError('');
+        setFormData(prev => {
+            const newAnswers = { ...prev.preTestAnswers };
+            if (questionType === 'radio') {
+                newAnswers[questionId] = answerValue;
+            } else {
+                const currentSelection = (newAnswers[questionId] as string[] | undefined) || [];
+                newAnswers[questionId] = currentSelection.includes(answerValue)
+                    ? currentSelection.filter(item => item !== answerValue)
+                    : [...currentSelection, answerValue];
+            }
+            return { ...prev, preTestAnswers: newAnswers };
         });
+    };
 
-        if (!answeredAllQuestions) {
-          setError('Por favor, responde todas las preguntas del test (para las noticias, al menos la opción V/F).');
-          return;
+    const handleRegisterNextStep = (event?: React.MouseEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>) => {
+        if (event) event.preventDefault();
+        setError('');
+
+        switch (step) {
+            case 'apodo':
+                if (!formData.apodo.trim()) { setError('Por favor, introduce un nickname.'); return; }
+                setStep('genero');
+                break;
+            case 'genero':
+                if (!formData.genero) { setError('Por favor, selecciona un género.'); return; }
+                setStep('edad');
+                break;
+            case 'edad':
+                { const edadNum = parseInt(formData.edad, 10);
+                if (!formData.edad || isNaN(edadNum) || edadNum < 5 || edadNum > 18) { setError('Introduce una edad válida (entre 5 y 18).'); return; }
+                setStep('curso');
+                break; }
+            case 'curso':
+                if (!formData.curso_escolar) { setError('Por favor, selecciona tu curso.'); return; }
+                setStep('pretest');
+                break;
+            case 'pretest':
+                {
+                const answeredAllQuestions = preSurveyQuestions.every(q => {
+                    if (q.isPractical) {
+                        const vfAnswerKey = q.id + q.question_quantitative.id_q_suffix;
+                        const explAnswerKey = q.id + q.question_qualitative.id_q_suffix;
+                        const hasVfAnswer = !!formData.preTestAnswers[vfAnswerKey];
+                        const hasExplAnswer = !!(formData.preTestAnswers[explAnswerKey] as string || "").trim();
+                        return hasVfAnswer && hasExplAnswer;
+                    }
+                    const answer = formData.preTestAnswers[q.id];
+                    return q.type === 'radio' ? !!answer : (Array.isArray(answer) && answer.length > 0);
+                });
+
+                if (!answeredAllQuestions) {
+                    setError('Por favor, responde todas las preguntas del test, incluyendo la justificación de la noticia.');
+                    return;
+                }
+
+                const calculatedScores = calculatePreTestScores(formData.preTestAnswers);
+                console.log("Puntuaciones calculadas:", calculatedScores);
+                setFormData(prev => ({ ...prev, scores: calculatedScores }));
+                setStep('final');
+                break; }
+            default:
+                break;
         }
-
-        const calculatedScores = calculatePreTestScores(formData.preTestAnswers);
-        console.log("Puntuaciones calculadas:", calculatedScores);
-        setFormData(prev => ({ ...prev, scores: calculatedScores }));
-        setStep('final');
-        break; }
-      default:
-        break;
-    }
-  };
-
-  const handleRegisterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError('');
-    if (formData.password !== formData.confirmPassword) { setError('Las contraseñas no coinciden.'); return; }
-    if (formData.password.length < 6) { setError('La contraseña debe tener al menos 6 caracteres.'); return; }
-    if (!formData.consentimiento) { setError('Debes aceptar el consentimiento informado.'); return; }
-
-    setIsLoading(true);
-    const registrationData: RegisterPayload = {
-      apodo: formData.apodo.trim(),
-      genero: formData.genero || 'prefiero_no_decir',
-      edad: parseInt(formData.edad, 10),
-      password: formData.password,
-      consentimiento_obtenido: formData.consentimiento,
-      curso_escolar: formData.curso_escolar,
-      respuestas_pre_test: formData.preTestAnswers,
-      pre_test_s1_perfil_puntos: formData.scores?.s1 ?? 0,
-      pre_test_s2_estrategias_puntos: formData.scores?.s2 ?? 0,
-      pre_test_s3_practica_puntos: formData.scores?.s3 ?? 0,
-      puntuacion_pre_test_total: formData.scores?.total ?? 0,
     };
 
-    try {
-      const response = await fetch('/api/register/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(registrationData),
-      });
-      setIsLoading(false);
-      const responseData = await response.json();
-      if (!response.ok) { throw new Error(responseData.detail || `Error: ${response.status}`); }
-      alert('¡Registro completado! Ahora puedes iniciar sesión.');
-      setMode('login');
-      setFormData(initialFormData);
-    } catch (err) {
-      setIsLoading(false);
-      setError(err instanceof Error ? err.message : 'Error de conexión al registrarse.');
-    }
-  };
+    const handleRegisterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setError('');
+        if (formData.password !== formData.confirmPassword) { setError('Las contraseñas no coinciden.'); return; }
+        if (formData.password.length < 6) { setError('La contraseña debe tener al menos 6 caracteres.'); return; }
+        if (!formData.consentimiento) { setError('Debes aceptar el consentimiento informado.'); return; }
 
-  const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!formData.apodo.trim() || !formData.password) { setError('Por favor, introduce apodo y contraseña.'); return; }
-    setError('');
-    setIsLoading(true);
+        setIsLoading(true);
+        const registrationData: RegisterPayload = {
+            apodo: formData.apodo.trim(),
+            genero: formData.genero || 'prefiero_no_decir',
+            edad: parseInt(formData.edad, 10),
+            password: formData.password,
+            consentimiento_obtenido: formData.consentimiento,
+            curso_escolar: formData.curso_escolar,
+            respuestas_pre_test: formData.preTestAnswers,
+            pre_test_s1_perfil_puntos: formData.scores?.s1 ?? 0,
+            pre_test_s2_estrategias_puntos: formData.scores?.s2 ?? 0,
+            pre_test_s3_practica_puntos: formData.scores?.s3 ?? 0,
+            puntuacion_pre_test_total: formData.scores?.total ?? 0,
+        };
 
-    const loginFormData = new URLSearchParams();
-    loginFormData.append('username', formData.apodo.trim());
-    loginFormData.append('password', formData.password);
-
-    try {
-      const response = await fetch('/api/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: loginFormData.toString(),
-      });
-      setIsLoading(false);
-      const responseData = await response.json();
-      if (!response.ok) { throw new Error(responseData.detail || `Error: ${response.status}`); }
-      onAuthSuccess(responseData.access_token);
-    } catch (err) {
-      setIsLoading(false);
-      setError(err instanceof Error ? err.message : 'Error de conexión al iniciar sesión.');
-    }
-  };
-
-  // Renderiza una única pregunta del pre-test.
-  const renderQuestion = (q: AnyPreSurveyQuestion) => {
-    const createInputId = (questionId: string, index: number) => `${questionId}-${index}`;
-
-    return (
-      <div key={q.id} className="pretest-question-card">
-      {!q.isPractical ? (
-        <>
-          <div className="pretest-question-text">{q.text}</div>
-          <div className="pretest-options-group">
-            {q.options.map((option, index) => {
-              const inputId = createInputId(q.id, index);
-              return (
-                <div key={inputId} className="radio-checkbox-item">
-                  <label htmlFor={inputId}>
-                    <input
-                      type={q.type}
-                      id={inputId}
-                      name={q.id}
-                      value={option}
-                      checked={q.type === 'radio' ? formData.preTestAnswers[q.id] === option : (formData.preTestAnswers[q.id] as string[] || []).includes(option)}
-                      onChange={() => handlePreTestAnswerChange(q.id, option, q.type)}
-                      disabled={isLoading}
-                    />
-                    {option}
-                  </label>
-                </div>
-              );
-            })}
-          </div>
-        </>
-      ) : (
-        <div className="practical-news-item">
-          <div className="news-content">
-            <h3>{q.news_item.headline}</h3>
-            {q.news_item.body.split('\n').map((p, i) => p.trim() && <div key={i}>{p}</div>)}
-            {q.news_item.source_hint && <small><em>{q.news_item.source_hint}</em></small>}
-          </div>
-          <div className="question-quantitative">
-            <p>{q.question_quantitative.text}</p>
-            {q.question_quantitative.options.map((option, index) => {
-              const answerKey = q.id + q.question_quantitative.id_q_suffix;
-              const practicalInputId = createInputId(answerKey, index);
-              return (
-                <div key={practicalInputId} className="radio-checkbox-item">
-                  <label htmlFor={practicalInputId}>
-                    <input
-                      type="radio"
-                      id={practicalInputId}
-                      name={answerKey}
-                      value={option}
-                      checked={formData.preTestAnswers[answerKey] === option}
-                      onChange={() => handlePreTestAnswerChange(answerKey, option, 'radio')}
-                      disabled={isLoading}
-                    />
-                    {option}
-                  </label>
-                </div>
-              );
-            })}
-          </div>
-          <div className="question-qualitative">
-            <p>{q.question_qualitative.text}</p>
-            <textarea
-              name={`preTestAnswer_${q.id}${q.question_qualitative.id_q_suffix}`}
-              value={formData.preTestAnswers[q.id + q.question_qualitative.id_q_suffix] as string || ''}
-              onChange={handleInputChange}
-              rows={3}
-              disabled={isLoading}
-              placeholder="Escribe aquí tu explicación..."
-              style={{ width: '100%', marginTop: '5px', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', borderColor: '#ccc', fontFamily: 'inherit', fontSize: '0.95em' }}
-            />
-          </div>
-        </div>
-      )}
-      </div>
-    );
-  };
-
-  const renderPreTest = () => {
-    const sections: Record<string, AnyPreSurveyQuestion[]> = {
-      s1: preSurveyQuestions.filter(q => ['P1_Horas', 'P2_Plataformas', 'P3_Habilidad_Tech', 'P4_Charla_Peligros'].includes(q.id)),
-      s2: preSurveyQuestions.filter(q => ['P5_Habilidad_VF', 'P6_Dificultad_VF', 'P7_Estrategias', 'P8_Fuentes_Confianza', 'P9_Sospecha_Falsa', 'P10_Prob_Verdad'].includes(q.id)),
-      s3: preSurveyQuestions.filter(q => ['P11'].includes(q.id)),
+        try {
+            const response = await fetch('/api/register/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(registrationData),
+            });
+            setIsLoading(false);
+            const responseData = await response.json();
+            if (!response.ok) { throw new Error(responseData.detail || `Error: ${response.status}`); }
+            alert('¡Registro completado! Ahora puedes iniciar sesión.');
+            setMode('login');
+            setFormData(initialFormData);
+        } catch (err) {
+            setIsLoading(false);
+            setError(err instanceof Error ? err.message : 'Error de conexión al registrarse.');
+        }
     };
 
-    return (
-      <form onSubmit={handleRegisterNextStep} style={{ maxWidth: '700px', width: '100%' }}>
-        <h2>Pequeño test inicial</h2>
-        <div className="intro-text-pimpoyo">¡Hola! Soy Pimpoyo. Antes de empezar nuestra aventura para ser detectives de noticias, quiero saber un poco sobre lo que ya conoces. ¡No es un examen, no hay respuestas buenas ni malas! Solo marca lo que piensas o haces normalmente. ¡Gracias por ayudarme!</div>
+    const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!formData.apodo.trim() || !formData.password) { setError('Por favor, introduce apodo y contraseña.'); return; }
+        setError('');
+        setIsLoading(true);
 
-        <h3>Sección 1: Sobre ti y cómo usas internet</h3>
-        {sections.s1.map(q => renderQuestion(q))}
+        const loginFormData = new URLSearchParams();
+        loginFormData.append('username', formData.apodo.trim());
+        loginFormData.append('password', formData.password);
 
-        <h3>Sección 2: ¿Cómo detectas noticias falsas?</h3>
-        {sections.s2.map(q => renderQuestion(q))}
+        try {
+            const response = await fetch('/api/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: loginFormData.toString(),
+            });
+            setIsLoading(false);
+            const responseData = await response.json();
+            if (!response.ok) { throw new Error(responseData.detail || `Error: ${response.status}`); }
+            onAuthSuccess(responseData.access_token);
+        } catch (err) {
+            setIsLoading(false);
+            setError(err instanceof Error ? err.message : 'Error de conexión al iniciar sesión.');
+        }
+    };
 
-        <h3>Sección 3: ¡A practicar!</h3>
-        {sections.s3.map(q => renderQuestion(q))}
+    // --- (MODIFICADO) Función de renderizado con la estructura corregida ---
+    const renderQuestion = (q: AnyPreSurveyQuestion) => {
+        const createInputId = (questionId: string, index: number) => `${questionId}-${index}`;
 
-        <p className="outro-text-pimpoyo">¡Listo! ¡Mil gracias por tus respuestas! Has ayudado mucho a Pimpoyo.</p>
-        <button type="submit" className="form-button" style={{ marginTop: '20px' }} disabled={isLoading}>Siguiente</button>
-      </form>
-    );
-  };
+        return (
+            <div key={q.id} className="pretest-question-card">
+            {!q.isPractical ? (
+                <>
+                    <p className="pretest-question-text">{q.text}</p>
+                    {q.type === 'checkbox' && <p className="pretest-instruction">(Puedes marcar todas las que quieras)</p>}
+                    <div className="pretest-options-group">
+                        {q.options.map((option, index) => {
+                            const inputId = createInputId(q.id, index);
+                            // La estructura ahora es input y label como hermanos, no anidados.
+                            // Esto proporciona una asociación más fiable.
+                            return (
+                                <div key={inputId} className="radio-checkbox-item" onClick={() => handlePreTestAnswerChange(q.id, option, q.type)}>
+                                    <input
+                                        type={q.type}
+                                        id={inputId}
+                                        name={q.id}
+                                        value={option}
+                                        checked={q.type === 'radio' ? formData.preTestAnswers[q.id] === option : (formData.preTestAnswers[q.id] as string[] || []).includes(option)}
+                                        onChange={() => handlePreTestAnswerChange(q.id, option, q.type)}
+                                        disabled={isLoading}
+                                    />
+                                    <label htmlFor={inputId}>
+                                        {option}
+                                    </label>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </>
+            ) : (
+                <div className="practical-news-item">
+                    <div className="news-content">
+                        <h3>{q.news_item.headline}</h3>
+                        {q.news_item.body.split('\n').map((p, i) => p.trim() && <p key={i}>{p}</p>)}
+                        {q.news_item.source_hint && <small><em>{q.news_item.source_hint}</em></small>}
+                    </div>
+                    <div className="question-quantitative">
+                        <p className="pretest-question-text">{q.question_quantitative.text}</p>
+                        {q.question_quantitative.options.map((option, index) => {
+                            const answerKey = q.id + q.question_quantitative.id_q_suffix;
+                            const practicalInputId = createInputId(answerKey, index);
+                            return (
+                                <div key={practicalInputId} className="radio-checkbox-item" onClick={() => handlePreTestAnswerChange(answerKey, option, 'radio')}>
+                                    <input
+                                        type="radio"
+                                        id={practicalInputId}
+                                        name={answerKey}
+                                        value={option}
+                                        checked={formData.preTestAnswers[answerKey] === option}
+                                        onChange={() => handlePreTestAnswerChange(answerKey, option, 'radio')}
+                                        disabled={isLoading}
+                                    />
+                                    <label htmlFor={practicalInputId}>
+                                        {option}
+                                    </label>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <div className="question-qualitative">
+                        <p className="pretest-question-text">{q.question_qualitative.text}</p>
+                        <textarea
+                            name={`preTestAnswer_${q.id}${q.question_qualitative.id_q_suffix}`}
+                            value={formData.preTestAnswers[q.id + q.question_qualitative.id_q_suffix] as string || ''}
+                            onChange={handleInputChange}
+                            rows={3}
+                            disabled={isLoading}
+                            placeholder="Escribe aquí tu explicación..."
+                            style={{ width: '100%', marginTop: '5px', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', borderColor: '#ccc', fontFamily: 'inherit', fontSize: '0.95em' }}
+                        />
+                    </div>
+                </div>
+            )}
+            </div>
+        );
+    };
 
-    return (
-    <div className="profile-setup-wrapper">
-      <div style={{ padding: '20px', textAlign: 'center', borderBottom: '1px solid #eee' }}>
-        <button onClick={() => { setMode('register'); setStep('apodo'); setError(''); setFormData(initialFormData); }} disabled={mode === 'register' || isLoading} className={`button-mode ${mode === 'register' ? 'active' : ''}`} style={{ marginRight: '10px' }}>Registrarse</button>
-        <button onClick={() => { setMode('login'); setError(''); setFormData(initialFormData);}} disabled={mode === 'login' || isLoading} className={`button-mode ${mode === 'login' ? 'active' : ''}`}>Iniciar Sesión</button>
-      </div>
+    const renderPreTest = () => {
+        const sections: Record<string, AnyPreSurveyQuestion[]> = {
+          s1: preSurveyQuestions.filter(q => ['P1_Horas', 'P2_Plataformas', 'P3_Habilidad_Tech', 'P4_Charla_Peligros'].includes(q.id)),
+          s2: preSurveyQuestions.filter(q => ['P5_Habilidad_VF', 'P6_Dificultad_VF', 'P7_Estrategias', 'P8_Fuentes_Confianza', 'P9_Sospecha_Falsa', 'P10_Prob_Verdad'].includes(q.id)),
+          s3: preSurveyQuestions.filter(q => ['P11'].includes(q.id)),
+        };
 
-      {mode === 'login' && (
-        <div className="step-container login-view">
-          <h2>Iniciar Sesión</h2>
-          <form className="nickname-input-area" onSubmit={handleLoginSubmit}>
-            <input type="text" className="form-input" name="apodo" placeholder="Escribe tu nickname..." value={formData.apodo} onChange={handleInputChange} required disabled={isLoading} />
-            <input type="password" className="form-input" name="password" placeholder="Contraseña..." value={formData.password} onChange={handleInputChange} required disabled={isLoading} />
-            <button type="submit" className="form-button" disabled={isLoading}>{isLoading ? 'Iniciando...' : 'Entrar'}</button>
+        return (
+          <form onSubmit={(e) => handleRegisterNextStep(e)} style={{ maxWidth: '700px', width: '100%' }}>
+            <h2>Pequeño test inicial</h2>
+            <p className="intro-text-pimpoyo">¡Hola! Soy Pimpoyo. Antes de empezar nuestra aventura para ser detectives de noticias, quiero saber un poco sobre lo que ya conoces. ¡No es un examen, no hay respuestas buenas ni malas! Solo marca lo que piensas o haces normalmente. ¡Gracias por ayudarme!</p>
+
+            <h3>Sección 1: Sobre ti y cómo usas internet</h3>
+            {sections.s1.map(q => renderQuestion(q))}
+
+            <h3>Sección 2: ¿Cómo detectas noticias falsas?</h3>
+            {sections.s2.map(q => renderQuestion(q))}
+
+            <h3>Sección 3: ¡A practicar!</h3>
+            {sections.s3.map(q => renderQuestion(q))}
+
+            <p className="outro-text-pimpoyo">¡Listo! ¡Mil gracias por tus respuestas! Has ayudado mucho a Pimpoyo.</p>
+            <button type="submit" className="form-button" style={{ marginTop: '20px' }} disabled={isLoading}>Siguiente</button>
+            {error && <p className="error-message">{error}</p>}
           </form>
-          {error && <p className="error-message">{error}</p>}
-        </div>
-      )}
+        );
+    };
 
-      {mode === 'register' && (
-        <div className="register-flow">
-            {step === 'apodo' && ( <div className="step-container"><h2>¡Bienvenido/a a Pimpoyo!</h2><p>Por favor, introduce un nickname para empezar:</p><form className="nickname-input-area" onSubmit={handleRegisterNextStep}><input type="text" className="form-input" name="apodo" value={formData.apodo} onChange={handleInputChange} placeholder="Escribe tu nickname..." maxLength={20} required disabled={isLoading} /><button type="submit" className="form-button" disabled={isLoading}>Siguiente</button></form><div style={{ marginTop: '15px' }}><button type="button" className="switch-mode-link" disabled={isLoading} onClick={() => { setMode('login'); setError(''); setFormData(initialFormData); }}>¿Ya tienes cuenta? Inicia Sesión</button></div>{error && <p className="error-message">{error}</p>}</div>)}
-            {step === 'genero' && (<div className="step-container"><h2>Un poco más sobre ti...</h2><p>Selecciona tu género:</p><div className="nickname-input-area"><select className="form-select" name="genero" value={formData.genero} onChange={handleInputChange} required disabled={isLoading}><option value="">Selecciona...</option><option value="masculino">Masculino</option><option value="femenino">Femenino</option><option value="otro">Otro</option><option value="prefiero_no_decir">Prefiero no decirlo</option></select><button type="button" className="form-button" onClick={handleRegisterNextStep} disabled={isLoading || !formData.genero}>Siguiente</button></div>{error && <p className="error-message">{error}</p>}</div>)}
-            {step === 'edad' && (<div className="step-container"><h2>¡Casi listo!</h2><p>Introduce tu edad:</p><div className="nickname-input-area"><input type="number" className="form-input" name="edad" value={formData.edad} onChange={handleInputChange} placeholder="Tu edad..." required min="5" max="18" disabled={isLoading} /><button type="button" className="form-button" onClick={handleRegisterNextStep} disabled={isLoading || !formData.edad}>Siguiente</button></div>{error && <p className="error-message">{error}</p>}</div>)}
-            {step === 'curso' && (<div className="step-container"><h2>¿En qué curso estás?</h2><p>Esto nos ayudará a adaptar mejor el contenido.</p><div className="nickname-input-area"><select className="form-select" name="curso_escolar" value={formData.curso_escolar} onChange={handleInputChange} required disabled={isLoading}><option value="">Selecciona tu curso...</option><option value="5º de Primaria">5º de Primaria</option><option value="6º de Primaria">6º de Primaria</option><option value="1º de la ESO">1º de la ESO</option><option value="2º de la ESO">2º de la ESO</option><option value="Otro">Otro</option></select><button type="button" className="form-button" onClick={handleRegisterNextStep} disabled={isLoading || !formData.curso_escolar}>Siguiente</button></div>{error && <p className="error-message">{error}</p>}</div>)}
-            {step === 'pretest' && (<div className="step-container pretest-step-style">{renderPreTest()}</div>)}
-            {step === 'final' && (<div className="step-container final-step-style"><h2>Seguridad y Consentimiento</h2><form className="final-step-area" onSubmit={handleRegisterSubmit}><div className="form-field"><label htmlFor="register-password">Contraseña (mín. 6 caracteres):</label><input type="password" id="register-password" name="password" className="form-input" value={formData.password} onChange={handleInputChange} required disabled={isLoading} /></div><div className="form-field"><label htmlFor="register-confirmPassword">Confirmar Contraseña:</label><input type="password" id="register-confirmPassword" name="confirmPassword" className="form-input" value={formData.confirmPassword} onChange={handleInputChange} required disabled={isLoading} /></div><div className="form-field" style={{display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center'}}><input type="checkbox" id="register-consentimiento" name="consentimiento" checked={formData.consentimiento} onChange={handleInputChange} required disabled={isLoading} style={{ width: 'auto' }} /><label htmlFor="register-consentimiento">He leído y acepto el consentimiento informado.</label></div><div style={{textAlign: 'center'}}><button type="submit" className="form-button" disabled={isLoading}>{isLoading ? 'Registrando...' : 'Completar Registro'}</button></div></form>{error && <p className="error-message">{error}</p>}</div>)}
+    return (
+        <div className="profile-setup-wrapper">
+            <div style={{ padding: '20px', textAlign: 'center', borderBottom: '1px solid #eee' }}>
+                <button onClick={() => { setMode('register'); setStep('apodo'); setError(''); setFormData(initialFormData); }} disabled={mode === 'register' || isLoading} className={`button-mode ${mode === 'register' ? 'active' : ''}`} style={{ marginRight: '10px' }}>Registrarse</button>
+                <button onClick={() => { setMode('login'); setError(''); setFormData(initialFormData);}} disabled={mode === 'login' || isLoading} className={`button-mode ${mode === 'login' ? 'active' : ''}`}>Iniciar Sesión</button>
+            </div>
+
+            {mode === 'login' && (
+                <div className="step-container login-view">
+                    <h2>Iniciar Sesión</h2>
+                    <form className="nickname-input-area" onSubmit={handleLoginSubmit}>
+                        <input type="text" className="form-input" name="apodo" placeholder="Escribe tu nickname..." value={formData.apodo} onChange={handleInputChange} required disabled={isLoading} />
+                        <input type="password" className="form-input" name="password" placeholder="Contraseña..." value={formData.password} onChange={handleInputChange} required disabled={isLoading} />
+                        <button type="submit" className="form-button" disabled={isLoading}>{isLoading ? 'Iniciando...' : 'Entrar'}</button>
+                    </form>
+                    {error && <p className="error-message">{error}</p>}
+                </div>
+            )}
+
+            {mode === 'register' && (
+                <div className="register-flow">
+                    {step === 'apodo' && ( <div className="step-container"><h2>¡Bienvenido/a a Pimpoyo!</h2><p>Por favor, introduce un nickname para empezar:</p><form className="nickname-input-area" onSubmit={(e) => handleRegisterNextStep(e)}><input type="text" className="form-input" name="apodo" value={formData.apodo} onChange={handleInputChange} placeholder="Escribe tu nickname..." maxLength={20} required disabled={isLoading} /><button type="submit" className="form-button" disabled={isLoading}>Siguiente</button></form><div style={{ marginTop: '15px' }}><button type="button" className="switch-mode-link" disabled={isLoading} onClick={() => { setMode('login'); setError(''); setFormData(initialFormData); }}>¿Ya tienes cuenta? Inicia Sesión</button></div>{error && <p className="error-message">{error}</p>}</div>)}
+                    {step === 'genero' && (<div className="step-container"><h2>Un poco más sobre ti...</h2><p>Selecciona tu género:</p><div className="nickname-input-area"><select className="form-select" name="genero" value={formData.genero} onChange={handleInputChange} required disabled={isLoading}><option value="">Selecciona...</option><option value="masculino">Masculino</option><option value="femenino">Femenino</option><option value="otro">Otro</option><option value="prefiero_no_decir">Prefiero no decirlo</option></select><button type="button" className="form-button" onClick={handleRegisterNextStep} disabled={isLoading || !formData.genero}>Siguiente</button></div>{error && <p className="error-message">{error}</p>}</div>)}
+                    {step === 'edad' && (<div className="step-container"><h2>¡Casi listo!</h2><p>Introduce tu edad:</p><div className="nickname-input-area"><input type="number" className="form-input" name="edad" value={formData.edad} onChange={handleInputChange} placeholder="Tu edad..." required min="5" max="18" disabled={isLoading} /><button type="button" className="form-button" onClick={handleRegisterNextStep} disabled={isLoading || !formData.edad}>Siguiente</button></div>{error && <p className="error-message">{error}</p>}</div>)}
+                    {step === 'curso' && (<div className="step-container"><h2>¿En qué curso estás?</h2><p>Esto nos ayudará a adaptar mejor el contenido.</p><div className="nickname-input-area"><select className="form-select" name="curso_escolar" value={formData.curso_escolar} onChange={handleInputChange} required disabled={isLoading}><option value="">Selecciona tu curso...</option><option value="5º de Primaria">5º de Primaria</option><option value="6º de Primaria">6º de Primaria</option><option value="1º de la ESO">1º de la ESO</option><option value="2º de la ESO">2º de la ESO</option><option value="Otro">Otro</option></select><button type="button" className="form-button" onClick={handleRegisterNextStep} disabled={isLoading || !formData.curso_escolar}>Siguiente</button></div>{error && <p className="error-message">{error}</p>}</div>)}
+                    {step === 'pretest' && (<div className="step-container pretest-step-style">{renderPreTest()}</div>)}
+                    {step === 'final' && (<div className="step-container final-step-style"><h2>Seguridad y Consentimiento</h2><form className="final-step-area" onSubmit={handleRegisterSubmit}><div className="form-field"><label htmlFor="register-password">Contraseña (mín. 6 caracteres):</label><input type="password" id="register-password" name="password" className="form-input" value={formData.password} onChange={handleInputChange} required disabled={isLoading} /></div><div className="form-field"><label htmlFor="register-confirmPassword">Confirmar Contraseña:</label><input type="password" id="register-confirmPassword" name="confirmPassword" className="form-input" value={formData.confirmPassword} onChange={handleInputChange} required disabled={isLoading} /></div><div className="form-field" style={{display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center'}}><input type="checkbox" id="register-consentimiento" name="consentimiento" checked={formData.consentimiento} onChange={handleInputChange} required disabled={isLoading} style={{ width: 'auto' }} /><label htmlFor="register-consentimiento">He leído y acepto el consentimiento informado.</label></div><div style={{textAlign: 'center'}}><button type="submit" className="form-button" disabled={isLoading}>{isLoading ? 'Registrando...' : 'Completar Registro'}</button></div></form>{error && <p className="error-message">{error}</p>}</div>)}
+                </div>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 }
 
 export default ProfileSetup;

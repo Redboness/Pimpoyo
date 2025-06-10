@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
+import {
     faX, faLightbulb, faBook, faChartPie, faGear,
-    faUserSecret, faSearch, faCalendarDays, faBullhorn, faSpellCheck, 
+    faUserSecret, faSearch, faCalendarDays, faBullhorn, faSpellCheck,
     faBalanceScale, faUsers, faFaceAngry, faCircleQuestion
 } from '@fortawesome/free-solid-svg-icons';
 import { SidePanelProps, GlossaryTermPublic, UserDetailedStats } from '../../types/types';
@@ -152,7 +152,7 @@ function SidePanel({
       setIsStatsLoading(false);
     }
   }, [authToken]);
-  
+
   useEffect(() => {
     if (isOpen && activeSection === 'stats' && !isStatsLoading) {
       fetchUserStats();
@@ -281,13 +281,13 @@ function SidePanel({
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 
   const puedeHacerPostTest = userInfo &&
-                               (userInfo.puntuacion_pre_test !== null && userInfo.puntuacion_pre_test !== undefined) &&
-                               (userInfo.puntuacion_post_test === null || userInfo.puntuacion_post_test === undefined);
+                               (userInfo.puntuacion_pre_test_total !== null && userInfo.puntuacion_pre_test_total !== undefined) &&
+                               (userInfo.puntuacion_post_test_total === null || userInfo.puntuacion_post_test_total === undefined);
 
   const yaHizoPostTest = userInfo &&
-                               (userInfo.puntuacion_post_test !== null && userInfo.puntuacion_post_test !== undefined);
+                               (userInfo.puntuacion_post_test_total !== null && userInfo.puntuacion_post_test_total !== undefined);
 
-  const necesitaPreTest = userInfo && (userInfo.puntuacion_pre_test === null || userInfo.puntuacion_pre_test === undefined);
+  const necesitaPreTest = userInfo && (userInfo.puntuacion_pre_test_total === null || userInfo.puntuacion_pre_test_total === undefined);
 
   return (
     <div id="side-panel" className={`side-panel ${isOpen ? 'open' : ''}`}>
@@ -414,7 +414,7 @@ function SidePanel({
                     <p className="progress-text-completed">
                         ¡Ya completaste tu evaluación de progreso!
                         <br />
-                        Puntuación: {userInfo.puntuacion_post_test?.toFixed(2)}%
+                        Puntuación: {userInfo.puntuacion_post_test_total?.toFixed(2)}%
                     </p>
                 )}
             </div>

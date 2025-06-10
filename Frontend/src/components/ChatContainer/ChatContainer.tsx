@@ -496,7 +496,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
             // Si encuentra una fecha en el enlace...
             if (match) {
                const date = new Date(parseInt(match[1], 10), parseInt(match[2], 10) - 1, parseInt(match[3], 10));
-                
+
                 const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
                 return ` • ${date.toLocaleDateString('es-ES', options)}`;
             }
@@ -575,7 +575,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
         setIsSingleNewsAnalysisMode(true);
 
         setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `Analicemos esta noticia:` } : msg));
-        
+
         const newsItemForDisplay: NewsItem = {
             ID: newsToAnalyze.noticia_id_json,
             HEADLINE: newsToAnalyze.headline,
@@ -589,7 +589,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
 
         const newsCardHtml = createMobileViewHtml(newsItemForDisplay);
         const finalHtml = `<div class="single-news-wrapper">${newsCardHtml}</div>`;
-        
+
         addBotResponse(null, [], 100, undefined, finalHtml);
 
         setTimeout(() => {
@@ -610,7 +610,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
     } finally {
         setIsLoadingNews(false);
     }
-    
+
     const introId = addBotResponse(introMessage, [], 0);
 
     if (shouldUseSingleAnalysis) {
@@ -1154,12 +1154,12 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
 
   // Comentario encima de la función startPostTest
   const startPostTest = useCallback(() => {
-    if (currentUserInfo && (currentUserInfo.puntuacion_pre_test === null || currentUserInfo.puntuacion_pre_test === undefined)) {
+    if (currentUserInfo && (currentUserInfo.puntuacion_pre_test_total === null || currentUserInfo.puntuacion_pre_test_total === undefined)) {
         addBotResponse("Para evaluar tu progreso, primero necesitas completar un pequeño test inicial. Si no lo has hecho y quieres hacerlo, pregúntame por el 'pre-test'.", [], 300);
         return;
     }
-    if (currentUserInfo && currentUserInfo.puntuacion_post_test !== null && currentUserInfo.puntuacion_post_test !== undefined){
-        addBotResponse(`¡Genial! Parece que ya completaste tu evaluación de progreso. Tu puntuación fue: **${currentUserInfo.puntuacion_post_test.toFixed(2)}%**. ¿Listo para más desafíos o aprender algo nuevo?`, [], 300);
+    if (currentUserInfo && currentUserInfo.puntuacion_post_test_total !== null && currentUserInfo.puntuacion_post_test_total !== undefined){
+        addBotResponse(`¡Genial! Parece que ya completaste tu evaluación de progreso. Tu puntuación fue: **${currentUserInfo.puntuacion_post_test_total.toFixed(2)}%**. ¿Listo para más desafíos o aprender algo nuevo?`, [], 300);
         return;
     }
     console.log("Iniciando Post-Test desde ChatContainer");
