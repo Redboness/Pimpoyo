@@ -233,6 +233,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>('bajo');
   const [correctStreak, setCorrectStreak] = useState<number>(0);
   const [incorrectStreak, setIncorrectStreak] = useState<number>(0);
+  const [lastChallengeType, setLastChallengeType] = useState<'pair' | 'guided' | null>(null);
 
   const [isSingleNewsAnalysisMode, setIsSingleNewsAnalysisMode] = useState<boolean>(false);
   const [singleNewsAnalysisData, setSingleNewsAnalysisData] = useState<NoticiaParaAnalisis | null>(null);
@@ -244,8 +245,8 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const [isPostTestMode, setIsPostTestMode] = useState<boolean>(false);
 
   const [isTipChallengeActive, setIsTipChallengeActive] = useState<boolean>(false);
-  const [selectedTermForSidePanel, setSelectedTermForSidePanel] = useState<string | null>(null); // <--- NUEVO ESTADO
-  const [initialPanelSection, setInitialPanelSection] = useState<string | null>(null); // <--- NUEVO ESTADO para la sección inicial
+  const [selectedTermForSidePanel, setSelectedTermForSidePanel] = useState<string | null>(null);
+  const [initialPanelSection, setInitialPanelSection] = useState<string | null>(null);
 
 
   // Comentario encima de la función fetchUserInfo
@@ -315,7 +316,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
 
   // Comentario encima de la función togglePanel
   const togglePanel = () => {
-    if (isPanelOpen) { // Si el panel se va a cerrar
+    if (isPanelOpen) {
       setSelectedTermForSidePanel(null);
       setInitialPanelSection(null);
     }
@@ -325,8 +326,8 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   // Comentario encima de la función closePanel
   const closePanel = () => {
     setIsPanelOpen(false);
-    setSelectedTermForSidePanel(null); // Resetea al cerrar
-    setInitialPanelSection(null);    // Resetea al cerrar
+    setSelectedTermForSidePanel(null);
+    setInitialPanelSection(null);
   };
 
   // Comentario encima de la función handleSettingsSaved
@@ -369,15 +370,15 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       if (onMessageAdded) onMessageAdded(botMsgId);
     }, delay);
     return botMsgId;
-  }, [BOT_AVATAR_URL, setMessages, setIsBotTyping]); // Eliminado BOT_AVATAR_URL de dependencias si es constante global
+  }, []);
 
-  // Define el manejador del clic para los términos del glosario
+  // Comentario encima de la función handleGlossaryTermClick
   const handleGlossaryTermClick = useCallback((term: string) => {
     console.log(`Término del glosario "${term}" clickeado/activado desde ChatContainer.`);
     setSelectedTermForSidePanel(term);
-    setInitialPanelSection('glossary'); // Indica al SidePanel que se abra en la sección 'glossary'
-    setIsPanelOpen(true);             // Abre el SidePanel
-  }, [setIsPanelOpen, setSelectedTermForSidePanel, setInitialPanelSection]); // Dependencias del useCallback
+    setInitialPanelSection('glossary');
+    setIsPanelOpen(true);
+  }, []);
 
 
   // Comentario encima de la función displayTipAndChallenge
@@ -390,7 +391,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     const processedTipContent = processTextForGlossary(
       rawTipText,
       glossaryForProcessing,
-      handleGlossaryTermClick // <--- USA EL NUEVO MANEJADOR AQUÍ
+      handleGlossaryTermClick
     );
 
     let challengeCardPayload: TipChallengeCard | null = null;
@@ -427,7 +428,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       <>{processedTipContent}</>
     );
 
-  }, [addBotResponse, setIsTipChallengeActive, handleGlossaryTermClick, glossaryForProcessing]); // Añade handleGlossaryTermClick y glossaryForProcessing
+  }, [addBotResponse, setIsTipChallengeActive, handleGlossaryTermClick]);
 
 
   // Comentario encima de la función increaseDifficulty
@@ -456,47 +457,20 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     setIsAwaitingInitialAnalysis(false);
   }, []);
 
-  // Comentario encima de la función processTwoNewsChallenge
-  const processTwoNewsChallenge = useCallback((currentNewsData: NewsItem[], introId: string | number) => {
-    const newsAtCurrentLevel = currentNewsData.filter(item => item.DIFFICULTY_LEVEL === difficultyLevel);
-    const trueNewsFiltered = newsAtCurrentLevel.filter(item => item.CATEGORY === 'TRUE');
-    const falseNewsFiltered = newsAtCurrentLevel.filter(item => item.CATEGORY === 'FALSE');
-
-    if (trueNewsFiltered.length === 0 || falseNewsFiltered.length === 0) {
-        const missingType = trueNewsFiltered.length === 0 ? 'verdaderas' : 'falsas';
-        setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Vaya! No encontré suficientes noticias ${missingType} de nivel "${difficultyLevel}" para este desafío.` } : msg));
-        addBotResponse("¿Quieres intentar con otro nivel o hacer otra cosa?", [
-            { id: "btn-tips-again", text: "Ver tips" }, { id: "btn-talk-again", text: "Sólo Charlar" },
-        ], 300);
-        setIsLoadingNews(false);
-        return;
-    }
-    const selectedTrueNews = trueNewsFiltered[Math.floor(Math.random() * trueNewsFiltered.length)];
-    const selectedFalseNews = falseNewsFiltered[Math.floor(Math.random() * falseNewsFiltered.length)];
-    const showTrueOnLeft = Math.random() < 0.5;
-    const leftNewsItem = showTrueOnLeft ? selectedTrueNews : selectedFalseNews;
-    const rightNewsItem = showTrueOnLeft ? selectedFalseNews : selectedTrueNews;
-const createMobileViewHtml = (newsItem: NewsItem): string => {
-    // Función para escapar caracteres HTML y evitar problemas de seguridad o visuales
+  // Comentario encima de la función createMobileViewHtml
+  const createMobileViewHtml = (newsItem: NewsItem): string => {
     const escapeHtml = (unsafe: string | null | undefined): string => {
         if (!unsafe) return '';
         return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     };
 
-    // Nueva función que busca y formatea la fecha desde el LINK
     const extractAndFormatDateFromLink = (link: string | undefined | null): string => {
-        if (!link) {
-            return ""; // Si no hay enlace, no hace nada
-        }
+        if (!link) return "";
         try {
-            // Esta expresión busca un patrón de fecha como /AAAA/MM/DD/ o /AAAA-MM-DD/
             const dateRegex = /(\d{4})[\/-](\d{2})[\/-](\d{2})/;
             const match = link.match(dateRegex);
-
-            // Si encuentra una fecha en el enlace...
             if (match) {
                const date = new Date(parseInt(match[1], 10), parseInt(match[2], 10) - 1, parseInt(match[3], 10));
-
                 const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
                 return ` • ${date.toLocaleDateString('es-ES', options)}`;
             }
@@ -535,7 +509,29 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
         </div>
       </div>
     `;
-};
+  };
+
+  // Comentario encima de la función processTwoNewsChallenge
+  const processTwoNewsChallenge = useCallback((currentNewsData: NewsItem[], introId: string | number) => {
+    const newsAtCurrentLevel = currentNewsData.filter(item => item.DIFFICULTY_LEVEL === difficultyLevel);
+    const trueNewsFiltered = newsAtCurrentLevel.filter(item => item.CATEGORY === 'TRUE');
+    const falseNewsFiltered = newsAtCurrentLevel.filter(item => item.CATEGORY === 'FALSE');
+
+    if (trueNewsFiltered.length === 0 || falseNewsFiltered.length === 0) {
+        const missingType = trueNewsFiltered.length === 0 ? 'verdaderas' : 'falsas';
+        setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Vaya! No encontré suficientes noticias ${missingType} de nivel "${difficultyLevel}" para este desafío.` } : msg));
+        addBotResponse("¿Quieres intentar con otro nivel o hacer otra cosa?", [
+            { id: "btn-tips-again", text: "Ver tips" }, { id: "btn-talk-again", text: "Sólo Charlar" },
+        ], 300);
+        setIsLoadingNews(false);
+        return;
+    }
+    const selectedTrueNews = trueNewsFiltered[Math.floor(Math.random() * trueNewsFiltered.length)];
+    const selectedFalseNews = falseNewsFiltered[Math.floor(Math.random() * falseNewsFiltered.length)];
+    const showTrueOnLeft = Math.random() < 0.5;
+    const leftNewsItem = showTrueOnLeft ? selectedTrueNews : selectedFalseNews;
+    const rightNewsItem = showTrueOnLeft ? selectedFalseNews : selectedTrueNews;
+
     const leftHtml = createMobileViewHtml(leftNewsItem);
     const rightHtml = createMobileViewHtml(rightNewsItem);
     const combinedHtml = `<div class="news-challenge-container">${leftHtml}${rightHtml}</div>`;
@@ -556,61 +552,11 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
     setNewsChallengeState(null);
     setIsTipChallengeActive(false);
 
-    const shouldUseSingleAnalysis = forceSingleAnalysisMode || (
-        (difficultyLevel === 'medio' || difficultyLevel === 'alto') && Math.random() < 0.6
-    );
+    // Lógica para alternar desafíos: si el último fue 'pair', el siguiente es 'guided' (análisis único).
+    // Si fue 'guided' o es el primero (null), el siguiente es 'pair'.
+    const shouldUseSingleAnalysis = lastChallengeType === 'pair';
 
     let introMessage = `Buscando desafío...`;
-    try {
-        const response = await fetch('/api/activity/guided-analysis/next-news', {
-            headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-        if (response.status === 401) { onLogout(); throw new Error("Sesión expirada."); }
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ detail: `Error ${response.status}` }));
-            throw new Error(errorData.detail || `No se pudo cargar la noticia para análisis: ${response.status}`);
-        }
-        const newsToAnalyze: NoticiaParaAnalisis = await response.json();
-        setSingleNewsAnalysisData({...newsToAnalyze, initialUserEvaluation: undefined });
-        setIsSingleNewsAnalysisMode(true);
-
-        setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `Analicemos esta noticia:` } : msg));
-
-        const newsItemForDisplay: NewsItem = {
-            ID: newsToAnalyze.noticia_id_json,
-            HEADLINE: newsToAnalyze.headline,
-            TEXT: newsToAnalyze.text,
-            SOURCE: newsToAnalyze.source || 'Fuente no especificada',
-            TOPICS: newsToAnalyze.difficulty_level || 'Análisis',
-            LINK: '',
-            CATEGORY: 'TRUE',
-            DIFFICULTY_LEVEL: 'medio'
-        };
-
-        const newsCardHtml = createMobileViewHtml(newsItemForDisplay);
-        const finalHtml = `<div class="single-news-wrapper">${newsCardHtml}</div>`;
-
-        addBotResponse(null, [], 100, undefined, finalHtml);
-
-        setTimeout(() => {
-            addBotResponse(
-                "Léela con atención. Cuando estés listo/a, dime: ¿Crees que esta noticia es Verdadera o Falsa? Y, lo más importante, ¿por qué piensas eso? Escribe tu análisis completo aquí abajo.",
-                [], 300
-            );
-            setIsAwaitingInitialAnalysis(true);
-        }, 1200);
-
-    } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : "Error desconocido";
-        if (errorMsg !== "Sesión expirada.") {
-            setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! No pude cargar una noticia para analizar (${errorMsg}).` } : msg));
-            addBotResponse("¿Probamos otra cosa?", [{ id: "btn-news-again", text: "Otro desafío" }, { id: "btn-talk-again", text: "Sólo charlar" }], 300);
-        }
-        resetSingleAnalysisMode();
-    } finally {
-        setIsLoadingNews(false);
-    }
-
     const introId = addBotResponse(introMessage, [], 0);
 
     if (shouldUseSingleAnalysis) {
@@ -618,6 +564,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
             const response = await fetch('/api/activity/guided-analysis/next-news', {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
+            if (response.status === 401) { onLogout(); throw new Error("Sesión expirada."); }
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ detail: `Error ${response.status}` }));
                 throw new Error(errorData.detail || `No se pudo cargar la noticia para análisis: ${response.status}`);
@@ -626,17 +573,23 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
             setSingleNewsAnalysisData({...newsToAnalyze, initialUserEvaluation: undefined });
             setIsSingleNewsAnalysisMode(true);
 
-            setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `Analicemos esta noticia:` } : msg));
+            setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Vamos a analizar esta noticia!` } : msg));
 
-            const newsHtml = `
-                <div class="single-news-display" style="background-color: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-top: 10px;">
-                    <h2>${newsToAnalyze.headline}</h2>
-                    ${newsToAnalyze.source ? `<p style="font-style: italic; color: #555; font-size: 0.9em;">Fuente: ${newsToAnalyze.source}</p>` : ''}
-                    <div class="single-news-text-scroll" style="max-height: 200px; overflow-y: auto; margin-top: 10px; line-height: 1.5;">
-                        ${newsToAnalyze.text.split('\n').filter((p: string) => p.trim() !== '').map((p: string) => `<p>${p}</p>`).join('')}
-                    </div>
-                </div>`;
-            addBotResponse(null, [], 100, undefined, newsHtml);
+            const newsItemForDisplay: NewsItem = {
+                ID: newsToAnalyze.noticia_id_json,
+                HEADLINE: newsToAnalyze.headline,
+                TEXT: newsToAnalyze.text,
+                SOURCE: newsToAnalyze.source || 'Fuente no especificada',
+                TOPICS: newsToAnalyze.difficulty_level || 'Análisis',
+                LINK: '',
+                CATEGORY: 'TRUE', // No relevante para la vista, pero requerido por el tipo
+                DIFFICULTY_LEVEL: 'medio' // No relevante para la vista
+            };
+
+            const newsCardHtml = createMobileViewHtml(newsItemForDisplay);
+            const finalHtml = `<div class="single-news-wrapper">${newsCardHtml}</div>`;
+
+            addBotResponse(null, [], 100, undefined, finalHtml);
 
             setTimeout(() => {
                 addBotResponse(
@@ -649,15 +602,16 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
         } catch (error) {
             console.error("Error fetching single news for analysis:", error);
             const errorMsg = error instanceof Error ? error.message : "Error desconocido";
-            setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! No pude cargar una noticia para analizar (${errorMsg}).` } : msg));
-            addBotResponse("¿Probamos otra cosa?", [
-                { id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" },
-            ], 300);
+            if (errorMsg !== "Sesión expirada.") {
+              setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! No pude cargar una noticia para analizar (${errorMsg}).` } : msg));
+              addBotResponse("¿Probamos otra cosa?", [{ id: "btn-news-again", text: "Otro desafío" }, { id: "btn-talk-again", text: "Sólo charlar" }], 300);
+            }
             resetSingleAnalysisMode();
         } finally {
             setIsLoadingNews(false);
         }
     } else {
+        // Lógica para el desafío de par (Verdadero/Falso)
         if (!newsData) {
              try {
                 const response = await fetch('/api/news/challenge', { headers: { 'Authorization': `Bearer ${authToken}` } });
@@ -677,7 +631,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
              processTwoNewsChallenge(newsData, introId);
         }
     }
-  }, [authToken, difficultyLevel, addBotResponse, resetSingleAnalysisMode, processTwoNewsChallenge, newsData, setMessages, setIsLoadingNews, setChatError, setNewsData, setNewsChallengeState, setIsTipChallengeActive, setSingleNewsAnalysisData, setIsSingleNewsAnalysisMode, setIsAwaitingInitialAnalysis]);
+  }, [authToken, addBotResponse, resetSingleAnalysisMode, processTwoNewsChallenge, newsData, onLogout, lastChallengeType, createMobileViewHtml]);
 
   // Comentario encima de la función handleMessageButtonClick
   const handleMessageButtonClick = useCallback(async (messageId: number | string, buttonId: string) => {
@@ -754,6 +708,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
       resetSingleAnalysisMode();
       setNewsChallengeState(null);
       setIsTipChallengeActive(false);
+      setLastChallengeType(null); // Reinicia el flujo de desafíos
 
       if (buttonId === "btn-tips") addUserChoiceMessage("Quiero TIPS Y CONSEJOS");
       else addUserChoiceMessage("Repasar los Tips");
@@ -781,6 +736,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
             { id: "btn-news-again", text: "Siguiente desafío" },
             { id: "btn-talk-again", text: "Sólo charlar" },
           ], 500);
+          setLastChallengeType('guided'); // Registra que el último desafío fue guiado
 
         } catch (error) {
             setIsBotTyping(false);
@@ -800,6 +756,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
         addBotResponse("¿Qué hacemos ahora?", [
             { id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" },
         ], 300);
+        setLastChallengeType('guided'); // Registra que el último desafío fue guiado
         resetSingleAnalysisMode();
         return;
     }
@@ -815,6 +772,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
       setIsFreeChatMode(true);
       resetSingleAnalysisMode();
       setIsTipChallengeActive(false);
+      setLastChallengeType(null); // Reinicia el flujo de desafíos
       addUserChoiceMessage(buttonId === "btn-talk" ? "Prefiero SÓLO CHARLAR" : "Sólo Charlar un rato");
       addBotResponse("¡Claro! ¿De qué te gustaría hablar hoy?", []);
       setNewsChallengeState(null);
@@ -824,7 +782,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
     if (buttonId === "btn-tip-understood") {
       addUserChoiceMessage("¡Entendido, Pimpoyo!");
       addBotResponse("¡Genial! Recordar estos consejos te ayudará mucho a ser un gran detective de noticias. 👍 \n\n¿Qué quieres hacer ahora?", [
-        { id: "btn-news-again", text: "" },
+        { id: "btn-news-again", text: "Descifrar noticias" },
         { id: "btn-talk-again", text: "Sólo Charlar" },
         { id: "btn-tips-again", text: "Repasar los Tips" }
       ]);
@@ -901,13 +859,13 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
             tempCorrectStreak = correctStreak + 1;
             setCorrectStreak(prev => prev + 1);
             setIncorrectStreak(0);
-            if (tempCorrectStreak >= 3) {
+            if (tempCorrectStreak >= 2) { // <- CAMBIO: La racha para subir de nivel es 2
                 if (increaseDifficulty()) {
-                    difficultyChangedMessage = "¡Tres seguidas! 😎 ¡Subimos un poco la dificultad!";
+                    difficultyChangedMessage = "¡Dos seguidas! 😎 ¡Subimos un poco la dificultad!";
                     setCorrectStreak(0);
                     tempCorrectStreak = 0;
                 } else {
-                   if (tempCorrectStreak % 3 === 0) {
+                   if (tempCorrectStreak % 2 === 0) { // <- CAMBIO: Racha en nivel máximo
                         difficultyChangedMessage = "¡Imparable! Sigues dominando el nivel más alto. 🔥";
                    }
                 }
@@ -950,14 +908,15 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
             { id: "btn-tips-again", text: "Ver tips" },
             { id: "btn-talk-again", text: "Sólo charlar" }
         ];
-        const isThreeStreakSpecialAndLevelUp = isCorrectBackend && tempCorrectStreak > 0 && tempCorrectStreak % 3 === 0 && difficultyChangedMessage && difficultyChangedMessage.includes("¡Subimos un poco la dificultad!");
 
-        if (isThreeStreakSpecialAndLevelUp) { // Esto debería ser tempCorrectStreak === 0 porque se reseteó
+        const isLevelUp = difficultyChangedMessage && difficultyChangedMessage.includes("¡Subimos un poco la dificultad!");
+        if (isLevelUp) {
              nextStepButtons[0].text = "Siguiente desafío (¡Nivel subido!)";
         }
 
 
         addBotResponse("¿Qué quieres hacer ahora?", nextStepButtons, feedbackPresentationDelay + 300);
+        setLastChallengeType('pair'); // Registra que el último desafío fue de par
       } catch (error) {
         setIsBotTyping(false);
         setMessages(prev => prev.filter(m => m.id !== veamosId));
@@ -971,11 +930,9 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
     }
   }, [
     authToken, addUserChoiceMessage, addBotResponse, presentNewsChallenge, newsChallengeState,
-    correctStreak, incorrectStreak, increaseDifficulty, decreaseDifficulty, difficultyLevel,
+    correctStreak, incorrectStreak, increaseDifficulty, decreaseDifficulty,
     isSingleNewsAnalysisMode, currentGuidedChatSessionId, displayTipAndChallenge,
-    setMessages, setIsBotTyping, resetSingleAnalysisMode, setIsTipChallengeActive, setNewsChallengeState,
-    glossaryForProcessing, handleGlossaryTermClick, // Añadidas para displayTipAndChallenge
-    setIsPanelOpen, setSelectedTermForSidePanel, setInitialPanelSection // Añadidas para handleGlossaryTermClick
+    setMessages, setIsBotTyping, resetSingleAnalysisMode, setIsTipChallengeActive, setNewsChallengeState
   ]);
 
   // Comentario encima de la función handleSendMessage
@@ -1171,7 +1128,7 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
     resetSingleAnalysisMode();
     setNewsChallengeState(null);
     setIsTipChallengeActive(false);
-  }, [currentUserInfo, messages, addBotResponse, resetSingleAnalysisMode, setMessages, setIsPostTestMode, setIsFreeChatMode, setNewsChallengeState, setIsTipChallengeActive]);
+  }, [currentUserInfo, messages, addBotResponse, resetSingleAnalysisMode]);
 
   // Comentario encima de la función handleRefresh
   const handleRefresh = () => {
@@ -1194,10 +1151,11 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
       setIncorrectStreak(0);
       setGuidedAnalysesSubmitted(0);
       setIsTipChallengeActive(false);
+      setLastChallengeType(null); // Reinicia el flujo de desafíos
     } else if (!authToken) {
         onLogout();
     }
-    closePanel(); // closePanel ahora resetea selectedTermForSidePanel e initialPanelSection
+    closePanel();
   };
 
   let determinedChatInputDisabled = isLoadingNews || isBotTyping || isPostTestMode || isTipChallengeActive;
@@ -1276,8 +1234,8 @@ const createMobileViewHtml = (newsItem: NewsItem): string => {
         onLogout={onLogout}
         onSettingsSaved={handleSettingsSaved}
         onStartPostTest={startPostTest}
-        selectedTerm={selectedTermForSidePanel} // <--- PASA LA PROP
-        initialSection={initialPanelSection}   // <--- PASA LA PROP
+        selectedTerm={selectedTermForSidePanel}
+        initialSection={initialPanelSection}
       />
     </div>
   );
