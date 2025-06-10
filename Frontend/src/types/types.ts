@@ -140,6 +140,7 @@ export interface NoticiaParaAnalisis {
     headline: string;
     text: string;
     source?: string | null;
+    topics?: string | null;
     difficulty_level?: string | null;
     initialUserEvaluation?: 'TRUE' | 'FALSE' | 'UNSURE' | null;
 }

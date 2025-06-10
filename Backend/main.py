@@ -622,7 +622,7 @@ async def get_next_guided_analysis_news_endpoint(current_user: UsuarioInDB = Dep
     return NoticiaParaAnalisis(
         noticia_id_json=sel_news_data_val["ID"], headline=sel_news_data_val.get("HEADLINE", "Sin titular"),
         text=sel_news_data_val.get("TEXT", "Sin texto"), source=sel_news_data_val.get("SOURCE"),
-        difficulty_level=sel_news_data_val.get("DIFFICULTY_LEVEL"), area_de_enfoque_sugerida=focus_frontend_val
+        difficulty_level=sel_news_data_val.get("DIFFICULTY_LEVEL"), topics=sel_news_data_val.get("TOPICS"), area_de_enfoque_sugerida=focus_frontend_val
     )
 
 @guided_analysis_router.post("/explain", response_model=ChatGuiaResponse)

@@ -132,6 +132,7 @@ class NoticiaParaAnalisis(BaseModel):
     headline: str
     text: str
     source: Optional[str] = None
+    topics: Optional[str] = None
     difficulty_level: Optional[str] = None
     area_de_enfoque_sugerida: Optional[str] = None
 

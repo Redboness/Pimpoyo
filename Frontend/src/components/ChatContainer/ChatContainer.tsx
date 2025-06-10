@@ -24,7 +24,7 @@ import {
   TipChallengeCard
 } from "../../types/types";
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { processTextForGlossary } from "../Utils/glossaryUtils"; // Asumiendo que si lo renombraste a .tsx, la importación se resuelve bien.
+import { processTextForGlossary } from "../Utils/glossaryUtils";
 
 interface ChatContainerProps {
   authToken: string;
@@ -55,96 +55,96 @@ interface Tip {
 }
 
 const tips: Tip[] = [
-  {
-    title: "**CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️**",
-    text: "Imagina que la [[Fuente (de información)|fuente]] de una noticia es como la persona que te cuenta un secreto. ¿Confiarías en cualquiera?\n\nPor eso, **fíjate siempre en** ¿quién publica la noticia? Pregúntate: ¿Es un periódico conocido como El País o El Mundo, una cadena de televisión como RTVE, o una agencia internacional [[Fiable|fiable]] como BBC News o Euronews? Cuando Pimpoyo y tú analicéis una noticia, él te ayudará a ver si su fuente es de este tipo.\n\n**¡Importante!** Si la fuente es una web que no conoces, te parece extraña, o es un blog personal sin referencias claras, ¡investiga un poco sobre ella antes de creer la noticia! Una fuente desconocida es una señal de alerta.",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si ves una noticia en \"SuperNoticiasFiables.com\" y otra en la web oficial de \"RTVE Noticias\", ¿cuál te parece más fiable a primera vista?",
-      options: [ { id: "c1_opt1", text: "SuperNoticiasFiables punto com", isCorrect: false }, { id: "c1_opt2", text: "RTVE Noticias", isCorrect: true }, { id: "c1_opt3", text: "Las dos igual", isCorrect: false }, ],
-      feedbackCorrect: "¡Exacto! RTVE Noticias es una fuente conocida y establecida, lo que la hace más fiable a primera vista. De la otra web, como no la conocemos mucho y su nombre suena un poco exagerado, haríamos bien en investigar más antes de confiar. ¡Bien visto!",
-      feedbackIncorrect: "Es una buena idea fijarse en los nombres. \"SuperNoticiasFiables punto com\" suena muy convincente, ¿verdad? Pero a veces, los sitios menos conocidos pueden no ser tan fiables como las cadenas de noticias establecidas como RTVE, que tienen equipos de periodistas. ¡Es bueno dudar un poquito de las fuentes que no conocemos bien!"
-    }
-  },
-  {
-    title: "**CONSEJO 2: ¡COMPARA, COMPARA! 🆚**",
-    text: "No te quedes solo con una versión de la historia, ¡como si solo escucharas a un amigo en una discusión!\n\nPor eso, **es clave que te fijes en esto:** [[Verificar|verifica]] la noticia buscando si otros medios conocidos y fiables también la cuentan. Por ejemplo, puedes [[Contrastar|contrastar]] lo que lees con lo que publican periódicos importantes de España, cadenas de televisión públicas, o fuentes de noticias internacionales reconocidas, como las que mencionamos en el primer consejo.\n\n**¡Importante!** Si muchos medios serios y diferentes cuentan la misma historia, es más probable que sea cierta. Pero si solo la encuentras en un sitio poco conocido o en blogs sin referencias claras, ¡es una gran pista para dudar! Podría ser un [[Bulo|bulo]].",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si lees una noticia sorprendente sobre tu juego favorito solo en un pequeño blog que nadie conoce, ¿qué sería lo primero que harías según este consejo?",
-      options: [ { id: "c2_opt1", text: "Creérmela y compartirla rápido", isCorrect: false }, { id: "c2_opt2", text: "Buscarla en otros sitios de noticias más grandes", isCorrect: true }, { id: "c2_opt3", text: "No hacer nada, seguro es mentira", isCorrect: false }, ],
-      feedbackCorrect: "¡Muy bien! Lo primero sería buscar si otros sitios de noticias más grandes y conocidos también hablan de ello. Si no encuentras nada más, es una buena razón para sospechar que quizás no sea del todo cierta. ¡Esa es una gran estrategia de detective!",
-      feedbackIncorrect: "Compartirla rápido puede ser tentador si la noticia es emocionante, ¡lo entiendo! Pero recuerda este consejo: si solo la has visto en un sitio pequeño y desconocido, es mejor buscarla primero en otros medios más grandes y fiables. Así te aseguras de no difundir un bulo."
-    }
-  },
-  {
-    title: "**CONSEJO 3: ¡OJO A LA FECHA! 📅**",
-    text: "Las noticias son como el pan, ¡mejor si son frescas y del día! Cuando analices una noticia con Pimpoyo, él podría preguntarte por la fecha.\n\nAsí que, **fíjate bien en** la fecha en la que se publicó.\n\n**¡Importante!** A veces, noticias muy antiguas (¡incluso de hace años!) se comparten como si fueran nuevas para engañar o crear confusión. Esto es una táctica común de las [[Noticia falsa|noticias falsas]]. Sacar algo de [[Contexto|contexto]] es muy habitual. ¡Que no te den gato por liebre!",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si un amigo te manda una noticia increíble sobre un descubrimiento espacial, pero ves que la fecha es de hace 5 años, ¿qué pensarías?",
-      options: [ { id: "c3_opt1", text: "¡Qué guay! Sigue siendo un gran descubrimiento.", isCorrect: false }, { id: "c3_opt2", text: "Que es vieja y quizás ya no es tan 'noticia'.", isCorrect: true }, { id: "c3_opt3", text: "Que seguro es falsa porque es antigua.", isCorrect: false }, ],
-      feedbackCorrect: "¡Exacto! Pensarías que, aunque pudo ser verdad en su momento, quizás ya no es una \"novedad\" o la situación ha cambiado. Las noticias viejas a veces se sacan de contexto. ¡Buen trabajo fijándote en la fecha!",
-      feedbackIncorrect: "Es verdad que un descubrimiento puede seguir siendo interesante, ¡pero la fecha es una pista muy importante! Una noticia de hace 5 años podría no contar toda la historia actual o usarse para confundir. Siempre es bueno preguntarse si una noticia tan antigua sigue siendo relevante hoy."
-    }
-  },
-  {
-    title: "**CONSEJO 4: TITULARES CON TRAMPA 🎣**",
-    text: "Algunos [[Titular|titulares]] son como un cebo brillante para pescar tu atención: ¡muy exagerados, alarmistas o sorprendentes! Pimpoyo a veces te preguntará: \"¿El titular parece muy exagerado?\".\n\nEntonces, **fíjate bien:** ¿El titular es demasiado increíble para ser verdad o busca generar una emoción muy fuerte? Lee siempre la noticia entera, no solo el titular, y pregúntate: ¿El texto cuenta lo mismo que el titular o lo exagera mucho?\n\n**¡Importante!** Esto se llama [[Clickbait|clickbait]]. Muchas veces, estos titulares esconden [[Fake news|noticias falsas]] o de poca calidad. Quieren tu clic, no informarte bien.",
-    challenge: {
-      question: "*Pimpoyo te reta:* ¿Cuál de estos titulares te parece más 'clickbait'?\nA) \"Descubren nueva especie de mariposa en el Amazonas\"\nB) \"¡ALUCINANTE! ¡CIENTÍFICOS CREAN MARIPOSA GIGANTE QUE HABLA! (NO TE LO CREERÁS)\"",
-      options: [ { id: "c4_opt1", text: "El titular A", isCorrect: false }, { id: "c4_opt2", text: "El titular B", isCorrect: true }, ],
-      feedbackCorrect: "¡Correcto! El titular B es súper exagerado, usa mayúsculas y frases como \"NO TE LO CREERÁS\" para llamar mucho la atención. Eso es típico del clickbait. El titular A, en cambio, suena más informativo y calmado. ¡Bien detectado!",
-      feedbackIncorrect: "El titular A suena interesante, ¿verdad? Pero fíjate en el B: las mayúsculas, los signos de exclamación, y que diga \"NO TE LO CREERÁS\" son pistas de que intenta ser muy llamativo, ¡quizás demasiado! Eso es el 'clickbait'. Busca más el clic que informar con seriedad."
-    }
-  },
-  {
-    title: "**CONSEJO 5: ¿ESTÁ BIEN ESCRITO? ✍️**",
-    text: "Las noticias de verdad suelen estar escritas con cuidado, ¡como un buen libro!\n\nPor eso, **fíjate en detalles como:** ¿Hay muchas faltas de ortografía? ¿Las frases están mal construidas o no se entienden bien, como a veces ves en mensajes [[Viral|virales]]? ¿Usa TODO EN MAYÚSCULAS y muchísimos signos de exclamación (!!!)?\n\n**¡Importante!** Los errores pueden ser una pista de que la noticia no es profesional y podría ser falsa. Un lenguaje muy agresivo o que solo busca la [[Manipulación|manipulación]] emocional también es sospechoso.",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si lees: \"URGENTE!!! an descubierto un tesoro SECRETISIMO!!!!! comparte YA\", ¿es una señal de noticia fiable o sospechosa?",
-      options: [ { id: "c5_opt1", text: "Fiable, porque es urgente", isCorrect: false }, { id: "c5_opt2", text: "Sospechosa, por los errores y mayúsculas", isCorrect: true }, ],
-      feedbackCorrect: "¡Perfecto! Las mayúsculas excesivas, las faltas de ortografía como \"an descubierto\" o \"secretisimo\", y el pedir compartirlo urgentemente son señales clarísimas para desconfiar. Una noticia seria no se escribiría así. ¡Eres un gran observador!",
-      feedbackIncorrect: "A veces, cuando algo es \"urgente\" queremos creerlo rápido. Pero fíjate bien: ¿una noticia importante se escribiría con tantas faltas como \"an descubierto\" o usaría tantas mayúsculas y exclamaciones? Esas son pistas de que quizás no es muy profesional y por eso es sospechosa."
-    }
-  },
-  {
-    title: "**CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS? 🔍**",
-    text: "Una noticia fiable te muestra de dónde saca la información, ¡como un detective que enseña sus pistas!\n\nPor eso, **fíjate si** la noticia menciona fuentes claras y verificables (por ejemplo, si nombra un estudio científico conocido, un informe oficial o a expertos específicos) y si ofrece enlaces o datos concretos para que puedas comprobarlo tú mismo.\n\n**¡Importante!** Si la noticia solo da [[Opinión|opiniones]], no dice de dónde viene la información claramente, o se basa en frases como \"me han dicho que...\" o \"se comenta por ahí\" sin más detalle, ¡desconfía! La falta de [[Evidencia|evidencia]] clara es una gran señal de alerta.",
-    challenge: {
-      question: "*Pimpoyo te reta:* Una noticia dice: \"Los expertos aseguran que comer chocolate te hace volar\". Para que sea más creíble, ¿qué debería incluir?",
-      options: [ { id: "c6_opt1", text: "Quiénes son los expertos y dónde está el estudio", isCorrect: true }, { id: "c6_opt2", text: "Más opiniones de gente que ha volado", isCorrect: false }, { id: "c6_opt3", text: "Una foto de alguien volando tras comer chocolate", isCorrect: false }, ],
-      feedbackCorrect: "¡Justo eso! Le faltaría saber QUIÉNES son esos \"expertos\", si hay algún estudio científico que lo demuestre, o dónde podemos leer más sobre ese \"descubrimiento\". Sin esas pruebas, ¡suena más a fantasía que a noticia!",
-      feedbackIncorrect: "Una foto o más opiniones podrían ser llamativas, ¡pero lo más importante son las pruebas! Para que sea creíble, necesitamos saber quiénes son esos expertos y dónde está el estudio que lo demuestra. ¡Las pruebas son clave, no solo lo que la gente dice o muestra sin más!"
-    }
-  },
-  {
-    title: "**CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS? 🧐**",
-    text: "A veces, una noticia puede estar un poquito inclinada hacia un lado, como una torre que no está recta, mostrando solo una parte de la historia.\n\nPor eso, **intenta descubrir si** la noticia cuenta diferentes puntos de vista o solo se enfoca en uno, ignorando los demás.\n\n**¡Importante!** Cuando una noticia parece favorecer mucho una idea y no presenta otros argumentos, podría tener [[Sesgo|sesgo]]. Un buen detective busca la historia más completa posible.",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si una noticia sobre un nuevo videojuego solo entrevista a gente que dice que es lo peor del mundo, ¿qué te faltaría para tener una idea más clara?",
-      options: [ { id: "c7_opt1", text: "Saber por qué es tan malo", isCorrect: false }, { id: "c7_opt2", text: "Escuchar a gente a la que sí le gusta", isCorrect: true }, { id: "c7_opt3", text: "Ver más vídeos del juego", isCorrect: false }, ],
-      feedbackCorrect: "¡Tienes toda la razón! Parece que solo nos está mostrando una parte de la historia, la negativa. Para entenderlo bien, sería importante escuchar también a quienes sí les gusta o buscar otras opiniones. Así tendríamos una visión más completa y justa.",
-      feedbackIncorrect: "Saber por qué es malo o ver vídeos ayuda, pero para saber si la noticia te cuenta la historia completa, es clave buscar los puntos de vista que faltan. Si solo nos dan una opinión, ¡quizás nos están mostrando solo un lado de la moneda! Faltaría la opinión de a quiénes sí les gusta, por ejemplo."
-    }
-  },
-  {
-    title: "**CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES! 😲😠😂**",
-    text: "Las noticias que nos hacen sentir MUY enfadados, tristes o súper felices al instante, a veces son como un mago que distrae tu atención.\n\nAsí que, **pon atención si** una noticia te provoca una emoción muy fuerte de golpe. Pregúntate: ¿Esta noticia busca más emocionarte que hacerte pensar con calma?\n\n**¡Importante!** Algunas noticias falsas usan emociones intensas para que no te pares a pensar si son verdad o no y para que las compartas rápido. ¡Respira hondo y analiza antes de creértela!",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si lees un titular que te hace enfadar muchísimo al instante, ¿qué es bueno hacer antes de compartirlo o creértelo del todo?",
-      options: [ { id: "c8_opt1", text: "Compartirlo rápido para que todos se enfaden", isCorrect: false }, { id: "c8_opt2", text: "Respirar y pensar si busca enfadarme a propósito", isCorrect: true }, { id: "c8_opt3", text: "Buscar más noticias que me hagan enfadar", isCorrect: false }, ],
-      feedbackCorrect: "¡Excelente! Lo mejor es parar un segundo, respirar y pensar si la noticia podría estar intentando que te enfades a propósito para que no analices bien la información. Usar las emociones para que no pensemos es un truco de algunas noticias falsas.",
-      feedbackIncorrect: "Cuando algo nos enfada mucho, la primera reacción puede ser compartirlo para que otros también se enteren. ¡Pero cuidado! A veces, las noticias falsas buscan justo eso, que la emoción nos gane y no pensemos con calma. ¡Es mejor respirar y analizarla un poquito antes de compartir!"
-    }
-  },
-  {
-    title: "**CONSEJO 9: ¿A QUIÉN LE INTERESA? 🤔**",
-    text: "Detrás de cada noticia, puede haber alguien que quiere que pienses o hagas algo específico.\n\nPor eso, **una buena pregunta de detective es:** ¿Quién podría querer que yo me crea esta noticia y por qué? ¿Gana algo alguien si esta historia se difunde?\n\n**¡Importante!** Pensar en quién se beneficia te puede dar pistas sobre si la noticia es de confianza o si intenta convencerte de algo sin que te des cuenta. A veces, esto es parte de la [[Propaganda|propaganda]] o la manipulación.",
-    challenge: {
-      question: "*Pimpoyo te reta:* Si ves un anuncio muy divertido que dice que una nueva marca de zapatillas te hará correr más rápido que nadie, ¿quién crees que se beneficia más si te lo crees?",
-      options: [ { id: "c9_opt1", text: "Yo, porque correré más rápido", isCorrect: false }, { id: "c9_opt2", text: "La marca de zapatillas", isCorrect: true }, { id: "c9_opt3", text: "Mis amigos, que me verán correr", isCorrect: false }, ],
-      feedbackCorrect: "¡Clarísimo! La marca de zapatillas, porque así es más probable que quieras comprarlas. Preguntarse quién se beneficia nos ayuda a ver si la información es objetiva o si tiene una intención detrás. ¡Muy astuto!",
-      feedbackIncorrect: "¡Es verdad que tú te beneficiarías si corrieras más rápido! Pero piensa, ¿quién más quiere que te lo creas mucho, mucho? La empresa que vende las zapatillas, ¿verdad? Ellos ganarían dinero si las compras. A veces, la intención detrás de un mensaje es importante para saber si es del todo neutral."
-    }
-  }
+    {
+        title: "**CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️**",
+        text: "Imagina que la [[Fuente (de información)|fuente]] de una noticia es como la persona que te cuenta un secreto. ¿Confiarías en cualquiera?\n\nPor eso, **fíjate siempre en** ¿quién publica la noticia? Pregúntate: ¿Es un periódico conocido como El País o El Mundo, una cadena de televisión como RTVE, o una agencia internacional [[Fiable|fiable]] como BBC News o Euronews? Cuando Pimpoyo y tú analicéis una noticia, él te ayudará a ver si su fuente es de este tipo.\n\n**¡Importante!** Si la fuente es una web que no conoces, te parece extraña, o es un blog personal sin referencias claras, ¡investiga un poco sobre ella antes de creer la noticia! Una fuente desconocida es una señal de alerta.",
+        challenge: {
+          question: "*Pimpoyo te reta:* Si ves una noticia en \"SuperNoticiasFiables.com\" y otra en la web oficial de \"RTVE Noticias\", ¿cuál te parece más fiable a primera vista?",
+          options: [ { id: "c1_opt1", text: "SuperNoticiasFiables punto com", isCorrect: false }, { id: "c1_opt2", text: "RTVE Noticias", isCorrect: true }, { id: "c1_opt3", text: "Las dos igual", isCorrect: false }, ],
+          feedbackCorrect: "¡Exacto! RTVE Noticias es una fuente conocida y establecida, lo que la hace más fiable a primera vista. De la otra web, como no la conocemos mucho y su nombre suena un poco exagerado, haríamos bien en investigar más antes de confiar. ¡Bien visto!",
+          feedbackIncorrect: "Es una buena idea fijarse en los nombres. \"SuperNoticiasFiables punto com\" suena muy convincente, ¿verdad? Pero a veces, los sitios menos conocidos pueden no ser tan fiables como las cadenas de noticias establecidas como RTVE, que tienen equipos de periodistas. ¡Es bueno dudar un poquito de las fuentes que no conocemos bien!"
+        }
+      },
+      {
+        title: "**CONSEJO 2: ¡COMPARA, COMPARA! 🆚**",
+        text: "No te quedes solo con una versión de la historia, ¡como si solo escucharas a un amigo en una discusión!\n\nPor eso, **es clave que te fijes en esto:** [[Verificar|verifica]] la noticia buscando si otros medios conocidos y fiables también la cuentan. Por ejemplo, puedes [[Contrastar|contrastar]] lo que lees con lo que publican periódicos importantes de España, cadenas de televisión públicas, o fuentes de noticias internacionales reconocidas, como las que mencionamos en el primer consejo.\n\n**¡Importante!** Si muchos medios serios y diferentes cuentan la misma historia, es más probable que sea cierta. Pero si solo la encuentras en un sitio poco conocido o en blogs sin referencias claras, ¡es una gran pista para dudar! Podría ser un [[Bulo|bulo]].",
+        challenge: {
+          question: "*Pimpoyo te reta:* Si lees una noticia sorprendente sobre tu juego favorito solo en un pequeño blog que nadie conoce, ¿qué sería lo primero que harías según este consejo?",
+          options: [ { id: "c2_opt1", text: "Creérmela y compartirla rápido", isCorrect: false }, { id: "c2_opt2", text: "Buscarla en otros sitios de noticias más grandes", isCorrect: true }, { id: "c2_opt3", text: "No hacer nada, seguro es mentira", isCorrect: false }, ],
+          feedbackCorrect: "¡Muy bien! Lo primero sería buscar si otros sitios de noticias más grandes y conocidos también hablan de ello. Si no encuentras nada más, es una buena razón para sospechar que quizás no sea del todo cierta. ¡Esa es una gran estrategia de detective!",
+          feedbackIncorrect: "Compartirla rápido puede ser tentador si la noticia es emocionante, ¡lo entiendo! Pero recuerda este consejo: si solo la has visto en un sitio pequeño y desconocido, es mejor buscarla primero en otros medios más grandes y fiables. Así te aseguras de no difundir un bulo."
+        }
+      },
+      {
+        title: "**CONSEJO 3: ¡OJO A LA FECHA! 📅**",
+        text: "Las noticias son como el pan, ¡mejor si son frescas y del día! Cuando analices una noticia con Pimpoyo, él podría preguntarte por la fecha.\n\nAsí que, **fíjate bien en** la fecha en la que se publicó.\n\n**¡Importante!** A veces, noticias muy antiguas (¡incluso de hace años!) se comparten como si fueran nuevas para engañar o crear confusión. Esto es una táctica común de las [[Noticia falsa|noticias falsas]]. Sacar algo de [[Contexto|contexto]] es muy habitual. ¡Que no te den gato por liebre!",
+        challenge: {
+          question: "*Pimpoyo te reta:* Si un amigo te manda una noticia increíble sobre un descubrimiento espacial, pero ves que la fecha es de hace 5 años, ¿qué pensarías?",
+          options: [ { id: "c3_opt1", text: "¡Qué guay! Sigue siendo un gran descubrimiento.", isCorrect: false }, { id: "c3_opt2", text: "Que es vieja y quizás ya no es tan 'noticia'.", isCorrect: true }, { id: "c3_opt3", text: "Que seguro es falsa porque es antigua.", isCorrect: false }, ],
+          feedbackCorrect: "¡Exacto! Pensarías que, aunque pudo ser verdad en su momento, quizás ya no es una \"novedad\" o la situación ha cambiado. Las noticias viejas a veces se sacan de contexto. ¡Buen trabajo fijándote en la fecha!",
+          feedbackIncorrect: "Es verdad que un descubrimiento puede seguir siendo interesante, ¡pero la fecha es una pista muy importante! Una noticia de hace 5 años podría no contar toda la historia actual o usarse para confundir. Siempre es bueno preguntarse si una noticia tan antigua sigue siendo relevante hoy."
+        }
+      },
+      {
+        title: "**CONSEJO 4: TITULARES CON TRAMPA 🎣**",
+        text: "Algunos [[Titular|titulares]] son como un cebo brillante para pescar tu atención: ¡muy exagerados, alarmistas o sorprendentes! Pimpoyo a veces te preguntará: \"¿El titular parece muy exagerado?\".\n\nEntonces, **fíjate bien:** ¿El titular es demasiado increíble para ser verdad o busca generar una emoción muy fuerte? Lee siempre la noticia entera, no solo el titular, y pregúntate: ¿El texto cuenta lo mismo que el titular o lo exagera mucho?\n\n**¡Importante!** Esto se llama [[Clickbait|clickbait]]. Muchas veces, estos titulares esconden [[Fake news|noticias falsas]] o de poca calidad. Quieren tu clic, no informarte bien.",
+        challenge: {
+          question: "*Pimpoyo te reta:* ¿Cuál de estos titulares te parece más 'clickbait'?\nA) \"Descubren nueva especie de mariposa en el Amazonas\"\nB) \"¡ALUCINANTE! ¡CIENTÍFICOS CREAN MARIPOSA GIGANTE QUE HABLA! (NO TE LO CREERÁS)\"",
+          options: [ { id: "c4_opt1", text: "El titular A", isCorrect: false }, { id: "c4_opt2", text: "El titular B", isCorrect: true }, ],
+          feedbackCorrect: "¡Correcto! El titular B es súper exagerado, usa mayúsculas y frases como \"NO TE LO CREERÁS\" para llamar mucho la atención. Eso es típico del clickbait. El titular A, en cambio, suena más informativo y calmado. ¡Bien detectado!",
+          feedbackIncorrect: "El titular A suena interesante, ¿verdad? Pero fíjate en el B: las mayúsculas, los signos de exclamación, y que diga \"NO TE LO CREERÁS\" son pistas de que intenta ser muy llamativo, ¡quizás demasiado! Eso es el 'clickbait'. Busca más el clic que informar con seriedad."
+        }
+      },
+      {
+        title: "**CONSEJO 5: ¿ESTÁ BIEN ESCRITO? ✍️**",
+        text: "Las noticias de verdad suelen estar escritas con cuidado, ¡como un buen libro!\n\nPor eso, **fíjate en detalles como:** ¿Hay muchas faltas de ortografía? ¿Las frases están mal construidas o no se entienden bien, como a veces ves en mensajes [[Viral|virales]]? ¿Usa TODO EN MAYÚSCULAS y muchísimos signos de exclamación (!!!)?\n\n**¡Importante!** Los errores pueden ser una pista de que la noticia no es profesional y podría ser falsa. Un lenguaje muy agresivo o que solo busca la [[Manipulación|manipulación]] emocional también es sospechoso.",
+        challenge: {
+          question: "*Pimpoyo te reta:* Si lees: \"URGENTE!!! an descubierto un tesoro SECRETISIMO!!!!! comparte YA\", ¿es una señal de noticia fiable o sospechosa?",
+          options: [ { id: "c5_opt1", text: "Fiable, porque es urgente", isCorrect: false }, { id: "c5_opt2", text: "Sospechosa, por los errores y mayúsculas", isCorrect: true }, ],
+          feedbackCorrect: "¡Perfecto! Las mayúsculas excesivas, las faltas de ortografía como \"an descubierto\" o \"secretisimo\", y el pedir compartirlo urgentemente son señales clarísimas para desconfiar. Una noticia seria no se escribiría así. ¡Eres un gran observador!",
+          feedbackIncorrect: "A veces, cuando algo es \"urgente\" queremos creerlo rápido. Pero fíjate bien: ¿una noticia importante se escribiría con tantas faltas como \"an descubierto\" o usaría tantas mayúsculas y exclamaciones? Esas son pistas de que quizás no es muy profesional y por eso es sospechosa."
+        }
+      },
+      {
+        title: "**CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS? 🔍**",
+        text: "Una noticia fiable te muestra de dónde saca la información, ¡como un detective que enseña sus pistas!\n\nPor eso, **fíjate si** la noticia menciona fuentes claras y verificables (por ejemplo, si nombra un estudio científico conocido, un informe oficial o a expertos específicos) y si ofrece enlaces o datos concretos para que puedas comprobarlo tú mismo.\n\n**¡Importante!** Si la noticia solo da [[Opinión|opiniones]], no dice de dónde viene la información claramente, o se basa en frases como \"me han dicho que...\" o \"se comenta por ahí\" sin más detalle, ¡desconfía! La falta de [[Evidencia|evidencia]] clara es una gran señal de alerta.",
+        challenge: {
+          question: "*Pimpoyo te reta:* Una noticia dice: \"Los expertos aseguran que comer chocolate te hace volar\". Para que sea más creíble, ¿qué debería incluir?",
+          options: [ { id: "c6_opt1", text: "Quiénes son los expertos y dónde está el estudio", isCorrect: true }, { id: "c6_opt2", text: "Más opiniones de gente que ha volado", isCorrect: false }, { id: "c6_opt3", text: "Una foto de alguien volando tras comer chocolate", isCorrect: false }, ],
+          feedbackCorrect: "¡Justo eso! Le faltaría saber QUIÉNES son esos \"expertos\", si hay algún estudio científico que lo demuestre, o dónde podemos leer más sobre ese \"descubrimiento\". Sin esas pruebas, ¡suena más a fantasía que a noticia!",
+          feedbackIncorrect: "Una foto o más opiniones podrían ser llamativas, ¡pero lo más importante son las pruebas! Para que sea creíble, necesitamos saber quiénes son esos expertos y dónde está el estudio que lo demuestra. ¡Las pruebas son clave, no solo lo que la gente dice o muestra sin más!"
+        }
+      },
+      {
+        title: "**CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS? 🧐**",
+        text: "A veces, una noticia puede estar un poquito inclinada hacia un lado, como una torre que no está recta, mostrando solo una parte de la historia.\n\nPor eso, **intenta descubrir si** la noticia cuenta diferentes puntos de vista o solo se enfoca en uno, ignorando los demás.\n\n**¡Importante!** Cuando una noticia parece favorecer mucho una idea y no presenta otros argumentos, podría tener [[Sesgo|sesgo]]. Un buen detective busca la historia más completa posible.",
+        challenge: {
+          question: "*Pimpoyo te reta:* Si una noticia sobre un nuevo videojuego solo entrevista a gente que dice que es lo peor del mundo, ¿qué te faltaría para tener una idea más clara?",
+          options: [ { id: "c7_opt1", text: "Saber por qué es tan malo", isCorrect: false }, { id: "c7_opt2", text: "Escuchar a gente a la que sí le gusta", isCorrect: true }, { id: "c7_opt3", text: "Ver más vídeos del juego", isCorrect: false }, ],
+          feedbackCorrect: "¡Tienes toda la razón! Parece que solo nos está mostrando una parte de la historia, la negativa. Para entenderlo bien, sería importante escuchar también a quienes sí les gusta o buscar otras opiniones. Así tendríamos una visión más completa y justa.",
+          feedbackIncorrect: "Saber por qué es malo o ver vídeos ayuda, pero para saber si la noticia te cuenta la historia completa, es clave buscar los puntos de vista que faltan. Si solo nos dan una opinión, ¡quizás nos están mostrando solo un lado de la moneda! Faltaría la opinión de a quiénes sí les gusta, por ejemplo."
+        }
+      },
+      {
+        title: "**CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES! 😲😠😂**",
+        text: "Las noticias que nos hacen sentir MUY enfadados, tristes o súper felices al instante, a veces son como un mago que distrae tu atención.\n\nAsí que, **pon atención si** una noticia te provoca una emoción muy fuerte de golpe. Pregúntate: ¿Esta noticia busca más emocionarte que hacerte pensar con calma?\n\n**¡Importante!** Algunas noticias falsas usan emociones intensas para que no te pares a pensar si son verdad o no y para que las compartas rápido. ¡Respira hondo y analiza antes de creértela!",
+        challenge: {
+          question: "*Pimpoyo te reta:* Si lees un titular que te hace enfadar muchísimo al instante, ¿qué es bueno hacer antes de compartirlo o creértelo del todo?",
+          options: [ { id: "c8_opt1", text: "Compartirlo rápido para que todos se enfaden", isCorrect: false }, { id: "c8_opt2", text: "Respirar y pensar si busca enfadarme a propósito", isCorrect: true }, { id: "c8_opt3", text: "Buscar más noticias que me hagan enfadar", isCorrect: false }, ],
+          feedbackCorrect: "¡Excelente! Lo mejor es parar un segundo, respirar y pensar si la noticia podría estar intentando que te enfades a propósito para que no analices bien la información. Usar las emociones para que no pensemos es un truco de algunas noticias falsas.",
+          feedbackIncorrect: "Cuando algo nos enfada mucho, la primera reacción puede ser compartirlo para que otros también se enteren. ¡Pero cuidado! A veces, las noticias falsas buscan justo eso, que la emoción nos gane y no pensemos con calma. ¡Es mejor respirar y analizarla un poquito antes de compartir!"
+        }
+      },
+      {
+        title: "**CONSEJO 9: ¿A QUIÉN LE INTERESA? 🤔**",
+        text: "Detrás de cada noticia, puede haber alguien que quiere que pienses o hagas algo específico.\n\nPor eso, **una buena pregunta de detective es:** ¿Quién podría querer que yo me crea esta noticia y por qué? ¿Gana algo alguien si esta historia se difunde?\n\n**¡Importante!** Pensar en quién se beneficia te puede dar pistas sobre si la noticia es de confianza o si intenta convencerte de algo sin que te des cuenta. A veces, esto es parte de la [[Propaganda|propaganda]] o la manipulación.",
+        challenge: {
+          question: "*Pimpoyo te reta:* Si ves un anuncio muy divertido que dice que una nueva marca de zapatillas te hará correr más rápido que nadie, ¿quién crees que se beneficia más si te lo crees?",
+          options: [ { id: "c9_opt1", text: "Yo, porque correré más rápido", isCorrect: false }, { id: "c9_opt2", text: "La marca de zapatillas", isCorrect: true }, { id: "c9_opt3", text: "Mis amigos, que me verán correr", isCorrect: false }, ],
+          feedbackCorrect: "¡Clarísimo! La marca de zapatillas, porque así es más probable que quieras comprarlas. Preguntarse quién se beneficia nos ayuda a ver si la información es objetiva o si tiene una intención detrás. ¡Muy astuto!",
+          feedbackIncorrect: "¡Es verdad que tú te beneficiarías si corrieras más rápido! Pero piensa, ¿quién más quiere que te lo creas mucho, mucho? La empresa que vende las zapatillas, ¿verdad? Ellos ganarían dinero si las compras. A veces, la intención detrás de un mensaje es importante para saber si es del todo neutral."
+        }
+      }
 ];
 
 const defaultGlossaryTermsForChatContainer = [
@@ -230,44 +230,68 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const [newsData, setNewsData] = useState<NewsItem[] | null>(null);
   const [isLoadingNews, setIsLoadingNews] = useState<boolean>(false);
   const [newsChallengeState, setNewsChallengeState] = useState<NewsChallengeState | null>(null);
-  const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>('bajo');
-  const [correctStreak, setCorrectStreak] = useState<number>(0);
-  const [incorrectStreak, setIncorrectStreak] = useState<number>(0);
-  const [lastChallengeType, setLastChallengeType] = useState<'pair' | 'guided' | null>(null);
 
+  // ---> INICIO DE LÓGICA DE PERSISTENCIA DE SESIÓN <---
+  const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>(() => {
+    const savedDifficulty = sessionStorage.getItem('difficultyLevel');
+    const isValidDifficulty = savedDifficulty && ['bajo', 'medio', 'alto'].includes(savedDifficulty);
+    return isValidDifficulty ? (savedDifficulty as DifficultyLevel) : 'bajo';
+  });
+
+  const [correctStreak, setCorrectStreak] = useState<number>(() => {
+    const savedStreak = sessionStorage.getItem('correctStreak');
+    const streak = savedStreak ? parseInt(savedStreak, 10) : 0;
+    return !isNaN(streak) ? streak : 0;
+  });
+
+  const [incorrectStreak, setIncorrectStreak] = useState<number>(() => {
+    const savedStreak = sessionStorage.getItem('incorrectStreak');
+    const streak = savedStreak ? parseInt(savedStreak, 10) : 0;
+    return !isNaN(streak) ? streak : 0;
+  });
+
+  useEffect(() => { sessionStorage.setItem('difficultyLevel', difficultyLevel); }, [difficultyLevel]);
+  useEffect(() => { sessionStorage.setItem('correctStreak', correctStreak.toString()); }, [correctStreak]);
+  useEffect(() => { sessionStorage.setItem('incorrectStreak', incorrectStreak.toString()); }, [incorrectStreak]);
+  // ---> FIN DE LÓGICA DE PERSISTENCIA DE SESIÓN <---
+
+  const [lastChallengeType, setLastChallengeType] = useState<'pair' | 'guided' | null>(null);
   const [isSingleNewsAnalysisMode, setIsSingleNewsAnalysisMode] = useState<boolean>(false);
   const [singleNewsAnalysisData, setSingleNewsAnalysisData] = useState<NoticiaParaAnalisis | null>(null);
   const [currentGuidedChatSessionId, setCurrentGuidedChatSessionId] = useState<number | null>(null);
-  const [isAwaitingInitialAnalysis, setIsAwaitingInitialAnalysis] = useState<boolean>(false);
   const [guidedAnalysesSubmitted, setGuidedAnalysesSubmitted] = useState<number>(0);
   const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
-
   const [isPostTestMode, setIsPostTestMode] = useState<boolean>(false);
-
   const [isTipChallengeActive, setIsTipChallengeActive] = useState<boolean>(false);
   const [selectedTermForSidePanel, setSelectedTermForSidePanel] = useState<string | null>(null);
   const [initialPanelSection, setInitialPanelSection] = useState<string | null>(null);
+
+  // ---> NUEVOS ESTADOS PARA EL FLUJO GUIADO <---
+  const [guidedChoice, setGuidedChoice] = useState<'TRUE' | 'FALSE' | null>(null);
+  const [guidedFlowStep, setGuidedFlowStep] = useState<'choice' | 'reasoning' | 'chatting' | null>(null);
+
+
+  // Comentario encima de la función handleLogout
+  const handleLogout = useCallback(() => {
+    sessionStorage.removeItem('difficultyLevel');
+    sessionStorage.removeItem('correctStreak');
+    sessionStorage.removeItem('incorrectStreak');
+    onLogout();
+  }, [onLogout]);
 
 
   // Comentario encima de la función fetchUserInfo
   const fetchUserInfo = useCallback(async () => {
     setChatError('');
-    if (!authToken) {
-      setIsLoadingUserInfo(false);
-      return;
-    }
+    if (!authToken) { setIsLoadingUserInfo(false); return; }
     setIsLoadingUserInfo(true);
     try {
       const response = await fetch(`/api/users/me/`, {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' }
+        method: 'GET', headers: { 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' }
       });
       if (!response.ok) {
-        if (response.status === 401) { onLogout(); }
-        else {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.detail || `Error ${response.status}`);
-        }
+        if (response.status === 401) { handleLogout(); }
+        else { const errorData = await response.json().catch(() => ({})); throw new Error(errorData.detail || `Error ${response.status}`); }
         return;
       }
       const userData: UserInfo = await response.json();
@@ -277,25 +301,22 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     } finally {
       setIsLoadingUserInfo(false);
     }
-  }, [authToken, onLogout]);
+  }, [authToken, handleLogout]);
 
   useEffect(() => {
     if (authToken && (currentUserInfo === null || refreshUserInfoToggle)) {
       fetchUserInfo();
       if (refreshUserInfoToggle) setRefreshUserInfoToggle(false);
     } else if (!authToken) {
-      setCurrentUserInfo(null);
-      setIsLoadingUserInfo(false);
+      setCurrentUserInfo(null); setIsLoadingUserInfo(false);
     }
   }, [authToken, fetchUserInfo, refreshUserInfoToggle]);
 
   // Comentario encima de la función createWelcomeMessage
   const createWelcomeMessage = useCallback((): ChatMessage => ({
-    id: "welcome-msg-" + Date.now(),
-    sender: "bot",
+    id: "welcome-msg-" + Date.now(), sender: "bot",
     text: `¡Encantado de conocerte, ${currentUserInfo?.apodo || "Usuario"}! Soy Pimpoyo. Puedo ayudarte con tips y consejos, descifrar noticias falsas o simplemente conversar un rato.`,
-    avatar: BOT_AVATAR_URL,
-    timestamp: Date.now(),
+    avatar: BOT_AVATAR_URL, timestamp: Date.now(),
   }), [currentUserInfo]);
 
   useEffect(() => {
@@ -332,6 +353,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
 
   // Comentario encima de la función handleSettingsSaved
   const handleSettingsSaved = () => setRefreshUserInfoToggle(true);
+
   // Comentario encima de la función addUserChoiceMessage
   const addUserChoiceMessage = useCallback((text: string) => {
     if (!currentUserInfo) return;
@@ -428,7 +450,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       <>{processedTipContent}</>
     );
 
-  }, [addBotResponse, setIsTipChallengeActive, handleGlossaryTermClick]);
+  }, [addBotResponse, handleGlossaryTermClick]);
 
 
   // Comentario encima de la función increaseDifficulty
@@ -436,8 +458,12 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     const currentIndex = difficultyOrder.indexOf(difficultyLevel);
     if (currentIndex < difficultyOrder.length - 1) {
       const nextLevel = difficultyOrder[currentIndex + 1];
-      setDifficultyLevel(nextLevel); console.log(`Difficulty increased to: ${nextLevel}`); return true;
-    } console.log(`Already at max difficulty: ${difficultyLevel}`); return false;
+      setDifficultyLevel(nextLevel);
+      console.log(`Difficulty increased to: ${nextLevel}`);
+      return true;
+    }
+    console.log(`Already at max difficulty: ${difficultyLevel}`);
+    return false;
   }, [difficultyLevel]);
 
   // Comentario encima de la función decreaseDifficulty
@@ -445,8 +471,12 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     const currentIndex = difficultyOrder.indexOf(difficultyLevel);
     if (currentIndex > 0) {
       const prevLevel = difficultyOrder[currentIndex - 1];
-      setDifficultyLevel(prevLevel); console.log(`Difficulty decreased to: ${prevLevel}`); return true;
-    } console.log(`Already at min difficulty: ${difficultyLevel}`); return false;
+      setDifficultyLevel(prevLevel);
+      console.log(`Difficulty decreased to: ${prevLevel}`);
+      return true;
+    }
+    console.log(`Already at min difficulty: ${difficultyLevel}`);
+    return false;
   }, [difficultyLevel]);
 
   // Comentario encima de la función resetSingleAnalysisMode
@@ -454,7 +484,8 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     setIsSingleNewsAnalysisMode(false);
     setSingleNewsAnalysisData(null);
     setCurrentGuidedChatSessionId(null);
-    setIsAwaitingInitialAnalysis(false);
+    setGuidedFlowStep(null);
+    setGuidedChoice(null);
   }, []);
 
   // Comentario encima de la función createMobileViewHtml
@@ -541,10 +572,10 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     const selectionMessageId = addBotResponse( "¿Cuál de las dos noticias crees que es la VERDADERA?", [{ id: `select-news-left`, text: "Noticia izquierda (1)" }, { id: `select-news-right`, text: "Noticia derecha (2)" }], 800 );
     setNewsChallengeState({ trueNewsOriginalId: selectedTrueNews.ID, leftNewsOriginalId: leftNewsItem.ID, rightNewsOriginalId: rightNewsItem.ID, selectionMessageId: selectionMessageId as string, });
     setIsLoadingNews(false);
-  }, [difficultyLevel, addBotResponse, setIsLoadingNews, setMessages, setNewsChallengeState]);
+  }, [difficultyLevel, addBotResponse, setMessages, setNewsChallengeState]);
 
   // Comentario encima de la función presentNewsChallenge
-  const presentNewsChallenge = useCallback(async (forceSingleAnalysisMode: boolean = false) => {
+  const presentNewsChallenge = useCallback(async () => {
     if (isLoadingNews) return;
     setIsLoadingNews(true);
     setChatError('');
@@ -552,58 +583,45 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     setNewsChallengeState(null);
     setIsTipChallengeActive(false);
 
-    // Lógica para alternar desafíos: si el último fue 'pair', el siguiente es 'guided' (análisis único).
-    // Si fue 'guided' o es el primero (null), el siguiente es 'pair'.
     const shouldUseSingleAnalysis = lastChallengeType === 'pair';
-
-    let introMessage = `Buscando desafío...`;
-    const introId = addBotResponse(introMessage, [], 0);
+    const introId = addBotResponse("Buscando desafío...", [], 0);
 
     if (shouldUseSingleAnalysis) {
         try {
             const response = await fetch('/api/activity/guided-analysis/next-news', {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
-            if (response.status === 401) { onLogout(); throw new Error("Sesión expirada."); }
+            if (response.status === 401) { handleLogout(); throw new Error("Sesión expirada."); }
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ detail: `Error ${response.status}` }));
                 throw new Error(errorData.detail || `No se pudo cargar la noticia para análisis: ${response.status}`);
             }
             const newsToAnalyze: NoticiaParaAnalisis = await response.json();
-            setSingleNewsAnalysisData({...newsToAnalyze, initialUserEvaluation: undefined });
+            setSingleNewsAnalysisData(newsToAnalyze);
             setIsSingleNewsAnalysisMode(true);
-
             setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Vamos a analizar esta noticia!` } : msg));
 
             const newsItemForDisplay: NewsItem = {
-                ID: newsToAnalyze.noticia_id_json,
-                HEADLINE: newsToAnalyze.headline,
-                TEXT: newsToAnalyze.text,
-                SOURCE: newsToAnalyze.source || 'Fuente no especificada',
-                TOPICS: newsToAnalyze.difficulty_level || 'Análisis',
-                LINK: '',
-                CATEGORY: 'TRUE', // No relevante para la vista, pero requerido por el tipo
-                DIFFICULTY_LEVEL: 'medio' // No relevante para la vista
+                ID: newsToAnalyze.noticia_id_json, HEADLINE: newsToAnalyze.headline, TEXT: newsToAnalyze.text,
+                SOURCE: newsToAnalyze.source || 'Fuente no especificada', TOPICS: newsToAnalyze.topics || 'Noticia',
+                LINK: '', CATEGORY: 'TRUE', DIFFICULTY_LEVEL: (newsToAnalyze.difficulty_level as DifficultyLevel) || 'medio'
             };
-
             const newsCardHtml = createMobileViewHtml(newsItemForDisplay);
-            const finalHtml = `<div class="single-news-wrapper">${newsCardHtml}</div>`;
-
-            addBotResponse(null, [], 100, undefined, finalHtml);
+            addBotResponse(null, [], 100, undefined, `<div class="single-news-wrapper">${newsCardHtml}</div>`);
 
             setTimeout(() => {
-                addBotResponse(
-                    "Léela con atención. Cuando estés listo/a, dime: ¿Crees que esta noticia es Verdadera o Falsa? Y, lo más importante, ¿por qué piensas eso? Escribe tu análisis completo aquí abajo.",
-                    [], 300
-                );
-                setIsAwaitingInitialAnalysis(true);
+                addBotResponse("Después de leerla con atención, ¿qué te parece?", [
+                    { id: "btn-guided-choice-true", text: "Verdadera" },
+                    { id: "btn-guided-choice-false", text: "Falsa" }
+                ], 300);
+                setGuidedFlowStep('choice');
             }, 1200);
 
         } catch (error) {
-            console.error("Error fetching single news for analysis:", error);
+            console.error("Error fetching single news:", error);
             const errorMsg = error instanceof Error ? error.message : "Error desconocido";
             if (errorMsg !== "Sesión expirada.") {
-              setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! No pude cargar una noticia para analizar (${errorMsg}).` } : msg));
+              setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! No pude cargar una noticia para analizar.` } : msg));
               addBotResponse("¿Probamos otra cosa?", [{ id: "btn-news-again", text: "Otro desafío" }, { id: "btn-talk-again", text: "Sólo charlar" }], 300);
             }
             resetSingleAnalysisMode();
@@ -611,7 +629,6 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
             setIsLoadingNews(false);
         }
     } else {
-        // Lógica para el desafío de par (Verdadero/Falso)
         if (!newsData) {
              try {
                 const response = await fetch('/api/news/challenge', { headers: { 'Authorization': `Bearer ${authToken}` } });
@@ -623,7 +640,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
             } catch (error) {
                 console.error("Failed to load news data from API:", error);
                 const errorMsg = error instanceof Error ? error.message : "Error desconocido";
-                setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! Hubo un problema al buscar las noticias (${errorMsg}).` } : msg));
+                setMessages(prev => prev.map(msg => msg.id === introId ? { ...msg, text: `¡Ups! Hubo un problema al buscar las noticias.` } : msg));
                 addBotResponse("¿Probamos otra cosa?", [{ id: "btn-tips-again", text: "Ver tips" }, { id: "btn-talk-again", text: "Sólo Charlar" }], 300);
                 setIsLoadingNews(false);
             }
@@ -631,52 +648,40 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
              processTwoNewsChallenge(newsData, introId);
         }
     }
-  }, [authToken, addBotResponse, resetSingleAnalysisMode, processTwoNewsChallenge, newsData, onLogout, lastChallengeType, createMobileViewHtml]);
+  }, [authToken, isLoadingNews, lastChallengeType, handleLogout, resetSingleAnalysisMode, addBotResponse, processTwoNewsChallenge, newsData, createMobileViewHtml]);
 
   // Comentario encima de la función handleMessageButtonClick
   const handleMessageButtonClick = useCallback(async (messageId: number | string, buttonId: string) => {
-    console.log(`Button Clicked: MessageID=${messageId}, ButtonID=${buttonId}`);
+    setMessages(current => current.map(msg => msg.id === messageId ? { ...msg, buttonsDisabled: true } : msg));
 
-     if (!buttonId.startsWith("btn-tip-challenge-")) {
-        setMessages(current => current.map(msg => {
-            if (msg.id === messageId && !msg.buttons?.some(b => b.id.startsWith("btn-tip-challenge-"))) {
-                return { ...msg, buttonsDisabled: true };
-            }
-            if (newsChallengeState && msg.id === newsChallengeState.selectionMessageId && !buttonId.startsWith("select-news-")) {
-                 return { ...msg, buttonsDisabled: true };
-            }
-            return msg;
-        }));
+    if (buttonId.startsWith("btn-guided-choice-")) {
+        const choice = buttonId === "btn-guided-choice-true" ? 'TRUE' : 'FALSE';
+        const choiceText = choice === 'TRUE' ? "Verdadera" : "Falsa";
+
+        setGuidedChoice(choice);
+        addUserChoiceMessage(choiceText);
+
+        addBotResponse(`¡Entendido! Ahora, cuéntame, ¿por qué piensas que es ${choiceText.toLowerCase()}?`, [], 300);
+        setGuidedFlowStep('reasoning');
+        return;
     }
 
     if (buttonId.startsWith("btn-tip-challenge-")) {
-        setMessages(current => current.map(msg => {
-            if (msg.id === messageId) {
-                return { ...msg, buttonsDisabled: true };
-            }
-            return msg;
-        }));
-
         const parts = buttonId.split('-');
         const tipIdxChallenge = parseInt(parts[3], 10);
         const optionId = parts[5];
         const tipForChallenge = tips[tipIdxChallenge];
 
-        if (tipForChallenge && tipForChallenge.challenge && tipForChallenge.challenge.options) {
+        if (tipForChallenge?.challenge?.options) {
             const chosenOption = tipForChallenge.challenge.options.find(opt => opt.id === optionId);
             if (chosenOption) {
                 addUserChoiceMessage(chosenOption.text);
                 const feedback = chosenOption.isCorrect ? tipForChallenge.challenge.feedbackCorrect : tipForChallenge.challenge.feedbackIncorrect;
                 addBotResponse(feedback, [], 300, () => {
                     const navButtons: MessageButton[] = [];
-                    if (tipIdxChallenge > 0) {
-                        navButtons.push({ id: `btn-tip-prev-${tipIdxChallenge}`, icon: faArrowLeft, ariaLabel: 'Anterior Consejo' });
-                    }
-                    if (tipIdxChallenge < tips.length - 1) {
-                        navButtons.push({ id: `btn-tip-next-${tipIdxChallenge}`, icon: faArrowRight, ariaLabel: 'Siguiente Consejo' });
-                    } else {
-                        navButtons.push({ id: "btn-tip-understood", text: "¡Entendido, Pimpoyo!" });
-                    }
+                    if (tipIdxChallenge > 0) navButtons.push({ id: `btn-tip-prev-${tipIdxChallenge}`, icon: faArrowLeft, ariaLabel: 'Anterior Consejo' });
+                    if (tipIdxChallenge < tips.length - 1) navButtons.push({ id: `btn-tip-next-${tipIdxChallenge}`, icon: faArrowRight, ariaLabel: 'Siguiente Consejo' });
+                    else navButtons.push({ id: "btn-tip-understood", text: "¡Entendido, Pimpoyo!" });
                     addBotResponse("¿Seguimos adelante?", navButtons);
                 });
             }
@@ -688,13 +693,13 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     if (buttonId.startsWith("btn-tip-next-") || buttonId.startsWith("btn-tip-prev-")) {
         const isNext = buttonId.startsWith("btn-tip-next-");
         const baseIndexFromButton = parseInt(buttonId.split("-").pop() || "0", 10);
-        let targetIndex = isNext ? baseIndexFromButton + 1 : baseIndexFromButton -1;
+        const targetIndex = isNext ? baseIndexFromButton + 1 : baseIndexFromButton - 1;
 
         if (targetIndex >= 0 && targetIndex < tips.length) {
             displayTipAndChallenge(targetIndex);
         } else if (isNext && targetIndex >= tips.length) {
             addUserChoiceMessage("He entendido los consejos");
-            addBotResponse("¡Genial! Recordar estos consejos te ayudará mucho a ser un gran detective de noticias. 👍 \n\n¿Qué quieres hacer ahora?", [
+            addBotResponse("¡Genial! Recordar estos consejos te ayudará mucho. 👍 \n\n¿Qué quieres hacer ahora?", [
                 { id: "btn-news-again", text: "Descifrar noticias" },
                 { id: "btn-talk-again", text: "Sólo charlar" },
                 { id: "btn-tips-again", text: "Repasar los tips" }
@@ -708,55 +713,78 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       resetSingleAnalysisMode();
       setNewsChallengeState(null);
       setIsTipChallengeActive(false);
-      setLastChallengeType(null); // Reinicia el flujo de desafíos
-
-      if (buttonId === "btn-tips") addUserChoiceMessage("Quiero TIPS Y CONSEJOS");
-      else addUserChoiceMessage("Repasar los Tips");
-
+      setLastChallengeType(null);
+      addUserChoiceMessage(buttonId === "btn-tips" ? "Quiero TIPS Y CONSEJOS" : "Repasar los Tips");
       displayTipAndChallenge(0);
       return;
     }
+
     if (buttonId === "btn-finish-analysis" && isSingleNewsAnalysisMode && currentGuidedChatSessionId) {
         addUserChoiceMessage("Terminar análisis y ver solución.");
         setIsBotTyping(true);
         try {
-          addBotResponse("Revisando tu análisis y preparando la solución...", [], 0);
+          const veamosId = addBotResponse("Revisando tu análisis...", [], 0);
           const response = await fetch(`/api/activity/guided-analysis/finish-news/${currentGuidedChatSessionId}`, {
             method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` }
           });
+          setMessages(prev => prev.filter(m => m.id !== veamosId));
           setIsBotTyping(false);
-          if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ detail: `Error ${response.status}` }));
-            throw new Error(errorData.detail || "No se pudo finalizar el análisis y obtener la solución.");
-          }
-          const result = await response.json();
+
+          if (!response.ok) throw new Error((await response.json().catch(() => ({}))).detail || "Error al finalizar.");
+
+          const result: { message: string; es_correcto: boolean | null } = await response.json();
           addBotResponse(result.message || "¡Análisis completado!", [], 300);
 
-          addBotResponse("¿Qué hacemos ahora?", [
-            { id: "btn-news-again", text: "Siguiente desafío" },
-            { id: "btn-talk-again", text: "Sólo charlar" },
-          ], 500);
-          setLastChallengeType('guided'); // Registra que el último desafío fue guiado
+          if (result.es_correcto !== null) {
+              let difficultyChangedMessage: string | null = null;
+              if (result.es_correcto) {
+                  const newCorrectStreak = correctStreak + 1;
+                  setCorrectStreak(newCorrectStreak);
+                  setIncorrectStreak(0);
+                  if (newCorrectStreak >= 2) {
+                      if (increaseDifficulty()) {
+                          difficultyChangedMessage = "¡Dos seguidas! 😎 ¡Subimos un poco la dificultad!";
+                          setCorrectStreak(0);
+                      }
+                  }
+              } else {
+                  setIncorrectStreak(prev => prev + 1);
+                  setCorrectStreak(0);
+                  if (incorrectStreak + 1 >= 3) {
+                      if (decreaseDifficulty()) {
+                          difficultyChangedMessage = "¡Ánimo! 💪 Vamos a probar con unas un poco más sencillas.";
+                          setIncorrectStreak(0);
+                      }
+                  }
+              }
+              if (difficultyChangedMessage) {
+                  addBotResponse(difficultyChangedMessage, [], 500);
+              }
+          }
+
+          const nextStepButtons = [{ id: "btn-news-again", text: "Siguiente desafío" }, { id: "btn-talk-again", text: "Sólo charlar" }];
+          if (result.es_correcto && (correctStreak + 1) % 2 === 0 && (correctStreak + 1) > 0) {
+            nextStepButtons[0].text = "Siguiente desafío (¡Nivel subido!)";
+          }
+          addBotResponse("¿Qué hacemos ahora?", nextStepButtons, 800);
+          setLastChallengeType('guided');
 
         } catch (error) {
             setIsBotTyping(false);
-            addBotResponse(`Error al finalizar y mostrar solución: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
-                { id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" },
-            ]);
-        }
-        finally {
+            addBotResponse(`Error: ${error instanceof Error ? error.message : 'Desconocido'}.`, []);
+        } finally {
             resetSingleAnalysisMode();
         }
         return;
-    } else if (buttonId === "btn-finish-analysis-anyway") {
+    }
+
+    if (buttonId === "btn-finish-analysis-anyway") {
         addUserChoiceMessage("Terminar Análisis Igualmente.");
-         if (currentGuidedChatSessionId) {
-            addBotResponse("De acuerdo, finalizando este análisis.", [], 0);
-         }
+        if (currentGuidedChatSessionId) addBotResponse("De acuerdo, finalizando este análisis.", [], 0);
         addBotResponse("¿Qué hacemos ahora?", [
             { id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" },
         ], 300);
-        setLastChallengeType('guided'); // Registra que el último desafío fue guiado
+        setLastChallengeType('guided');
         resetSingleAnalysisMode();
         return;
     }
@@ -764,15 +792,16 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     if (buttonId === "btn-news" || buttonId === "btn-news-again") {
       setIsFreeChatMode(false);
       setIsTipChallengeActive(false);
-      addUserChoiceMessage(buttonId === "btn-news" ? "Quiero DESCIFRAR NOTICIAS" : (buttonId === "btn-news-again" ? "¡Otro Desafío!" : "Otro Desafío de Noticias"));
+      addUserChoiceMessage(buttonId === "btn-news" ? "Quiero DESCIFRAR NOTICIAS" : "¡Otro Desafío!");
       presentNewsChallenge();
       return;
     }
+
     if (buttonId === "btn-talk" || buttonId === "btn-talk-again") {
       setIsFreeChatMode(true);
       resetSingleAnalysisMode();
       setIsTipChallengeActive(false);
-      setLastChallengeType(null); // Reinicia el flujo de desafíos
+      setLastChallengeType(null);
       addUserChoiceMessage(buttonId === "btn-talk" ? "Prefiero SÓLO CHARLAR" : "Sólo Charlar un rato");
       addBotResponse("¡Claro! ¿De qué te gustaría hablar hoy?", []);
       setNewsChallengeState(null);
@@ -781,50 +810,25 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
 
     if (buttonId === "btn-tip-understood") {
       addUserChoiceMessage("¡Entendido, Pimpoyo!");
-      addBotResponse("¡Genial! Recordar estos consejos te ayudará mucho a ser un gran detective de noticias. 👍 \n\n¿Qué quieres hacer ahora?", [
+      addBotResponse("¡Genial! Recordar estos consejos te ayudará mucho. 👍 \n\n¿Qué quieres hacer ahora?", [
         { id: "btn-news-again", text: "Descifrar noticias" },
-        { id: "btn-talk-again", text: "Sólo Charlar" },
+        { id: "btn-talk-again", text: "Sólo charlar" },
         { id: "btn-tips-again", text: "Repasar los Tips" }
       ]);
       setIsTipChallengeActive(false);
       return;
     }
 
-
     if (newsChallengeState && buttonId.startsWith("select-news-")) {
-      setMessages(current => current.map(msg => msg.id === newsChallengeState.selectionMessageId ? { ...msg, buttonsDisabled: true } : msg));
       const choseLeft = buttonId === "select-news-left";
       const choiceText = choseLeft ? "Noticia Izquierda" : "Noticia Derecha";
       addUserChoiceMessage(`Creo que la verdadera es: ${choiceText}`);
 
-      const veamosId = addBotResponse("Veamos...", [],0);
+      const veamosId = addBotResponse("Veamos...", [], 0);
       setIsBotTyping(true);
 
       const selectedNewsId = choseLeft ? newsChallengeState.leftNewsOriginalId : newsChallengeState.rightNewsOriginalId;
-      let actualFalseNewsId = "";
-
-      if (!newsChallengeState.trueNewsOriginalId || !newsChallengeState.leftNewsOriginalId || !newsChallengeState.rightNewsOriginalId) {
-        console.error("Error: IDs de noticias faltantes en newsChallengeState", newsChallengeState);
-        setMessages(prev => prev.filter(m => m.id !== veamosId));
-        setIsBotTyping(false);
-        addBotResponse("Hubo un problema interno al identificar las noticias. Intenta de nuevo o elige otra opción.", [
-            { id: "btn-news-again", text: "Jugar otra vez" }, { id: "btn-talk-again", text: "Sólo Charlar" },
-        ]);
-        setNewsChallengeState(null); return;
-      }
-      actualFalseNewsId = newsChallengeState.leftNewsOriginalId === newsChallengeState.trueNewsOriginalId ? newsChallengeState.rightNewsOriginalId : newsChallengeState.leftNewsOriginalId;
-
-      if (typeof newsChallengeState.trueNewsOriginalId !== 'string' || !newsChallengeState.trueNewsOriginalId ||
-          typeof actualFalseNewsId !== 'string' || !actualFalseNewsId ||
-          typeof selectedNewsId !== 'string' || !selectedNewsId) {
-          console.error("Error: Uno o más IDs de noticias para el payload no son válidos.", { trueNewsOriginalId: newsChallengeState.trueNewsOriginalId, actualFalseNewsId, selectedNewsId });
-          setMessages(prev => prev.filter(m => m.id !== veamosId));
-          setIsBotTyping(false);
-          addBotResponse("Hubo un error al procesar tu elección debido a IDs de noticias inválidos. Por favor, intenta de nuevo.", [
-            { id: "btn-news-again", text: "Jugar otra vez" }, { id: "btn-talk-again", text: "Sólo Charlar" },
-          ]);
-          setNewsChallengeState(null); return;
-      }
+      const actualFalseNewsId = newsChallengeState.leftNewsOriginalId === newsChallengeState.trueNewsOriginalId ? newsChallengeState.rightNewsOriginalId : newsChallengeState.leftNewsOriginalId;
 
       const payload: FinishPairChallengePayload = {
         noticia_verdadera_id_json: newsChallengeState.trueNewsOriginalId,
@@ -841,67 +845,47 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         setMessages(prev => prev.filter(m => m.id !== veamosId));
         setIsBotTyping(false);
 
-        if (!response.ok) {
-            let errorContentToThrow = `Error ${response.status}`;
-            try {
-                const errorData = await response.json();
-                errorContentToThrow = errorData.detail || errorContentToThrow;
-            } catch (e) { console.error("Error parsing error response:", e); }
-            throw new Error(errorContentToThrow);
-        }
+        if (!response.ok) throw new Error((await response.json().catch(() => ({}))).detail || `Error ${response.status}`);
 
         const result: FinishPairChallengeResponse = await response.json();
-        const isCorrectBackend = result.es_correcto;
+        const { es_correcto: isCorrectBackend, explanation } = result;
         let difficultyChangedMessage: string | null = null;
-        let tempCorrectStreak = correctStreak;
 
         if (isCorrectBackend) {
-            tempCorrectStreak = correctStreak + 1;
-            setCorrectStreak(prev => prev + 1);
+            const newCorrectStreak = correctStreak + 1;
+            setCorrectStreak(newCorrectStreak);
             setIncorrectStreak(0);
-            if (tempCorrectStreak >= 2) { // <- CAMBIO: La racha para subir de nivel es 2
+            if (newCorrectStreak >= 2) {
                 if (increaseDifficulty()) {
                     difficultyChangedMessage = "¡Dos seguidas! 😎 ¡Subimos un poco la dificultad!";
                     setCorrectStreak(0);
-                    tempCorrectStreak = 0;
-                } else {
-                   if (tempCorrectStreak % 2 === 0) { // <- CAMBIO: Racha en nivel máximo
-                        difficultyChangedMessage = "¡Imparable! Sigues dominando el nivel más alto. 🔥";
-                   }
+                } else if (newCorrectStreak > 0 && newCorrectStreak % 2 === 0) {
+                    difficultyChangedMessage = "¡Imparable! Sigues dominando el nivel más alto. 🔥";
                 }
             }
         } else {
-            const newIncStreak = incorrectStreak + 1;
-            setIncorrectStreak(newIncStreak);
+            const newIncorrectStreak = incorrectStreak + 1;
+            setIncorrectStreak(newIncorrectStreak);
             setCorrectStreak(0);
-            tempCorrectStreak = 0;
-            if (newIncStreak >= 3) {
+            if (newIncorrectStreak >= 3) {
                 if (decreaseDifficulty()) {
                     difficultyChangedMessage = "¡Ánimo! 💪 Vamos a probar con unas un poco más sencillas.";
                     setIncorrectStreak(0);
-                } else {
-                    setIncorrectStreak(0);
                 }
             }
         }
 
-        let feedbackText = "";
-        if (isCorrectBackend) {
-            feedbackText = `✅ ¡Correcto! La ${choiceText.toLowerCase()} era la verdadera.`;
-        } else {
-            const correctPos = (newsChallengeState.leftNewsOriginalId === newsChallengeState.trueNewsOriginalId) ? "la izquierda" : "la derecha";
-            feedbackText = `❌ ¡Ups! La ${choiceText.toLowerCase()} era la falsa. La verdadera era ${correctPos}.`;
-        }
-        if (result.explanation) {
-            feedbackText += ` ${result.explanation}`;
-        }
+        let feedbackText = isCorrectBackend
+            ? `✅ ¡Correcto! La ${choiceText.toLowerCase()} era la verdadera.`
+            : `❌ ¡Ups! La ${choiceText.toLowerCase()} era la falsa. La verdadera era ${newsChallengeState.leftNewsOriginalId === newsChallengeState.trueNewsOriginalId ? "la izquierda" : "la derecha"}.`;
+        if (explanation) feedbackText += ` ${explanation}`;
 
-        let feedbackPresentationDelay = 300;
+        let feedbackDelay = 300;
         if (difficultyChangedMessage) {
             addBotResponse(difficultyChangedMessage, [], 300);
-            feedbackPresentationDelay = 800;
+            feedbackDelay = 800;
         }
-        addBotResponse(feedbackText, [], feedbackPresentationDelay);
+        addBotResponse(feedbackText, [], feedbackDelay);
 
         const nextStepButtons: MessageButton[] = [
             { id: "btn-news-again", text: "Siguiente desafío" },
@@ -909,180 +893,130 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
             { id: "btn-talk-again", text: "Sólo charlar" }
         ];
 
-        const isLevelUp = difficultyChangedMessage && difficultyChangedMessage.includes("¡Subimos un poco la dificultad!");
-        if (isLevelUp) {
+        if (difficultyChangedMessage?.includes("¡Subimos un poco la dificultad!")) {
              nextStepButtons[0].text = "Siguiente desafío (¡Nivel subido!)";
         }
 
-
-        addBotResponse("¿Qué quieres hacer ahora?", nextStepButtons, feedbackPresentationDelay + 300);
-        setLastChallengeType('pair'); // Registra que el último desafío fue de par
+        addBotResponse("¿Qué quieres hacer ahora?", nextStepButtons, feedbackDelay + 300);
+        setLastChallengeType('pair');
       } catch (error) {
         setIsBotTyping(false);
         setMessages(prev => prev.filter(m => m.id !== veamosId));
-        console.error("Error en desafío de pares:", error);
-        addBotResponse(`Error al procesar tu elección: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
+        addBotResponse(`Error: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
             { id: "btn-news-again", text: "Jugar otra vez" }, { id: "btn-talk-again", text: "Sólo charlar" },
         ]);
+      } finally {
+        setNewsChallengeState(null);
       }
-      finally { setNewsChallengeState(null); }
       return;
     }
   }, [
     authToken, addUserChoiceMessage, addBotResponse, presentNewsChallenge, newsChallengeState,
     correctStreak, incorrectStreak, increaseDifficulty, decreaseDifficulty,
     isSingleNewsAnalysisMode, currentGuidedChatSessionId, displayTipAndChallenge,
-    setMessages, setIsBotTyping, resetSingleAnalysisMode, setIsTipChallengeActive, setNewsChallengeState
+    setMessages, setIsBotTyping, resetSingleAnalysisMode, setIsTipChallengeActive, setNewsChallengeState,
+    guidedChoice, setGuidedChoice, setGuidedFlowStep
   ]);
 
   // Comentario encima de la función handleSendMessage
   const handleSendMessage = async (inputText: string) => {
     if (!inputText.trim() || !currentUserInfo) return;
-
-    if (isTipChallengeActive) {
-        addBotResponse("Por favor, responde al reto del consejo usando los botones.", [], 0);
-        return;
-    }
+    if (isTipChallengeActive) { addBotResponse("Por favor, responde al reto del consejo usando los botones.", [], 0); return; }
 
     const newUserMessage: ChatMessage = {
       id: Date.now() + Math.random(), sender: "user", text: inputText,
       avatar: currentUserInfo?.avatar_url || USER_AVATAR_URL_DEFAULT, timestamp: Date.now(),
     };
-    setMessages(currentMessages => [...currentMessages, newUserMessage]);
-
+    setMessages(current => [...current, newUserMessage]);
     setIsBotTyping(true);
 
-    if (isSingleNewsAnalysisMode && isAwaitingInitialAnalysis && singleNewsAnalysisData) {
-      setIsAwaitingInitialAnalysis(false);
-      let evaluacion: 'TRUE' | 'FALSE' | 'UNSURE' | null = null;
-      const lowerInput = inputText.toLowerCase();
-      if (/\b(es\s+)?verdadera\b/.test(lowerInput) && !/\bno\s+(es\s+)?verdadera\b/.test(lowerInput)) evaluacion = 'TRUE';
-      else if (/\b(es\s+)?falsa\b/.test(lowerInput) && !/\bno\s+(es\s+)?falsa\b/.test(lowerInput)) evaluacion = 'FALSE';
-      else if (/\b(no\s+estoy\s+segur|no\s+s[eé]|dudo)\b/.test(lowerInput)) evaluacion = 'UNSURE';
-
-      if (singleNewsAnalysisData) {
-          setSingleNewsAnalysisData(prevData => prevData ? { ...prevData, initialUserEvaluation: evaluacion } : null);
-      }
-
+    if (isSingleNewsAnalysisMode && guidedFlowStep === 'reasoning' && singleNewsAnalysisData && guidedChoice) {
       const payload: ExplicacionInicialPayload = {
         noticia_id_json: singleNewsAnalysisData.noticia_id_json,
         explicacion_usuario: inputText,
-        evaluacion_inicial_opcional: evaluacion,
+        evaluacion_inicial_opcional: guidedChoice,
         ...(singleNewsAnalysisData.area_de_enfoque_sugerida && { area_de_enfoque_sugerida: singleNewsAnalysisData.area_de_enfoque_sugerida })
       };
+
       try {
         const response = await fetch('/api/activity/guided-analysis/explain', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
           body: JSON.stringify(payload),
         });
-        if (!response.ok) { throw new Error((await response.json().catch(() => ({}))).detail || `Error ${response.status}`); }
+        if (!response.ok) throw new Error((await response.json().catch(() => ({}))).detail || `Error ${response.status}`);
         const responseData: ChatGuiaResponse = await response.json();
 
         setCurrentGuidedChatSessionId(responseData.chat_sesion_noticia_id);
         addBotResponse(responseData.respuesta_chatbot, [], 500);
+        setGuidedAnalysesSubmitted(prev => prev + 1);
+        setGuidedFlowStep('chatting');
+        setGuidedChoice(null);
 
-        const newSubmittedCount = guidedAnalysesSubmitted + 1;
-        setGuidedAnalysesSubmitted(newSubmittedCount);
-
-        let buttonsForInitialGuidedPhase: MessageButton[] = [
-            { id: "btn-finish-analysis", text: "Terminar análisis y ver solución" }
-        ];
-        if (newSubmittedCount >= 5) {
-            buttonsForInitialGuidedPhase.push({ id: "btn-tips-again", text: "Ver tips" });
+        const buttons = [{ id: "btn-finish-analysis", text: "Terminar análisis y ver solución" }];
+        if (guidedAnalysesSubmitted + 1 >= 5) {
+            buttons.push({ id: "btn-tips-again", text: "Ver tips" });
         }
-        addBotResponse(
-            "Puedes seguir preguntándome sobre esta noticia si tienes más dudas, o si ya estás listo/a:",
-            buttonsForInitialGuidedPhase,
-            600
-        );
+        addBotResponse("Puedes seguir preguntándome sobre esta noticia o, si estás listo/a:", buttons, 600);
       } catch (error) {
         setIsBotTyping(false);
-        addBotResponse(`Error al procesar tu análisis inicial: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
-            { id: "btn-news-again", text: "Otro Desafío" }, { id: "btn-talk-again", text: "Sólo Charlar" }
-        ]);
+        addBotResponse(`Error: ${error instanceof Error ? error.message : 'Desconocido'}.`, []);
         resetSingleAnalysisMode();
       }
-
-    } else if (isSingleNewsAnalysisMode && currentGuidedChatSessionId && singleNewsAnalysisData) {
-      const payload: ContinuarChatGuiaPayload = {
-        mensaje_usuario: inputText,
-      };
+    } else if (isSingleNewsAnalysisMode && guidedFlowStep === 'chatting' && currentGuidedChatSessionId) {
       try {
         const response = await fetch(`/api/activity/guided-analysis/chat/${currentGuidedChatSessionId}/continue`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-            body: JSON.stringify(payload),
+            body: JSON.stringify({ mensaje_usuario: inputText }),
         });
-        if (!response.ok) { throw new Error((await response.json().catch(() => ({}))).detail || `Error ${response.status}`);}
+        if (!response.ok) throw new Error((await response.json().catch(() => ({}))).detail || `Error ${response.status}`);
         const responseData: ChatGuiaResponse = await response.json();
         addBotResponse(responseData.respuesta_chatbot, [], 500);
 
-        let buttonsForContinuedGuidedPhase: MessageButton[] = [
-            { id: "btn-finish-analysis", text: "Terminar análisis y ver solución" }
-        ];
+        const buttons = [{ id: "btn-finish-analysis", text: "Terminar análisis y ver solución" }];
         if (guidedAnalysesSubmitted >= 5) {
-             buttonsForContinuedGuidedPhase.push({ id: "btn-tips-again", text: "Ver tips" });
+             buttons.push({ id: "btn-tips-again", text: "Ver tips" });
         }
-        addBotResponse(
-            "Puedes seguir preguntándome, o si prefieres:",
-            buttonsForContinuedGuidedPhase,
-            600
-        );
+        addBotResponse("Puedes seguir preguntándome, o si prefieres:", buttons, 600);
       } catch (error) {
         setIsBotTyping(false);
-        addBotResponse(`Error continuando la conversación guiada: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
-            { id: "btn-finish-analysis-anyway", text: "Terminar Análisis Igualmente" },
+        addBotResponse(`Error: ${error instanceof Error ? error.message : 'Desconocido'}.`, [
+            { id: "btn-finish-analysis-anyway", text: "Terminar Análisis" },
             { id: "btn-news-again", text: "Otro Desafío" }
         ]);
       }
     } else {
-        if (newsChallengeState && newsChallengeState.selectionMessageId) {
-             const selectionMessage = messages.find(msg => msg.id === newsChallengeState.selectionMessageId);
-             if (selectionMessage && !selectionMessage.buttonsDisabled) {
-                 addBotResponse("Elige una de las noticias con los botones antes de escribir, por favor.", [], 0);
-                 setIsBotTyping(false);
-                 return;
-             }
+        const selectionMessage = messages.find(msg => msg.id === newsChallengeState?.selectionMessageId);
+        if (selectionMessage && !selectionMessage.buttonsDisabled) {
+            addBotResponse("Elige una de las noticias con los botones antes de escribir, por favor.", [], 0);
+            setIsBotTyping(false);
+            return;
         }
+
         const currentSystemPrompt = isFreeChatMode ? SYSTEM_PROMPT_FREE_CHAT : SYSTEM_PROMPT_FAKE_NEWS;
         const targetEndpoint = isFreeChatMode ? `/api/bot/chatlibre` : `/api/bot/chat`;
-
         const messagesForOllama: OllamaMessage[] = [{ role: 'system', content: currentSystemPrompt }];
-        const messagesWithNewUser = [...messages, newUserMessage];
-        messagesWithNewUser.forEach(msg => {
-            if (msg.text && !msg.htmlContent && !msg.interactiveContent) {
-                 if (!(newsChallengeState && msg.id === newsChallengeState.selectionMessageId && !msg.buttonsDisabled)) {
-                    messagesForOllama.push({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.text });
-                }
+        messages.concat(newUserMessage).forEach(msg => {
+            if (msg.text && !msg.htmlContent && !msg.interactiveContent && !(msg.id === newsChallengeState?.selectionMessageId && !msg.buttonsDisabled)) {
+                messagesForOllama.push({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.text });
             }
         });
 
         try {
             const apiResponse = await fetch(targetEndpoint, {
-                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
                 body: JSON.stringify({ messages: messagesForOllama, model: 'gemma3:4b' })
             });
-            if (!apiResponse.ok) {
-                setIsBotTyping(false);
-                const errData = await apiResponse.json().catch(() => ({})); throw new Error(errData.detail || `API Error ${apiResponse.status}`);
-            }
+            if (!apiResponse.ok) throw new Error((await apiResponse.json().catch(() => ({}))).detail || `API Error ${apiResponse.status}`);
             const data = await apiResponse.json();
             addBotResponse(data.reply, [], 300);
 
             if (!isFreeChatMode) {
-                addBotResponse(
-                    "Puedes seguir preguntando o:",
-                    [
-                        { id: "btn-news-again", text: "Ir a Otro Desafío" },
-                        { id: "btn-tips-again", text: "Ver tips" },
-                    ],
-                    500
-                );
+                addBotResponse("Puedes seguir preguntando o:", [{ id: "btn-news-again", text: "Ir a Otro Desafío" }, { id: "btn-tips-again", text: "Ver tips" }], 500);
             }
         } catch (error) {
             setIsBotTyping(false);
-            console.error(`Error sending message via ${targetEndpoint}:`, error);
             addBotResponse(`Lo siento, hubo un problema: ${error instanceof Error ? error.message : 'Desconocido'}`, [], 100);
         }
     }
@@ -1092,19 +1026,12 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const handlePostTestCompleted = useCallback(async (score: number, aciertos: number, totalQuestions: number) => {
     addBotResponse(
       `¡Terminaste tu evaluación de progreso! 🎉 Tu puntuación fue: **${score.toFixed(2)}%** (${aciertos} de ${totalQuestions} aciertos). ` +
-      (score >= 70 ? "¡Excelente trabajo! Has aprendido mucho." : "¡Buen esfuerzo! Sigue practicando y verás cómo mejoras cada día."),
-      [],
-      300
+      (score >= 70 ? "¡Excelente trabajo! Has aprendido mucho." : "¡Buen esfuerzo! Sigue practicando."),
+      [], 300
     );
-    addBotResponse(
-        "¿Qué te gustaría hacer ahora?",
-        [
-            { id: "btn-news", text: "Más Desafíos de Noticias" },
-            { id: "btn-tips", text: "Repasar Tips" },
-            { id: "btn-talk", text: "Sólo Charlar" }
-        ],
-        600
-    );
+    addBotResponse("¿Qué te gustaría hacer ahora?", [
+        { id: "btn-news", text: "Más Desafíos" }, { id: "btn-tips", text: "Repasar Tips" }, { id: "btn-talk", text: "Sólo Charlar" }
+    ], 600);
     setIsPostTestMode(false);
     await fetchUserInfo();
   }, [addBotResponse, fetchUserInfo]);
@@ -1112,17 +1039,15 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   // Comentario encima de la función startPostTest
   const startPostTest = useCallback(() => {
     if (currentUserInfo && (currentUserInfo.puntuacion_pre_test_total === null || currentUserInfo.puntuacion_pre_test_total === undefined)) {
-        addBotResponse("Para evaluar tu progreso, primero necesitas completar un pequeño test inicial. Si no lo has hecho y quieres hacerlo, pregúntame por el 'pre-test'.", [], 300);
+        addBotResponse("Para evaluar tu progreso, primero necesitas completar el test inicial. Si no lo has hecho, pregúntame por el 'pre-test'.", [], 300);
         return;
     }
-    if (currentUserInfo && currentUserInfo.puntuacion_post_test_total !== null && currentUserInfo.puntuacion_post_test_total !== undefined){
-        addBotResponse(`¡Genial! Parece que ya completaste tu evaluación de progreso. Tu puntuación fue: **${currentUserInfo.puntuacion_post_test_total.toFixed(2)}%**. ¿Listo para más desafíos o aprender algo nuevo?`, [], 300);
+    if (currentUserInfo?.puntuacion_post_test_total !== null && currentUserInfo?.puntuacion_post_test_total !== undefined){
+        addBotResponse(`¡Genial! Parece que ya completaste tu evaluación de progreso. Tu puntuación fue: **${currentUserInfo.puntuacion_post_test_total.toFixed(2)}%**.`, [], 300);
         return;
     }
-    console.log("Iniciando Post-Test desde ChatContainer");
     const welcomeMsg = messages.find(msg => msg.id.toString().startsWith("welcome-msg"));
     setMessages(welcomeMsg ? [welcomeMsg] : []);
-
     setIsPostTestMode(true);
     setIsFreeChatMode(false);
     resetSingleAnalysisMode();
@@ -1132,9 +1057,8 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
 
   // Comentario encima de la función handleRefresh
   const handleRefresh = () => {
-    if (isPostTestMode) {
-        setIsPostTestMode(false);
-    }
+    if (isPostTestMode) return;
+
     if (!isLoadingUserInfo && currentUserInfo) {
       const welcomeMessage = createWelcomeMessage();
       const initialButtonsMessage: ChatMessage = {
@@ -1146,50 +1070,37 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
       setMessages([welcomeMessage, initialButtonsMessage]);
       setNewsChallengeState(null);
       resetSingleAnalysisMode();
-      setDifficultyLevel('bajo');
-      setCorrectStreak(0);
-      setIncorrectStreak(0);
       setGuidedAnalysesSubmitted(0);
       setIsTipChallengeActive(false);
-      setLastChallengeType(null); // Reinicia el flujo de desafíos
+      setLastChallengeType(null);
     } else if (!authToken) {
-        onLogout();
+        handleLogout();
     }
     closePanel();
   };
 
   let determinedChatInputDisabled = isLoadingNews || isBotTyping || isPostTestMode || isTipChallengeActive;
-  if (!isPostTestMode && !isTipChallengeActive && !determinedChatInputDisabled) {
-    const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
-    const hasStrictlyExclusiveChoiceButtons =
-        lastMessage?.sender === 'bot' &&
-        lastMessage.buttons &&
-        lastMessage.buttons.length > 0 &&
-        !lastMessage.buttonsDisabled &&
-        lastMessage.buttons.every(btn =>
-            btn.id === "btn-tips" || btn.id === "btn-news" || btn.id === "btn-talk" ||
-            btn.id === "btn-repeat-tips-yes" || btn.id === "btn-tip-understood" ||
-            btn.id.startsWith("select-news-")
-        );
-
+  if (!determinedChatInputDisabled) {
     if (isSingleNewsAnalysisMode) {
-      if (isAwaitingInitialAnalysis) determinedChatInputDisabled = false;
-      else if (currentGuidedChatSessionId) determinedChatInputDisabled = false;
-      else determinedChatInputDisabled = true;
-    } else if (hasStrictlyExclusiveChoiceButtons) {
-      determinedChatInputDisabled = true;
+        if (guidedFlowStep === 'choice') {
+            determinedChatInputDisabled = true;
+        } else {
+            determinedChatInputDisabled = false;
+        }
     } else {
-      determinedChatInputDisabled = false;
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage?.sender === 'bot' && lastMessage.buttons && !lastMessage.buttonsDisabled) {
+             determinedChatInputDisabled = true;
+        }
     }
   }
-
 
   return (
     <div className="chat-container">
       <ChatHeader
         nickname={currentUserInfo?.apodo || 'Usuario'}
         onPanelToggle={togglePanel}
-        onRefresh={isPostTestMode ? () => { alert("No puedes refrescar durante la evaluación."); } : handleRefresh}
+        onRefresh={isPostTestMode ? () => alert("No puedes refrescar durante la evaluación.") : handleRefresh}
       />
 
       {isPostTestMode ? (
@@ -1199,20 +1110,17 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
           onCancelTest={() => {
             setIsPostTestMode(false);
             const welcomeMsg = messages.find(msg => msg.id.toString().startsWith("welcome-msg"));
-            const initialButtonsMessage: ChatMessage = {
-                id: "buttons-msg-" + Date.now() +'-cancel', sender: "bot", text: "¿Qué te gustaría hacer ahora?", avatar: BOT_AVATAR_URL, timestamp: Date.now() + 1,
-                buttons: [
-                  { id: "btn-tips", text: "TIPS Y CONSEJOS" },
-                  { id: "btn-news", text: "DESCIFRAR NOTICIAS" },
-                  { id: "btn-talk", text: "SÓLO CHARLAR" }, ],
+            const initialButtons: ChatMessage = {
+                id: "buttons-msg-cancel-" + Date.now(), sender: "bot", text: "¿Qué te gustaría hacer ahora?", avatar: BOT_AVATAR_URL, timestamp: Date.now(),
+                buttons: [{ id: "btn-tips", text: "TIPS" }, { id: "btn-news", text: "NOTICIAS" }, { id: "btn-talk", text: "CHARLAR" }],
                 buttonsDisabled: false,
               };
-            setMessages(welcomeMsg ? [welcomeMsg, initialButtonsMessage] : [initialButtonsMessage]);
+            setMessages(welcomeMsg ? [welcomeMsg, initialButtons] : [initialButtons]);
           }}
         />
       ) : (
         <>
-          {chatError && (isLoadingNews || isSingleNewsAnalysisMode) && ( <div style={{ padding: '5px', background: '#fff0f0', color: 'red', textAlign: 'center' }}>Error: {chatError}</div> )}
+          {chatError && <div style={{ padding: '5px', background: '#fff0f0', color: 'red', textAlign: 'center' }}>Error: {chatError}</div>}
           <MessageList
             messages={messages}
             onButtonClick={handleMessageButtonClick}
@@ -1231,7 +1139,7 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
         onClose={closePanel}
         userInfo={currentUserInfo}
         authToken={authToken}
-        onLogout={onLogout}
+        onLogout={handleLogout}
         onSettingsSaved={handleSettingsSaved}
         onStartPostTest={startPostTest}
         selectedTerm={selectedTermForSidePanel}
@@ -1240,4 +1148,5 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     </div>
   );
 }
+
 export default ChatContainer;
