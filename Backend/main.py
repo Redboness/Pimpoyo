@@ -428,8 +428,8 @@ post_test_router = APIRouter(prefix="/activity/post-test", tags=["Post-Test Acti
 @auth_router.post("/register/", response_model=UsuarioPublic, status_code=status.HTTP_201_CREATED)
 async def register_usuario(usuario_in: UsuarioCreate):
     """
-    Registra un nuevo usuario, incluyendo el procesamiento y guardado
-    de las respuestas del pre-test en las columnas correspondientes de la tabla sesiones.
+    Registra un nuevo usuario, guardando las respuestas del pre-test
+    y las puntuaciones por sección calculadas en el frontend.
     """
     existing_user = await get_usuario_by_apodo(usuario_in.apodo)
     if existing_user:
@@ -437,24 +437,24 @@ async def register_usuario(usuario_in: UsuarioCreate):
 
     hashed_password = get_password_hash(usuario_in.password)
 
-    # 1. Mapeo de IDs de preguntas del frontend a columnas de la BBDD
-    # Basado en el PDF "Análisis completo_ Encuestas .pdf" y el array preSurveyQuestions de ProfileSetup.tsx
+    # Mapeo de IDs de preguntas del frontend a columnas de la BBDD
     pre_test_id_to_db_col = {
-        'q1': 'pre_s2_p5_habilidad_vf',          # Habilidad para descubrir V/F
-        'q2': 'pre_s1_p4_charla_peligros',      # Dificultad para saber si es real (mapeo adaptado)
-        'q3': 'pre_s2_p6_dificultad_vf',         # Dificultad para saber si es real (mapeo adaptado)
-        'q4': 'pre_s1_p3_habilidad_tech',       # Habilidad con tecnologías (mapeo adaptado)
-        'q5': 'pre_s2_p7_estrategias_fijarse',   # En qué te fijas
-        'q6': 'pre_s2_p8_fuentes_confianza',     # Fuentes de confianza
-        'q7': 'pre_s2_p9_sospecha_falsa',        # Sospecha de FALSA
-        'q8': 'pre_s2_p10_probabilidad_verdad', # Probabilidad de VERDAD
-        'q9_q': 'pre_s3_p11_vf_apagon',          # Noticia del Apagón ¿V/F?
-        'q9_a': 'pre_s3_p11_expl_apagon',        # Explicación de la noticia del Apagón
-        'q10_q': 'post_s3_p10_vf_sangre_artificial', # Noticia Sangre Artificial ¿V/F? (Nombre de columna adaptado de post-test)
-        'q10_a': 'post_s3_p11_expl_apagon_post' # Explicación Sangre Artificial (Nombre de columna adaptado de post-test)
+        'P1_Horas': 'pre_s1_p1_horas_internet',
+        'P2_Plataformas': 'pre_s1_p2_plataformas',
+        'P3_Habilidad_Tech': 'pre_s1_p3_habilidad_tech',
+        'P4_Charla_Peligros': 'pre_s1_p4_charla_peligros',
+        'P5_Habilidad_VF': 'pre_s2_p5_habilidad_vf',
+        'P6_Dificultad_VF': 'pre_s2_p6_dificultad_vf',
+        'P7_Estrategias': 'pre_s2_p7_estrategias_fijarse',
+        'P8_Fuentes_Confianza': 'pre_s2_p8_fuentes_confianza',
+        'P9_Sospecha_Falsa': 'pre_s2_p9_sospecha_falsa',
+        'P10_Prob_Verdad': 'pre_s2_p10_probabilidad_verdad',
+        'P11_VF': 'pre_s3_p11_vf_apagon',
+        'P11_Expl': 'pre_s3_p11_expl_apagon',
+        # La entrada para P12 ha sido eliminada
     }
 
-    # 2. Prepara el diccionario principal de valores para la tabla 'sesiones'
+    # Prepara el diccionario de valores para insertar
     sesion_values_to_insert = {
         "apodo": usuario_in.apodo,
         "hashed_password": hashed_password,
@@ -464,40 +464,44 @@ async def register_usuario(usuario_in: UsuarioCreate):
         "consentimiento_obtenido": usuario_in.consentimiento_obtenido,
         "curso_escolar": usuario_in.curso_escolar,
         "inicio_sesion_ts": datetime.now(dt_timezone.utc),
-        # Usamos el nombre de columna correcto para la puntuación total
-        "puntuacion_pre_test_total": usuario_in.puntuacion_pre_test,
+
+        # --- AÑADIENDO LAS PUNTUACIONES POR SECCIÓN ---
+        "pre_test_s1_perfil_puntos": usuario_in.pre_test_s1_perfil_puntos,
+        "pre_test_s2_estrategias_puntos": usuario_in.pre_test_s2_estrategias_puntos,
+        "pre_test_s3_practica_puntos": usuario_in.pre_test_s3_practica_puntos,
+        "puntuacion_pre_test_total": usuario_in.puntuacion_pre_test_total,
     }
 
-    # 3. Procesa y añade las respuestas del pre-test al diccionario
+    # Procesa y añade las respuestas del pre-test
     if usuario_in.respuestas_pre_test:
         for question_id, answer in usuario_in.respuestas_pre_test.items():
             db_column_name = pre_test_id_to_db_col.get(question_id)
             if db_column_name:
-                # El valor ya viene como string o array de strings desde el frontend
                 sesion_values_to_insert[db_column_name] = answer
 
-    # 4. Inserta todo en la base de datos en una sola operación
+    # Inserta todo en la base de datos
     async with database.transaction():
         try:
-            query_sesion = sesiones_table.insert().values(**sesion_values_to_insert).returning(sesiones_table.c.sesion_id)
-            last_sesion_id = await database.fetch_val(query_sesion)
-            if last_sesion_id is None:
-                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error creando al usuario, no se devolvió ID.")
+            # Usamos .values() y execute() que es más compatible con diferentes backends
+            query_sesion = sesiones_table.insert().values(**sesion_values_to_insert)
+            last_sesion_id = await database.execute(query_sesion)
 
-            # Ya no necesitamos insertar en 'respuestas_pre_test_table'
+            # Comprobación de que el ID se ha generado
+            if not last_sesion_id:
+                 raise HTTPException(status_code=500, detail="Fallo al crear el usuario en la base de datos.")
 
             created_user_query = sesiones_table.select().where(sesiones_table.c.sesion_id == last_sesion_id)
             created_user_db_map = await database.fetch_one(created_user_query)
+
             if not created_user_db_map:
-                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="No se pudo recuperar el usuario tras crearlo.")
+                raise HTTPException(status_code=500, detail="No se pudo recuperar el usuario tras crearlo.")
 
             created_user_db = UsuarioInDB(**dict(created_user_db_map))
             return UsuarioPublic.model_validate(created_user_db.model_dump())
 
         except Exception as e:
-            print(f"Error detallado en el registro durante la transacción: {e}")
-            # Ofrece un mensaje de error más genérico al usuario final
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"No se pudo registrar al usuario. Ocurrió un error.")
+            print(f"Error detallado en el registro: {e}")
+            raise HTTPException(status_code=400, detail="No se pudo registrar al usuario.")
 
 # --- Endpoint para el submit del POST-TEST (guardando respuestas individuales) ---
 @post_test_router.post("/submit", response_model=PostTestSubmitResponse)

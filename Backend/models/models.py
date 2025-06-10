@@ -13,8 +13,8 @@ class PerfilBase(BaseModel):
     # Si avatar_url puede ser string o HttpUrl, mantenlo. Si solo va a ser string, simplifica.
     avatar_url: Optional[str] = None # Simplificado a str opcional, ajusta si necesitas HttpUrl
     curso_escolar: Optional[str] = None
-    puntuacion_pre_test: Optional[float] = None
-    puntuacion_post_test: Optional[float] = None
+    puntuacion_pre_test_total: Optional[float] = None
+    puntuacion_post_test_total: Optional[float] = None
     precision_global_sesion: Optional[float] = None
 
 class UsuarioCreate(PerfilBase):
@@ -23,6 +23,9 @@ class UsuarioCreate(PerfilBase):
     curso_escolar: str
     # puntuacion_pre_test ya es opcional desde PerfilBase
     respuestas_pre_test: Optional[Dict[str, Any]] = None # <--- CAMBIO PRINCIPAL AQUÍ: Añadir este campo
+    pre_test_s1_perfil_puntos: Optional[float] = None
+    pre_test_s2_estrategias_puntos: Optional[float] = None
+    pre_test_s3_practica_puntos: Optional[float] = None
 
 class UsuarioUpdateProfile(BaseModel):
     apodo: Optional[str] = Field(None, min_length=1, max_length=50)

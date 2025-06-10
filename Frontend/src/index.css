@@ -687,12 +687,19 @@ body {
 
 /* Estilo para las etiquetas */
 .radio-checkbox-item label {
-  cursor: pointer;
+  display: flex; /* Convierte el label en un contenedor flex */
+  align-items: flex-start; /* Alinea el botón con la parte de arriba del texto (ideal para textos largos) */
+  gap: 12px; /* Espacio moderno entre el botón y el texto */
+  cursor: pointer; /* ¡Esencial! El cursor indica que es clicable */
+  padding: 10px; /* Un buen área de padding para que sea fácil acertar con el clic */
+  border-radius: 8px; /* Bordes redondeados */
+  transition: background-color 0.2s;
+  width: 100%;
   color: #4a3112;
-  flex-grow: 1; /* Ocupa el espacio restante */
-  line-height: 1.6; /* Altura de línea cómoda */
-  text-align: left; /* Asegurar alineación */
-  font-size: 1em; /* Tamaño normal */
+  line-height: 1.6;
+  text-align: justify;
+  hyphens: auto;
+  box-sizing: border-box;
 }
 
 /* --- ESTILOS PASO FINAL --- */
