@@ -1,37 +1,40 @@
 /* --- Fuente principal Fredoka --- */
 @import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap");
 
-/* --- Estilos Generales --- */
 body {
   margin: 0;
   font-family: "Fredoka", "Comic Sans MS", sans-serif;
   color: #4a3112;
   line-height: 1.4;
+  /* Evita el rebote del scroll en el body en iOS */
+  overflow: hidden;
 }
 
 /* --- Contenedor Principal del Chat --- */
+/* [MODIFICADO] Convertido en un contenedor Flex que ocupa toda la pantalla */
 .chat-container {
   background-color: #fff4de;
   width: 100%;
-  height: 100vh;
-  /* Ahora este contenedor es el que tendrá el scroll */
-  overflow-y: auto;
-  /* Ya no necesita ser un contenedor flex para este propósito */
+  height: 100vh; /* Ocupa el 100% de la altura de la ventana */
+  display: flex;
+  flex-direction: column; /* Apila los elementos (header, mensajes, input) verticalmente */
+  overflow: hidden; /* El scroll lo manejará el área de mensajes */
 }
 
 /* --- Cabecera --- */
+/* [MODIFICADO] La cabecera ya no necesita 'sticky'. Se posicionará de forma natural arriba. */
 .chat-header {
   padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  /* --- LA MAGIA PARA QUE SE QUEDE FIJA --- */
-  position: sticky; /* Hace que la cabecera sea "pegajosa" */
-  top: 0;           /* Le decimos que se pegue al borde superior */
-  z-index: 10;      /* Nos aseguramos de que esté por encima de los mensajes */
   background-color: #fff4de;
+  /* Se añade un z-index para asegurar que esté por encima de los mensajes */
+  z-index: 10;
+  /* flex-shrink: 0 evita que la cabecera se encoja */
+  flex-shrink: 0;
 }
+
 
 .chat-header button {
   cursor: pointer;
@@ -97,11 +100,17 @@ body {
 }
 
 /* --- Área de Mensajes --- */
+/* [MODIFICADO] Esta área ahora es la única con scroll */
 .chat-messages {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  /* flex-grow: 1 hace que ocupe todo el espacio vertical disponible */
+  flex-grow: 1;
+  /* overflow-y: auto añade el scroll solo cuando es necesario */
+  overflow-y: auto;
 }
+
 
 /* --- Estilos Base Mensaje --- */
 .message {
@@ -261,12 +270,16 @@ body {
 }
 
 /* --- Área de Input --- */
+/* [MODIFICADO] El área de input ahora es fija en su sitio, sin 'sticky' */
 .chat-input-area {
   display: flex;
   align-items: flex-end;
   padding: 15px;
   background-color: #94ab3d;
+  /* flex-shrink: 0 evita que el input se encoja */
   flex-shrink: 0;
+  /* Se añade un z-index para asegurar que esté por encima por si acaso */
+  z-index: 10;
 }
 
 .text-input {
@@ -331,6 +344,8 @@ body {
 .send-button:hover {
   background-color: #f750b6;
 }
+
+/* El resto de tus estilos permanecen igual... */
 
 /* --- Panel Lateral --- */
 #side-panel {
@@ -450,11 +465,11 @@ body {
 .register-flow {
   flex-grow: 1;
   display: flex;
-  flex-direction: column;     
+  flex-direction: column;
  }
 
 .step-container {
-  margin: auto;  
+  margin: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -594,7 +609,7 @@ body {
   color: #4a3112;
   margin-bottom: 30px;
   max-width: 600px; /* Ancho máximo */
-  text-align: justify; 
+  text-align: justify;
   margin-left: auto;   /* Centra el párrafo en sí mismo horizontalmente */
   margin-right: auto;  /* Centra el párrafo en sí mismo horizontalmente */
   margin-bottom: 30px; /* Mantiene la separación inferior que ya tenías */
@@ -1440,7 +1455,7 @@ border: 1px solid #e0e0e0;
   color: #4a3112;
   line-height: 1.5;
   text-align: justify;
-  hyphens: auto;  
+  hyphens: auto;
 }
 .single-news-wrapper {
   display: flex;
@@ -1650,7 +1665,7 @@ border: 1px solid #e0e0e0;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0; 
+  gap: 0;
   margin-bottom: 20px;
   padding: 0 10px 20px 10px; /* Ajustamos padding */
 }
@@ -1663,7 +1678,7 @@ border: 1px solid #e0e0e0;
   box-shadow: none;
   background-color: transparent;
   border: none;
-  
+
   /* Nuevo estilo minimalista */
   font-family: "Fredoka", sans-serif;
   font-weight: 600;
@@ -1715,7 +1730,7 @@ border: 1px solid #e0e0e0;
 /* La definición (la tarjeta en sí) */
 .panel-section-content dl dd {
   /* Usamos un blanco roto, más cálido y dulce */
-  background-color: #ffffff; 
+  background-color: #ffffff;
   border: 3px solid #f5e187;
   border-radius: 10px; /* Bordes más redondeados para un look más suave */
   padding: 15px;
@@ -1749,7 +1764,7 @@ border: 1px solid #e0e0e0;
   row-gap: 10px;
   margin-bottom: 5px;
   padding: 10px 10px 25px 10px;
-  margin-top: 25px; 
+  margin-top: 25px;
 }
 
 /* Letras activas (con enlace) */
@@ -1762,7 +1777,7 @@ border: 1px solid #e0e0e0;
   text-decoration-color: #f5e187;
 
   /* La "magia" para la línea ondulada */
-  text-decoration-style: wavy; 
+  text-decoration-style: wavy;
   text-decoration-thickness: 2px; /* Grosor de la onda */
   text-underline-offset: 3px; /* Distancia de la onda al texto */
   transition: all 0.2s ease;
@@ -1828,11 +1843,11 @@ hr.separator {
   display: flex;
   align-items: center; /* Centramos verticalmente todo el contenido de la fila */
   gap: 15px;
-  background-color: #ffffff; 
+  background-color: #ffffff;
   padding: 18px;
   border-radius: 20px;
-  border: 5px solid #94ab3d; 
-  margin-bottom: 15px; 
+  border: 5px solid #94ab3d;
+  margin-bottom: 15px;
 }
 
 /* El círculo del icono */
@@ -1847,7 +1862,7 @@ hr.separator {
   flex-shrink: 0;
   background-color: #ffffff; /* Fondo blanco para que destaque más */
   color: #7a8e31; /* Icono en marrón oscuro */
-  
+
 }
 
 /* CORRECCIÓN 2: Aseguramos el tamaño y alineación del icono SVG interno */
