@@ -14,6 +14,7 @@ body {
   background-color: #fff4de;
   width: 100%;
   height: 100vh; /* Ocupa el 100% de la altura de la ventana */
+  height: 100dvh; /* Unidad moderna que se ajusta a la UI del navegador móvil */
   display: flex;
   flex-direction: column; /* Apila los elementos (header, mensajes, input) verticalmente */
   overflow: hidden; /* El scroll lo manejará el área de mensajes */
