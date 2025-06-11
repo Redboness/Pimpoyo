@@ -1,5 +1,6 @@
 # main.py
 import os
+import asyncio
 from fastapi.concurrency import asynccontextmanager
 import uvicorn
 from dotenv import load_dotenv
@@ -41,6 +42,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 480))
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3:4b")
 OLLAMA_MODEL_ANALYSIS = os.getenv("OLLAMA_MODEL_ANALYSIS", "gemma3:4b")
 NEWS_DATASET_PATH = os.path.join(os.path.dirname(__file__), "datasets", "analyzed_test_with_stats.json")
+OLLAMA_CONCURRENCY_LIMIT = int(os.getenv("OLLAMA_CONCURRENCY_LIMIT", 5))
+
 
 XP_POR_ACIERTO = 10
 XP_POR_FALLO = 2
@@ -330,15 +333,48 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 ollama_client: Optional[ollama.AsyncClient] = None
+ollama_semaphore: Optional[asyncio.Semaphore] = None
+
+#
+# Procesa una petición a Ollama de forma segura, controlando la concurrencia.
+#
+async def process_with_ollama(model: str, messages: List[Dict[str, Any]], **kwargs) -> Dict[str, Any]:
+    if not ollama_client or not ollama_semaphore:
+        print("ERROR: El cliente de Ollama o el semáforo no están inicializados.")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="El servicio de inferencia no está disponible en este momento."
+        )
+
+    async with ollama_semaphore:
+        print(f"INFO: Semáforo adquirido. Procesando petición a Ollama con el modelo {model}.")
+        try:
+            response = await ollama_client.chat(
+                model=model,
+                messages=messages,
+                **kwargs
+            )
+            print("INFO: Petición a Ollama completada. Semáforo liberado.")
+            return response
+        except Exception as e:
+            print(f"ERROR: Fallo durante la comunicación con Ollama: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=f"Error al comunicarse con el modelo de lenguaje: {str(e)[:100]}"
+            )
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global ollama_client
+    global ollama_client, ollama_semaphore
     try:
         await database.connect()
         print("INFO: Conectado a la base de datos PostgreSQL.")
     except Exception as e:
         print(f"ERROR CRÍTICO: No se pudo conectar a la base de datos: {e}")
+
+    print(f"INFO: Configurando semáforo de Ollama con un límite de {OLLAMA_CONCURRENCY_LIMIT} peticiones concurrentes.")
+    ollama_semaphore = asyncio.Semaphore(OLLAMA_CONCURRENCY_LIMIT)
+
     try:
         ollama_client_instance = ollama.AsyncClient()
         await ollama_client_instance.list()
@@ -515,10 +551,12 @@ async def handle_fake_news_chat(request: ChatRequest, current_user: UsuarioInDB 
     if not messages_to_ollama or messages_to_ollama[0]['role'] != 'system': raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="System message is missing or not first.")
     if len(messages_to_ollama) < 2: raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Insufficient messages provided.")
     try:
-        response = await ollama_client.chat(model=request.model or OLLAMA_MODEL, messages=messages_to_ollama)
+        response = await process_with_ollama(model=request.model or OLLAMA_MODEL, messages=messages_to_ollama)
         reply_content = response.get('message', {}).get('content', '')
         return ChatResponse(reply=reply_content)
     except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
         print(f"Error interacting with Ollama in /bot/chat: {e}")
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=f"Failed to get response from language model: {str(e)[:100]}")
 
@@ -529,10 +567,12 @@ async def handle_free_chat(request: ChatRequest, current_user: UsuarioInDB = Dep
     if not messages_to_ollama or messages_to_ollama[0]['role'] != 'system': raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="System message is missing or not first.")
     if len(messages_to_ollama) < 2: raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Insufficient messages provided.")
     try:
-        response = await ollama_client.chat(model=request.model or OLLAMA_MODEL, messages=messages_to_ollama)
+        response = await process_with_ollama(model=request.model or OLLAMA_MODEL, messages=messages_to_ollama)
         reply_content = response.get('message', {}).get('content', '')
         return ChatResponse(reply=reply_content)
     except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
         print(f"Error interacting with Ollama in /bot/chatlibre: {e}")
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=f"Failed to get response from language model: {str(e)[:100]}")
 
@@ -726,12 +766,14 @@ async def start_guided_analysis_explanation_endpoint(request_data: ExplicacionIn
     if request_data.area_de_enfoque_sugerida: sys_prompt += f" CONSEJO ADICIONAL PARA TI, PIMPOYO: Esta noticia fue seleccionada porque el usuario podría necesitar reforzar su comprensión sobre '{request_data.area_de_enfoque_sugerida}'. Intenta guiar la conversación sutilmente para abordar este aspecto si surge naturalmente en la explicación del usuario o si ves una oportunidad."
     ollama_msgs = [OllamaMessage(role="system", content=sys_prompt), OllamaMessage(role="user", content=user_msg_content)]
     try:
-        ollama_resp = await ollama_client.chat(model=OLLAMA_MODEL_ANALYSIS, messages=[msg.model_dump() for msg in ollama_msgs])
+        ollama_resp = await process_with_ollama(model=OLLAMA_MODEL_ANALYSIS, messages=[msg.model_dump() for msg in ollama_msgs])
         reply_content = ollama_resp['message']['content']
         if not reply_content: reply_content = "¡Entendido! Gracias por compartir tu primer análisis. ¿Hay algo en particular de la noticia que te gustaría que exploráramos juntos? Puedes preguntarme lo que quieras sobre ella."
     except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
         print(f"Error Ollama en /explain: {e}"); reply_content = "Vaya, mis circuitos están un poco revueltos ahora mismo. Pero dime, ¿qué te hizo pensar así sobre la noticia?"
-    await database.execute(mensajes_chat_guia_table.insert().values(chat_sesion_noticia_id=chat_sesion_id, emisor='chatbot', contenido=reply_content, timestamp_mensaje=datetime.now(dt_timezone.utc))) # Falta orden_en_chat aquí
+    await database.execute(mensajes_chat_guia_table.insert().values(chat_sesion_noticia_id=chat_sesion_id, emisor='chatbot', contenido=reply_content, timestamp_mensaje=datetime.now(dt_timezone.utc), orden_en_chat=2))
     return ChatGuiaResponse(chat_sesion_noticia_id=chat_sesion_id, respuesta_chatbot=reply_content)
 
 @guided_analysis_router.post("/chat/{chat_sesion_noticia_id}/continue", response_model=ChatGuiaResponse)
@@ -751,9 +793,11 @@ async def continue_guided_analysis_chat_endpoint(chat_sesion_noticia_id: int, re
     sys_prompt_cont = ("Rol: Eres 'Pimpoyo', un chatbot guía para niños de 10-12 años. Ayúdalos a analizar una noticia paso a paso. Contexto: Estás continuando una conversación sobre una noticia específica que el usuario está analizando. Ya le diste un feedback conversacional inicial a su primera evaluación. Tarea: Responde a la NUEVA pregunta o comentario del usuario de forma clara y sencilla. Sigue guiándolo para que reflexione sobre la noticia. Evita dar la solución (si es verdadera o falsa la noticia) directamente. Si que puedes contestar otras preguntas sobre la noticia o cómo identificar su respuesta del usuario. Anímalo a encontrar pistas por sí mismo. Sé breve y amigable. Si el usuario parece estar atascado o pide una pista directa, puedes ofrecer una pequeña ayuda sutil.")
     final_ollama_msgs = [OllamaMessage(role="system", content=sys_prompt_cont)] + ollama_hist
     try:
-        ollama_resp = await ollama_client.chat(model=OLLAMA_MODEL_ANALYSIS, messages=[msg.model_dump() for msg in final_ollama_msgs])
+        ollama_resp = await process_with_ollama(model=OLLAMA_MODEL_ANALYSIS, messages=[msg.model_dump() for msg in final_ollama_msgs])
         reply_content = ollama_resp['message']['content'] or "Entendido. ¿Qué más quieres que veamos?"
     except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
         print(f"Error Ollama en /continue: {e}"); reply_content = "Mis antenas de detective están cruzadas. ¿Podrías preguntarme de otra forma?"
     await database.execute(mensajes_chat_guia_table.insert().values(
         chat_sesion_noticia_id=chat_sesion_noticia_id, emisor='chatbot', contenido=reply_content,
@@ -820,7 +864,7 @@ Basado en la conversación, responde ÚNICAMENTE en formato JSON válido con la 
 """
         try:
             ollama_params = {"model": OLLAMA_MODEL_ANALYSIS, "messages": [{"role": "user", "content": prompt_for_llm_analysis}], "format": "json", "stream": False}
-            response_llm = await ollama_client.chat(**ollama_params)
+            response_llm = await process_with_ollama(**ollama_params)
             llm_reply_content = response_llm.get('message', {}).get('content', '').strip()
             parsed_llm_data = py_json.loads(llm_reply_content)
             llm_analysis_payload = PostChatAnalysisPayload(**parsed_llm_data)
@@ -861,7 +905,7 @@ Basado en la conversación, responde ÚNICAMENTE en formato JSON válido con la 
                 relevant_tips_text=relevant_tips_text
             )
 
-            response_llm_exp = await ollama_client.chat(model=OLLAMA_MODEL_ANALYSIS, messages=[{"role": "user", "content": explanation_prompt}])
+            response_llm_exp = await process_with_ollama(model=OLLAMA_MODEL_ANALYSIS, messages=[{"role": "user", "content": explanation_prompt}])
             # La respuesta ahora se usa directamente, sin limpieza de código.
             pedagogical_explanation = response_llm_exp.get('message', {}).get('content', '').strip()
 
@@ -964,10 +1008,13 @@ async def finish_pair_selection_challenge(request_data: FinishPairChallengeReque
     ollama_expl_final_val = "Fíjate bien en las pistas de cada noticia para descubrir la verdad. ¡Tú puedes!"
     if ollama_client:
         try:
-            response_ollama = await ollama_client.chat(model=OLLAMA_MODEL_ANALYSIS, messages=[{"role": "user", "content": prompt_final_ollama_expl}])
+            response_ollama = await process_with_ollama(model=OLLAMA_MODEL_ANALYSIS, messages=[{"role": "user", "content": prompt_final_ollama_expl}])
             ollama_cand = response_ollama.get('message', {}).get('content', '')
             if ollama_cand: ollama_expl_final_val = ollama_cand.strip()
-        except Exception as e: print(f"Error Ollama en finish_pair_selection: {e}")
+        except Exception as e:
+            if isinstance(e, HTTPException):
+                raise e
+            print(f"Error Ollama en finish_pair_selection: {e}")
 
     # Asegurar que noticia_data_from_json no sea None para registrar_interaccion...
     noticia_para_registrar = sel_data if sel_data else {"ID": sel_id, "CATEGORY": "DESCONOCIDA"}
