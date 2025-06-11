@@ -14,9 +14,9 @@ body {
   background-color: #fff4de;
   width: 100%;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  /* Ahora este contenedor es el que tendrá el scroll */
+  overflow-y: auto;
+  /* Ya no necesita ser un contenedor flex para este propósito */
 }
 
 /* --- Cabecera --- */
@@ -25,8 +25,12 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: none;
-  flex-shrink: 0;
+
+  /* --- LA MAGIA PARA QUE SE QUEDE FIJA --- */
+  position: sticky; /* Hace que la cabecera sea "pegajosa" */
+  top: 0;           /* Le decimos que se pegue al borde superior */
+  z-index: 10;      /* Nos aseguramos de que esté por encima de los mensajes */
+  background-color: #fff4de;
 }
 
 .chat-header button {
@@ -94,8 +98,6 @@ body {
 
 /* --- Área de Mensajes --- */
 .chat-messages {
-  flex-grow: 1;
-  overflow-y: auto;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -443,13 +445,20 @@ body {
   display: flex;
   flex-direction: column;
   background-color: #fff4de;
-}
+  }
+
+.register-flow {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;     
+ }
+
 .step-container {
+  margin: auto;  
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-grow: 1;
   padding: 20px;
   box-sizing: border-box;
   text-align: center;
@@ -585,10 +594,27 @@ body {
   color: #4a3112;
   margin-bottom: 30px;
   max-width: 600px; /* Ancho máximo */
-  text-align: justify; /* *** JUSTIFICADO *** */
+  text-align: justify; 
+  margin-left: auto;   /* Centra el párrafo en sí mismo horizontalmente */
+  margin-right: auto;  /* Centra el párrafo en sí mismo horizontalmente */
+  margin-bottom: 30px; /* Mantiene la separación inferior que ya tenías */
   line-height: 1.5;
   font-size: 1.1em; /* Un poco más grande */
 }
+.pretest-step-style > form > h3{
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 1.3em;
+  color: #8b4513; /* Un marrón oscuro para que el texto destaque */
+  background-color: #ffffff; /* Un fondo color crema suave que combina con el resto */
+  padding: 10px 25px;
+  border-radius: 25px; /* Bordes redondeados para un look más suave */
+  margin-top: 40px; /* Aumentamos el espacio superior para separar bien las secciones */
+  margin-bottom: 30px; /* Espacio antes de la primera pregunta de la sección */
+  display: inline-block; /* Evita que el fondo ocupe todo el ancho de la página */
+  border: 5px solid #eaddc0; /* Un borde sutil que le da profundidad */
+}
+
 .outro-text-pimpoyo {
   /* Añadido estilo para el texto final */
   color: #4a3112;
@@ -617,7 +643,7 @@ body {
 /* Ítem de opción (Contenedor de input + label) */
 .radio-checkbox-item {
   display: flex;
-  align-items: flex-start; /* Alinea arriba para textos largos */
+  align-items: center; /* <-- CAMBIO: De 'flex-start' a 'center' para alinear verticalmente */
   margin-bottom: 15px; /* Espacio entre opciones */
   cursor: pointer; /* Hace toda la fila clickeable */
   padding: 8px; /* Pequeño padding para hover */
@@ -644,7 +670,7 @@ body {
   position: relative;
   transition: border-color 0.2s, background-color 0.2s;
   flex-shrink: 0; /* Evita que se encoja */
-  margin-top: 2px; /* Alineación vertical ligera */
+  z-index: 2;
 }
 
 .radio-checkbox-item input[type="checkbox"] {

@@ -12,10 +12,10 @@ post_test_questions: List[Dict[str, Any]] = [
         "id_pregunta": "s1_p1", "seccion_id": "s1", "tipo": "eleccion_unica",
         "texto_pregunta": "¿Cómo dirías que se te da AHORA descubrir si una noticia que ves en internet o redes sociales es verdadera o es falsa?",
         "opciones": [
-            {"id": "s1_p1_o1", "text": "1- Nada bueno/a, me cuesta muchísimo."},
-            {"id": "s1_p1_o2", "text": "2- No muy bueno/a, suelo dudar."},
-            {"id": "s1_p1_o3", "text": "3 - Normal, a veces acierto y a veces no."},
-            {"id": "s1_p1_o4", "text": "4- Bastante bueno/a, suelo acertar."},
+            {"id": "s1_p1_o1", "text": "Nada bueno/a, me cuesta muchísimo."},
+            {"id": "s1_p1_o2", "text": "No muy bueno/a, suelo dudar."},
+            {"id": "s1_p1_o3", "text": "Normal, a veces acierto y a veces no."},
+            {"id": "s1_p1_o4", "text": "Bastante bueno/a, suelo acertar."},
             {"id": "s1_p1_o5", "text": "5- ¡Soy un crack!, se me da muy bien."}
         ]
     },
