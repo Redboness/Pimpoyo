@@ -6,8 +6,6 @@ body {
   font-family: "Fredoka", "Comic Sans MS", sans-serif;
   color: #4a3112;
   line-height: 1.4;
-  /* Evita el rebote del scroll en el body en iOS */
-  overflow: hidden;
 }
 
 /* --- Contenedor Principal del Chat --- */
@@ -466,10 +464,12 @@ body {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;     /* Mantiene el contenido centrado horizontalmente */
+  justify-content: center; /* CAMBIO: Alinea el contenido arriba para que el scroll empiece bien */
+  padding: 40px 20px; /* Añade espacio superior e inferior para que no se pegue a los bordes */
  }
 
 .step-container {
-  margin: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -639,6 +639,8 @@ body {
   text-align: center;
   font-size: 1.1em;
   font-weight: bold;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Tarjeta para CADA pregunta (según tu TSX) */

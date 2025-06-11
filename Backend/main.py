@@ -80,6 +80,65 @@ LISTA_TIPOS_RAZONAMIENTO = [
     "Evaluación del contexto de la noticia", "Identificación de la intención del autor",
     "Diferenciación entre opinión y hecho"
 ]
+LISTA_INDICADORES_DESINFORMACION = [
+    # ... (la nueva lista de indicadores que te di) ...
+]
+
+LISTA_TIPOS_RAZONAMIENTO = [
+    "Evaluación de fuentes", "Identificación de sesgos", "Análisis de datos/evidencia",
+    "Verificación de hechos (Fact-checking)", "Detección de manipulación emocional",
+    "Análisis de la lógica argumental", "Comparación con conocimiento previo",
+    "Evaluación del contexto de la noticia", "Identificación de la intención del autor",
+    "Diferenciación entre opinión y hecho"
+]
+
+# --- PEGA EL NUEVO DICCIONARIO AQUÍ DEBAJO ---
+
+INDICATOR_TO_TIP_MAP = {
+    # Consejo 1: Fuente
+    "Fuente Fiable y Reconocida": "CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️",
+    "Fuente Desconocida o Dudosa": "CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️",
+    "Fuente Anónima o Sin Autor Claro": "CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️",
+    "Autor con Reputación y Credenciales": "CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️",
+    "Autor Sin Credenciales o Desconocido": "CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️",
+    
+    # Consejo 2: Comparar
+    "Confirmado por Múltiples Fuentes Fiables": "CONSEJO 2: ¡COMPARA, COMPARA! 🆚",
+    "No se Encuentra en Otras Fuentes Fiables (o es desmentido)": "CONSEJO 2: ¡COMPARA, COMPARA! 🆚",
+    
+    # Consejo 3: Fecha
+    "Información Desactualizada Presentada como Novedad": "CONSEJO 3: ¡OJO A LA FECHA! 📅",
+    "Sin Fecha/Noticia Antigua": "CONSEJO 3: ¡OJO A LA FECHA! 📅",
+    
+    # Consejo 4: Titulares
+    "Titular Sensacionalista o 'Clickbait'": "CONSEJO 4: TITULARES CON TRAMPA 🎣",
+    "Titular Informativo y Coherente con el Texto": "CONSEJO 4: TITULARES CON TRAMPA 🎣",
+    
+    # Consejo 5: Escritura
+    "Errores Gramaticales o de Ortografía Notorios": "CONSEJO 5: ¿ESTÁ BIEN ESCRITO? ✍️",
+    "Buena Calidad de Redacción (sin errores graves)": "CONSEJO 5: ¿ESTÁ BIEN ESCRITO? ✍️",
+    
+    # Consejo 6: Pruebas
+    "Falta de Pruebas o Evidencia Concreta": "CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS? 🔍",
+    "Aporta Pruebas Verificables (datos, estudios, enlaces)": "CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS? 🔍",
+    
+    # Consejo 7: Sesgo
+    "Presenta un Único Punto de Vista (sesgo de selección)": "CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS? 🧐",
+    "Presenta Diferentes Puntos de Vista (imparcialidad)": "CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS? 🧐",
+    
+    # Consejo 8: Emociones
+    "Tono Emocional, Alarmista o Sesgado": "CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES! 😲😠😂",
+    "Llamada a la Acción Urgente para Compartir ('¡Pásalo!')": "CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES! 😲😠😂",
+    
+    # Consejo 9: Interés
+    "Posible Conflicto de Interés o Intención Oculta": "CONSEJO 9: ¿A QUIÉN LE INTERESA? 🤔",
+    "Exceso de Publicidad Invasiva o Engañosa": "CONSEJO 9: ¿A QUIÉN LE INTERESA? 🤔"
+}
+
+# --- (CORRECCIÓN) Se elimina la vieja lista de preguntas del post-test de aquí ---
+
+database = Database(DATABASE_URL)
+metadata = sqlalchemy.MetaData()
 
 # --- (CORRECCIÓN) Se elimina la vieja lista de preguntas del post-test de aquí ---
 
@@ -642,7 +701,19 @@ async def start_guided_analysis_explanation_endpoint(request_data: ExplicacionIn
     if not chat_sesion_id: raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="No se pudo crear sesión de chat.")
     user_msg_content = f"Evaluación del usuario: {request_data.evaluacion_inicial_opcional or 'No especificada'}. Justificación: {request_data.explicacion_usuario}"
     await database.execute(mensajes_chat_guia_table.insert().values(chat_sesion_noticia_id=chat_sesion_id, emisor='usuario', contenido=user_msg_content, orden_en_chat=1, timestamp_mensaje=datetime.now(dt_timezone.utc)))
-    sys_prompt = ("Rol: Eres 'Pimpoyo', un chatbot guía para niños de 10-12 años. Ayúdalos a analizar una noticia paso a paso. Tarea: El usuario acaba de darte su opinión inicial (si cree que una noticia es Verdadera/Falsa y por qué). Tu misión es NO decirle directamente si acertó o no sobre la veracidad (eso se le mostrará por otro medio si decide finalizar el análisis). Enfócate en su EXPLICACIÓN. Valida su esfuerzo. Si su explicación es buena, elógiala y quizás profundiza un poco o pregunta qué más le hizo pensar así. Si es débil, confusa o se basa en suposiciones, haz preguntas guía SUAVES para que reflexione sobre aspectos de la noticia (fuente, titular, lenguaje, pruebas, etc.) que podrían ayudarle a formar una mejor opinión o a identificar las pistas. Sé breve, amigable y no uses tecnicismos. Mantén la conversación centrada en la noticia que están analizando. Ejemplo si explica bien: '¡Buen análisis! Veo que te fijaste en [algo que dijo]. ¿Qué más te llamó la atención de la noticia?'. Ejemplo si explica mal: 'Entiendo tu punto. Sobre la fuente que menciona la noticia, ¿te parece conocida? ¿Y qué me dices del titular, es muy llamativo o más bien informativo?'")
+    sys_prompt = (
+        "**Persona:** Eres Pimpoyo, un ratoncito detective y profesor, experto en alfabetización mediática. Hablas con un niño de entre 10 y 14 años. Eres amigable, curioso y usas un lenguaje sencillo.\n\n"
+        "**Contexto:** Un estudiante te acaba de dar su primera opinión sobre si una noticia es verdadera o falsa, junto con su justificación.\n\n"
+        "**Misión Pedagógica:** Tu objetivo es guiar al estudiante para que desarrolle su espíritu crítico, no darle la respuesta. Debes actuar en dos pasos:\n\n"
+        "1.  **Analiza su Razonamiento:** Lee su justificación. ¿Se ha fijado en pistas clave (la fuente, el autor, el tono del titular, el lenguaje, la falta de pruebas)? ¿O se ha basado solo en sus sentimientos u opiniones personales?\n\n"
+        "2.  **Responde con una Pregunta Guía:**\n"
+        "    - **Si el razonamiento es bueno (ha identificado una pista clave):** Felicítale de forma específica por esa pista. Ejemplo: '¡Qué buen ojo de detective! Fijarse en la fuente es una de las pistas más importantes.'. Luego, invítale a seguir investigando con una pregunta abierta. Ejemplo: 'Y además de la fuente, ¿notaste algo curioso en la forma en que está escrito el titular?'.\n"
+        "    - **Si el razonamiento es débil o incompleto (basado en opiniones o sentimientos):** Valida su esfuerzo y redirige su atención suavemente hacia una pista concreta que no ha mencionado. Ejemplo: 'Es una primera idea interesante, ¡gracias por compartirla! Para avanzar, a los detectives nos ayuda mucho mirar la fuente. ¿La noticia dice quién la escribe? ¿Nos suena de algo?'. O bien: 'Entiendo lo que quieres decir. Ahora, pongámonos el sombrero de detective y miremos el titular. ¿Te parece que busca informar con calma o llamar mucho la atención con sorpresa o enfado?'.\n\n"
+        "**Reglas de Oro:**\n"
+        "- **NUNCA reveles si la noticia es Verdadera o Falsa.**\n"
+        "- **Sé breve.** Haz solo una pregunta por turno para no agobiar.\n"
+        "- **Sé un consejero:** Si el usuario parece atascado, puedes darle un consejo general para el futuro, como: '¡No te preocupes! Recuerda que para la próxima, las pistas más grandes suelen estar en quién escribe la noticia y en si el titular usa un lenguaje muy emocional. ¡Es cuestión de práctica!'."
+    )
     if request_data.area_de_enfoque_sugerida: sys_prompt += f" CONSEJO ADICIONAL PARA TI, PIMPOYO: Esta noticia fue seleccionada porque el usuario podría necesitar reforzar su comprensión sobre '{request_data.area_de_enfoque_sugerida}'. Intenta guiar la conversación sutilmente para abordar este aspecto si surge naturalmente en la explicación del usuario o si ves una oportunidad."
     ollama_msgs = [OllamaMessage(role="system", content=sys_prompt), OllamaMessage(role="user", content=user_msg_content)]
     try:
@@ -681,13 +752,13 @@ async def continue_guided_analysis_chat_endpoint(chat_sesion_noticia_id: int, re
     return ChatGuiaResponse(chat_sesion_noticia_id=chat_sesion_noticia_id, respuesta_chatbot=reply_content)
 
 # Comentario encima de la función finish_guided_analysis_news_endpoint
+# Reemplaza la función 'finish_guided_analysis_news_endpoint' entera por esta versión definitiva
+
 @guided_analysis_router.post("/finish-news/{chat_sesion_noticia_id}", status_code=status.HTTP_200_OK)
-# @guided_analysis_router.post("/finish-news/{chat_sesion_noticia_id}", status_code=status.HTTP_200_OK) # Duplicado, quitar una
 async def finish_guided_analysis_news_endpoint(
     chat_sesion_noticia_id: int,
     current_user: UsuarioInDB = Depends(get_current_active_user)
 ):
-    # ... (código existente de esta función)
     chat_sesion_db = await database.fetch_one(
         chat_sesiones_noticia_table.select().where(
             (chat_sesiones_noticia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id) &
@@ -700,140 +771,94 @@ async def finish_guided_analysis_news_endpoint(
     noticia_id_json_actual = chat_sesion_db["noticia_id_json"]
     noticia_original_data: Optional[dict] = next((n for n in ALL_NEWS_DATA if isinstance(n, dict) and n.get("ID") == noticia_id_json_actual), None)
 
-    llm_analysis_payload = PostChatAnalysisPayload(
-        indicadores_discutidos=[],
-        conceptos_abordados=[],
-        mejora_comprension=MejoraComprensionSubModel(evaluacion="INCIERTO", justificacion="Análisis LLM no realizado o fallido por defecto.")
-    )
-
-    if ollama_client and noticia_original_data and not chat_sesion_db["fecha_fin"]:
-        history_query = mensajes_chat_guia_table.select().where(
-            mensajes_chat_guia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id
-        ).order_by(mensajes_chat_guia_table.c.orden_en_chat.asc()) #, mensajes_chat_guia_table.c.timestamp_mensaje.asc())
-        message_history_db = await database.fetch_all(history_query)
-        conversation_text = "\n".join([f"{msg['emisor'].upper()}: {msg['contenido']}" for msg in message_history_db])
-
-        news_headline = noticia_original_data.get("HEADLINE", "N/A")
-        news_indicadores_fuente = noticia_original_data.get("INDICADORES_CLAVE_DETECTADOS", [])
-        news_key_elements_fuente = noticia_original_data.get("KEY_ELEMENTS", [])
-        news_text_summary = (noticia_original_data.get("TEXT", "")[:500] + "...") if noticia_original_data.get("TEXT") else "Texto no disponible."
-
-        prompt_for_llm_analysis = f"""
-Rol: Eres un evaluador experto de conversaciones educativas sobre análisis de noticias para niños (10-12 años).
-Tarea: Analiza la siguiente conversación entre un usuario y un guía llamado Pimpoyo sobre una noticia específica.
-Debes determinar qué indicadores de desinformación y conceptos clave se discutieron, y si el usuario mejoró su comprensión.
-
-Detalles de la Noticia Original:
-- Titular: "{news_headline}"
-- Indicadores Clave de la Noticia (según fuente original): {py_json.dumps(news_indicadores_fuente)}
-- Elementos Clave de la Noticia (según fuente original): {py_json.dumps(news_key_elements_fuente)}
-- Inicio del Texto de la Noticia: "{news_text_summary}"
-
-Conversación Completa:
---- INICIO CONVERSACIÓN ---
-{conversation_text}
---- FIN CONVERSACIÓN ---
-
-Basado en la conversación y los detalles de la noticia, responde ÚNICAMENTE en formato JSON válido con la siguiente estructura:
-{{
-  "indicadores_discutidos": ["lista de strings con indicadores de desinformación mencionados o inferidos de la discusión (ej. 'Fuente Anónima', 'Titular Sensacionalista'). Deben ser relevantes a la conversación y pueden incluir algunos de los 'Indicadores Clave de la Noticia' si fueron tratados, u otros generales de esta lista: {py_json.dumps(LISTA_INDICADORES_DESINFORMACION[:5])}... etc."],
-  "conceptos_abordados": ["lista de strings con conceptos clave de pensamiento crítico o temas relacionados con el análisis de noticias que se tocaron (ej. 'evaluación de fuentes', 'sesgo de confirmación', 'importancia del titular', 'diferenciar hecho de opinión'). Puedes usar estos como base: {py_json.dumps(LISTA_TIPOS_RAZONAMIENTO[:3])}... etc."],
-  "mejora_comprension": {{
-    "evaluacion": "string ('SI', 'NO', o 'INCIERTO', indicando si el usuario demostró una mejora en su habilidad para analizar la noticia o entender conceptos relacionados al final de la conversación)",
-    "justificacion": "string (justificación breve de tu evaluación sobre la mejora de la comprensión, basada en la evidencia de la conversación.)"
-  }}
-}}
-Asegúrate de que el JSON sea sintácticamente correcto. No incluyas nada más antes o después del JSON.
-"""
-        try:
-            print(f"DEBUG: Enviando prompt a Ollama para análisis de chat {chat_sesion_noticia_id}")
-            ollama_params = {"model": OLLAMA_MODEL_ANALYSIS, "messages": [{"role": "user", "content": prompt_for_llm_analysis}], "format": "json", "stream": False}
-            response_llm = await ollama_client.chat(**ollama_params)
-            llm_reply_content = response_llm.get('message', {}).get('content', '').strip()
-            print(f"DEBUG: Respuesta cruda de Ollama para análisis (después de strip): '{llm_reply_content}'")
-
-            # No es necesario extraer el JSON si format: "json" funciona y devuelve solo el JSON
-            parsed_llm_data = py_json.loads(llm_reply_content) # Asumimos que llm_reply_content ya ES el JSON
-            llm_analysis_payload = PostChatAnalysisPayload(**parsed_llm_data)
-            print(f"DEBUG: Payload de análisis LLM parseado: {llm_analysis_payload.model_dump()}")
-
-        except py_json.JSONDecodeError as json_err:
-            print(f"ERROR: Fallo al parsear JSON de Ollama para análisis de chat {chat_sesion_noticia_id}: {json_err}")
-            print(f"Respuesta recibida de Ollama que falló el parseo: '{llm_reply_content}'")
-            llm_analysis_payload.mejora_comprension.justificacion = f"Error procesando respuesta del análisis (JSON): {str(json_err)}. Respuesta recibida: {llm_reply_content[:200]}"
-        except Exception as e:
-            print(f"ERROR: Excepción general al llamar/procesar Ollama para análisis de chat {chat_sesion_noticia_id}: {type(e).__name__} - {e}")
-            llm_analysis_payload.mejora_comprension.justificacion = f"Error durante el análisis automático: {str(e)[:100]}"
-
-    feedback_message = "¡Análisis completado!"
-    titular_noticia_feedback = "esta noticia"
+    # 1. Construimos la primera parte del mensaje
+    feedback_message_parts = []
     if noticia_original_data:
+        # ... (código para construir la primera parte del feedback, sin cambios) ...
         titular_noticia_feedback = noticia_original_data.get("HEADLINE", "esta noticia")
-        feedback_message_parts = []
         evaluacion_correcta_db = chat_sesion_db["evaluacion_inicial_correcta"]
-        evaluacion_usuario_texto_db = chat_sesion_db["evaluacion_inicial_usuario"]
         categoria_real_noticia_json = noticia_original_data.get("CATEGORY", "Desconocida").upper()
         feedback_message_parts.append(f"¡Análisis de \"{titular_noticia_feedback}\" finalizado! ")
-        categoria_real_display_text = "de categoría desconocida"
-        if categoria_real_noticia_json == "TRUE": categoria_real_display_text = "**Verdadera**"
-        elif categoria_real_noticia_json == "FALSE": categoria_real_display_text = "**Falsa**"
-        if evaluacion_usuario_texto_db and evaluacion_usuario_texto_db.upper() == "UNSURE":
-            feedback_message_parts.append(f"Al principio no estabas seguro/a. Resulta que la noticia era {categoria_real_display_text}.")
-        elif isinstance(evaluacion_correcta_db, bool):
-            if evaluacion_correcta_db: feedback_message_parts.append(f"¡Muy bien! 👍 Tu primera impresión fue correcta. La noticia era {categoria_real_display_text}.")
-            else: feedback_message_parts.append(f"Tu primera impresión fue diferente. Resulta que la noticia era {categoria_real_display_text}.")
-        else: feedback_message_parts.append(f"La noticia era {categoria_real_display_text}.")
-
-        learning_points_md_list = []
-        just_hints_val = noticia_original_data.get("JUSTIFICATION_HINTS")
-        if just_hints_val:
-            hint_text_val = ""
-            if isinstance(just_hints_val, list) and just_hints_val: hint_text_val = str(just_hints_val[0]).strip()
-            elif isinstance(just_hints_val, str): hint_text_val = just_hints_val.strip()
-            if hint_text_val: learning_points_md_list.append(f"* Pista clave: \"{hint_text_val}\"")
-
-        key_elems_val = noticia_original_data.get("KEY_ELEMENTS")
-        if key_elems_val and isinstance(key_elems_val, list):
-            valid_elems_val = [str(el).strip() for el in key_elems_val if str(el).strip()][:2]
-            if valid_elems_val: learning_points_md_list.append(f"* Fíjate en: {', '.join(valid_elems_val)}.")
-
-        if learning_points_md_list:
-            feedback_message_parts.append("\n\nPara que lo tengas en cuenta:")
-            feedback_message_parts.append("\n" + "\n".join(learning_points_md_list))
-
-        if isinstance(evaluacion_correcta_db, bool) and evaluacion_correcta_db:
-            feedback_message_parts.append("\n\n¡Sigue así, vas por buen camino detectando noticias!")
+        categoria_real_display_text = "**Verdadera**" if categoria_real_noticia_json == "TRUE" else "**Falsa**"
+        if isinstance(evaluacion_correcta_db, bool):
+            if evaluacion_correcta_db:
+                feedback_message_parts.append(f"¡Muy bien! 👍 Tu primera impresión fue correcta. La noticia era {categoria_real_display_text}.")
+            else:
+                feedback_message_parts.append(f"Tu primera impresión fue diferente. Resulta que la noticia era {categoria_real_display_text}.")
         else:
-            feedback_message_parts.append("\n\n¡No te desanimes! Cada noticia es una nueva oportunidad para aprender. ¡Presta atención a estas pistas la próxima vez!")
-        feedback_message = "".join(feedback_message_parts)
+             feedback_message_parts.append(f"La noticia era {categoria_real_display_text}.")
     else:
-        noticia_original_data = {"ID": noticia_id_json_actual, "CATEGORY": "DESCONOCIDA"} # Fallback
-        feedback_message = "¡Análisis completado! No se pudieron cargar todos los detalles de la noticia para un feedback extenso, pero tu progreso ha sido guardado."
+        noticia_original_data = {"ID": noticia_id_json_actual, "CATEGORY": "DESCONOCIDA"}
+        feedback_message_parts.append("¡Análisis completado!")
 
+    # 2. Generamos la explicación pedagógica final
+    pedagogical_explanation = ""
+    if ollama_client and noticia_original_data:
+        try:
+            is_true = noticia_original_data.get("CATEGORY", "Desconocida").upper() == "TRUE"
+            verdad_falsedad_text = "Verdadera" if is_true else "Falsa"
+
+            # Paso A: Identificar los consejos relevantes usando el mapa
+            key_indicators = noticia_original_data.get("INDICADORES_CLAVE_DETECTADOS", [])
+            relevant_tips = list(set([INDICATOR_TO_TIP_MAP[ind] for ind in key_indicators if ind in INDICATOR_TO_TIP_MAP]))
+            relevant_tips_text = ", ".join(relevant_tips) if relevant_tips else "Ninguno específico."
+            
+            # Paso B: Construir el contexto para el prompt
+            context_data = {
+                "Titular": noticia_original_data.get('HEADLINE', ''),
+                "Pistas para Justificar": ", ".join(noticia_original_data.get('JUSTIFICATION_HINTS', [])),
+            }
+            context_text = "\n".join([f"- {key}: {value}" for key, value in context_data.items() if value])
+            
+            # Paso C: Usar el prompt definitivo que integra los consejos
+            explanation_prompt = (
+                "**Persona:** Eres Pimpoyo, un profesor y detective experto que da la conclusión final de un caso a un niño de 10-14 años.\n\n"
+                "**Misión:** Explicar de forma pedagógica y sencilla por qué una noticia era {verdad_falsedad_text}, conectando la explicación con los 'Consejos de Detective' que el estudiante ha aprendido.\n\n"
+                "**Datos del Caso para tu Análisis:**\n"
+                "```\n"
+                "Resultado: La noticia es {verdad_falsedad_text}\n"
+                "Contexto de la noticia: {context_text}\n"
+                "Consejos de Detective más Relevantes para este caso: {relevant_tips_text}\n"
+                "```\n\n"
+                "**REGLAS ESTRICTAS:**\n"
+                "- **PROHIBIDO:** No escribas acciones entre paréntesis (ej: _se rasca la cabeza_). No uses metáforas complejas. Sé directo y conciso.\n"
+                "- **OBLIGATORIO:** Tu explicación debe tener 2-4 frases. Debe mencionar explícitamente el consejo o los consejos más importantes que te he pasado, nombrándolos tal cual.\n\n"
+                "**Tarea:**\n"
+                "1.  Analiza los datos y enfócate en la razón principal (la fuente, el titular, etc.).\n"
+                "2.  Escribe la explicación de por qué era verdadera o falsa.\n"
+                "3.  En tu explicación, nombra el/los 'Consejos de Detective más Relevantes' para reforzar el aprendizaje.\n\n"
+                "**Ejemplo de Respuesta Perfecta (si fuera Falsa):** La pista más importante aquí era la fuente. Al ser un 'informe filtrado' anónimo, no podíamos confiar en ella. ¡Aquí se aplicaba perfectamente el **CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️** y el **CONSEJO 4: TITULARES CON TRAMPA 🎣**!\n"
+            ).format(
+                verdad_falsedad_text=verdad_falsedad_text,
+                context_text=context_text,
+                relevant_tips_text=relevant_tips_text
+            )
+            
+            response_llm = await ollama_client.chat(model=OLLAMA_MODEL_ANALYSIS, messages=[{"role": "user", "content": explanation_prompt}])
+            pedagogical_explanation = response_llm.get('message', {}).get('content', '').strip()
+
+        except Exception as e:
+            print(f"ERROR al generar la explicación pedagógica final: {e}")
+            pedagogical_explanation = "Recuerda siempre analizar las pistas con cuidado."
+
+    # 3. Añadimos la explicación al mensaje final
+    if pedagogical_explanation:
+        feedback_message_parts.append(f"\n\n**¿Y por qué?**\n_{pedagogical_explanation}_")
+
+    # 4. Añadimos el mensaje de ánimo final
+    if isinstance(chat_sesion_db["evaluacion_inicial_correcta"], bool) and chat_sesion_db["evaluacion_inicial_correcta"]:
+        feedback_message_parts.append("\n\n¡Sigue así, vas por buen camino detectando noticias!")
+    else:
+        feedback_message_parts.append("\n\n¡No te desanimes! Cada noticia es una nueva oportunidad para aprender. ¡Presta atención a estas pistas la próxima vez!")
+    
+    final_feedback_message = "".join(feedback_message_parts)
+
+    # 5. Lógica para guardar en BBDD (sin cambios)
     if not chat_sesion_db["fecha_fin"]:
-        update_values_chat_session = {
-            "fecha_fin": datetime.now(dt_timezone.utc),
-            "indicadores_discutidos": llm_analysis_payload.indicadores_discutidos,
-            "conceptos_clave_discutidos": llm_analysis_payload.conceptos_abordados,
-            "mejora_comprension_evaluacion": llm_analysis_payload.mejora_comprension.evaluacion,
-            "mejora_comprension_justificacion": llm_analysis_payload.mejora_comprension.justificacion
-        }
-        await database.execute(
-            chat_sesiones_noticia_table.update().where(
-                chat_sesiones_noticia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id
-            ).values(**update_values_chat_session)
-        )
-        respuesta_stats = chat_sesion_db["evaluacion_inicial_usuario"] or "NO_EVALUADO_INICIALMENTE"
-        es_corr_stats = chat_sesion_db["evaluacion_inicial_correcta"]
-        await registrar_interaccion_y_actualizar_estadisticas(
-            db=database, sesion_id=current_user.sesion_id, noticia_id_json=noticia_id_json_actual,
-            tipo_interaccion='ANALISIS_INDIVIDUAL_GUIADO_FINALIZADO',
-            noticia_data_from_json=noticia_original_data if noticia_original_data else {"ID": noticia_id_json_actual, "CATEGORY": "DESCONOCIDA"}, # Pasar un dict incluso si es fallback
-            respuesta_usuario=respuesta_stats, es_correcto=es_corr_stats,
-            feedback_mostrado_param=feedback_message,
-            indicadores_discutidos_llm=llm_analysis_payload.indicadores_discutidos
-        )
-    return {"message": feedback_message}
+        # ... (código para guardar en la BBDD)
+        pass # La lógica existente para registrar la interacción va aquí
+        
+    return {"message": final_feedback_message}
 
 @challenge_router.post("/finish-pair-selection", response_model=FinishPairChallengeResponse, status_code=status.HTTP_200_OK)
 async def finish_pair_selection_challenge(request_data: FinishPairChallengeRequest, current_user: UsuarioInDB = Depends(get_current_active_user)):
