@@ -16,6 +16,7 @@ databases = {extras = ["postgresql"], version = "*"}
 sqlalchemy = "*"
 asyncpg = "*"
 ollama = "*"
+locust = "*"
 
 [dev-packages]
 
