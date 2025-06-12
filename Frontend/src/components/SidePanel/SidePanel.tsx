@@ -320,7 +320,7 @@ function SidePanel({
 
         {activeSection === 'chuleta' && (
           <div id="chuleta-content" className="panel-section-content" style={{ display: 'block' }}>
-            <h3>Chuleta de Consejos 📝</h3>
+            <h3>Chuleta de consejos</h3>
             <ul className="chuleta-list">
               {tipsResumen.map((tip, index) => (
                 <li key={index} className="chuleta-item">

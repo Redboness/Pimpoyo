@@ -150,7 +150,7 @@ function PostTestFlow({ authToken, onTestComplete, onCancelTest }: PostTestFlowP
                         <>
                             <p className="post-test-question-text">{q.texto_pregunta}</p>
                             {q.tipo === 'eleccion_multiple' && (
-                                <p className="post-test-instruction">(Selecciona todas las que creas correctas)</p>
+                                <p className="post-test-instruction"></p>
                             )}
                             <div className="post-test-options-group">
                                 {q.opciones?.map(op => (

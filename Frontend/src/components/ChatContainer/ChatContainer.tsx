@@ -56,7 +56,7 @@ interface Tip {
 
 const tips: Tip[] = [
     {
-        title: "**CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️**",
+        title: "**CONSEJO 1: ¿QUIÉN LO DICE?**",
         text: "Imagina que la [[Fuente (de información)|fuente]] de una noticia es como la persona que te cuenta un secreto. ¿Confiarías en cualquiera?\n\nPor eso, **fíjate siempre en** ¿quién publica la noticia? Pregúntate: ¿Es un periódico conocido como El País o El Mundo, una cadena de televisión como RTVE, o una agencia internacional [[Fiable|fiable]] como BBC News o Euronews? Cuando Pimpoyo y tú analicéis una noticia, él te ayudará a ver si su fuente es de este tipo.\n\n**¡Importante!** Si la fuente es una web que no conoces, te parece extraña, o es un blog personal sin referencias claras, ¡investiga un poco sobre ella antes de creer la noticia! Una fuente desconocida es una señal de alerta.",
         challenge: {
           question: "*Pimpoyo te reta:* Si ves una noticia en \"SuperNoticiasFiables.com\" y otra en la web oficial de \"RTVE Noticias\", ¿cuál te parece más fiable a primera vista?",
@@ -66,7 +66,7 @@ const tips: Tip[] = [
         }
       },
       {
-        title: "**CONSEJO 2: ¡COMPARA, COMPARA! 🆚**",
+        title: "**CONSEJO 2: ¡COMPARA, COMPARA!**",
         text: "No te quedes solo con una versión de la historia, ¡como si solo escucharas a un amigo en una discusión!\n\nPor eso, **es clave que te fijes en esto:** [[Verificar|verifica]] la noticia buscando si otros medios conocidos y fiables también la cuentan. Por ejemplo, puedes [[Contrastar|contrastar]] lo que lees con lo que publican periódicos importantes de España, cadenas de televisión públicas, o fuentes de noticias internacionales reconocidas, como las que mencionamos en el primer consejo.\n\n**¡Importante!** Si muchos medios serios y diferentes cuentan la misma historia, es más probable que sea cierta. Pero si solo la encuentras en un sitio poco conocido o en blogs sin referencias claras, ¡es una gran pista para dudar! Podría ser un [[Bulo|bulo]].",
         challenge: {
           question: "*Pimpoyo te reta:* Si lees una noticia sorprendente sobre tu juego favorito solo en un pequeño blog que nadie conoce, ¿qué sería lo primero que harías según este consejo?",
@@ -76,7 +76,7 @@ const tips: Tip[] = [
         }
       },
       {
-        title: "**CONSEJO 3: ¡OJO A LA FECHA! 📅**",
+        title: "**CONSEJO 3: ¡OJO A LA FECHA!**",
         text: "Las noticias son como el pan, ¡mejor si son frescas y del día! Cuando analices una noticia con Pimpoyo, él podría preguntarte por la fecha.\n\nAsí que, **fíjate bien en** la fecha en la que se publicó.\n\n**¡Importante!** A veces, noticias muy antiguas (¡incluso de hace años!) se comparten como si fueran nuevas para engañar o crear confusión. Esto es una táctica común de las [[Noticia falsa|noticias falsas]]. Sacar algo de [[Contexto|contexto]] es muy habitual. ¡Que no te den gato por liebre!",
         challenge: {
           question: "*Pimpoyo te reta:* Si un amigo te manda una noticia increíble sobre un descubrimiento espacial, pero ves que la fecha es de hace 5 años, ¿qué pensarías?",
@@ -86,7 +86,7 @@ const tips: Tip[] = [
         }
       },
       {
-        title: "**CONSEJO 4: TITULARES CON TRAMPA 🎣**",
+        title: "**CONSEJO 4: TITULARES CON TRAMPA**",
         text: "Algunos [[Titular|titulares]] son como un cebo brillante para pescar tu atención: ¡muy exagerados, alarmistas o sorprendentes! Pimpoyo a veces te preguntará: \"¿El titular parece muy exagerado?\".\n\nEntonces, **fíjate bien:** ¿El titular es demasiado increíble para ser verdad o busca generar una emoción muy fuerte? Lee siempre la noticia entera, no solo el titular, y pregúntate: ¿El texto cuenta lo mismo que el titular o lo exagera mucho?\n\n**¡Importante!** Esto se llama [[Clickbait|clickbait]]. Muchas veces, estos titulares esconden [[Fake news|noticias falsas]] o de poca calidad. Quieren tu clic, no informarte bien.",
         challenge: {
           question: "*Pimpoyo te reta:* ¿Cuál de estos titulares te parece más 'clickbait'?\nA) \"Descubren nueva especie de mariposa en el Amazonas\"\nB) \"¡ALUCINANTE! ¡CIENTÍFICOS CREAN MARIPOSA GIGANTE QUE HABLA! (NO TE LO CREERÁS)\"",
@@ -96,7 +96,7 @@ const tips: Tip[] = [
         }
       },
       {
-        title: "**CONSEJO 5: ¿ESTÁ BIEN ESCRITO? ✍️**",
+        title: "**CONSEJO 5: ¿ESTÁ BIEN ESCRITO?**",
         text: "Las noticias de verdad suelen estar escritas con cuidado, ¡como un buen libro!\n\nPor eso, **fíjate en detalles como:** ¿Hay muchas faltas de ortografía? ¿Las frases están mal construidas o no se entienden bien, como a veces ves en mensajes [[Viral|virales]]? ¿Usa TODO EN MAYÚSCULAS y muchísimos signos de exclamación (!!!)?\n\n**¡Importante!** Los errores pueden ser una pista de que la noticia no es profesional y podría ser falsa. Un lenguaje muy agresivo o que solo busca la [[Manipulación|manipulación]] emocional también es sospechoso.",
         challenge: {
           question: "*Pimpoyo te reta:* Si lees: \"URGENTE!!! an descubierto un tesoro SECRETISIMO!!!!! comparte YA\", ¿es una señal de noticia fiable o sospechosa?",
@@ -106,7 +106,7 @@ const tips: Tip[] = [
         }
       },
       {
-        title: "**CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS? 🔍**",
+        title: "**CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS?**",
         text: "Una noticia fiable te muestra de dónde saca la información, ¡como un detective que enseña sus pistas!\n\nPor eso, **fíjate si** la noticia menciona fuentes claras y verificables (por ejemplo, si nombra un estudio científico conocido, un informe oficial o a expertos específicos) y si ofrece enlaces o datos concretos para que puedas comprobarlo tú mismo.\n\n**¡Importante!** Si la noticia solo da [[Opinión|opiniones]], no dice de dónde viene la información claramente, o se basa en frases como \"me han dicho que...\" o \"se comenta por ahí\" sin más detalle, ¡desconfía! La falta de [[Evidencia|evidencia]] clara es una gran señal de alerta.",
         challenge: {
           question: "*Pimpoyo te reta:* Una noticia dice: \"Los expertos aseguran que comer chocolate te hace volar\". Para que sea más creíble, ¿qué debería incluir?",
@@ -116,7 +116,7 @@ const tips: Tip[] = [
         }
       },
       {
-        title: "**CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS? 🧐**",
+        title: "**CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS?**",
         text: "A veces, una noticia puede estar un poquito inclinada hacia un lado, como una torre que no está recta, mostrando solo una parte de la historia.\n\nPor eso, **intenta descubrir si** la noticia cuenta diferentes puntos de vista o solo se enfoca en uno, ignorando los demás.\n\n**¡Importante!** Cuando una noticia parece favorecer mucho una idea y no presenta otros argumentos, podría tener [[Sesgo|sesgo]]. Un buen detective busca la historia más completa posible.",
         challenge: {
           question: "*Pimpoyo te reta:* Si una noticia sobre un nuevo videojuego solo entrevista a gente que dice que es lo peor del mundo, ¿qué te faltaría para tener una idea más clara?",
@@ -126,7 +126,7 @@ const tips: Tip[] = [
         }
       },
       {
-        title: "**CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES! 😲😠😂**",
+        title: "**CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES!**",
         text: "Las noticias que nos hacen sentir MUY enfadados, tristes o súper felices al instante, a veces son como un mago que distrae tu atención.\n\nAsí que, **pon atención si** una noticia te provoca una emoción muy fuerte de golpe. Pregúntate: ¿Esta noticia busca más emocionarte que hacerte pensar con calma?\n\n**¡Importante!** Algunas noticias falsas usan emociones intensas para que no te pares a pensar si son verdad o no y para que las compartas rápido. ¡Respira hondo y analiza antes de creértela!",
         challenge: {
           question: "*Pimpoyo te reta:* Si lees un titular que te hace enfadar muchísimo al instante, ¿qué es bueno hacer antes de compartirlo o creértelo del todo?",
@@ -136,7 +136,7 @@ const tips: Tip[] = [
         }
       },
       {
-        title: "**CONSEJO 9: ¿A QUIÉN LE INTERESA? 🤔**",
+        title: "**CONSEJO 9: ¿A QUIÉN LE INTERESA?**",
         text: "Detrás de cada noticia, puede haber alguien que quiere que pienses o hagas algo específico.\n\nPor eso, **una buena pregunta de detective es:** ¿Quién podría querer que yo me crea esta noticia y por qué? ¿Gana algo alguien si esta historia se difunde?\n\n**¡Importante!** Pensar en quién se beneficia te puede dar pistas sobre si la noticia es de confianza o si intenta convencerte de algo sin que te des cuenta. A veces, esto es parte de la [[Propaganda|propaganda]] o la manipulación.",
         challenge: {
           question: "*Pimpoyo te reta:* Si ves un anuncio muy divertido que dice que una nueva marca de zapatillas te hará correr más rápido que nadie, ¿quién crees que se beneficia más si te lo crees?",

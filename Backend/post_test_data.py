@@ -10,18 +10,18 @@ post_test_questions: List[Dict[str, Any]] = [
     # Sección 1: ¿Cómo ves las noticias ahora?
     {
         "id_pregunta": "s1_p1", "seccion_id": "s1", "tipo": "eleccion_unica",
-        "texto_pregunta": "¿Cómo dirías que se te da AHORA descubrir si una noticia que ves en internet o redes sociales es verdadera o es falsa?",
+        "texto_pregunta": "¿Cómo dirías que se te da AHORA descubrir si una noticia que ves en internet o redes sociales es verdadera o es falsa? (marca SOLO UNA opción)",
         "opciones": [
             {"id": "s1_p1_o1", "text": "Nada bueno/a, me cuesta muchísimo."},
             {"id": "s1_p1_o2", "text": "No muy bueno/a, suelo dudar."},
             {"id": "s1_p1_o3", "text": "Normal, a veces acierto y a veces no."},
             {"id": "s1_p1_o4", "text": "Bastante bueno/a, suelo acertar."},
-            {"id": "s1_p1_o5", "text": "5- ¡Soy un crack!, se me da muy bien."}
+            {"id": "s1_p1_o5", "text": "¡Soy un crack!, se me da muy bien."}
         ]
     },
     {
         "id_pregunta": "s1_p2", "seccion_id": "s1", "tipo": "eleccion_unica",
-        "texto_pregunta": "¿Cómo de difícil crees que es saber AHORA si una noticia es real hoy en día?",
+        "texto_pregunta": "¿Cómo de difícil crees que es saber AHORA si una noticia es real hoy en día? (marca SOLO UNA opción)",
         "opciones": [
             {"id": "s1_p2_o1", "text": "Es muy fácil, casi nunca tengo dudas."},
             {"id": "s1_p2_o2", "text": "Es bastante fácil, aunque a veces dudo."},
@@ -32,14 +32,14 @@ post_test_questions: List[Dict[str, Any]] = [
     },
     {
         "id_pregunta": "s1_p3", "seccion_id": "s1", "tipo": "eleccion_multiple",
-        "texto_pregunta": "Cuando ves una noticia y no estás seguro/a, ¿en qué cosas te sueles fijar AHORA?",
+        "texto_pregunta": "Cuando ves una noticia y no estás seguro/a, ¿en qué cosas te sueles fijar AHORA? (puedes marcar TODAS las que apliquen)",
         "opciones": [
             {"id": "s1_p3_o1", "text": "Si la web o la persona que la publica parece de confianza."},
             {"id": "s1_p3_o2", "text": "Si el titular es muy exagerado o busca polémica."},
             {"id": "s1_p3_o3", "text": "Si está bien escrita, sin faltas de ortografía."},
             {"id": "s1_p3_o4", "text": "Si explica de dónde viene la información o da pruebas."},
             {"id": "s1_p3_o5", "text": "Si busco esa misma noticia o sobre quién la publica en otros sitios web para comparar."},
-            {"id": "s1_p3_o6", "text": "Si tiene fotos o vídeos (¡me creo más las que tienen!)."},
+            {"id": "s1_p3_o6", "text": "Si tiene fotos o vídeos (me creo más las que tienen)."},
             {"id": "s1_p3_o7", "text": "Si la comparten mis amigos o mucha gente."},
             {"id": "s1_p3_o8", "text": "Si la fecha es reciente o antigua."},
             {"id": "s1_p3_o9", "text": "Si me hace sentir muy enfadado/a o sorprendido/a."},
@@ -48,9 +48,9 @@ post_test_questions: List[Dict[str, Any]] = [
     },
     {
         "id_pregunta": "s1_p4", "seccion_id": "s1", "tipo": "eleccion_multiple",
-        "texto_pregunta": "¿Qué tipo de fuentes te hacen confiar más AHORA en que una noticia es VERDAD?",
+        "texto_pregunta": "¿Qué tipo de fuentes te hacen confiar más AHORA para ver que una noticia es VERDAD? (puedes marcar TODAS las que apliquen).",
         "opciones": [
-            {"id": "s1_p4_o1", "text": "Periódicos, telediarios o webs de noticias famosas."},
+            {"id": "s1_p4_o1", "text": "Periódicos, telediarios o webs de noticias famosas (El Mundo, El País, La Vanguardia...)."},
             {"id": "s1_p4_o2", "text": "Webs oficiales (del gobierno, de la NASA, de universidades...)."},
             {"id": "s1_p4_o3", "text": "Un científico o experto conocido que habla del tema."},
             {"id": "s1_p4_o4", "text": "Mis amigos o mi familia cuando me cuentan algo."},
@@ -61,7 +61,7 @@ post_test_questions: List[Dict[str, Any]] = [
     },
     {
         "id_pregunta": "s1_p5", "seccion_id": "s1", "tipo": "eleccion_multiple",
-        "texto_pregunta": "¿Qué cosas en una noticia te harían sospechar más AHORA que podría ser FALSA?",
+        "texto_pregunta": "¿Qué cosas en una noticia te harían sospechar más AHORA que podría ser FALSA? (puedes marcar TODAS las que te hagan dudar)",
         "opciones": [
             {"id": "s1_p5_o1", "text": "Un titular súper exagerado o increíble."},
             {"id": "s1_p5_o2", "text": "Muchas faltas de ortografia o frases mal escritas."},
@@ -75,7 +75,7 @@ post_test_questions: List[Dict[str, Any]] = [
     },
     {
         "id_pregunta": "s1_p6", "seccion_id": "s1", "tipo": "eleccion_multiple",
-        "texto_pregunta": "¿Qué cosas te harían pensar que una noticia tiene más posibilidades de ser VERDAD?",
+        "texto_pregunta": "Y al revés, ¿qué cosas te harían pensar que una noticia tiene más posibilidades de ser VERDAD? (puedes marcar TODAS las que te ayuden)",
         "opciones": [
             {"id": "s1_p6_o1", "text": "Si explica claramente de dónde viene la información y da enlaces o nombres."},
             {"id": "s1_p6_o2", "text": "Si la escriben expertos o periodistas conocidos."},
@@ -87,7 +87,7 @@ post_test_questions: List[Dict[str, Any]] = [
         ]
     },
     { "id_pregunta": "s2_p7", "seccion_id": "s2", "tipo": "texto_libre", "texto_pregunta": "Después de usar el chatbot Pimpoyo, ¿qué es lo más importante que has aprendido sobre cómo detectar si una noticia es verdadera o falsa?" },
-    { "id_pregunta": "s2_p8", "seccion_id": "s2", "tipo": "texto_libre", "texto_pregunta": "¿Ha cambiado tu forma de ver o de reaccionar ante las noticias que encuentras en internet desde que usaste a Pimpoyo? ¿Podrías explicar cómo?" },
+    { "id_pregunta": "s2_p8", "seccion_id": "s2", "tipo": "texto_libre", "texto_pregunta": "¿Ha cambiado tu forma de ver o de reaccionar ante las noticias que encuentras en internet desde que usaste a Pimpoyo? ¿podrías explicar cómo?" },
     {
         "id_pregunta": "s2_p9", "seccion_id": "s2", "tipo": "eleccion_unica",
         "texto_pregunta": "¿Sientes que aprendiste cosas nuevas sobre cómo detectar noticias falsas gracias a Pimpoyo?",
@@ -101,7 +101,7 @@ post_test_questions: List[Dict[str, Any]] = [
     },
     {
         "id_pregunta": "s4_p12", "seccion_id": "s4", "tipo": "eleccion_unica",
-        "texto_pregunta": "En una escala del 1 (muy difícil) al 5 (muy fácil), ¿cómo de fácil o difícil te resultó usar a Pimpoyo para chatear y hacer las actividades?",
+        "texto_pregunta": "En una escala del 1 (muy difícil) al 5 (muy fácil), ¿cómo de fácil o difícil te resultó usar a Pimpoyo para chatear y hacer las actividades? (marca SOLO UNA opción)", # <-- ¡COMA AÑADIDA AQUÍ!
         "opciones": [
             {"id": "s4_p12_o5", "text": "5 - Muy fácil, entendí todo enseguida y no tuve problemas."},
             {"id": "s4_p12_o4", "text": "4 - Bastante fácil, aunque alguna vez dudé un poco, lo pude sacar sin problemas."},

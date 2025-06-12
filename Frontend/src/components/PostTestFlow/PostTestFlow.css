@@ -28,6 +28,7 @@
     overflow-y: auto;
     padding: 5px;
     margin-bottom: 20px;
+    flex-grow: 1;
 }
 
 .post-test-item-block {
@@ -271,4 +272,7 @@
     color: #4a3112;
     min-width: 100px;
     display: inline-block;
+}
+.post-test-navigation {
+ flex-grow: 1;
 }

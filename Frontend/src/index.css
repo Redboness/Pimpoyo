@@ -34,8 +34,7 @@ body {
   flex-shrink: 0;
 }
 
-
-.chat-header button {
+#chat-header button {
   cursor: pointer;
   padding: 0;
   display: flex;
@@ -468,7 +467,7 @@ body {
   align-items: center;     /* Mantiene el contenido centrado horizontalmente */
   justify-content: center; /* CAMBIO: Alinea el contenido arriba para que el scroll empiece bien */
   padding: 40px 20px; /* Añade espacio superior e inferior para que no se pegue a los bordes */
- }
+  }
 
 .step-container {
   display: flex;
@@ -589,6 +588,10 @@ body {
   color: red;
   width: 100%;
   max-width: 450px;
+  text-align: center;   /* Centra el texto DENTRO del bloque */
+  margin-top: 15px;     /* Un poco más de espacio superior */
+  margin-left: auto;    /* Centra el bloque en SÍ MISMO horizontalmente */
+  margin-right: auto;   /* Centra el bloque en SÍ MISMO horizontalmente */
 }
 .hidden {
   display: none !important;
@@ -1437,12 +1440,6 @@ border: 1px solid #e0e0e0;
   border-bottom: 1px dashed #eadca6; /* Separador punteado */
 }
 
-.chuleta-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
 /* Icono del consejo */
 .chuleta-icon {
   font-size: 1.6em; /* Un poco más grande para que destaque */
@@ -1818,7 +1815,7 @@ hr.separator {
 .glossary-add-form .form-field label {
   font-size: 1.04em !important;   /* Hacemos la fuente más grande de forma forzada */
   font-weight: 500 !important;   /* La ponemos en negrita (bold) de forma forzada */
-  color: #4a3112 !important;      /* Cambiamos el color a verde para que el cambio sea muy obvio */
+  color: #4a3112 !important;       /* Cambiamos el color a verde para que el cambio sea muy obvio */
   margin-bottom: 8px !important; /* Aumentamos un poco la separación con el campo de abajo */
 }
 /* --- DISEÑO FINAL Y ROBUSTO PARA CHULETA DE CONSEJOS --- */
@@ -1980,4 +1977,137 @@ hr.separator {
   background-color: #f2dede;
   color: #a94442;
   border: 1px solid #ebccd1;
+}
+/*
+  * ===============================================================
+  * == Estilos para las opciones del Pre-Test (ProfileSetup.tsx) ==
+  * ===============================================================
+  */
+
+/*
+  * Estilo para la etiqueta <label> que funciona como una tarjeta
+  * para cada opción de radio button o checkbox.
+  */
+.radio-checkbox-item {
+  /* Convertimos la opción en un contenedor flex para alinear sus hijos */
+  display: flex;
+  align-items: center; /* Centra verticalmente el input y el texto */
+
+  /* Estilos para que parezca una tarjeta ancha */
+  width: 100%; /* Ocupa todo el ancho del contenedor padre */
+  box-sizing: border-box; /* Importante para que el padding no altere el ancho total */
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background-color: #ffffff;
+  border: 2px solid #eaddc0;
+  border-radius: 12px;
+  
+  /* Interacción y feedback visual */
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* * Efecto visual al pasar el ratón por encima de cualquier opción.
+  */
+.radio-checkbox-item:hover {
+  border-color: #94ab3d; /* Un color de acento de tu app */
+}
+
+/*
+  * Estilo para la opción que está SELECCIONADA.
+  * Usamos el selector :has(), una novedad en CSS que nos permite
+  * estilizar el contenedor (.radio-checkbox-item) cuando su hijo
+  * (el input) está ':checked'.
+  */
+.radio-checkbox-item:has(input:checked) {
+  border-color: #fa77c5; /* Color de acento para la selección */
+  background-color: #fff5fb;
+}
+
+/*
+  * Estilos para el texto (<span>) dentro de la opción.
+  */
+.radio-checkbox-item span {
+  flex-grow: 1; /* El texto ocupará todo el espacio restante */
+  line-height: 1.4;
+  color: #4a3112; /* Aseguramos el color de texto principal */
+  padding-left: 1rem; /* Espacio entre el input y el texto */
+}
+
+/*
+  * Estilo para el propio input (el círculo o el cuadrado).
+  */
+.radio-checkbox-item input {
+  accent-color: #94ab3d; /* Cambia el color del check/punto */
+  width: 1.3em;
+  height: 1.3em;
+  flex-shrink: 0; /* Evita que se encoja si el texto es muy largo */
+}
+
+/* Cuando la opción está seleccionada, el texto se pone en negrita */
+.radio-checkbox-item:has(input:checked) span {
+    font-weight: 600;
+}
+
+
+#header-nickname {
+  font-weight: 700 !important;   /* Usamos un grosor alto (bold) y !important */
+  font-size: 1.09em !important;     /* Hacemos la letra más grande para que sea obvio */
+}
+
+/*
+==================================================================
+ M E D I A   Q U E R I E S   P A R A   R E S P O N S I V E
+==================================================================
+*/
+
+@media (max-width: 768px) {
+
+  /* --- AJUSTES PARA EL PANEL LATERAL EN MÓVILES --- */
+  
+  #side-panel {
+    /* El panel ocupará casi todo el ancho, dejando un pequeño margen */
+    width: 90%;
+    max-width: 400px; /* Un máximo para móviles muy anchos */
+  }
+
+  /* Reducimos el espacio de las pestañas para que quepan */
+  .panel-nav-buttons {
+    gap: 10px;
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en lugar de 4 */
+  }
+
+  .panel-button {
+    flex-direction: row; /* Icono y texto en la misma línea */
+    justify-content: center;
+    padding: 12px 8px;
+    gap: 8px;
+  }
+
+  .panel-button span {
+    font-size: 0.9em;
+  }
+
+  #side-panel .panel-content {
+    padding: 15px; /* Menos padding en el contenido */
+  }
+
+  .panel-section-content h3 {
+    font-size: 1.4em;
+    margin-bottom: 20px;
+  }
+
+  /* --- OTROS AJUSTES GENERALES PARA MÓVIL --- */
+
+  .chat-messages {
+    padding: 10px;
+  }
+
+  .chat-header {
+    padding: 10px 15px;
+  }
+  
+  .register-flow {
+    padding: 20px 15px;
+  }
 }

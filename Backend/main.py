@@ -91,63 +91,61 @@ LISTA_TIPOS_RAZONAMIENTO = [
     "Evaluación del contexto de la noticia", "Identificación de la intención del autor",
     "Diferenciación entre opinión y hecho"
 ]
-
-# --- PEGA EL NUEVO DICCIONARIO AQUÍ DEBAJO ---
+# Lista de diccionarios con la información completa de cada consejo.
 CONSEJOS_COMPLETOS = [
-    {"title": "CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️", "text": "Fíjate siempre en quién publica la noticia. ¿Es una fuente conocida y fiable o alguien desconocido? Una fuente anónima o extraña es una señal de alerta."},
-    {"title": "CONSEJO 2: ¡COMPARA, COMPARA! 🆚", "text": "Verifica la noticia buscando si otros medios conocidos y fiables también la cuentan. Si solo la encuentras en un sitio, duda."},
-    {"title": "CONSEJO 3: ¡OJO A LA FECHA! 📅", "text": "Fíjate en la fecha. A veces, noticias muy antiguas se comparten como si fueran nuevas para engañar o crear confusión."},
-    {"title": "CONSEJO 4: TITULARES CON TRAMPA 🎣", "text": "Desconfía de los titulares muy exagerados, alarmistas o sorprendentes. A menudo buscan tu clic, no informarte bien (clickbait)."},
-    {"title": "CONSEJO 5: ¿ESTÁ BIEN ESCRITO? ✍️", "text": "Los errores de ortografía o una redacción extraña son una pista de que la noticia no es profesional y podría ser falsa."},
-    {"title": "CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS? 🔍", "text": "Una noticia fiable te muestra sus pruebas (datos, enlaces, nombres de expertos). Si solo da opiniones sin evidencia, desconfía."},
-    {"title": "CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS? 🧐", "text": "Intenta descubrir si la noticia cuenta diferentes puntos de vista o solo se enfoca en uno, ignorando los demás (sesgo)."},
-    {"title": "CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES! 😲😠😂", "text": "Si una noticia te provoca una emoción muy fuerte de golpe (enfado, miedo), podría estar intentando que no pienses con calma y la compartas rápido."},
-    {"title": "CONSEJO 9: ¿A QUIÉN LE INTERESA? 🤔", "text": "Pregúntate siempre quién se beneficia de que te creas esa noticia. Esto te puede dar pistas sobre su intención real."}
+    {"title": "CONSEJO 1: ¿QUIÉN LO DICE?", "text": "Fíjate siempre en quién publica la noticia. ¿Es una fuente conocida y fiable o alguien desconocido? Una fuente anónima o extraña es una señal de alerta."},
+    {"title": "CONSEJO 2: ¡COMPARA, COMPARA!", "text": "Verifica la noticia buscando si otros medios conocidos y fiables también la cuentan. Si solo la encuentras en un sitio, duda."},
+    {"title": "CONSEJO 3: ¡OJO A LA FECHA!", "text": "Fíjate en la fecha. A veces, noticias muy antiguas se comparten como si fueran nuevas para engañar o crear confusión."},
+    {"title": "CONSEJO 4: TITULARES CON TRAMPA", "text": "Desconfía de los titulares muy exagerados, alarmistas o sorprendentes. A menudo buscan tu clic, no informarte bien (clickbait)."},
+    {"title": "CONSEJO 5: ¿ESTÁ BIEN ESCRITO?", "text": "Los errores de ortografía o una redacción extraña son una pista de que la noticia no es profesional y podría ser falsa."},
+    {"title": "CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS?", "text": "Una noticia fiable te muestra sus pruebas (datos, enlaces, nombres de expertos). Si solo da opiniones sin evidencia, desconfía."},
+    {"title": "CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS?", "text": "Intenta descubrir si la noticia cuenta diferentes puntos de vista o solo se enfoca en uno, ignorando los demás (sesgo)."},
+    {"title": "CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES!", "text": "Si una noticia te provoca una emoción muy fuerte de golpe (enfado, miedo), podría estar intentando que no pienses con calma y la compartas rápido."},
+    {"title": "CONSEJO 9: ¿A QUIÉN LE INTERESA?", "text": "Pregúntate siempre quién se beneficia de que te creas esa noticia. Esto te puede dar pistas sobre su intención real."}
 ]
 
+# Diccionario para buscar rápidamente el texto de un consejo por su título.
 CONSEJOS_POR_TITULO = {c["title"]: c["text"] for c in CONSEJOS_COMPLETOS}
 INDICATOR_TO_TIP_MAP = {
     # Consejo 1: Fuente
-    "Fuente Fiable y Reconocida": "CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️",
-    "Fuente Desconocida o Dudosa": "CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️",
-    "Fuente Anónima o Sin Autor Claro": "CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️",
-    "Autor con Reputación y Credenciales": "CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️",
-    "Autor Sin Credenciales o Desconocido": "CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️",
+    "Fuente Fiable y Reconocida": "CONSEJO 1: ¿QUIÉN LO DICE?",
+    "Fuente Desconocida o Dudosa": "CONSEJO 1: ¿QUIÉN LO DICE?",
+    "Fuente Anónima o Sin Autor Claro": "CONSEJO 1: ¿QUIÉN LO DICE?",
+    "Autor con Reputación y Credenciales": "CONSEJO 1: ¿QUIÉN LO DICE?",
+    "Autor Sin Credenciales o Desconocido": "CONSEJO 1: ¿QUIÉN LO DICE?",
 
     # Consejo 2: Comparar
-    "Confirmado por Múltiples Fuentes Fiables": "CONSEJO 2: ¡COMPARA, COMPARA! 🆚",
-    "No se Encuentra en Otras Fuentes Fiables (o es desmentido)": "CONSEJO 2: ¡COMPARA, COMPARA! 🆚",
+    "Confirmado por Múltiples Fuentes Fiables": "CONSEJO 2: ¡COMPARA, COMPARA!",
+    "No se Encuentra en Otras Fuentes Fiables (o es desmentido)": "CONSEJO 2: ¡COMPARA, COMPARA!",
 
     # Consejo 3: Fecha
-    "Información Desactualizada Presentada como Novedad": "CONSEJO 3: ¡OJO A LA FECHA! 📅",
-    "Sin Fecha/Noticia Antigua": "CONSEJO 3: ¡OJO A LA FECHA! 📅",
+    "Información Desactualizada Presentada como Novedad": "CONSEJO 3: ¡OJO A LA FECHA!",
+    "Sin Fecha/Noticia Antigua": "CONSEJO 3: ¡OJO A LA FECHA!",
 
     # Consejo 4: Titulares
-    "Titular Sensacionalista o 'Clickbait'": "CONSEJO 4: TITULARES CON TRAMPA 🎣",
-    "Titular Informativo y Coherente con el Texto": "CONSEJO 4: TITULARES CON TRAMPA 🎣",
+    "Titular Sensacionalista o 'Clickbait'": "CONSEJO 4: TITULARES CON TRAMPA",
+    "Titular Informativo y Coherente con el Texto": "CONSEJO 4: TITULARES CON TRAMPA",
 
     # Consejo 5: Escritura
-    "Errores Gramaticales o de Ortografía Notorios": "CONSEJO 5: ¿ESTÁ BIEN ESCRITO? ✍️",
-    "Buena Calidad de Redacción (sin errores graves)": "CONSEJO 5: ¿ESTÁ BIEN ESCRITO? ✍️",
+    "Errores Gramaticales o de Ortografía Notorios": "CONSEJO 5: ¿ESTÁ BIEN ESCRITO?",
+    "Buena Calidad de Redacción (sin errores graves)": "CONSEJO 5: ¿ESTÁ BIEN ESCRITO?",
 
     # Consejo 6: Pruebas
-    "Falta de Pruebas o Evidencia Concreta": "CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS? 🔍",
-    "Aporta Pruebas Verificables (datos, estudios, enlaces)": "CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS? 🔍",
+    "Falta de Pruebas o Evidencia Concreta": "CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS?",
+    "Aporta Pruebas Verificables (datos, estudios, enlaces)": "CONSEJO 6: ¿PRUEBAS O SOLO PALABRAS?",
 
     # Consejo 7: Sesgo
-    "Presenta un Único Punto de Vista (sesgo de selección)": "CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS? 🧐",
-    "Presenta Diferentes Puntos de Vista (imparcialidad)": "CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS? 🧐",
+    "Presenta un Único Punto de Vista (sesgo de selección)": "CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS?",
+    "Presenta Diferentes Puntos de Vista (imparcialidad)": "CONSEJO 7: ¿HISTORIA COMPLETA O A MEDIAS?",
 
     # Consejo 8: Emociones
-    "Tono Emocional, Alarmista o Sesgado": "CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES! 😲😠😂",
-    "Llamada a la Acción Urgente para Compartir ('¡Pásalo!')": "CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES! 😲😠😂",
+    "Tono Emocional, Alarmista o Sesgado": "CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES!",
+    "Llamada a la Acción Urgente para Compartir ('¡Pásalo!')": "CONSEJO 8: ¡CUIDADO CON LAS EMOCIONES FUERTES!",
 
     # Consejo 9: Interés
-    "Posible Conflicto de Interés o Intención Oculta": "CONSEJO 9: ¿A QUIÉN LE INTERESA? 🤔",
-    "Exceso de Publicidad Invasiva o Engañosa": "CONSEJO 9: ¿A QUIÉN LE INTERESA? 🤔"
+    "Posible Conflicto de Interés o Intención Oculta": "CONSEJO 9: ¿A QUIÉN LE INTERESA?",
+    "Exceso de Publicidad Invasiva o Engañosa": "CONSEJO 9: ¿A QUIÉN LE INTERESA?"
 }
-
-# --- (CORRECCIÓN) Se elimina la vieja lista de preguntas del post-test de aquí ---
 
 database = Database(DATABASE_URL)
 metadata = sqlalchemy.MetaData()
@@ -803,15 +801,6 @@ async def continue_guided_analysis_chat_endpoint(chat_sesion_noticia_id: int, re
         chat_sesion_noticia_id=chat_sesion_noticia_id, emisor='chatbot', contenido=reply_content,
         timestamp_mensaje=datetime.now(dt_timezone.utc), orden_en_chat=last_order + 2))
     return ChatGuiaResponse(chat_sesion_noticia_id=chat_sesion_noticia_id, respuesta_chatbot=reply_content)
-
-#
-# Finaliza la sesión de análisis guiado. Esta función realiza dos acciones principales con el LLM:
-# 1. Analiza toda la conversación para evaluar la mejora en la comprensión del usuario y los
-#    conceptos discutidos, guardando estos datos internamente para estadísticas.
-# 2. Genera una explicación pedagógica final y de alta calidad sobre por qué la noticia
-#    era verdadera o falsa, la cual se muestra directamente al usuario.
-# Finalmente, actualiza la base de datos con todos los resultados y devuelve el mensaje final.
-#
 @guided_analysis_router.post("/finish-news/{chat_sesion_noticia_id}", status_code=status.HTTP_200_OK)
 async def finish_guided_analysis_news_endpoint(
     chat_sesion_noticia_id: int,
@@ -877,36 +866,52 @@ Basado en la conversación, responde ÚNICAMENTE en formato JSON válido con la 
         try:
             is_true = noticia_original_data.get("CATEGORY", "").upper() == "TRUE"
             verdad_falsedad_text = "Verdadera" if is_true else "Falsa"
+
+            # --- INICIO DE LA LÓGICA MEJORADA ---
             key_indicators = noticia_original_data.get("INDICADORES_CLAVE_DETECTADOS", [])
-            relevant_tips = list(set([INDICATOR_TO_TIP_MAP[ind] for ind in key_indicators if ind in INDICATOR_TO_TIP_MAP]))
-            relevant_tips_text = ", ".join(relevant_tips) if relevant_tips else "Ninguno específico."
+            
+            relevant_tip_titles = list(set([
+                INDICATOR_TO_TIP_MAP[ind]
+                for ind in key_indicators
+                if ind in INDICATOR_TO_TIP_MAP
+            ]))
+            
+            consejos_para_prompt = []
+            for title in relevant_tip_titles:
+                if title in CONSEJOS_POR_TITULO:
+                    text = CONSEJOS_POR_TITULO[title]
+                    consejos_para_prompt.append(f"- {title}: \"{text}\"")
+            
+            relevant_tips_details_text = "\n".join(consejos_para_prompt) if consejos_para_prompt else "Ninguno específico."
+            
             context_data = {"Titular": noticia_original_data.get('HEADLINE', ''), "Pistas para Justificar": ", ".join(noticia_original_data.get('JUSTIFICATION_HINTS', []))}
             context_text = "\n".join([f"- {key}: {value}" for key, value in context_data.items() if value])
-
-            # PROMPT FINAL, ENFOCADO EN DIÁLOGO VS. ACCIÓN
+            
             explanation_prompt = (
-                "**Persona:** Eres Pimpoyo, un profesor y detective experto que da la conclusión final de un caso a un niño de 10-14 años.\n\n"
-                "**Misión:** Explicar de forma pedagógica por qué una noticia era {verdad_falsedad_text}, conectando la explicación con los 'Consejos de Detective' relevantes.\n\n"
-                "**Formato de Respuesta:**\n"
-                "Tu respuesta debe ser exclusivamente el diálogo del personaje, como si fuera la línea de un guion. No incluyas acotaciones escénicas, descripciones de acciones o gestos (ej: '(sonríe)', '(mira fijamente)'). Céntrate solo en las palabras que diría el personaje.\n\n"
-                "**Datos del Caso para tu Análisis:**\n"
+                "**Rol y Misión:** Eres Pimpoyo, un detective y profesor experto. Tu misión es dar la conclusión final de un caso a tu joven aprendiz (10-14 años). Debes revelar si la noticia era Verdadera o Falsa y, lo más importante, explicar el 'porqué' usando las pistas de la noticia y los 'Consejos de Detective' que te proporciono.\n\n"
+                "**Contexto del Caso (Datos que DEBES usar):**\n"
                 "```\n"
-                "Resultado: La noticia es {verdad_falsedad_text}\n"
-                "Contexto de la noticia: {context_text}\n"
-                "Consejos de Detective más Relevantes para este caso: {relevant_tips_text}\n"
+                "Veredicto del Caso: La noticia es {verdad_falsedad_text}\n"
+                "Pistas Clave en la Noticia: {context_text}\n"
+                "Consejos de Detective Relevantes (Título y Explicación): \n{relevant_tips_details_text}\n"
                 "```\n\n"
-                "**Reglas Adicionales:**\n"
-                "1.  **SÉ DIRECTO Y CONCISO:** Usa 2-4 frases como máximo.\n"
-                "2.  **NOMBRA LOS CONSEJOS:** Debes mencionar explícitamente el nombre del 'Consejo de Detective' más relevante para este caso.\n\n"
-                "**Ejemplo de Respuesta Perfecta (solo diálogo):** La pista más importante aquí era la fuente. Al ser un 'informe filtrado' anónimo, no podíamos confiar en ella. ¡Aquí se aplicaba perfectamente el **CONSEJO 1: ¿QUIÉN LO DICE? 🕵️‍♀️** y el **CONSEJO 4: TITULARES CON TRAMPA 🎣**!\n"
+                "**Tus Reglas de Oro (¡Obligatorias!):**\n"
+                "1.  **CITA Y EXPLICA CON DETALLE:** Tu tarea principal es conectar los 'Consejos de Detective' con las 'Pistas Clave' de la noticia. Para cada consejo relevante:\n"
+                "    a. Cita el **título exacto** del consejo (ej: **CONSEJO 1: ¿QUIÉN LO DICE?**).\n"
+                "    b. Usando la **explicación del consejo** que te he dado, justifica de forma breve y directa por qué se aplica a las 'Pistas Clave' de esta noticia en particular.\n"
+                "2.  **TONO DE DETECTIVE EXPERTO:** Sé directo, claro y motivador. Habla como un mentor que revela las claves de un misterio. Fomenta el espíritu crítico.\n"
+  "3.  **BREVEDAD Y CLARIDAD:** No te enrolles. Usa frases cortas. La respuesta completa no debe superar las 10 líneas en total.\n"
+                "4.  **SOLO DIÁLOGO:** Tu respuesta debe ser ÚNICAMENTE el texto que diría Pimpoyo.\n\n"
+                "**Ejemplo de Estructura Perfecta:**\n"
+                "¡Caso resuelto! Esta noticia era Falsa. La clave estaba en el **CONSEJO 1: ¿QUIÉN LO DICE?**, ya que como vimos, es clave fijarse en la fuente, y en este caso era una web desconocida. También aplicaba el **CONSEJO 4: TITULARES CON TRAMPA**, porque el titular era muy exagerado y solo buscaba el clic."
             ).format(
                 verdad_falsedad_text=verdad_falsedad_text,
                 context_text=context_text,
-                relevant_tips_text=relevant_tips_text
+                relevant_tips_details_text=relevant_tips_details_text
             )
+            # --- FIN DE LA LÓGICA MEJORADA ---
 
             response_llm_exp = await process_with_ollama(model=OLLAMA_MODEL_ANALYSIS, messages=[{"role": "user", "content": explanation_prompt}])
-            # La respuesta ahora se usa directamente, sin limpieza de código.
             pedagogical_explanation = response_llm_exp.get('message', {}).get('content', '').strip()
 
         except Exception as e:
