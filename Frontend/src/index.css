@@ -612,7 +612,7 @@ body {
 .intro-text-pimpoyo {
   color: #4a3112;
   margin-bottom: 30px;
-  max-width: 600px; /* Ancho máximo */
+  max-width: 500px; /* Ancho máximo */
   text-align: justify;
   margin-left: auto;   /* Centra el párrafo en sí mismo horizontalmente */
   margin-right: auto;  /* Centra el párrafo en sí mismo horizontalmente */
@@ -645,6 +645,13 @@ body {
   font-weight: bold;
   margin-left: auto;
   margin-right: auto;
+}
+
+.texto-noticia-pretest {
+  text-align: justify;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
 }
 
 /* Tarjeta para CADA pregunta (según tu TSX) */
@@ -2001,7 +2008,7 @@ hr.separator {
   background-color: #ffffff;
   border: 2px solid #eaddc0;
   border-radius: 12px;
-  
+
   /* Interacción y feedback visual */
   cursor: pointer;
   transition: all 0.2s ease-in-out;
@@ -2064,7 +2071,7 @@ hr.separator {
 @media (max-width: 768px) {
 
   /* --- AJUSTES PARA EL PANEL LATERAL EN MÓVILES --- */
-  
+
   #side-panel {
     /* El panel ocupará casi todo el ancho, dejando un pequeño margen */
     width: 90%;
@@ -2106,7 +2113,7 @@ hr.separator {
   .chat-header {
     padding: 10px 15px;
   }
-  
+
   .register-flow {
     padding: 20px 15px;
   }

@@ -81,10 +81,36 @@ const preSurveyQuestions: AnyPreSurveyQuestion[] = [
     { id: 'P11', isPractical: true, news_item: { headline: '¡LO OCULTAN! APAGÓN MASIVO NO FUE CASUALIDAD : Expertos independientes denuncian posible CIBERATAQUE COMBINADO  a la red eléctrica', body: 'Mientras las autoridades ofrecen explicaciones técnicas sobre "fallos en cadena" para el gran apagón que afectó a la península el pasado 28 de abril, crece la preocupación entre círculos de expertos en ciberseguridad que apuntan a una causa mucho más siniestra. Un informe filtrado, elaborado por un grupo de ingenieros eléctricos de internet piensa que la historia podría ser diferente a la que nos cuentan. Ellos aseguran tener pruebas convincentes de una invasión externa coordinada en los sistemas de control de la red eléctrica nacional. El informe que se hace eco en los foros especializados dice: "Esto no fue un simple fallo, fue una prueba. Alguien atacó los ordenadores especiales (llamados SCADA) que controlan que la luz llegue bien a todas las casas y ciudades". También informa que el ataque pudo ser obra de otro país con el objetivo de probar cómo de bien se defiende España ante un ataque por internet y ver si estamos preparados para una "guerra moderna" en la que no se usan solo armas, sino también ataques informáticos (virus). El informe recomienda a la gente no creerse la historia del "fallo técnico" y estar preparados por si hay nuevos apagones más serios en el futuro. Las compañías eléctricas y el Centro Criptológico Nacional, por el momento, han mantenido silencio sobre estas alegaciones específicas, limitándose a difundir los comunicados sobre fallos técnicos.', source_hint: '(Fuente: “informe filtrado” distribuido por canales de mensajería encriptada y foros de ciberseguridad alternativos - Abril 2025)'}, question_quantitative: { id_q_suffix: '_VF', text: '11. ¿Crees que esta noticia sobre el ciberataque y el apagón es verdadera o falsa?', type: 'radio', options: ['Verdadera', 'Falsa'] }, question_qualitative: { id_q_suffix: '_Expl', text: 'Explica brevemente por qué crees que es verdadera o falsa. ¿Qué pistas o señales viste en la noticia (en el titular, en el texto, en la fuente...)?', type: 'textarea' } },
 ];
 const preTestScoringKey: Record<string, Record<string, number>> = {
-    'P7_Estrategias': { 'Si la web o la persona que la publica parece de confianza.': 2, 'Si el titular es muy exagerado o busca polémica.': 2, 'Si está bien escrita, sin faltas de ortografía.': 2, 'Si explica de dónde viene la información o da pruebas.': 2, 'Si busco esa misma noticia o sobre quién la publica en otros sitios web para comparar.': 2 },
-    'P8_Fuentes_Confianza': { 'Periódicos, telediarios o webs de noticias famosas.': 5, 'Webs oficiales (del gobierno, de la NASA, de universidades...).': 5, 'Un científico o experto conocido que habla del tema.': 5 },
-    'P9_Sospecha_Falsa': { 'Un titular súper exagerado o increíble.': 2, 'Muchas faltas de ortografía o frases mal escritas.': 2, 'Uso de MUCHAS MAYÚSCULAS y signos de exclamación !!!': 2, 'Un lenguaje que busca enfadarte, darte miedo o insultar.': 2, 'Que te pida compartirla "URGENTE" con todo el mundo.': 3, 'Que no tenga fecha o sea muy, muy antigua.': 2, 'Que nadie más hable de esa noticia en otros sitios.': 2 },
-    'P10_Prob_Verdad': { 'Si explica claramente de dónde viene la información y da enlaces o nombres.': 2, 'Si la escriben expertos o periodistas conocidos.': 1, 'Si varios periódicos o webs de noticias fiables cuentan lo mismo.': 2, 'Si está escrita de forma tranquila y objetiva, sin insultar ni exagerar.': 2, 'Si tiene una fecha clara y es reciente.': 2, 'Si presenta datos o números concretos (y dice de dónde salen).': 1 },
+    'P7_Estrategias': {
+        'Si la web o la persona que la publica parece de confianza.': 2,
+        'Si el titular es muy exagerado o busca polémica.': 2,
+        'Si está bien escrita, sin faltas de ortografía.': 2,
+        'Si explica de dónde viene la información o da pruebas.': 2,
+        'Si busco esa misma noticia o sobre quién la publica en otros sitios web para comparar.': 2
+    },
+    'P8_Fuentes_Confianza': {
+        'Periódicos, telediarios o webs de noticias famosas. (El Mundo, BBC, La Vanguardia...)': 5,
+        'Webs oficiales (del gobierno, de la NASA, de universidades...).': 5,
+        'Un científico o experto conocido que habla del tema.': 5
+    },
+    'P9_Sospecha_Falsa': {
+        'Un titular súper exagerado o increíble.': 2,
+        'Muchas faltas de ortografía o frases mal escritas.': 2,
+        'Uso de MUCHAS MAYÚSCULAS y signos de exclamación !!!': 2,
+        'Un lenguaje que busca enfadarte, darte miedo o insultar.': 2,
+        'Que no diga de dónde saca la información o no dé pruebas.': 2,
+        'Que te pida compartirla "URGENTE" con todo el mundo.': 3,
+        'Que no tenga fecha o sea muy, muy antigua.': 2,
+        'Que nadie más hable de esa noticia en otros sitios.': 2
+    },
+    'P10_Prob_Verdad': {
+        'Si explica claramente de dónde viene la información y da enlaces o nombres.': 2,
+        'Si la escriben expertos o periodistas conocidos.': 1,
+        'Si varios periódicos o webs de noticias fiables cuentan lo mismo.': 2,
+        'Si está escrita de forma tranquila y objetiva, sin insultar ni exagerar.': 2,
+        'Si tiene una fecha clara y es reciente.': 2,
+        'Si presenta datos o números concretos (y dice de dónde salen).': 1
+    },
     'P11_VF': { 'Falsa': 15 },
 };
 
@@ -100,52 +126,69 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
     const [error, setError] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    // ... (El resto de funciones como calculatePreTestScores, handleInputChange, etc., se mantienen igual)
-    const calculatePreTestScores = (answers: Record<string, string | string[]>) => {
-        let s1_score = 0; // Perfil (P1-P4) -> No puntúa
-        let s2_score = 0; // Estrategias (P5-P10) -> P5 y P6 no puntúan, el resto sí.
-        let s3_score = 0; // Práctica (P11)
+/**
+ * Calcula las puntuaciones del pre-test basándose en las respuestas del usuario.
+ * Identifica la sección de cada pregunta y suma los puntos según la clave de puntuación.
+ */
+const calculatePreTestScores = (answers: Record<string, string | string[]>) => {
+    let s1_score = 0; // Perfil (no puntúa)
+    let s2_score = 0; // Estrategias
+    let s3_score = 0; // Práctica
 
-        const questionToSectionMap: Record<string, 's1' | 's2' | 's3'> = {
-            'P1_Horas': 's1', 'P2_Plataformas': 's1', 'P3_Habilidad_Tech': 's1', 'P4_Charla_Peligros': 's1',
-            'P5_Habilidad_VF': 's2', 'P6_Dificultad_VF': 's2', 'P7_Estrategias': 's2',
-            'P8_Fuentes_Confianza': 's2', 'P9_Sospecha_Falsa': 's2', 'P10_Prob_Verdad': 's2',
-            'P11': 's3',
-        };
+    // El mapa para asignar cada ID de pregunta base a una sección
+    const questionToSectionMap: Record<string, 's1' | 's2' | 's3'> = {
+        'P1_Horas': 's1', 'P2_Plataformas': 's1', 'P3_Habilidad_Tech': 's1', 'P4_Charla_Peligros': 's1',
+        'P5_Habilidad_VF': 's2', 'P6_Dificultad_VF': 's2', 'P7_Estrategias': 's2',
+        'P8_Fuentes_Confianza': 's2', 'P9_Sospecha_Falsa': 's2', 'P10_Prob_Verdad': 's2',
+        'P11': 's3',
+    };
 
-        for (const [questionIdWithSuffix, userAnswer] of Object.entries(answers)) {
-            const questionId = questionIdWithSuffix.replace(/_VF$|_Expl$/, '');
-            const section = questionToSectionMap[questionId];
+    // Itera sobre cada respuesta que ha dado el usuario
+    for (const [questionIdWithSuffix, userAnswer] of Object.entries(answers)) {
+        // Obtenemos el ID base para encontrar la sección (ej. 'P11_VF' -> 'P11')
+        const questionIdBase = questionIdWithSuffix.replace(/_VF$|_Expl$/, '');
+        const section = questionToSectionMap[questionIdBase];
 
-            const scoringRule = preTestScoringKey[questionId] || preTestScoringKey[questionIdWithSuffix];
+        // --- LÍNEA CORREGIDA ---
+        // Buscamos la regla de puntuación usando SIEMPRE el ID completo de la respuesta.
+        const scoringRule = preTestScoringKey[questionIdWithSuffix];
 
-            if (!section || !scoringRule) continue;
-
-            let questionScore = 0;
-            if (Array.isArray(userAnswer)) {
-                for (const selectedOption of userAnswer) {
-                    if (scoringRule[selectedOption]) {
-                        questionScore += scoringRule[selectedOption];
-                    }
-                }
-            } else if (typeof userAnswer === 'string') {
-                const score = scoringRule[userAnswer];
-                if (score !== undefined) {
-                    questionScore = score;
-                }
-            }
-
-            if (section === 's2') s2_score += questionScore;
-            else if (section === 's3') s3_score += questionScore;
+        // Si la pregunta no pertenece a una sección o no tiene puntuación, la saltamos.
+        if (!section || !scoringRule) {
+            continue;
         }
 
-        return {
-            s1: parseFloat(s1_score.toFixed(2)),
-            s2: parseFloat(s2_score.toFixed(2)),
-            s3: parseFloat(s3_score.toFixed(2)),
-            total: parseFloat((s1_score + s2_score + s3_score).toFixed(2)),
-        };
+        let questionScore = 0;
+        // Si la respuesta es un array (checkbox)
+        if (Array.isArray(userAnswer)) {
+            for (const selectedOption of userAnswer) {
+                if (scoringRule[selectedOption]) {
+                    questionScore += scoringRule[selectedOption];
+                }
+            }
+        // Si la respuesta es un string (radio)
+        } else if (typeof userAnswer === 'string') {
+            const score = scoringRule[userAnswer];
+            if (score !== undefined) {
+                questionScore = score;
+            }
+        }
+
+        // Asignamos la puntuación a la sección correcta
+        if (section === 's2') {
+            s2_score += questionScore;
+        } else if (section === 's3') {
+            s3_score += questionScore;
+        }
+    }
+
+    return {
+        s1: parseFloat(s1_score.toFixed(2)),
+        s2: parseFloat(s2_score.toFixed(2)),
+        s3: parseFloat(s3_score.toFixed(2)),
+        total: parseFloat((s1_score + s2_score + s3_score).toFixed(2)),
     };
+};
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, type } = event.target;
@@ -305,8 +348,8 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
             <div key={q.id} className="pretest-question-card">
             {!q.isPractical ? (
                 <>
-                    <p className="pretest-question-text">{q.text}</p>
-                    {q.type === 'checkbox' && <p className="pretest-instruction">(Puedes marcar todas las que quieras)</p>}
+                    <div className="pretest-question-text">{q.text}</div>
+                    {q.type === 'checkbox' && <div className="pretest-instruction">(Puedes marcar todas las que quieras)</div>}
                     <div className="pretest-options-group">
                         {q.options.map((option, index) => {
                             const inputId = createInputId(q.id, index);
@@ -333,11 +376,11 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
                 <div className="practical-news-item">
                     <div className="news-content">
                         <h3>{q.news_item.headline}</h3>
-                        {q.news_item.body.split('\n').map((p, i) => p.trim() && <p key={i}>{p}</p>)}
+                        {q.news_item.body.split('\n').map((p, i) => p.trim() && <div className="texto-noticia-pretest" key={i}>{p}</div>)}
                         {q.news_item.source_hint && <small><em>{q.news_item.source_hint}</em></small>}
                     </div>
                     <div className="question-quantitative">
-                        <p className="pretest-question-text">{q.question_quantitative.text}</p>
+                        <div className="pretest-question-text">{q.question_quantitative.text}</div>
                         {q.question_quantitative.options.map((option, index) => {
                             const answerKey = q.id + q.question_quantitative.id_q_suffix;
                             const practicalInputId = createInputId(answerKey, index);
@@ -358,7 +401,7 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
                         })}
                     </div>
                     <div className="question-qualitative">
-                        <p className="pretest-question-text">{q.question_qualitative.text}</p>
+                        <div className="pretest-question-text">{q.question_qualitative.text}</div>
                         <textarea
                             name={`preTestAnswer_${q.id}${q.question_qualitative.id_q_suffix}`}
                             value={formData.preTestAnswers[q.id + q.question_qualitative.id_q_suffix] as string || ''}
@@ -385,7 +428,7 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
         return (
           <form onSubmit={(e) => handleRegisterNextStep(e)} style={{ maxWidth: '700px', width: '100%' }}>
             <h2>Pequeño test inicial</h2>
-            <p className="intro-text-pimpoyo">¡Hola! Soy Pimpoyo. Antes de empezar nuestra aventura para ser detectives de noticias, quiero saber un poco sobre lo que ya conoces. ¡No es un examen, no hay respuestas buenas ni malas! Solo marca lo que piensas o haces normalmente. ¡Gracias por ayudarme!</p>
+            <div className="intro-text-pimpoyo">¡Hola! Soy Pimpoyo. Antes de empezar nuestra aventura para ser detectives de noticias, quiero saber un poco sobre lo que ya conoces. ¡No es un examen, no hay respuestas buenas ni malas! Solo marca lo que piensas o haces normalmente. ¡Gracias por ayudarme!</div>
 
             <h3>Sección 1: Sobre ti y cómo usas internet</h3>
             {sections.s1.map(q => renderQuestion(q))}
@@ -396,7 +439,7 @@ function ProfileSetup({ onAuthSuccess }: ProfileSetupProps) {
             <h3>Sección 3: ¡A practicar!</h3>
             {sections.s3.map(q => renderQuestion(q))}
 
-            <p className="outro-text-pimpoyo">¡Listo! ¡Mil gracias por tus respuestas! Has ayudado mucho a Pimpoyo.</p>
+            <div className="outro-text-pimpoyo">¡Listo! ¡Mil gracias por tus respuestas! Has ayudado mucho a Pimpoyo.</div>
             <button type="submit" className="form-button" style={{ marginTop: '20px' }} disabled={isLoading}>Siguiente</button>
             {error && <p className="error-message">{error}</p>}
           </form>

@@ -2,8 +2,8 @@
 
 .post-test-flow-container {
     background-color: #fff9e9;
-    padding: 20px 30px;
-    margin: 20px auto;
+    padding: 40px 0px;
+    margin: 10px auto;
     border-radius: 15px;
     border: 3px solid #e7d8b8;
     max-width: 800px;
@@ -27,7 +27,7 @@
 .post-test-content-wrapper {
     overflow-y: auto;
     padding: 5px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     flex-grow: 1;
 }
 
@@ -205,7 +205,7 @@
 
 .post-test-navigation {
     flex-shrink: 0;
-    padding-top: 20px;
+    padding-top: 10px;
     border-top: 1px solid #e7d8b8;
 }
 
@@ -239,7 +239,7 @@
     color: #c00;
     padding: 0;
     margin: 0;
-    height: 24px; /* Damos una altura fija para que no salte la UI */
+    height: 5px; /* Damos una altura fija para que no salte la UI */
 }
 
 .post-test-finished-message {

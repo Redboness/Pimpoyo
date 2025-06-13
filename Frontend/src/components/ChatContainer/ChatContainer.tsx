@@ -1025,7 +1025,8 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   // Comentario encima de la función handlePostTestCompleted
   const handlePostTestCompleted = useCallback(async (score: number, aciertos: number, totalQuestions: number) => {
     addBotResponse(
-      `¡Terminaste tu evaluación de progreso! 🎉 Tu puntuación fue: **${score.toFixed(2)}%** (${aciertos} de ${totalQuestions} aciertos). ` +
+      `¡Terminaste tu evaluación de progreso! 🎉 Tu puntuación fue: **${score.toFixed(2)}%**
+       ` +
       (score >= 70 ? "¡Excelente trabajo! Has aprendido mucho." : "¡Buen esfuerzo! Sigue practicando."),
       [], 300
     );

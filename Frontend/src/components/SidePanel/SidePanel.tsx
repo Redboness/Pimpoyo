@@ -280,12 +280,13 @@ function SidePanel({
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 
-  const puedeHacerPostTest = userInfo &&
-                               (userInfo.puntuacion_pre_test_total !== null && userInfo.puntuacion_pre_test_total !== undefined) &&
-                               (userInfo.puntuacion_post_test_total === null || userInfo.puntuacion_post_test_total === undefined);
+  const puedeHacerPostTest = true;
+  //userInfo &&
+  //                           (userInfo.puntuacion_pre_test_total !== null && userInfo.puntuacion_pre_test_total !== undefined) &&
+  //                           (userInfo.puntuacion_post_test_total === null || userInfo.puntuacion_post_test_total === undefined);
 
-  const yaHizoPostTest = userInfo &&
-                               (userInfo.puntuacion_post_test_total !== null && userInfo.puntuacion_post_test_total !== undefined);
+  const yaHizoPostTest = false/*userInfo &&
+                               (userInfo.puntuacion_post_test_total !== null && userInfo.puntuacion_post_test_total !== undefined);*/
 
   const necesitaPreTest = userInfo && (userInfo.puntuacion_pre_test_total === null || userInfo.puntuacion_pre_test_total === undefined);
 
