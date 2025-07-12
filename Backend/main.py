@@ -42,7 +42,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 480))
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3:4b")
 OLLAMA_MODEL_ANALYSIS = os.getenv("OLLAMA_MODEL_ANALYSIS", "gemma3:4b")
 NEWS_DATASET_PATH = os.path.join(os.path.dirname(__file__), "datasets", "analyzed_test_with_stats.json")
-OLLAMA_CONCURRENCY_LIMIT = int(os.getenv("OLLAMA_CONCURRENCY_LIMIT", 5))
+OLLAMA_CONCURRENCY_LIMIT = int(os.getenv("OLLAMA_CONCURRENCY_LIMIT", 8))
 
 
 XP_POR_ACIERTO = 10
@@ -444,11 +444,16 @@ guided_analysis_router = APIRouter(tags=["Guided Analysis Activity"])
 challenge_router = APIRouter(prefix="/challenge", tags=["Challenges"])
 post_test_router = APIRouter(prefix="/activity/post-test", tags=["Post-Test Activity"])
 
+# Registra un nuevo usuario.
+# Si el 'apodo' (nickname) elegido ya existe, se le añade un número aleatorio
+# al final para garantizar su unicidad antes de proceder con el registro.
 @auth_router.post("/register/", response_model=UsuarioPublic, status_code=status.HTTP_201_CREATED)
 async def register_usuario(usuario_in: UsuarioCreate):
-    existing_user = await get_usuario_by_apodo(usuario_in.apodo)
-    if existing_user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Apodo ya registrado.")
+    original_apodo = usuario_in.apodo
+    while await get_usuario_by_apodo(usuario_in.apodo):
+        random_suffix = random.randint(100, 9999)
+        usuario_in.apodo = f"{original_apodo}{random_suffix}"
+
     hashed_password = get_password_hash(usuario_in.password)
     pre_test_id_to_db_col = {
         'P1_Horas': 'pre_s1_p1_horas_internet', 'P2_Plataformas': 'pre_s1_p2_plataformas',
@@ -473,16 +478,20 @@ async def register_usuario(usuario_in: UsuarioCreate):
             db_column_name = pre_test_id_to_db_col.get(question_id)
             if db_column_name:
                 sesion_values_to_insert[db_column_name] = answer
+
     async with database.transaction():
         try:
             query_sesion = sesiones_table.insert().values(**sesion_values_to_insert)
             last_sesion_id = await database.execute(query_sesion)
             if not last_sesion_id:
                 raise HTTPException(status_code=500, detail="Fallo al crear el usuario en la base de datos.")
+
             created_user_query = sesiones_table.select().where(sesiones_table.c.sesion_id == last_sesion_id)
             created_user_db_map = await database.fetch_one(created_user_query)
+
             if not created_user_db_map:
                 raise HTTPException(status_code=500, detail="No se pudo recuperar el usuario tras crearlo.")
+
             created_user_db = UsuarioInDB(**dict(created_user_db_map))
             return UsuarioPublic.model_validate(created_user_db.model_dump())
         except Exception as e:

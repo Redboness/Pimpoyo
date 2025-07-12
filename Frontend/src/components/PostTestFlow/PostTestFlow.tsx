@@ -232,10 +232,10 @@ function PostTestFlow({ authToken, onTestComplete, onCancelTest }: PostTestFlowP
                 </div>
             </div>
             <div className="post-test-navigation">
-                <div className="post-test-loading-error">{error}</div>
                 <button className="post-test-button" onClick={handleNext}>
                     {currentItemIndex < allItems.length - 1 ? 'Siguiente' : 'Finalizar y Corregir Test'}
                 </button>
+                <div className="post-test-loading-error">{error}</div>
             </div>
         </div>
     );
