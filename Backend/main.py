@@ -19,7 +19,6 @@ from typing import Optional, List, Any, Dict
 import ollama
 import random
 
-# --- (CORRECCIÓN) Importamos desde 'data.post_test_data' que ahora contiene las preguntas y la lógica ---
 from post_test_data import post_test_questions, post_test_news, score_post_test
 
 from models.models import (
@@ -34,7 +33,6 @@ from models.models import (
 
 load_dotenv()
 
-# --- Constants and Configuration ---
 DATABASE_URL = os.getenv("DATABASE_URL")
 SECRET_KEY = os.getenv("SECRET_KEY", "un_secreto_muy_fuerte_y_largo_aqui")
 ALGORITHM = "HS256"
@@ -91,7 +89,6 @@ LISTA_TIPOS_RAZONAMIENTO = [
     "Evaluación del contexto de la noticia", "Identificación de la intención del autor",
     "Diferenciación entre opinión y hecho"
 ]
-# Lista de diccionarios con la información completa de cada consejo.
 CONSEJOS_COMPLETOS = [
     {"title": "CONSEJO: ¿QUIÉN LO DICE?", "text": "Fíjate siempre en quién publica la noticia. ¿Es una fuente conocida y fiable o alguien desconocido? Una fuente anónima o extraña es una señal de alerta."},
     {"title": "CONSEJO: ¡COMPARA, COMPARA!", "text": "Verifica la noticia buscando si otros medios conocidos y fiables también la cuentan. Si solo la encuentras en un sitio, duda."},
@@ -104,45 +101,35 @@ CONSEJOS_COMPLETOS = [
     {"title": "CONSEJO: ¿A QUIÉN LE INTERESA?", "text": "Pregúntate siempre quién se beneficia de que te creas esa noticia. Esto te puede dar pistas sobre su intención real."}
 ]
 
-# Diccionario para buscar rápidamente el texto de un consejo por su título.
 CONSEJOS_POR_TITULO = {c["title"]: c["text"] for c in CONSEJOS_COMPLETOS}
 INDICATOR_TO_TIP_MAP = {
-    # Consejo 1: Fuente
     "Fuente Fiable y Reconocida": "CONSEJO: ¿QUIÉN LO DICE?",
     "Fuente Desconocida o Dudosa": "CONSEJO: ¿QUIÉN LO DICE?",
     "Fuente Anónima o Sin Autor Claro": "CONSEJO: ¿QUIÉN LO DICE?",
     "Autor con Reputación y Credenciales": "CONSEJO: ¿QUIÉN LO DICE?",
     "Autor Sin Credenciales o Desconocido": "CONSEJO: ¿QUIÉN LO DICE?",
 
-    # Consejo 2: Comparar
     "Confirmado por Múltiples Fuentes Fiables": "CONSEJO: ¡COMPARA, COMPARA!",
     "No se Encuentra en Otras Fuentes Fiables (o es desmentido)": "CONSEJO: ¡COMPARA, COMPARA!",
 
-    # Consejo 3: Fecha
     "Información Desactualizada Presentada como Novedad": "CONSEJO: ¡OJO A LA FECHA!",
     "Sin Fecha/Noticia Antigua": "CONSEJO: ¡OJO A LA FECHA!",
 
-    # Consejo 4: Titulares
     "Titular Sensacionalista o 'Clickbait'": "CONSEJO: TITULARES CON TRAMPA",
     "Titular Informativo y Coherente con el Texto": "CONSEJO: TITULARES CON TRAMPA",
 
-    # Consejo 5: Escritura
     "Errores Gramaticales o de Ortografía Notorios": "CONSEJO: ¿ESTÁ BIEN ESCRITO?",
     "Buena Calidad de Redacción (sin errores graves)": "CONSEJO: ¿ESTÁ BIEN ESCRITO?",
 
-    # Consejo 6: Pruebas
     "Falta de Pruebas o Evidencia Concreta": "CONSEJO: ¿PRUEBAS O SOLO PALABRAS?",
     "Aporta Pruebas Verificables (datos, estudios, enlaces)": "CONSEJO: ¿PRUEBAS O SOLO PALABRAS?",
 
-    # Consejo 7: Sesgo
     "Presenta un Único Punto de Vista (sesgo de selección)": "CONSEJO: ¿HISTORIA COMPLETA O A MEDIAS?",
     "Presenta Diferentes Puntos de Vista (imparcialidad)": "CONSEJO: ¿HISTORIA COMPLETA O A MEDIAS?",
 
-    # Consejo 8: Emociones
     "Tono Emocional, Alarmista o Sesgado": "CONSEJO: ¡CUIDADO CON LAS EMOCIONES FUERTES!",
     "Llamada a la Acción Urgente para Compartir ('¡Pásalo!')": "CONSEJO: ¡CUIDADO CON LAS EMOCIONES FUERTES!",
 
-    # Consejo 9: Interés
     "Posible Conflicto de Interés o Intención Oculta": "CONSEJO: ¿A QUIÉN LE INTERESA?",
     "Exceso de Publicidad Invasiva o Engañosa": "CONSEJO: ¿A QUIÉN LE INTERESA?"
 }
@@ -150,12 +137,9 @@ INDICATOR_TO_TIP_MAP = {
 database = Database(DATABASE_URL)
 metadata = sqlalchemy.MetaData()
 
-# --- (CORRECCIÓN) Se elimina la vieja lista de preguntas del post-test de aquí ---
-
 database = Database(DATABASE_URL)
 metadata = sqlalchemy.MetaData()
 
-# --- Definiciones de Tablas (sin cambios) ---
 sesiones_table = sqlalchemy.Table(
     "sesiones", metadata,
     Column("sesion_id", BigInteger, primary_key=True),
@@ -175,8 +159,6 @@ sesiones_table = sqlalchemy.Table(
     Column("fallos_totales_sesion", Integer, server_default='0', nullable=False),
     Column("precision_global_sesion", Float, nullable=True),
     Column("xp_actual", Integer, server_default='0', nullable=False),
-    Column("tasa_falsos_negativos_global", Float, nullable=True),
-    Column("tasa_falsos_positivos_global", Float, nullable=True),
     Column("pre_s1_p1_horas_internet", Text),
     Column("pre_s1_p2_plataformas", ARRAY(Text)),
     Column("pre_s1_p3_habilidad_tech", Text),
@@ -198,15 +180,12 @@ sesiones_table = sqlalchemy.Table(
     Column("post_s2_p7_aprendizaje_abierta", Text),
     Column("post_s2_p8_cambio_forma_ver_abierta", Text),
     Column("post_s2_p9_aprendizaje_escala", Text),
-    Column("post_s3_p10_vf_sangre_artificial", Text),
     Column("post_s3_p11_vf_apagon_post", Text),
     Column("post_s3_p11_expl_apagon_post", Text),
     Column("post_s4_p12_facilidad_uso_escala", Text),
     Column("post_s4_p13_utilidad_pistas_escala", Text),
     Column("post_s4_p14_que_gusto_abierta", Text),
     Column("post_s4_p15_que_no_gusto_abierta", Text),
-    Column("post_s4_p16_personaje_pimpoyo_escala", Text),
-    Column("post_s4_p17_utilidad_futura_abierta", Text),
     Column("post_s4_p18_frecuencia_aplicacion_escala", Text),
     Column("pre_test_s1_perfil_puntos", Float),
     Column("pre_test_s2_estrategias_puntos", Float),
@@ -325,18 +304,31 @@ mensajes_chat_guia_table = sqlalchemy.Table(
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verifica una contraseña en texto plano contra su versión hasheada."""
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password: str) -> str:
+    """Genera el hash de una contraseña en texto plano."""
     return pwd_context.hash(password)
 
 ollama_client: Optional[ollama.AsyncClient] = None
 ollama_semaphore: Optional[asyncio.Semaphore] = None
 
-#
-# Procesa una petición a Ollama de forma segura, controlando la concurrencia.
-#
 async def process_with_ollama(model: str, messages: List[Dict[str, Any]], **kwargs) -> Dict[str, Any]:
+    """
+    Procesa una petición a Ollama de forma segura, controlando la concurrencia.
+
+    Args:
+        model: El nombre del modelo de Ollama a utilizar.
+        messages: La lista de mensajes para enviar al modelo.
+        **kwargs: Argumentos adicionales para la llamada a ollama.chat.
+
+    Returns:
+        La respuesta del modelo de Ollama.
+
+    Raises:
+        HTTPException: Si el servicio de Ollama no está disponible o falla la comunicación.
+    """
     if not ollama_client or not ollama_semaphore:
         print("ERROR: El cliente de Ollama o el semáforo no están inicializados.")
         raise HTTPException(
@@ -363,6 +355,12 @@ async def process_with_ollama(model: str, messages: List[Dict[str, Any]], **kwar
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """
+    Gestiona el ciclo de vida de la aplicación FastAPI.
+
+    Se encarga de conectar y desconectar la base de datos, así como de
+    inicializar el cliente y el semáforo para las peticiones a Ollama.
+    """
     global ollama_client, ollama_semaphore
     try:
         await database.connect()
@@ -400,6 +398,16 @@ app.add_middleware(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    """
+    Crea un token de acceso JWT.
+
+    Args:
+        data: Diccionario con los datos a incluir en el payload del token.
+        expires_delta: Duración opcional del token. Si no se especifica, usa el valor por defecto.
+
+    Returns:
+        El token JWT codificado como una cadena de texto.
+    """
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(dt_timezone.utc) + expires_delta
@@ -410,6 +418,15 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 async def get_usuario_by_apodo(apodo: str) -> Optional[UsuarioInDB]:
+    """
+    Busca y recupera un usuario de la base de datos por su apodo.
+
+    Args:
+        apodo: El apodo del usuario a buscar.
+
+    Returns:
+        Un objeto UsuarioInDB si se encuentra, o None si no existe.
+    """
     query = sesiones_table.select().where(sesiones_table.c.apodo == apodo)
     result = await database.fetch_one(query)
     if result:
@@ -417,6 +434,18 @@ async def get_usuario_by_apodo(apodo: str) -> Optional[UsuarioInDB]:
     return None
 
 async def get_current_active_user(token: str = Depends(oauth2_scheme)) -> UsuarioInDB:
+    """
+    Dependencia de FastAPI para obtener el usuario activo actual a partir de un token JWT.
+
+    Args:
+        token: El token JWT proporcionado en la cabecera de autorización.
+
+    Returns:
+        El objeto UsuarioInDB correspondiente al usuario autenticado.
+
+    Raises:
+        HTTPException: Si las credenciales no pueden ser validadas.
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -444,11 +473,14 @@ guided_analysis_router = APIRouter(tags=["Guided Analysis Activity"])
 challenge_router = APIRouter(prefix="/challenge", tags=["Challenges"])
 post_test_router = APIRouter(prefix="/activity/post-test", tags=["Post-Test Activity"])
 
-# Registra un nuevo usuario.
-# Si el 'apodo' (nickname) elegido ya existe, se le añade un número aleatorio
-# al final para garantizar su unicidad antes de proceder con el registro.
 @auth_router.post("/register/", response_model=UsuarioPublic, status_code=status.HTTP_201_CREATED)
 async def register_usuario(usuario_in: UsuarioCreate):
+    """
+    Registra un nuevo usuario en el sistema.
+
+    Si el apodo ya existe, se le añade un sufijo numérico aleatorio para garantizar la unicidad.
+    Almacena los datos del usuario y sus respuestas del pre-test en la base de datos.
+    """
     original_apodo = usuario_in.apodo
     while await get_usuario_by_apodo(usuario_in.apodo):
         random_suffix = random.randint(100, 9999)
@@ -500,6 +532,11 @@ async def register_usuario(usuario_in: UsuarioCreate):
 
 @auth_router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    """
+    Procesa el inicio de sesión de un usuario y emite un token de acceso.
+
+    Verifica el apodo y la contraseña. Si son correctos, genera y devuelve un token JWT.
+    """
     usuario = await get_usuario_by_apodo(form_data.username)
     if not usuario or not verify_password(form_data.password, usuario.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect apodo or password", headers={"WWW-Authenticate": "Bearer"})
@@ -509,10 +546,16 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 @users_router.get("/me/", response_model=UsuarioPublic)
 async def read_users_me(current_user: UsuarioInDB = Depends(get_current_active_user)):
+    """Devuelve los datos públicos del usuario actualmente autenticado."""
     return UsuarioPublic.model_validate(current_user.model_dump())
 
 @users_router.patch("/me/", response_model=UsuarioPublic)
 async def update_usuario_me(usuario_update: UsuarioUpdateProfile, current_user: UsuarioInDB = Depends(get_current_active_user)):
+    """
+    Actualiza los datos del perfil del usuario actualmente autenticado.
+
+    Permite cambiar el apodo, la URL del avatar y otros campos del perfil.
+    """
     update_data = usuario_update.model_dump(exclude_unset=True)
     if "apodo" in update_data and update_data["apodo"] != current_user.apodo:
         existing_user = await get_usuario_by_apodo(update_data["apodo"])
@@ -534,6 +577,12 @@ async def update_usuario_me(usuario_update: UsuarioUpdateProfile, current_user: 
 
 @users_router.get("/me/detailed-stats", response_model=UserDetailedStatsResponse)
 async def get_user_detailed_stats(current_user: UsuarioInDB = Depends(get_current_active_user)):
+    """
+    Obtiene las estadísticas detalladas de progreso del usuario actual.
+
+    Incluye el total de noticias analizadas, aciertos, fallos, XP actual
+    y el XP necesario para el siguiente nivel.
+    """
     total_analizadas = current_user.interacciones_totales_sesion or 0
     aciertos = current_user.aciertos_totales_sesion or 0
     fallos = current_user.fallos_totales_sesion or 0
@@ -547,12 +596,24 @@ async def get_user_detailed_stats(current_user: UsuarioInDB = Depends(get_curren
 
 @news_router.get("/challenge", response_model=List[Any])
 async def get_news_for_challenge():
+    """
+    Proporciona el conjunto completo de datos de noticias cargado desde el archivo JSON.
+
+    Raises:
+        HTTPException: Si el archivo de datos de noticias no está disponible.
+    """
     if not ALL_NEWS_DATA:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="News data source not available.")
     return ALL_NEWS_DATA
 
 @chat_router.post("/chat", response_model=ChatResponse)
 async def handle_fake_news_chat(request: ChatRequest, current_user: UsuarioInDB = Depends(get_current_active_user)):
+    """
+    Gestiona una interacción de chat para el análisis de noticias.
+
+    Recibe un historial de mensajes, lo envía al modelo de lenguaje (Ollama)
+    y devuelve la respuesta generada por el modelo.
+    """
     if not ollama_client: raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Servicio de Chatbot no disponible.")
     messages_to_ollama = [msg.model_dump() for msg in request.messages]
     if not messages_to_ollama or messages_to_ollama[0]['role'] != 'system': raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="System message is missing or not first.")
@@ -569,6 +630,12 @@ async def handle_fake_news_chat(request: ChatRequest, current_user: UsuarioInDB 
 
 @chat_router.post("/chatlibre", response_model=ChatResponse)
 async def handle_free_chat(request: ChatRequest, current_user: UsuarioInDB = Depends(get_current_active_user)):
+    """
+    Gestiona una interacción de chat libre con el bot.
+
+    Funciona de manera similar a /chat, pero está destinado a conversaciones
+    que no están directamente ligadas al análisis de una noticia específica.
+    """
     if not ollama_client: raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Servicio de Chatbot no disponible.")
     messages_to_ollama = [msg.model_dump() for msg in request.messages]
     if not messages_to_ollama or messages_to_ollama[0]['role'] != 'system': raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="System message is missing or not first.")
@@ -585,6 +652,11 @@ async def handle_free_chat(request: ChatRequest, current_user: UsuarioInDB = Dep
 
 @glossary_router.post("/", response_model=GlossaryTermPublic, status_code=status.HTTP_201_CREATED)
 async def create_glossary_term(term_in: GlossaryTermCreate, current_user: UsuarioInDB = Depends(get_current_active_user)):
+    """
+    Crea un nuevo término en el glosario personal del usuario.
+
+    Verifica que el término no exista previamente para ese usuario antes de añadirlo.
+    """
     existing_query = glosario_usuario_table.select().where(
         (glosario_usuario_table.c.usuario_sesion_id == current_user.sesion_id) &
         (sqlfunc.lower(glosario_usuario_table.c.termino) == sqlfunc.lower(term_in.termino.strip())))
@@ -607,11 +679,22 @@ async def create_glossary_term(term_in: GlossaryTermCreate, current_user: Usuari
 
 @glossary_router.get("/", response_model=List[GlossaryTermPublic])
 async def get_user_glossary_terms(current_user: UsuarioInDB = Depends(get_current_active_user)):
+    """Recupera todos los términos del glosario para el usuario actual, ordenados alfabéticamente."""
     query = glosario_usuario_table.select().where(glosario_usuario_table.c.usuario_sesion_id == current_user.sesion_id).order_by(sqlfunc.lower(glosario_usuario_table.c.termino))
     results = await database.fetch_all(query)
     return [GlossaryTermPublic.model_validate(row) for row in results]
 
 async def get_next_secuencia_interaccion(sesion_id: int, db: Database) -> int:
+    """
+    Calcula el siguiente número de secuencia para una interacción de un usuario.
+
+    Args:
+        sesion_id: El ID de la sesión del usuario.
+        db: La instancia de la base de datos.
+
+    Returns:
+        El siguiente número de secuencia (el máximo actual + 1).
+    """
     query = select(sqlfunc.max(interacciones_table.c.secuencia_interaccion)).where(interacciones_table.c.sesion_id == sesion_id)
     max_secuencia = await db.fetch_val(query)
     return (max_secuencia or 0) + 1
@@ -622,6 +705,14 @@ async def registrar_interaccion_y_actualizar_estadisticas(
     tiempo_respuesta_ms: Optional[int] = None, indicadores_discutidos_llm: Optional[List[str]] = None,
     feedback_mostrado_param: Optional[str] = None
 ):
+    """
+    Registra una interacción del usuario y actualiza todas las estadísticas relacionadas.
+
+    Esta función centralizada se encarga de:
+    1.  Guardar la interacción en la tabla `interacciones`.
+    2.  Actualizar las estadísticas globales del usuario (aciertos, fallos, XP, precisión).
+    3.  Actualizar las estadísticas detalladas por criterio (tema, dificultad, etc.).
+    """
     secuencia = await get_next_secuencia_interaccion(sesion_id, db)
     xp_ganado = XP_POR_ACIERTO if es_correcto is True else (XP_POR_FALLO if es_correcto is False else 0)
     puntos_otorgados = xp_ganado
@@ -694,6 +785,14 @@ async def registrar_interaccion_y_actualizar_estadisticas(
 
 @guided_analysis_router.get("/next-news", response_model=NoticiaParaAnalisis)
 async def get_next_guided_analysis_news_endpoint(current_user: UsuarioInDB = Depends(get_current_active_user)):
+    """
+    Selecciona la siguiente noticia para la actividad de análisis guiado.
+
+    El sistema intenta personalizar la selección basándose en las áreas donde el
+    usuario ha mostrado debilidad (indicadores o tipos de razonamiento con baja
+    tasa de acierto). Si no hay datos suficientes para personalizar, selecciona
+    una noticia de forma aleatoria.
+    """
     if not ollama_client: raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Servicio de Chatbot no disponible para análisis guiado.")
     if not ALL_NEWS_DATA: raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Dataset de noticias no disponible.")
     query_seen = select(chat_sesiones_noticia_table.c.noticia_id_json).where(chat_sesiones_noticia_table.c.sesion_id == current_user.sesion_id)
@@ -742,6 +841,13 @@ async def get_next_guided_analysis_news_endpoint(current_user: UsuarioInDB = Dep
 
 @guided_analysis_router.post("/explain", response_model=ChatGuiaResponse)
 async def start_guided_analysis_explanation_endpoint(request_data: ExplicacionInicialRequest, current_user: UsuarioInDB = Depends(get_current_active_user)):
+    """
+    Inicia una nueva sesión de análisis guiado para una noticia.
+
+    Recibe la evaluación y explicación inicial del usuario, crea la sesión de chat
+    en la base de datos y genera la primera respuesta del chatbot guía (Pimpoyo)
+    para empezar la conversación pedagógica.
+    """
     if not ollama_client: raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Servicio de Chatbot no disponible.")
     noticia_data: Optional[dict] = next((n for n in ALL_NEWS_DATA if isinstance(n, dict) and n.get("ID") == request_data.noticia_id_json), None)
     if not noticia_data: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Noticia no encontrada.")
@@ -785,6 +891,12 @@ async def start_guided_analysis_explanation_endpoint(request_data: ExplicacionIn
 
 @guided_analysis_router.post("/chat/{chat_sesion_noticia_id}/continue", response_model=ChatGuiaResponse)
 async def continue_guided_analysis_chat_endpoint(chat_sesion_noticia_id: int, request_data: ContinuarChatGuiaRequest, current_user: UsuarioInDB = Depends(get_current_active_user)):
+    """
+    Continúa una conversación de análisis guiado existente.
+
+    Añade el nuevo mensaje del usuario al historial, obtiene una nueva respuesta
+    del chatbot guía y la devuelve, guardando ambos mensajes en la base de datos.
+    """
     if not ollama_client: raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Servicio de Chatbot no disponible.")
     chat_sess_db = await database.fetch_one(chat_sesiones_noticia_table.select().where((chat_sesiones_noticia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id) & (chat_sesiones_noticia_table.c.sesion_id == current_user.sesion_id)))
     if not chat_sess_db: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sesión de chat no encontrada.")
@@ -815,6 +927,16 @@ async def finish_guided_analysis_news_endpoint(
     chat_sesion_noticia_id: int,
     current_user: UsuarioInDB = Depends(get_current_active_user)
 ):
+    """
+    Finaliza una sesión de análisis guiado.
+
+    Realiza dos tareas principales:
+    1.  Usa un LLM para analizar la conversación completa y extraer métricas pedagógicas
+        (indicadores discutidos, mejora de la comprensión) para guardarlas en la BBDD.
+    2.  Usa otro LLM para generar una explicación final y pedagógica para el usuario,
+        revelando la respuesta correcta y explicando el porqué.
+    Finalmente, registra la interacción y actualiza las estadísticas del usuario.
+    """
     chat_sesion_db = await database.fetch_one(
         chat_sesiones_noticia_table.select().where(
             (chat_sesiones_noticia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id) &
@@ -834,7 +956,6 @@ async def finish_guided_analysis_news_endpoint(
     )
     pedagogical_explanation = ""
 
-    # --- TAREA 1: ANÁLISIS DE LA CONVERSACIÓN (PARA GUARDAR EN BBDD) ---
     if ollama_client and noticia_original_data and not chat_sesion_db["fecha_fin"]:
         history_query = mensajes_chat_guia_table.select().where(
             mensajes_chat_guia_table.c.chat_sesion_noticia_id == chat_sesion_noticia_id
@@ -868,15 +989,12 @@ Basado en la conversación, responde ÚNICAMENTE en formato JSON válido con la 
             llm_analysis_payload = PostChatAnalysisPayload(**parsed_llm_data)
         except Exception as e:
             print(f"ERROR: Fallo en TAREA 1 (Análisis de chat) para chat {chat_sesion_noticia_id}: {e}")
-            # Se usará el payload por defecto inicializado arriba
 
-    # --- TAREA 2: GENERACIÓN DE LA EXPLICACIÓN PEDAGÓGICA (PARA MOSTRAR AL USUARIO) ---
     if ollama_client and noticia_original_data and noticia_original_data.get("CATEGORY") != "DESCONOCIDA":
         try:
             is_true = noticia_original_data.get("CATEGORY", "").upper() == "TRUE"
             verdad_falsedad_text = "Verdadera" if is_true else "Falsa"
 
-            # --- INICIO DE LA LÓGICA MEJORADA ---
             key_indicators = noticia_original_data.get("INDICADORES_CLAVE_DETECTADOS", [])
 
             relevant_tip_titles = list(set([
@@ -916,7 +1034,6 @@ Basado en la conversación, responde ÚNICAMENTE en formato JSON válido con la 
                 context_text=context_text,
                 relevant_tips_details_text=relevant_tips_details_text
             )
-            # --- FIN DE LA LÓGICA MEJORADA ---
 
             response_llm_exp = await process_with_ollama(model=OLLAMA_MODEL_ANALYSIS, messages=[{"role": "user", "content": explanation_prompt}])
             pedagogical_explanation = response_llm_exp.get('message', {}).get('content', '').strip()
@@ -925,7 +1042,6 @@ Basado en la conversación, responde ÚNICAMENTE en formato JSON válido con la 
             print(f"ERROR: Fallo en TAREA 2 (Generación de explicación) para chat {chat_sesion_noticia_id}: {e}")
             pedagogical_explanation = "Recuerda siempre analizar las pistas con cuidado."
 
-    # --- CONSTRUCCIÓN DEL MENSAJE FINAL Y GUARDADO EN BBDD ---
     feedback_message_parts = []
     if noticia_original_data:
         titular_noticia_feedback = noticia_original_data.get("HEADLINE", "esta noticia")
@@ -979,6 +1095,13 @@ Basado en la conversación, responde ÚNICAMENTE en formato JSON válido con la 
 
 @challenge_router.post("/finish-pair-selection", response_model=FinishPairChallengeResponse, status_code=status.HTTP_200_OK)
 async def finish_pair_selection_challenge(request_data: FinishPairChallengeRequest, current_user: UsuarioInDB = Depends(get_current_active_user)):
+    """
+    Gestiona la finalización del desafío de selección por pares.
+
+    El usuario elige cuál de las dos noticias presentadas es la verdadera. Esta
+    función verifica la respuesta, genera una explicación pedagógica usando un
+    LLM y registra la interacción y las estadísticas del usuario.
+    """
     sel_id = request_data.seleccion_usuario_id_json
     true_id = request_data.noticia_verdadera_id_json
     false_id = request_data.noticia_falsa_id_json
@@ -1028,13 +1151,12 @@ async def finish_pair_selection_challenge(request_data: FinishPairChallengeReque
                 raise e
             print(f"Error Ollama en finish_pair_selection: {e}")
 
-    # Asegurar que noticia_data_from_json no sea None para registrar_interaccion...
     noticia_para_registrar = sel_data if sel_data else {"ID": sel_id, "CATEGORY": "DESCONOCIDA"}
 
     await registrar_interaccion_y_actualizar_estadisticas(
         db=database, sesion_id=current_user.sesion_id, noticia_id_json=sel_id, tipo_interaccion='DOS_NOTICIAS',
         noticia_data_from_json=noticia_para_registrar,
-        respuesta_usuario="TRUE" if sel_id == true_id else "FALSE", # Refleja si eligió la que era verdadera
+        respuesta_usuario="TRUE" if sel_id == true_id else "FALSE",
         es_correcto=es_corr,
         tiempo_respuesta_ms=request_data.tiempo_respuesta_ms, feedback_mostrado_param=ollama_expl_final_val)
     return FinishPairChallengeResponse(message="Resultado del desafío registrado.", es_correcto=es_corr, explanation=ollama_expl_final_val)
@@ -1045,10 +1167,8 @@ async def finish_pair_selection_challenge(request_data: FinishPairChallengeReque
 async def get_post_test_items(current_user: UsuarioInDB = Depends(get_current_active_user)):
     """
     Entrega al frontend el conjunto completo y ordenado de preguntas y noticias
-    necesarias para realizar el Post-Test, tal como se define en el PDF.
+    necesarias para realizar el Post-Test.
     """
-    # La lógica ahora es simple: devolver los datos importados del fichero de configuración.
-    # Ya no hay selección aleatoria aquí.
     return PostTestStartResponse(
         preguntas=post_test_questions,
         noticias_para_analizar=post_test_news
@@ -1064,17 +1184,14 @@ async def submit_post_test_answers(
     centralizada, guarda las puntuaciones y respuestas en la BBDD,
     y devuelve el resultado desglosado.
     """
-    # 1. Corregir el test usando la lógica de 'data/post_test_data.py'
     resultados = score_post_test(payload)
 
-    # 2. Preparar los datos para guardar en la base de datos
     db_update_data = {
         "puntuacion_post_test_total": resultados["puntuacion_total"],
-        "puntuacion_final": resultados["puntuacion_total"],  # Actualizamos también la puntuación final general
+        "puntuacion_final": resultados["puntuacion_total"],
         "fin_sesion_ts": datetime.now(dt_timezone.utc),
     }
 
-    # Mapeo de puntuaciones por sección a las columnas de la BBDD
     for seccion in resultados["puntuaciones_por_seccion"]:
         if seccion["seccion_id"] == "s1":
             db_update_data["post_test_s1_estrategias_puntos"] = seccion["puntos_obtenidos"]
@@ -1085,7 +1202,6 @@ async def submit_post_test_answers(
         elif seccion["seccion_id"] == "s4":
             db_update_data["post_test_s4_ux_puntos"] = seccion["puntos_obtenidos"]
 
-    # Mapeo de respuestas de texto (abiertas y de elección) a sus columnas
     all_options_map = {opt['id']: opt['text'] for q in post_test_questions if q.get('opciones') for opt in q['opciones']}
 
     single_choice_map = {
@@ -1120,7 +1236,6 @@ async def submit_post_test_answers(
             db_update_data["post_s3_p11_vf_apagon_post"] = resp.evaluacion_usuario
             db_update_data["post_s3_p11_expl_apagon_post"] = resp.justificacion
 
-    # 3. Actualizar la base de datos
     try:
         query = sesiones_table.update().where(sesiones_table.c.sesion_id == current_user.sesion_id).values(**db_update_data)
         await database.execute(query)
@@ -1128,10 +1243,8 @@ async def submit_post_test_answers(
         print(f"Error al guardar los resultados del post-test en la BBDD para usuario {current_user.sesion_id}: {e}")
         raise HTTPException(status_code=500, detail="No se pudieron guardar los resultados del test.")
 
-    # 4. Devolver la respuesta completa al frontend
     return PostTestSubmitResponse(**resultados, message="Test completado y guardado con éxito.")
 
-# --- (FIN DE LA SECCIÓN A MODIFICAR) ---
 
 app.include_router(auth_router)
 app.include_router(users_router)
@@ -1144,6 +1257,7 @@ app.include_router(post_test_router)
 
 @app.get("/", include_in_schema=False)
 async def redirect_to_docs():
+    """Redirige la ruta raíz de la API a la documentación interactiva (`/docs`)."""
     from fastapi.responses import RedirectResponse
     return RedirectResponse(url="/docs")
 
