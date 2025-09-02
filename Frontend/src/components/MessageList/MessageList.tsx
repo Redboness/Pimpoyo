@@ -1,13 +1,21 @@
 // src/components/MessageList/MessageList.tsx
 import React, { useEffect, useRef } from 'react';
-// Import the new Message component
 import Message from '../Message/Message';
 import { MessageListProps } from '../../types/types';
 
+/**
+ * Renderiza la lista de mensajes en el chat.
+ * Itera sobre un array de mensajes y usa el componente `Message` para mostrar
+ * cada uno. Implementa una función de auto-scroll para que la vista siempre
+ * se desplace hacia el mensaje más reciente.
+ * @param {MessageListProps} props - Las propiedades del componente.
+ * @param {ChatMessage[]} props.messages - El array de objetos de mensaje a renderizar.
+ * @param {(messageId: number | string, buttonId: string) => void} props.onButtonClick - La función callback que se pasa a cada `Message` para manejar los clics en botones.
+ * @returns {React.ReactElement} El elemento `main` que contiene la lista de mensajes.
+ */
 function MessageList({ messages, onButtonClick }: MessageListProps) {
-  const messagesEndRef = useRef<HTMLDivElement>(null); // Ref for scrolling
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -15,14 +23,12 @@ function MessageList({ messages, onButtonClick }: MessageListProps) {
   return (
     <main className="chat-messages">
       {messages.map((msg) => (
-         // Use the Message component for each message
-         <Message
-            key={msg.id}
-            message={msg}
-            onButtonClick={onButtonClick} // Pass the handler down
-         />
+        <Message
+          key={msg.id}
+          message={msg}
+          onButtonClick={onButtonClick}
+        />
       ))}
-      {/* Empty div at the end to scroll to */}
       <div ref={messagesEndRef} />
     </main>
   );

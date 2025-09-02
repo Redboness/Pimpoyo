@@ -9,7 +9,16 @@ interface GlossaryItem {
   definition: string;
 }
 
-// Comentario encima de la función processTextForGlossary
+/**
+ * Procesa una cadena de texto para encontrar y reemplazar términos del glosario
+ * marcados con una sintaxis especial (`[[término]]` o `[[término|alias]]`).
+ * Cada término encontrado se convierte en un componente `InteractiveTerm`,
+ * mientras que el resto del texto se renderiza como Markdown.
+ * @param {string} text - La cadena de texto de entrada que puede contener términos del glosario.
+ * @param {GlossaryItem[]} glossary - Un array de objetos, donde cada uno contiene un `term` y su `definition`.
+ * @param {(term: string) => void} [onTermClickHandler] - Un manejador opcional que se pasará al componente `InteractiveTerm` para gestionar los clics.
+ * @returns {React.ReactNode[]} Un array de nodos de React listos para ser renderizados.
+ */
 export const processTextForGlossary = (
   text: string,
   glossary: GlossaryItem[],
@@ -20,27 +29,23 @@ export const processTextForGlossary = (
     return [<ReactMarkdown key="full-text-markdown" remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>];
   }
 
-  // Mapa para buscar definiciones fácilmente (case-insensitive)
   const definitionMap = new Map<string, string>();
   glossary.forEach(item => {
     definitionMap.set(item.term.toLowerCase(), item.definition);
   });
 
-  // Regex mejorada que busca [[término]] o [[término|alias]]
   const regex = /\[\[([^|\]]+)(?:\|([^\]]+))?\]\]/g;
-  
+
   const result: React.ReactNode[] = [];
   let lastIndex = 0;
   let keyCounter = 0;
 
-  // Usamos matchAll para iterar sobre todas las coincidencias
   for (const match of text.matchAll(regex)) {
-    const termToLookUp = match[1].trim(); // El término real para buscar en el glosario
-    const textToDisplay = match[2]?.trim() || termToLookUp; // El alias a mostrar, o el término si no hay alias
+    const termToLookUp = match[1].trim();
+    const textToDisplay = match[2]?.trim() || termToLookUp;
     const termDefinition = definitionMap.get(termToLookUp.toLowerCase());
     const matchIndex = match.index || 0;
 
-    // 1. Añadir el fragmento de texto ANTES de la coincidencia
     if (matchIndex > lastIndex) {
       result.push(
         <ReactMarkdown key={`markdown-part-${keyCounter++}`} remarkPlugins={[remarkGfm]} components={{ p: React.Fragment }}>
@@ -49,7 +54,6 @@ export const processTextForGlossary = (
       );
     }
 
-    // 2. Añadir el término interactivo SI existe en el glosario
     if (termDefinition) {
       result.push(
         React.createElement(InteractiveTerm, {
@@ -60,14 +64,12 @@ export const processTextForGlossary = (
         })
       );
     } else {
-      // Si no se encuentra en el glosario, mostrarlo como texto normal
       result.push(textToDisplay);
     }
 
     lastIndex = matchIndex + match[0].length;
   }
 
-  // 3. Añadir el resto del texto después de la última coincidencia
   if (lastIndex < text.length) {
     result.push(
       <ReactMarkdown key={`markdown-part-${keyCounter++}`} remarkPlugins={[remarkGfm]} components={{ p: React.Fragment }}>

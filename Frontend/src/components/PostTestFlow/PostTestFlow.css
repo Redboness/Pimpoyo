@@ -1,180 +1,188 @@
 /* src/components/PostTestFlow/PostTestFlow.css */
 
-/* Main Container: FIXED OVERLAY
-   - `position: fixed`: This is the key. It removes the component from the
-     normal document flow and positions it relative to the viewport. It is now
-     immune to any parent element's `overflow` or `height` styles.
-   - `top, left, right, bottom`: Set to 0 to make it cover the entire screen.
-   - `display: flex`: We now use flexbox INSIDE this fixed container to
-     reliably position the header, content, and footer.
-*/
+/**
+ * @section Contenedor Principal (Overlay)
+ * @description Establece el contenedor como una capa fija que ocupa toda la
+ * pantalla (viewport). Utiliza flexbox en modo columna para organizar su
+ * contenido interno (cabecera, contenido desplazable y pie de página).
+ */
 .post-test-flow-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1000; /* High z-index to ensure it's on top of everything */
-    background-color: #fff9e9;
-    font-family: "Fredoka", sans-serif;
-    color: #4a3112;
-    box-sizing: border-box;
-
-    /* Use flexbox for the internal layout */
-    display: flex;
-    flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  background-color: #fff9e9;
+  font-family: "Fredoka", sans-serif;
+  color: #4a3112;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Header/Title: Flex Child
-   - It will not shrink.
-*/
+/**
+ * @section Título del Test
+ * @description Estilo para la cabecera del test. Se asegura de que no se
+ * encoja (`flex-shrink: 0`) y permanezca fija en la parte superior.
+ */
 .post-test-title {
-    flex-shrink: 0; /* Do not shrink */
-    color: #94ab3d;
-    text-align: center;
-    margin: 0;
-    padding: 20px 20px 15px 20px;
+  flex-shrink: 0;
+  color: #94ab3d;
+  text-align: center;
+  margin: 0;
+  padding: 20px 20px 15px 20px;
 }
 
-/* Content Wrapper: THE SCROLLABLE AREA
-   - This will now reliably work because its parent has a fixed, known height (the viewport).
-   - `flex-grow: 1`: Takes up all available space between header and footer.
-   - `overflow-y: auto`: Becomes scrollable if content overflows.
-   - `min-height: 0`: The critical fix for flexbox scrolling bugs.
-*/
+/**
+ * @section Envoltura de Contenido Desplazable
+ * @description Define el área principal que contendrá las preguntas.
+ * Crece para ocupar todo el espacio disponible (`flex-grow: 1`) y permite
+ * el desplazamiento vertical (`overflow-y: auto`) si el contenido excede la altura.
+ * `min-height: 0` es crucial para asegurar el correcto funcionamiento del scroll en flexbox.
+ */
 .post-test-content-wrapper {
-    flex-grow: 1; /* Take up all available space */
-    overflow-y: auto;
-    min-height: 0; /* The magic ingredient for flex scroll */
-    padding: 0 5px;
+  flex-grow: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 0 5px;
 }
 
+/**
+ * @section Bloque de Pregunta
+ * @description Estilo para la tarjeta individual que contiene cada pregunta
+ * y sus opciones, dándole un fondo y bordes definidos.
+ */
 .post-test-item-block {
-    background-color: #ffffff;
-    padding: 25px;
-    border-radius: 10px;
-    border: 1px solid #eadca6;
-    margin: 20px 15px;
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid #eadca6;
+  margin: 20px 15px;
 }
 
-/* Footer/Navigation: Flex Child
-   - It will not shrink. It will always be at the bottom.
-*/
+/**
+ * @section Navegación (Pie de página)
+ * @description Estilo para el pie de página que contiene los botones de
+ * navegación. Se asegura de que no se encoja y permanezca fijo en la parte inferior.
+ */
 .post-test-navigation {
-    flex-shrink: 0; /* Do not shrink */
-    padding: 15px 20px;
-    background-color: #fff9e9;
+  flex-shrink: 0;
+  padding: 15px 20px;
+  background-color: #fff9e9;
 }
 
-/* --- The rest of the styles are unchanged --- */
-
+/**
+ * @section Estilos de Elementos del Test
+ * @description A continuación se definen los estilos para los elementos
+ * específicos dentro de una pregunta: texto, opciones, inputs, etc.
+ */
 .post-test-question-text {
-    font-size: 1.2em;
-    font-weight: 500;
-    margin-bottom: 10px;
-    line-height: 1.5;
-    text-align: justify;
-    hyphens: auto;
+  font-size: 1.2em;
+  font-weight: 500;
+  margin-bottom: 10px;
+  line-height: 1.5;
+  text-align: justify;
+  hyphens: auto;
 }
 
 .post-test-options-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .post-test-option-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 25px;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  cursor: pointer;
 }
 
 .post-test-option-item.selected {
-    border-color: #94ab3d;
-    background-color: #f0f5d4;
-    font-weight: bold;
+  border-color: #94ab3d;
+  background-color: #f0f5d4;
+  font-weight: bold;
 }
 
 .post-test-option-item input {
-    appearance: none;
-    -webkit-appearance: none;
-    flex-shrink: 0;
-    margin-right: 12px;
-    width: 22px;
-    height: 22px;
-    border: 2px solid #94ab3d;
-    position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+  margin-right: 12px;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #94ab3d;
+  position: relative;
 }
 
 .post-test-option-item input[type="radio"] { border-radius: 50%; }
 .post-test-option-item input[type="checkbox"] { border-radius: 6px; }
 
 .post-test-option-item input[type="radio"]:checked::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: #7a8e31;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #7a8e31;
 }
 
 .post-test-option-item input[type="checkbox"]:checked {
-    background-color: #94ab3d;
-    border-color: #7a8e31;
+  background-color: #94ab3d;
+  border-color: #7a8e31;
 }
 
 .post-test-option-item input[type="checkbox"]:checked::before {
-    content: '✔';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 14px;
-    line-height: 1;
+  content: '✔';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+  line-height: 1;
 }
 
 .post-test-textarea {
-    width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #eadca6;
-    border-radius: 20px;
-    font-family: inherit;
-    font-size: 1em;
-    min-height: 100px;
-    resize: vertical;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #eadca6;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 1em;
+  min-height: 100px;
+  resize: vertical;
+  box-sizing: border-box;
 }
 
 .post-test-button {
-    display: block;
-    margin: 0 auto;
-    padding: 12px 30px;
-    background-color: #94ab3d;
-    color: #ffffff;
-    border: none;
-    border-radius: 25px;
-    font-size: 1.1em;
-    font-weight: bold;
-    cursor: pointer;
+  display: block;
+  margin: 0 auto;
+  padding: 12px 30px;
+  background-color: #94ab3d;
+  color: #ffffff;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .post-test-loading-error {
-    text-align: center;
-    color: #c00;
-    min-height: 1.2em;
-    margin-bottom: 10px;
+  text-align: center;
+  color: #c00;
+  min-height: 1.2em;
+  margin-bottom: 10px;
 }
 
-/* Finished view must also be scrollable */
 .post-test-finished-message {
-    padding: 40px 20px;
-    text-align: center;
-    overflow-y: auto;
+  padding: 40px 20px;
+  text-align: center;
+  overflow-y: auto;
 }

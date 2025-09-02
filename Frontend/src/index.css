@@ -1,4 +1,3 @@
-/* --- Fuente principal Fredoka --- */
 @import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap");
 
 body {
@@ -8,29 +7,23 @@ body {
   line-height: 1.4;
 }
 
-/* --- Contenedor Principal del Chat --- */
-/* [MODIFICADO] Convertido en un contenedor Flex que ocupa toda la pantalla */
 .chat-container {
   background-color: #fff4de;
   width: 100%;
-  height: 100vh; /* Ocupa el 100% de la altura de la ventana */
-  height: 100dvh; /* Unidad moderna que se ajusta a la UI del navegador móvil */
+  height: 100vh;
+  height: 100dvh;
   display: flex;
-  flex-direction: column; /* Apila los elementos (header, mensajes, input) verticalmente */
-  overflow: hidden; /* El scroll lo manejará el área de mensajes */
+  flex-direction: column;
+  overflow: hidden;
 }
 
-/* --- Cabecera --- */
-/* [MODIFICADO] La cabecera ya no necesita 'sticky'. Se posicionará de forma natural arriba. */
 .chat-header {
   padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #fff4de;
-  /* Se añade un z-index para asegurar que esté por encima de los mensajes */
   z-index: 10;
-  /* flex-shrink: 0 evita que la cabecera se encoja */
   flex-shrink: 0;
 }
 
@@ -67,7 +60,6 @@ body {
   justify-content: center;
 }
 
-/* Icono de 3 barras SÓLO para el botón de ABRIR panel */
 .chat-header > .button-panel:not(#close-panel-btn)::before,
 .chat-header > .button-panel:not(#close-panel-btn)::after,
 .chat-header > .button-panel:not(#close-panel-btn) .panel-bar-middle {
@@ -97,20 +89,16 @@ body {
   transform: translate(-50%, -50%);
 }
 
-/* --- Área de Mensajes --- */
-/* [MODIFICADO] Esta área ahora es la única con scroll */
 .chat-messages {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  /* flex-grow: 1 hace que ocupe todo el espacio vertical disponible */
+
   flex-grow: 1;
-  /* overflow-y: auto añade el scroll solo cuando es necesario */
+
   overflow-y: auto;
 }
 
-
-/* --- Estilos Base Mensaje --- */
 .message {
   display: flex;
   align-items: flex-end;
@@ -133,7 +121,6 @@ body {
   object-fit: cover;
 }
 
-/* Burbuja Amarilla (Bot) */
 .message.received {
   align-self: flex-start;
 }
@@ -160,7 +147,6 @@ body {
   margin-bottom: 0;
 }
 
-/* Burbuja Verde (Usuario) */
 .message.sent {
   align-self: flex-end;
   display: flex;
@@ -182,7 +168,6 @@ body {
   box-shadow: none;
 }
 
-/* Contenido Párrafos */
 .message-bubble p {
   margin: 0 0 10px 0;
   line-height: 1.4;
@@ -194,7 +179,6 @@ body {
   margin-bottom: 0;
 }
 
-/* --- Botones en Burbujas --- */
 .message-buttons {
   display: flex;
   flex-direction: column;
@@ -267,16 +251,14 @@ body {
   background-color: #e0e0e0 !important;
 }
 
-/* --- Área de Input --- */
-/* [MODIFICADO] El área de input ahora es fija en su sitio, sin 'sticky' */
 .chat-input-area {
   display: flex;
   align-items: flex-end;
   padding: 15px;
   background-color: #94ab3d;
-  /* flex-shrink: 0 evita que el input se encoja */
+
   flex-shrink: 0;
-  /* Se añade un z-index para asegurar que esté por encima por si acaso */
+
   z-index: 10;
 }
 
@@ -293,9 +275,9 @@ body {
   color: #4a3112;
   resize: none;
   overflow-y: auto;
-  line-height: 1.4; /* Ajustado para mejor visualización */
-  min-height: calc(1em * 1.4 + 10px); /* Ajustado */
-  max-height: calc(4 * 1em * 1.4 + 10px); /* Ajustado */
+  line-height: 1.4;
+  min-height: calc(1em * 1.4 + 10px);
+  max-height: calc(4 * 1em * 1.4 + 10px);
   scrollbar-width: auto;
   scrollbar-color: #94ab3d rgba(148, 171, 61, 0.1);
 }
@@ -335,17 +317,14 @@ body {
   align-items: center;
   flex-shrink: 0;
   transition: background-color 0.2s ease;
-  align-self: flex-end; /* Alinear con la base del textarea */
-  margin-bottom: 0; /* Asegurar alineación */
+  align-self: flex-end;
+  margin-bottom: 0;
 }
 
 .send-button:hover {
   background-color: #f750b6;
 }
 
-/* El resto de tus estilos permanecen igual... */
-
-/* --- Panel Lateral --- */
 #side-panel {
   position: fixed;
   top: 0;
@@ -420,7 +399,7 @@ body {
   margin-bottom: 15px;
   font-size: 1em;
   box-sizing: border-box;
-  width: 100%
+  width: 100%;
 }
 .panel-button:hover {
   background-color: #fdf9e0;
@@ -429,7 +408,6 @@ body {
   margin-bottom: 0;
 }
 
-/* --- Scrollbars Generales --- */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -451,23 +429,22 @@ body {
   scrollbar-color: #94ab3d rgba(148, 171, 61, 0.1);
 }
 
-/* --- ESTILOS ProfileSetup / Login / Register --- */
 .profile-setup-wrapper {
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: #fff4de;
-  }
+}
 
 .register-flow {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;     /* Mantiene el contenido centrado horizontalmente */
-  justify-content: center; /* CAMBIO: Alinea el contenido arriba para que el scroll empiece bien */
-  padding: 40px 20px; /* Añade espacio superior e inferior para que no se pegue a los bordes */
-  }
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
 
 .step-container {
   display: flex;
@@ -503,7 +480,7 @@ body {
   margin-bottom: 10px;
   font-size: 1.8em;
   font-weight: 600;
-} /* Título más grande */
+}
 .step-container p {
   color: #4a3112;
   margin-bottom: 20px;
@@ -588,18 +565,15 @@ body {
   color: red;
   width: 100%;
   max-width: 450px;
-  text-align: center;   /* Centra el texto DENTRO del bloque */
-  margin-top: 15px;     /* Un poco más de espacio superior */
-  margin-left: auto;    /* Centra el bloque en SÍ MISMO horizontalmente */
-  margin-right: auto;   /* Centra el bloque en SÍ MISMO horizontalmente */
+  text-align: center;
+  margin-top: 15px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .hidden {
   display: none !important;
 }
 
-/* --- ESTILOS PRE-TEST (CORREGIDOS) --- */
-
-/* Contenedor específico del paso pretest */
 .pretest-step-style {
   padding: 20px;
   text-align: center;
@@ -608,34 +582,32 @@ body {
   align-items: center;
 }
 
-/* Párrafo introductorio (usando tu clase) */
 .intro-text-pimpoyo {
   color: #4a3112;
   margin-bottom: 30px;
-  max-width: 500px; /* Ancho máximo */
+  max-width: 500px;
   text-align: justify;
-  margin-left: auto;   /* Centra el párrafo en sí mismo horizontalmente */
-  margin-right: auto;  /* Centra el párrafo en sí mismo horizontalmente */
-  margin-bottom: 30px; /* Mantiene la separación inferior que ya tenías */
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px;
   line-height: 1.5;
-  font-size: 1.1em; /* Un poco más grande */
+  font-size: 1.1em;
 }
-.pretest-step-style > form > h3{
-  font-family: 'Fredoka', sans-serif;
+.pretest-step-style > form > h3 {
+  font-family: "Fredoka", sans-serif;
   font-weight: 600;
   font-size: 1.3em;
-  color: #8b4513; /* Un marrón oscuro para que el texto destaque */
-  background-color: #ffffff; /* Un fondo color crema suave que combina con el resto */
+  color: #8b4513;
+  background-color: #ffffff;
   padding: 10px 25px;
-  border-radius: 25px; /* Bordes redondeados para un look más suave */
-  margin-top: 40px; /* Aumentamos el espacio superior para separar bien las secciones */
-  margin-bottom: 30px; /* Espacio antes de la primera pregunta de la sección */
-  display: inline-block; /* Evita que el fondo ocupe todo el ancho de la página */
-  border: 5px solid #eaddc0; /* Un borde sutil que le da profundidad */
+  border-radius: 25px;
+  margin-top: 40px;
+  margin-bottom: 30px;
+  display: inline-block;
+  border: 5px solid #eaddc0;
 }
 
 .outro-text-pimpoyo {
-  /* Añadido estilo para el texto final */
   color: #4a3112;
   margin-top: 20px;
   margin-bottom: 10px;
@@ -654,36 +626,32 @@ body {
   line-height: 1.5;
 }
 
-/* Tarjeta para CADA pregunta (según tu TSX) */
 .pretest-question-card {
   border: 2px solid #94ab3d;
-  padding: 25px 30px; /* Aumentar padding */
-  margin: 0 auto 20px auto; /* Centrar y añadir margen inferior */
+  padding: 25px 30px;
+  margin: 0 auto 20px auto;
   background-color: #ffffff;
   border-radius: 15px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08); /* Sombra sutil */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
   text-align: left;
   box-sizing: border-box;
-  width: 100%; /* Ocupa el 100% del form (que es 700px max) */
+  width: 100%;
 }
 
-
-/* Ítem de opción (Contenedor de input + label) */
 .radio-checkbox-item {
   display: flex;
-  align-items: center; /* <-- CAMBIO: De 'flex-start' a 'center' para alinear verticalmente */
-  margin-bottom: 15px; /* Espacio entre opciones */
-  cursor: pointer; /* Hace toda la fila clickeable */
-  padding: 8px; /* Pequeño padding para hover */
+  align-items: center;
+  margin-bottom: 15px;
+  cursor: pointer;
+  padding: 8px;
   border-radius: 6px;
   transition: background-color 0.2s;
 }
 
 .radio-checkbox-item:hover {
-  background-color: #f0f5d4; /* Efecto hover */
+  background-color: #f0f5d4;
 }
 
-/* Estilo para los inputs (radio y checkbox) */
 .radio-checkbox-item input[type="radio"],
 .radio-checkbox-item input[type="checkbox"] {
   appearance: none;
@@ -697,15 +665,14 @@ body {
   cursor: pointer;
   position: relative;
   transition: border-color 0.2s, background-color 0.2s;
-  flex-shrink: 0; /* Evita que se encoja */
+  flex-shrink: 0;
   z-index: 2;
 }
 
 .radio-checkbox-item input[type="checkbox"] {
-  border-radius: 4px; /* Checkboxes cuadrados */
+  border-radius: 4px;
 }
 
-/* Estilo cuando está seleccionado */
 .radio-checkbox-item input[type="radio"]:checked {
   border-color: #7a8e31;
 }
@@ -715,7 +682,6 @@ body {
   background-color: #94ab3d;
 }
 
-/* Círculo interior para radio / Check para checkbox */
 .radio-checkbox-item input[type="radio"]:checked::before {
   content: "";
   display: block;
@@ -733,20 +699,19 @@ body {
   content: "✔";
   display: block;
   color: white;
-  font-size: 14px; /* Tamaño del check */
+  font-size: 14px;
   font-weight: bold;
   text-align: center;
-  line-height: 17px; /* Centrado vertical */
+  line-height: 17px;
 }
 
-/* Estilo para las etiquetas */
 .radio-checkbox-item label {
-  display: flex; /* Convierte el label en un contenedor flex */
-  align-items: flex-start; /* Alinea el botón con la parte de arriba del texto (ideal para textos largos) */
-  gap: 12px; /* Espacio moderno entre el botón y el texto */
-  cursor: pointer; /* ¡Esencial! El cursor indica que es clicable */
-  padding: 10px; /* Un buen área de padding para que sea fácil acertar con el clic */
-  border-radius: 8px; /* Bordes redondeados */
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
   transition: background-color 0.2s;
   width: 100%;
   color: #4a3112;
@@ -756,7 +721,6 @@ body {
   box-sizing: border-box;
 }
 
-/* --- ESTILOS PASO FINAL --- */
 .final-step-area {
   max-width: 450px;
   margin: 20px auto 0 auto;
@@ -795,7 +759,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* --- OTROS ESTILOS (Glosario, Stats, etc. - Mantenidos como estaban) --- */
 .panel-section-content {
   display: none;
   margin-top: 10px;
@@ -996,7 +959,6 @@ body {
   color: #4a3112;
 }
 
-/* === Estilos para PostTestFlow (Mantenidos) === */
 .post-test-flow-container {
   padding: 20px;
   text-align: center;
@@ -1191,49 +1153,31 @@ body {
   margin-bottom: 15px;
 }
 
-/* Párrafo de la pregunta DENTRO de la tarjeta (Q1-Q8) */
 .pretest-question-text {
   display: block;
   width: 100%;
   box-sizing: border-box;
   font-weight: bold;
-  margin: 0 0 25px 0; /* Margen inferior */
-  font-size: 1.15em; /* Tamaño deseado */
+  margin: 0 0 25px 0;
+  font-size: 1.15em;
   color: #4a3112;
-  line-height: 1.5; /* Altura de línea */
-  text-align: justify; /* << YA ESTÁ ASÍ, ES CORRECTO */
-  -webkit-hyphens: auto; /* Ayuda a justificar */
+  line-height: 1.5;
+  text-align: justify;
+  -webkit-hyphens: auto;
   -ms-hyphens: auto;
   hyphens: auto;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
-/* Estilo para las etiquetas de las opciones (Q1-Q8) */
 .radio-checkbox-item label {
   cursor: pointer;
   color: #4a3112;
-  flex-grow: 1; /* Ocupa el espacio restante */
-  line-height: 1.6; /* Altura de línea cómoda */
-  text-align: justify; /* << CAMBIO PRINCIPAL AQUÍ: de 'left' a 'justify' */
-  font-size: 1em; /* Tamaño normal */
-  /* Puedes añadir hyphens aquí también si quieres para mejor justificación en opciones largas */
-  -webkit-hyphens: auto;
-  -ms-hyphens: auto;
-  hyphens: auto;
-  word-wrap: break-word; /* Asegura el ajuste de palabras largas */
-  overflow-wrap: break-word; /* Equivalente a word-wrap */
-}
-
-/* --- ESTILOS PARA NOTICIAS PRÁCTICAS EN PRE-TEST (Q9, Q10) --- */
-/* Estos ya estaban bien para el cuerpo de la noticia justificado */
-.practical-news-item .news-content p {
-  /* Cuerpo de la noticia práctica */
-  text-align: justify; /* << YA ESTÁ ASÍ, ES CORRECTO */
-  margin-bottom: 0.75em;
+  flex-grow: 1;
   line-height: 1.6;
-  color: #333;
-  /* Puedes añadir hyphens aquí también si el texto es muy denso */
+  text-align: justify;
+  font-size: 1em;
+
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
   hyphens: auto;
@@ -1241,14 +1185,26 @@ body {
   overflow-wrap: break-word;
 }
 
-/* Texto de la pregunta V/F y "Explica por qué" en Q9/Q10 */
+.practical-news-item .news-content p {
+  text-align: justify;
+  margin-bottom: 0.75em;
+  line-height: 1.6;
+  color: #333;
+
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
 .practical-news-item .question-quantitative p,
 .practical-news-item .question-qualitative p {
   font-weight: bold;
   color: #4a3112;
   margin-bottom: 10px;
-  text-align: justify; /* << AÑADIR JUSTIFY AQUÍ TAMBIÉN para el texto de estas sub-preguntas */
-  /* Puedes añadir hyphens aquí también */
+  text-align: justify;
+
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
   hyphens: auto;
@@ -1257,12 +1213,12 @@ body {
 }
 
 .tip-challenge-card {
-  background-color: #ffffff; /* CAMBIO: Fondo blanco para la tarjeta */
-  border: 4px solid #94ab3d; /* Un borde gris claro para que se distinga sobre el blanco si la burbuja también es muy clara */
-  border-radius: 10px; /* Bordes redondeados para la tarjeta */
+  background-color: #ffffff;
+  border: 4px solid #94ab3d;
+  border-radius: 10px;
   padding: 15px;
-  margin-top: 15px; /* Espacio entre el texto principal del consejo y la tarjeta del reto */
-  margin-bottom: 10px; /* Espacio antes de los botones de navegación (si los hubiera fuera) */
+  margin-top: 15px;
+  margin-bottom: 10px;
 }
 
 .tip-challenge-card .challenge-question {
@@ -1283,8 +1239,8 @@ body {
 }
 
 .tip-challenge-card .challenge-option-button {
-  background-color: #ffffff; /* Un color de fondo ligeramente gris para los botones sobre blanco */
-  color: #4a3112; /* Color de texto más oscuro para contraste sobre el botón claro */
+  background-color: #ffffff;
+  color: #4a3112;
   border: 3px solid #94ab3d;
 }
 
@@ -1293,7 +1249,6 @@ body {
   border-color: #93ab3da0;
 }
 
-/* --- Estilos para el Desafío de Dos Noticias --- */
 .news-challenge-container {
   display: flex;
   align-items: stretch;
@@ -1304,7 +1259,7 @@ body {
 }
 
 .mobile-news-view {
-border: 1px solid #e0e0e0;
+  border: 1px solid #e0e0e0;
   border-radius: 12px;
   background-color: #ffffff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -1314,9 +1269,8 @@ border: 1px solid #e0e0e0;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-  /* MODIFICACIÓN CLAVE: */
-  flex: 1; /* Permite que la tarjeta crezca para ocupar el espacio */
-  min-width: 300px; /* Un ancho mínimo para que no se comprima demasiado */
+  flex: 1;
+  min-width: 300px;
 }
 
 .news-image-header {
@@ -1392,37 +1346,34 @@ border: 1px solid #e0e0e0;
 }
 
 .mobile-news-footer {
-  height: 20px; /* Espacio para un footer simulado */
+  height: 20px;
   background-color: #f0f0f0;
   border-top: 1px solid #ddd;
-  flex-shrink: 0; /* Evita que el footer se encoja */
+  flex-shrink: 0;
 }
 
 .highlighted-term-momentarily {
-  background-color: #fff8c4; /* Un amarillo claro o el color que prefieras */
+  background-color: #fff8c4;
   transition: background-color 0.3s ease-in-out;
   border-radius: 3px;
-  padding: 0 2px; /* Pequeño padding para que el fondo no esté pegado al texto */
+  padding: 0 2px;
 }
 
-/* Media Query para pantallas más pequeñas, donde las tarjetas se apilarían */
 @media (max-width: 780px) {
   .news-challenge-container {
-    flex-direction: column; /* Apila las tarjetas verticalmente */
-    align-items: center; /* Centra las tarjetas */
+    flex-direction: column;
+    align-items: center;
   }
   .mobile-news-view {
-    width: 90%; /* Ocupa más ancho en vista de columna */
-    margin-bottom: 15px; /* Espacio entre tarjetas apiladas */
+    width: 90%;
+    margin-bottom: 15px;
     border: 1px solid #e0e0e0;
   }
   .mobile-news-view:last-child {
     margin-bottom: 0;
   }
 }
-/* --- Estilos para la Chuleta de Consejos en SidePanel --- */
 
-/* Contenedor principal de la sección de la chuleta */
 #chuleta-content h3 {
   margin-top: 0;
   margin-bottom: 15px;
@@ -1431,31 +1382,27 @@ border: 1px solid #e0e0e0;
   border-bottom: 1px solid #eee;
 }
 
-/* Lista de consejos */
 .chuleta-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-/* Cada elemento de la lista (un consejo) */
 .chuleta-item {
   display: flex;
-  align-items: flex-start; /* Alinea el icono con la parte superior del texto */
+  align-items: flex-start;
   margin-bottom: 15px;
   padding-bottom: 15px;
-  border-bottom: 1px dashed #eadca6; /* Separador punteado */
+  border-bottom: 1px dashed #eadca6;
 }
 
-/* Icono del consejo */
 .chuleta-icon {
-  font-size: 1.6em; /* Un poco más grande para que destaque */
+  font-size: 1.6em;
   margin-right: 15px;
-  line-height: 1.4; /* Ayuda a la alineación vertical */
+  line-height: 1.4;
   color: #4a3112;
 }
 
-/* Párrafo con el texto del consejo */
 .chuleta-item p {
   margin: 0;
   font-size: 0.95em;
@@ -1475,9 +1422,7 @@ border: 1px solid #e0e0e0;
   max-width: 700px;
   flex: none;
 }
-/* --- ESTILOS MEJORADOS Y UNIFICADOS PARA EL PANEL LATERAL --- */
 
-/* Contenedor principal del Panel */
 #side-panel {
   position: fixed;
   top: 0;
@@ -1485,7 +1430,7 @@ border: 1px solid #e0e0e0;
   bottom: 0;
   width: 450px;
   max-width: 300%;
-  background-color: #fcf8ee; /* Un fondo ligeramente más cálido que el principal */
+  background-color: #fcf8ee;
   border-left: 1px solid #eaddc0;
   box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
   transform: translateX(100%);
@@ -1498,7 +1443,6 @@ border: 1px solid #e0e0e0;
   transform: translateX(0%);
 }
 
-/* Cabecera del Panel */
 #side-panel .panel-header {
   display: flex;
   justify-content: space-between;
@@ -1532,17 +1476,15 @@ border: 1px solid #e0e0e0;
   transform: rotate(90deg);
 }
 
-/* Contenido principal con scroll */
 #side-panel .panel-content {
   padding: 20px;
   overflow-y: auto;
   flex-grow: 1;
 }
 
-/* --- NUEVA NAVEGACIÓN POR PESTAÑAS --- */
 .panel-nav-buttons {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 columnas iguales */
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin-bottom: 25px;
   align-items: start;
@@ -1581,14 +1523,12 @@ border: 1px solid #e0e0e0;
 }
 
 .panel-button svg {
-  font-size: 1.5em; /* Iconos más grandes */
+  font-size: 1.5em;
 }
 
-
-/* --- CONTENIDO DE LAS SECCIONES (GLOSARIO, CHULETA, ETC) --- */
 .panel-section-content {
   display: none;
-  background-color: transparent; /* El fondo lo da el panel principal */
+  background-color: transparent;
 }
 
 .panel-section-content h3 {
@@ -1600,7 +1540,6 @@ border: 1px solid #e0e0e0;
   margin-bottom: 25px;
 }
 
-/* --- ESTILO MEJORADO PARA LA CHULETA --- */
 .chuleta-list {
   list-style: none;
   padding: 0;
@@ -1617,7 +1556,7 @@ border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 15px;
   border: 1px solid #f0e6d0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .chuleta-icon {
@@ -1636,18 +1575,16 @@ border: 1px solid #e0e0e0;
   hyphens: auto;
 }
 
-
-/* --- BOTÓN DE SALIR --- */
 .logout-button-wrapper {
   padding: 20px;
   border-top: 1px solid #eaddc0;
-  margin-top: auto; /* Empuja el botón al final */
-  background-color: #fcf8ee; /* Mismo fondo que el panel */
+  margin-top: auto;
+  background-color: #fcf8ee;
 }
 
 #settings-logout-btn {
   width: 100%;
-  background-color: #e25361; /* Color rosa Pimpoyo */
+  background-color: #e25361;
   color: white;
   border: none;
   padding: 12px 15px;
@@ -1665,81 +1602,69 @@ border: 1px solid #e0e0e0;
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(250, 119, 197, 0.4);
 }
-/* --- ESTILOS FINALES v2: GLOSARIO CON TARJETAS DULCES Y ABECEDARIO MINIMALISTA --- */
 
-/* 1. Nuevo Diseño del Abecedario (Más pequeño y elegante) */
 .glossary-index {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0;
   margin-bottom: 20px;
-  padding: 0 10px 20px 10px; /* Ajustamos padding */
+  padding: 0 10px 20px 10px;
 }
 
-/* Letras activas (enlaces 'a') */
 .glossary-index a {
-  /* Reseteamos estilos de botón anteriores */
   width: auto;
   height: auto;
   box-shadow: none;
   background-color: transparent;
   border: none;
 
-  /* Nuevo estilo minimalista */
   font-family: "Fredoka", sans-serif;
   font-weight: 600;
-  font-size: 0.9em; /* Letra más pequeña */
-  color: #94ab3d; /* Verde principal */
+  font-size: 0.9em;
+  color: #94ab3d;
   text-decoration: underline;
-  text-decoration-color: #f5e187; /* Subrayado amarillo suave */
+  text-decoration-color: #f5e187;
   text-decoration-thickness: 3px;
-  text-underline-offset: 4px; /* Distancia del subrayado al texto */
-  padding: 0 4px; /* Espacio horizontal pequeño */
+  text-underline-offset: 4px;
+  padding: 0 4px;
   margin: 0 2px;
   transition: all 0.2s ease;
 }
 
 .glossary-index a:hover {
-  color: #7a8e31; /* Un verde más oscuro al pasar el ratón */
+  color: #7a8e31;
   text-decoration-color: #7a8e31;
-  transform: none; /* Quitamos el salto */
-  background-color: transparent; /* Nos aseguramos de que no haya fondo */
+  transform: none;
+  background-color: transparent;
 }
 
-/* Letras desactivadas ('span') */
 .glossary-index span {
   width: auto;
   height: auto;
   background-color: transparent;
   border: none;
 
-  /* Nuevo estilo minimalista */
   font-family: "Fredoka", sans-serif;
   font-weight: 500;
-  font-size: 1em; /* Mismo tamaño pequeño */
-  color: #d3c8af; /* Color de texto muy suave, casi integrado */
+  font-size: 1em;
+  color: #d3c8af;
   padding: px;
   margin: 6px;
 }
 
-/* 2. Tarjetas de Definición (Estilo Dulce y Armonioso) */
-
-/* El término (ej: "Algoritmo") */
 .panel-section-content dl dt {
   font-size: 1.05em;
   font-weight: 600;
   color: #94ab3d;
   margin-top: 25px;
-  margin-bottom: 8px; /* Conecta el título con la tarjeta */
+  margin-bottom: 8px;
 }
 
-/* La definición (la tarjeta en sí) */
 .panel-section-content dl dd {
-  /* Usamos un blanco roto, más cálido y dulce */
   background-color: #ffffff;
   border: 3px solid #f5e187;
-  border-radius: 10px; /* Bordes más redondeados para un look más suave */
+  border-radius: 10px;
   padding: 15px;
   margin-left: 0;
   margin-bottom: 20px;
@@ -1750,18 +1675,16 @@ border: 1px solid #e0e0e0;
   font-size: 0.95em;
 }
 
-/* Etiqueta para los términos del usuario (igual que antes) */
 .panel-section-content dl dt .user-term-tag {
-    font-size: 1em;
-    font-weight: 500;
-    color: #fa77c5;
-    background-color: #fa77c520;
-    padding: 2px 6px;
-    border-radius: 10px;
-    margin-left: 8px;
-    vertical-align: middle;
+  font-size: 1em;
+  font-weight: 500;
+  color: #fa77c5;
+  background-color: #fa77c520;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+  vertical-align: middle;
 }
-/* --- OPCIÓN 3: ESTILO ABECEDARIO "SUBRAYADO CREATIVO" --- */
 
 .glossary-index {
   display: flex;
@@ -1774,7 +1697,6 @@ border: 1px solid #e0e0e0;
   margin-top: 25px;
 }
 
-/* Letras activas (con enlace) */
 .glossary-index a {
   font-family: "Fredoka", sans-serif;
   font-weight: 600;
@@ -1783,10 +1705,9 @@ border: 1px solid #e0e0e0;
   text-decoration: underline;
   text-decoration-color: #f5e187;
 
-  /* La "magia" para la línea ondulada */
   text-decoration-style: wavy;
-  text-decoration-thickness: 2px; /* Grosor de la onda */
-  text-underline-offset: 3px; /* Distancia de la onda al texto */
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
   transition: all 0.2s ease;
 }
 
@@ -1795,7 +1716,6 @@ border: 1px solid #e0e0e0;
   text-decoration-color: #7a8e31;
 }
 
-/* Letras desactivadas (sin enlace) */
 .glossary-index span {
   font-family: "Fredoka", sans-serif;
   font-weight: 500;
@@ -1808,26 +1728,21 @@ hr.separator {
 .panel-section-content dl dt:first-of-type {
   margin-top: auto;
 }
-/* --- MEJORA DE ESTILOS: FORMULARIO AÑADIR PALABRA --- */
 
-/* Estilo para el título "Añadir mi palabra" */
 .glossary-add-form h4 {
   font-size: 1.03em;
-  font-weight: 700; /* Lo hacemos negrita (bold) */
-  color: #4a3112; /* Usamos el color de texto principal para consistencia */
+  font-weight: 700;
+  color: #4a3112;
   margin-bottom: 15px;
 }
 
-/* --- ESTILO FORZADO PARA ETIQUETAS DEL FORMULARIO DEL GLOSARIO --- */
 .glossary-add-form .form-field label {
-  font-size: 1.04em !important;   /* Hacemos la fuente más grande de forma forzada */
-  font-weight: 500 !important;   /* La ponemos en negrita (bold) de forma forzada */
-  color: #4a3112 !important;       /* Cambiamos el color a verde para que el cambio sea muy obvio */
-  margin-bottom: 8px !important; /* Aumentamos un poco la separación con el campo de abajo */
+  font-size: 1.04em !important;
+  font-weight: 500 !important;
+  color: #4a3112 !important;
+  margin-bottom: 8px !important;
 }
-/* --- DISEÑO FINAL Y ROBUSTO PARA CHULETA DE CONSEJOS --- */
 
-/* Título principal de la sección */
 #chuleta-content h3 {
   text-align: center;
   color: #8b4513;
@@ -1836,7 +1751,6 @@ hr.separator {
   margin-bottom: 25px;
 }
 
-/* Contenedor de la lista de consejos */
 .chuleta-list {
   list-style: none;
   padding: 0;
@@ -1845,10 +1759,9 @@ hr.separator {
   flex-direction: column;
 }
 
-/* CADA CONSEJO (LA BURBUJA AMARILLA) */
 .chuleta-item {
   display: flex;
-  align-items: center; /* Centramos verticalmente todo el contenido de la fila */
+  align-items: center;
   gap: 15px;
   background-color: #ffffff;
   padding: 18px;
@@ -1857,96 +1770,85 @@ hr.separator {
   margin-bottom: 15px;
 }
 
-/* El círculo del icono */
 .chuleta-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5em; /* Ligeramente más grande para un mejor impacto */
+  font-size: 1.5em;
   width: 45px;
   height: 45px;
   border-radius: 50%;
   flex-shrink: 0;
-  background-color: #ffffff; /* Fondo blanco para que destaque más */
-  color: #7a8e31; /* Icono en marrón oscuro */
-
+  background-color: #ffffff;
+  color: #7a8e31;
 }
 
-/* CORRECCIÓN 2: Aseguramos el tamaño y alineación del icono SVG interno */
 .chuleta-icon svg {
   width: 55%;
   height: 55%;
 }
 
-/* Contenedor del texto del consejo (el texto ya no necesita ajustes de padding) */
 .chuleta-item p {
-  font-family: 'Fredoka', sans-serif;
+  font-family: "Fredoka", sans-serif;
   font-size: 1em;
   color: #6b4f34;
   line-height: 1.6;
   margin: 0;
 }
-/* --- DISEÑO MEJORADO Y ARMONIOSO PARA LA SECCIÓN DE AJUSTES --- */
 
-/* Título de la sección */
 #settings-content h3 {
   text-align: center;
   color: #8b4513;
   font-size: 1.6em;
   font-weight: 700;
-  margin-bottom: 30px; /* Más espacio para empezar */
+  margin-bottom: 30px;
 }
 
-/* Contenedor de cada campo del formulario (label + input) */
 .setting-item {
   margin-bottom: 25px;
 }
 
-/* Etiquetas ("Nickname", "URL del Avatar") */
 .setting-item label {
   display: block;
-  font-weight: 600; /* Semi-negrita */
+  font-weight: 600;
   margin-bottom: 8px;
-  color: #6b4f34; /* Marrón suave */
+  color: #6b4f34;
   font-size: 1.05em;
 }
 
-/* Campos de texto y URL */
 .settings-input {
   width: 100%;
-  padding: 12px 18px; /* Más padding interno */
-  border: 2px solid #eaddc0; /* Borde suave */
-  border-radius: 20px; /* Muy redondeado */
+  padding: 12px 18px;
+  border: 2px solid #eaddc0;
+  border-radius: 20px;
   font-family: inherit;
   font-size: 1em;
   color: #4a3112;
   box-sizing: border-box;
   background-color: #ffffff;
   transition: all 0.2s ease;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .settings-input:focus {
   outline: none;
-  border-color: #94ab3d; /* Borde verde al enfocar */
-  box-shadow: 0 0 8px rgba(148, 171, 61, 0.3); /* Resplandor verde */
+  border-color: #94ab3d;
+  box-shadow: 0 0 8px rgba(148, 171, 61, 0.3);
 }
 
-/* Vista previa del Avatar */
 .avatar-preview {
   width: 60px;
   height: 60px;
-  border-radius: 50%; /* La hacemos circular */
-  object-fit: cover; /* Evita que la imagen se deforme */
+  border-radius: 50%;
+  object-fit: cover;
   margin-top: 10px;
-  border: 3px solid #f5e187; /* Borde amarillo Pimpoyo */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border: 3px solid #f5e187;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Botón de Guardar Cambios */
 #settings-save-btn.action-button {
   width: 100%;
-  background-color: #94ab3d; /* Verde principal */
+  background-color: #94ab3d;
   color: white;
   border: none;
   padding: 12px 15px;
@@ -1965,7 +1867,6 @@ hr.separator {
   box-shadow: 0 4px 10px rgba(148, 171, 61, 0.4);
 }
 
-/* Mensajes de feedback (éxito o error) */
 .settings-feedback {
   margin-top: 15px;
   padding: 10px 15px;
@@ -1985,107 +1886,68 @@ hr.separator {
   color: #a94442;
   border: 1px solid #ebccd1;
 }
-/*
-  * ===============================================================
-  * == Estilos para las opciones del Pre-Test (ProfileSetup.tsx) ==
-  * ===============================================================
-  */
 
-/*
-  * Estilo para la etiqueta <label> que funciona como una tarjeta
-  * para cada opción de radio button o checkbox.
-  */
 .radio-checkbox-item {
-  /* Convertimos la opción en un contenedor flex para alinear sus hijos */
   display: flex;
-  align-items: center; /* Centra verticalmente el input y el texto */
+  align-items: center;
 
-  /* Estilos para que parezca una tarjeta ancha */
-  width: 100%; /* Ocupa todo el ancho del contenedor padre */
-  box-sizing: border-box; /* Importante para que el padding no altere el ancho total */
+  width: 100%;
+  box-sizing: border-box;
   padding: 1rem;
   margin-bottom: 0.75rem;
   background-color: #ffffff;
   border: 2px solid #eaddc0;
   border-radius: 12px;
 
-  /* Interacción y feedback visual */
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
 
-/* * Efecto visual al pasar el ratón por encima de cualquier opción.
-  */
 .radio-checkbox-item:hover {
-  border-color: #94ab3d; /* Un color de acento de tu app */
+  border-color: #94ab3d;
 }
 
-/*
-  * Estilo para la opción que está SELECCIONADA.
-  * Usamos el selector :has(), una novedad en CSS que nos permite
-  * estilizar el contenedor (.radio-checkbox-item) cuando su hijo
-  * (el input) está ':checked'.
-  */
 .radio-checkbox-item:has(input:checked) {
-  border-color: #fa77c5; /* Color de acento para la selección */
+  border-color: #fa77c5;
   background-color: #fff5fb;
 }
 
-/*
-  * Estilos para el texto (<span>) dentro de la opción.
-  */
 .radio-checkbox-item span {
-  flex-grow: 1; /* El texto ocupará todo el espacio restante */
+  flex-grow: 1;
   line-height: 1.4;
-  color: #4a3112; /* Aseguramos el color de texto principal */
-  padding-left: 1rem; /* Espacio entre el input y el texto */
+  color: #4a3112;
+  padding-left: 1rem;
 }
 
-/*
-  * Estilo para el propio input (el círculo o el cuadrado).
-  */
 .radio-checkbox-item input {
-  accent-color: #94ab3d; /* Cambia el color del check/punto */
+  accent-color: #94ab3d;
   width: 1.3em;
   height: 1.3em;
-  flex-shrink: 0; /* Evita que se encoja si el texto es muy largo */
+  flex-shrink: 0;
 }
 
-/* Cuando la opción está seleccionada, el texto se pone en negrita */
 .radio-checkbox-item:has(input:checked) span {
-    font-weight: 600;
+  font-weight: 600;
 }
-
 
 #header-nickname {
-  font-weight: 700 !important;   /* Usamos un grosor alto (bold) y !important */
-  font-size: 1.09em !important;     /* Hacemos la letra más grande para que sea obvio */
+  font-weight: 700 !important;
+  font-size: 1.09em !important;
 }
 
-/*
-==================================================================
- M E D I A   Q U E R I E S   P A R A   R E S P O N S I V E
-==================================================================
-*/
-
 @media (max-width: 768px) {
-
-  /* --- AJUSTES PARA EL PANEL LATERAL EN MÓVILES --- */
-
   #side-panel {
-    /* El panel ocupará casi todo el ancho, dejando un pequeño margen */
     width: 90%;
-    max-width: 400px; /* Un máximo para móviles muy anchos */
+    max-width: 400px;
   }
 
-  /* Reducimos el espacio de las pestañas para que quepan */
   .panel-nav-buttons {
     gap: 10px;
-    grid-template-columns: repeat(2, 1fr); /* 2 columnas en lugar de 4 */
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .panel-button {
-    flex-direction: row; /* Icono y texto en la misma línea */
+    flex-direction: row;
     justify-content: center;
     padding: 12px 8px;
     gap: 8px;
@@ -2096,15 +1958,13 @@ hr.separator {
   }
 
   #side-panel .panel-content {
-    padding: 15px; /* Menos padding en el contenido */
+    padding: 15px;
   }
 
   .panel-section-content h3 {
     font-size: 1.4em;
     margin-bottom: 20px;
   }
-
-  /* --- OTROS AJUSTES GENERALES PARA MÓVIL --- */
 
   .chat-messages {
     padding: 10px;

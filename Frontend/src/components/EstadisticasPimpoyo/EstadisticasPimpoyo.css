@@ -1,94 +1,128 @@
-/* --- NUEVO DISEÑO PARA ESTADÍSTICAS PIMPOYO (MÁS TIERNO Y ARMONIOSO) --- */
-
-/* 1. Contenedor Principal: Lo hacemos una tarjeta flotante y suave */
+/**
+ * @section Contenedor Principal
+ * @description Define el estilo base para la tarjeta de estadísticas,
+ * estableciendo el fondo, bordes, espaciado y tipografía.
+ */
 .estadisticas-pimpoyo {
-  background-color: #fdfaf3; /* Un fondo crema muy pálido */
+  background-color: #fdfaf3;
   border: 5px solid #f2eadd;
-  border-radius: 16px; /* Bordes más redondeados */
+  border-radius: 16px;
   padding: 20px 25px;
   max-width: 380px;
   margin: 20px auto;
   font-family: 'Fredoka', sans-serif;
-  color: #4a3112; /* Color de texto principal */
+  color: #4a3112;
 }
 
-/* 2. Título "Registro del detective": Más grande y amigable */
+/**
+ * @section Título
+ * @description Estilos para el encabezado principal (h2) dentro del
+ * contenedor de estadísticas, controlando su alineación, color, tamaño y sombra.
+ */
 .estadisticas-pimpoyo h2 {
   text-align: center;
-  color: #8b4513; /* Marrón oscuro para el título */
+  color: #8b4513;
   font-size: 1.8em;
   font-weight: 700;
   margin-bottom: 25px;
-  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); /* Sombra de texto sutil */
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
 }
 
-/* 3. Cada fila de estadística: ahora parte de una lista unificada */
+/**
+ * @section Filas de Estadísticas
+ * @description Estilo para cada elemento individual de estadística.
+ * Utiliza flexbox para alinear el icono y el contenido de texto.
+ */
 .estadistica-item {
   display: flex;
   align-items: center;
-  gap: 15px; /* Espacio entre icono, texto y valor */
-  padding: 12px 0; /* Espaciado vertical */
-  /* Separador de línea sutil, excepto para el último elemento */
+  gap: 15px;
+  padding: 12px 0;
 }
+
 .estadistica-item:last-of-type {
   border-bottom: none;
 }
 
-/* 4. Iconos: Con fondo circular para que destaquen */
+/**
+ * @section Iconos
+ * @description Da formato a los contenedores de los iconos, convirtiéndolos
+ * en círculos y centrando su contenido. Se definen colores de fondo y texto
+ * específicos para cada tipo de estadística (rango, total, aciertos, fallos).
+ */
 .estadistica-item .icono {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5em; /* Tamaño del emoji/icono */
+  font-size: 1.5em;
   width: 40px;
   height: 40px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-/* Colores de fondo para cada icono */
+
 .rango-detective .icono { background-color: #ffd5a1; color: #b76a00; }
 .estadistica-item[aria-label="Total"] { background-color: #d1eaff; color: #326a9e; }
 .estadistica-item.aciertos .icono { background-color: #dff0d8; color: #3c763d; }
 .estadistica-item.fallos .icono { background-color: #f2dede; color: #a94442; }
 
-/* 5. Contenido de la fila (etiqueta y valor) */
+/**
+ * @section Contenido de Texto de las Filas
+ * @description Organiza el texto de cada fila (etiqueta y valor),
+ * alineando la etiqueta a la izquierda y el valor a la derecha.
+ * Define estilos para etiquetas y valores, con fondos y colores
+ * específicos para un mejor contraste visual.
+ */
 .stat-main {
   flex-grow: 1;
   display: flex;
-  justify-content: space-between; /* Alinea etiqueta a la izq y valor a la der */
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
 }
+
 .estadistica-item .etiqueta {
   font-size: 1em;
   font-weight: 500;
   color: #6b4f34;
 }
+
 .estadistica-item .valor, .rango-detective .valor-texto {
   font-weight: 700;
   font-size: 1.1em;
   padding: 4px 12px;
   border-radius: 15px;
 }
+
 .estadistica-item .valor {
   background-color: #eee;
 }
-/* Colores específicos para valores de acierto/fallo */
+
 .estadistica-item.aciertos .valor { color: #3c763d; background-color: #dff0d8; }
 .estadistica-item.fallos .valor { color: #a94442; background-color: #f2dede; }
-.rango-detective .valor-texto { color: #b76a00; background-color: #ffd5a1;}
+.rango-detective .valor-texto { color: #b76a00; background-color: #ffd5a1; }
 
-/* Quitamos las mini-barras que eran poco estéticas */
+/**
+ * @section Mini Barras (Ocultas)
+ * @description Oculta las mini-barras de progreso que anteriormente
+ * acompañaban a los aciertos y fallos para simplificar la UI.
+ */
 .mini-barra-progreso {
   display: none;
 }
 
-/* 6. Sección de Experiencia (XP): Más gruesa y atractiva */
+/**
+ * @section Barra de Experiencia (XP)
+ * @description Estilos para la sección de la barra de progreso de XP.
+ * Incluye el título, la barra principal (con su fondo y relleno degradado)
+ * y el texto que muestra los puntos de experiencia.
+ */
 .progreso-contenedor {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px dashed #eaddc0;
 }
+
 .xp-titulo {
   text-align: center;
   font-size: 1.4em;
@@ -96,22 +130,24 @@
   color: #6b4f34;
   margin-bottom: 12px;
 }
+
 .barra-progreso {
-  height: 20px; /* Barra más gruesa */
+  height: 20px;
   border-radius: 10px;
-  background-color: #e0d8c6; /* Fondo de la barra más claro */
+  background-color: #e0d8c6;
   overflow: hidden;
   border: 1px solid #fff;
   box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
+
 .barra-progreso-relleno {
   height: 100%;
   border-radius: 10px;
-  /* Degradado atractivo para la barra */
   background: linear-gradient(to right, #f7d286, #f9a825);
   transition: width 0.8s ease-out;
   box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1);
 }
+
 .xp-texto {
   text-align: center;
   margin-top: 8px;
@@ -120,7 +156,11 @@
   color: #4a3112;
 }
 
-/* 7. Sección de Evaluación de Progreso */
+/**
+ * @section Evaluación de Progreso
+ * @description Estilos para la sección final destinada a la evaluación
+ * del progreso del usuario, separada visualmente del resto de estadísticas.
+ */
 .progress-section {
   text-align: center;
   padding-top: 20px;

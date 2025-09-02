@@ -9,14 +9,13 @@ import {
 import { SidePanelProps, GlossaryTermPublic, UserDetailedStats } from '../../types/types';
 import EstadisticasPimpoyo from '../EstadisticasPimpoyo/EstadisticasPimpoyo';
 
-
 interface GlossaryEntry {
-  id?: number;
-  term: string;
-  definition: string;
-  isDefault: boolean;
-  userId?: number | string;
-  fecha_creacion?: Date | string;
+    id?: number;
+    term: string;
+    definition: string;
+    isDefault: boolean;
+    userId?: number | string;
+    fecha_creacion?: Date | string;
 }
 
 const defaultGlossaryTerms: GlossaryEntry[] = [
@@ -57,6 +56,13 @@ const tipsResumen = [
     { icon: faCircleQuestion, text: 'Pregúntate siempre: ¿quién se beneficia al difundir esta información?' }
 ];
 
+/**
+ * Renderiza el panel lateral de la aplicación, que contiene múltiples secciones:
+ * una "chuleta" de consejos, un glosario de términos, estadísticas de progreso
+ * del usuario y ajustes de perfil.
+ * @param {SidePanelProps} props - Las propiedades del componente.
+ * @returns {React.ReactElement} El elemento `div` del panel lateral.
+ */
 function SidePanel({
     isOpen,
     onClose,
@@ -68,395 +74,436 @@ function SidePanel({
     selectedTerm,
     initialSection
 }: SidePanelProps) {
-  const [activeSection, setActiveSection] = useState<string | null>(initialSection || 'chuleta');
-  const [nicknameSetting, setNicknameSetting] = useState('');
-  const [avatarUrlSetting, setAvatarUrlSetting] = useState('');
-  const [settingsLoading, setSettingsLoading] = useState<boolean>(false);
-  const [settingsFeedback, setSettingsFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
-  const [userGlossaryTerms, setUserGlossaryTerms] = useState<GlossaryEntry[]>([]);
-  const [newTerm, setNewTerm] = useState('');
-  const [newDefinition, setNewDefinition] = useState('');
-  const [glossaryLoading, setGlossaryLoading] = useState(false);
-  const [glossaryError, setGlossaryError] = useState<string | null>(null);
-  const [fetchedStats, setFetchedStats] = useState<UserDetailedStats | null>(null);
-  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(false);
-  const [statsError, setStatsError] = useState<string | null>(null);
+    const [activeSection, setActiveSection] = useState<string | null>(initialSection || 'chuleta');
+    const [nicknameSetting, setNicknameSetting] = useState('');
+    const [avatarUrlSetting, setAvatarUrlSetting] = useState('');
+    const [settingsLoading, setSettingsLoading] = useState<boolean>(false);
+    const [settingsFeedback, setSettingsFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+    const [userGlossaryTerms, setUserGlossaryTerms] = useState<GlossaryEntry[]>([]);
+    const [newTerm, setNewTerm] = useState('');
+    const [newDefinition, setNewDefinition] = useState('');
+    const [glossaryLoading, setGlossaryLoading] = useState(false);
+    const [glossaryError, setGlossaryError] = useState<string | null>(null);
+    const [fetchedStats, setFetchedStats] = useState<UserDetailedStats | null>(null);
+    const [isStatsLoading, setIsStatsLoading] = useState<boolean>(false);
+    const [statsError, setStatsError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (userInfo) {
-      setNicknameSetting(userInfo.apodo);
-      setAvatarUrlSetting(userInfo.avatar_url || '');
-    } else {
-      setNicknameSetting('');
-      setAvatarUrlSetting('');
-    }
-  }, [userInfo]);
-
-  const fetchUserGlossaryTerms = useCallback(async () => {
-    if (!authToken) { return; }
-    setGlossaryLoading(true);
-    setGlossaryError(null);
-    try {
-      const response = await fetch('/api/glossary/', {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' }
-      });
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: `HTTP error ${response.status}` }));
-        throw new Error(errorData.detail || `Failed to fetch glossary: ${response.status}`);
-      }
-      const fetchedData: GlossaryTermPublic[] = await response.json();
-      const formattedData: GlossaryEntry[] = fetchedData.map(termFromApi => ({
-        id: termFromApi.id, term: termFromApi.termino, definition: termFromApi.definicion,
-        isDefault: false, userId: termFromApi.usuario_sesion_id, fecha_creacion: termFromApi.fecha_creacion
-      })).filter(entry => entry.term && entry.definition);
-      setUserGlossaryTerms(formattedData);
-    } catch (error) {
-      setGlossaryError(error instanceof Error ? error.message : 'No se pudieron cargar tus palabras.');
-      setUserGlossaryTerms([]);
-    } finally {
-      setGlossaryLoading(false);
-    }
-  }, [authToken]);
-
-  useEffect(() => {
-    if (isOpen && activeSection === 'glossary' && authToken) {
-      fetchUserGlossaryTerms();
-    }
-   }, [isOpen, activeSection, authToken, fetchUserGlossaryTerms]);
-
-  const fetchUserStats = useCallback(async () => {
-    if (!authToken) {
-      setStatsError("No autenticado. No se pueden cargar estadísticas.");
-      setFetchedStats(null);
-      return;
-    }
-    setIsStatsLoading(true);
-    setStatsError(null);
-    try {
-      const response = await fetch('/api/users/me/detailed-stats', {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' }
-      });
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: `Error HTTP ${response.status}` }));
-        throw new Error(errorData.detail || `Error al cargar estadísticas: ${response.status}`);
-      }
-      const statsData: UserDetailedStats = await response.json();
-      setFetchedStats(statsData);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'No se pudieron cargar las estadísticas.';
-      setStatsError(errorMessage);
-      setFetchedStats(null);
-    } finally {
-      setIsStatsLoading(false);
-    }
-  }, [authToken]);
-
-  useEffect(() => {
-    if (isOpen && activeSection === 'stats' && !isStatsLoading) {
-      fetchUserStats();
-    }
-    if ((!isOpen && activeSection === 'stats') || (isOpen && activeSection !== 'stats')) {
-       setFetchedStats(null);
-       setStatsError(null);
-    }
-  }, [isOpen, activeSection, fetchUserStats]);
-
-  useEffect(() => {
-    if (isOpen && initialSection) {
-      if (activeSection !== initialSection) {
-        setActiveSection(initialSection);
-      }
-    }
-  }, [isOpen, initialSection]);
-
-  useEffect(() => {
-    if (isOpen && activeSection === 'glossary' && selectedTerm) {
-      const timer = setTimeout(() => {
-        const sanitizedTermId = `glossary-entry-${selectedTerm.toLowerCase().replace(/[^a-z0-9ñáéíóúü]+/gi, '-')}`;
-        const element = document.getElementById(sanitizedTermId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          element.classList.add('highlighted-term-momentarily');
-          setTimeout(() => {
-            element.classList.remove('highlighted-term-momentarily');
-          }, 2500);
-        }
-      }, 150);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen, activeSection, selectedTerm]);
-
-  const handleSectionChange = (section: string | null) => {
-    setActiveSection(section);
-    if (section === 'settings' && userInfo) {
-      setNicknameSetting(userInfo.apodo);
-      setAvatarUrlSetting(userInfo.avatar_url || '');
-    }
-    if (section !== 'glossary') {
-      setNewTerm('');
-      setNewDefinition('');
-      setGlossaryError(null);
-    }
-  };
-
-  const handleSaveSettings = async () => {
-   setSettingsFeedback(null);
-    const newNickname = nicknameSetting.trim();
-    const newAvatarUrl = avatarUrlSetting.trim();
-    if (!newNickname) { setSettingsFeedback({ type: 'error', message: 'El nickname no puede estar vacío.' }); return; }
-    setSettingsLoading(true);
-    try {
-        const bodyPayload = { apodo: newNickname, avatar_url: newAvatarUrl || null };
-        const response = await fetch('/api/users/me/', { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }, body: JSON.stringify(bodyPayload) });
-        setSettingsLoading(false);
-        const responseData = await response.json();
-        if (!response.ok) { throw new Error(responseData.detail || `Error: ${response.status}`); }
-        setSettingsFeedback({ type: 'success', message: '¡Cambios guardados!' });
-        onSettingsSaved();
-        setTimeout(() => setSettingsFeedback(null), 3000);
-    } catch (error) {
-        setSettingsLoading(false);
-        const message = error instanceof Error ? error.message : 'Error al guardar ajustes.';
-        setSettingsFeedback({ type: 'error', message });
-    }
-  };
-
-  const handleAddGlossaryTerm = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!newTerm.trim() || !newDefinition.trim()) { setGlossaryError("Debes escribir un término y una definición."); return; }
-    if (!authToken) { setGlossaryError("Error de autenticación."); return; }
-    setGlossaryError(null);
-    setGlossaryLoading(true);
-    try {
-        const response = await fetch('/api/glossary/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' },
-            body: JSON.stringify({ termino: newTerm.trim(), definicion: newDefinition.trim() })
-        });
-        if (!response.ok) {
-             let errorDetail = `Error ${response.status}: ${response.statusText}`;
-             try {
-                 const errorJson = await response.json();
-                 errorDetail = errorJson.detail || errorDetail;
-             } catch (e) { console.error("Error parsing JSON:", e); }
-            throw new Error(errorDetail);
-        }
-        setNewTerm('');
-        setNewDefinition('');
-        await fetchUserGlossaryTerms();
-    } catch (error) {
-        setGlossaryError(error instanceof Error ? error.message : 'No se pudo añadir la palabra.');
-    } finally {
-        setGlossaryLoading(false);
-    }
-  };
-
-  const groupedGlossary = useMemo(() => {
-    const combinedTerms = [...defaultGlossaryTerms, ...userGlossaryTerms];
-    const validTerms = combinedTerms.filter((term) => term && typeof term.term === 'string' && term.term.length > 0);
-    let sortedTerms: GlossaryEntry[] = [];
-    try {
-        sortedTerms = [...validTerms].sort((a, b) => a.term.localeCompare(b.term));
-    } catch (sortError) {
-        console.error("Error durante la ordenación:", sortError);
-        sortedTerms = [...validTerms];
-    }
-    const finalGroupedResult = sortedTerms.reduce((acc, term) => {
-        const firstLetter = term.term[0].toUpperCase();
-        if (/^[A-Z]$/.test(firstLetter)) {
-            if (!acc[firstLetter]) { acc[firstLetter] = []; }
-            acc[firstLetter].push(term);
+    /**
+     * Sincroniza los campos de entrada de la sección de ajustes con la
+     * información del usuario (`userInfo`) cada vez que esta cambia.
+     */
+    useEffect(() => {
+        if (userInfo) {
+            setNicknameSetting(userInfo.apodo);
+            setAvatarUrlSetting(userInfo.avatar_url || '');
         } else {
-            const otherCategory = '#';
-            if (!acc[otherCategory]) { acc[otherCategory] = []; }
-            acc[otherCategory].push(term);
+            setNicknameSetting('');
+            setAvatarUrlSetting('');
         }
-        return acc;
-    }, {} as Record<string, GlossaryEntry[]>);
-    return finalGroupedResult;
-  }, [userGlossaryTerms]);
+    }, [userInfo]);
 
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+    /**
+     * Obtiene de forma asíncrona los términos del glosario personalizados
+     * del usuario desde la API.
+     * @async
+     */
+    const fetchUserGlossaryTerms = useCallback(async () => {
+        if (!authToken) { return; }
+        setGlossaryLoading(true);
+        setGlossaryError(null);
+        try {
+            const response = await fetch('/api/glossary/', {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' }
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ detail: `HTTP error ${response.status}` }));
+                throw new Error(errorData.detail || `Failed to fetch glossary: ${response.status}`);
+            }
+            const fetchedData: GlossaryTermPublic[] = await response.json();
+            const formattedData: GlossaryEntry[] = fetchedData.map(termFromApi => ({
+                id: termFromApi.id, term: termFromApi.termino, definition: termFromApi.definicion,
+                isDefault: false, userId: termFromApi.usuario_sesion_id, fecha_creacion: termFromApi.fecha_creacion
+            })).filter(entry => entry.term && entry.definition);
+            setUserGlossaryTerms(formattedData);
+        } catch (error) {
+            setGlossaryError(error instanceof Error ? error.message : 'No se pudieron cargar tus palabras.');
+            setUserGlossaryTerms([]);
+        } finally {
+            setGlossaryLoading(false);
+        }
+    }, [authToken]);
 
-  const puedeHacerPostTest = true;
-  //userInfo &&
-  //                           (userInfo.puntuacion_pre_test_total !== null && userInfo.puntuacion_pre_test_total !== undefined) &&
-  //                           (userInfo.puntuacion_post_test_total === null || userInfo.puntuacion_post_test_total === undefined);
+    /**
+     * Dispara la carga de los términos del glosario del usuario cuando el
+     * panel se abre en la sección del glosario.
+     */
+    useEffect(() => {
+        if (isOpen && activeSection === 'glossary' && authToken) {
+            fetchUserGlossaryTerms();
+        }
+    }, [isOpen, activeSection, authToken, fetchUserGlossaryTerms]);
 
-  const yaHizoPostTest = false/*userInfo &&
-                               (userInfo.puntuacion_post_test_total !== null && userInfo.puntuacion_post_test_total !== undefined);*/
+    /**
+     * Obtiene de forma asíncrona las estadísticas detalladas del usuario
+     * desde la API.
+     * @async
+     */
+    const fetchUserStats = useCallback(async () => {
+        if (!authToken) {
+            setStatsError("No autenticado. No se pueden cargar estadísticas.");
+            setFetchedStats(null);
+            return;
+        }
+        setIsStatsLoading(true);
+        setStatsError(null);
+        try {
+            const response = await fetch('/api/users/me/detailed-stats', {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' }
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ detail: `Error HTTP ${response.status}` }));
+                throw new Error(errorData.detail || `Error al cargar estadísticas: ${response.status}`);
+            }
+            const statsData: UserDetailedStats = await response.json();
+            setFetchedStats(statsData);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'No se pudieron cargar las estadísticas.';
+            setStatsError(errorMessage);
+            setFetchedStats(null);
+        } finally {
+            setIsStatsLoading(false);
+        }
+    }, [authToken]);
 
-  const necesitaPreTest = userInfo && (userInfo.puntuacion_pre_test_total === null || userInfo.puntuacion_pre_test_total === undefined);
+    /**
+     * Dispara la carga de las estadísticas del usuario cuando el panel se abre
+     * en esa sección y las limpia al cerrar o cambiar de sección.
+     */
+    useEffect(() => {
+        if (isOpen && activeSection === 'stats' && !isStatsLoading) {
+            fetchUserStats();
+        }
+        if ((!isOpen && activeSection === 'stats') || (isOpen && activeSection !== 'stats')) {
+            setFetchedStats(null);
+            setStatsError(null);
+        }
+    }, [isOpen, activeSection, fetchUserStats]);
 
-  return (
-    <div id="side-panel" className={`side-panel ${isOpen ? 'open' : ''}`}>
-      <div className="panel-header">
-        <h2>PANEL DE AYUDA</h2>
-        <button id="close-panel-btn" className="panel-button-close" aria-label="Cerrar panel" onClick={onClose}>
-          <FontAwesomeIcon icon={faX} />
-        </button>
-      </div>
+    /**
+     * Establece la sección activa inicial del panel cuando se abre,
+     * basándose en la prop `initialSection`.
+     */
+    useEffect(() => {
+        if (isOpen && initialSection) {
+            if (activeSection !== initialSection) {
+                setActiveSection(initialSection);
+            }
+        }
+    }, [isOpen, initialSection]);
 
-      <div className="panel-content">
-        <div className="panel-nav-buttons">
-            <button id="btn-chuleta" className={`panel-button ${activeSection === 'chuleta' ? 'active' : ''}`} onClick={() => handleSectionChange('chuleta')}>
-                <FontAwesomeIcon icon={faLightbulb} />
-                <span>Chuleta</span>
-            </button>
-            <button id="btn-glossary" className={`panel-button ${activeSection === 'glossary' ? 'active' : ''}`} onClick={() => handleSectionChange('glossary')}>
-                <FontAwesomeIcon icon={faBook} />
-                <span>Glosario</span>
-            </button>
-            <button id="btn-stats" className={`panel-button ${activeSection === 'stats' ? 'active' : ''}`} onClick={() => handleSectionChange('stats')}>
-                <FontAwesomeIcon icon={faChartPie} />
-                <span>Estadísticas</span>
-            </button>
-            <button id="btn-settings" className={`panel-button ${activeSection === 'settings' ? 'active' : ''}`} onClick={() => handleSectionChange('settings')}>
-                <FontAwesomeIcon icon={faGear} />
-                <span>Ajustes</span>
-            </button>
-        </div>
+    /**
+     * Hace scroll hasta un término específico en el glosario y lo resalta
+     * momentáneamente cuando el panel se abre con un `selectedTerm` predefinido.
+     */
+    useEffect(() => {
+        if (isOpen && activeSection === 'glossary' && selectedTerm) {
+            const timer = setTimeout(() => {
+                const sanitizedTermId = `glossary-entry-${selectedTerm.toLowerCase().replace(/[^a-z0-9ñáéíóúü]+/gi, '-')}`;
+                const element = document.getElementById(sanitizedTermId);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    element.classList.add('highlighted-term-momentarily');
+                    setTimeout(() => {
+                        element.classList.remove('highlighted-term-momentarily');
+                    }, 2500);
+                }
+            }, 150);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen, activeSection, selectedTerm]);
 
-        {activeSection === 'chuleta' && (
-          <div id="chuleta-content" className="panel-section-content" style={{ display: 'block' }}>
-            <h3>Chuleta de consejos</h3>
-            <ul className="chuleta-list">
-              {tipsResumen.map((tip, index) => (
-                <li key={index} className="chuleta-item">
-                  <span className="chuleta-icon">
-                    <FontAwesomeIcon icon={tip.icon} />
-                  </span>
-                  <p>{tip.text}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+    /**
+     * Gestiona el cambio de la sección activa en el panel de navegación.
+     * @param {string | null} section - La nueva sección a mostrar.
+     */
+    const handleSectionChange = (section: string | null) => {
+        setActiveSection(section);
+        if (section === 'settings' && userInfo) {
+            setNicknameSetting(userInfo.apodo);
+            setAvatarUrlSetting(userInfo.avatar_url || '');
+        }
+        if (section !== 'glossary') {
+            setNewTerm('');
+            setNewDefinition('');
+            setGlossaryError(null);
+        }
+    };
 
-        {activeSection === 'glossary' && (
-          <div id="glossary-content" className="panel-section-content" style={{ display: 'block' }}>
-            <h3>Glosario de términos</h3>
-            <form onSubmit={handleAddGlossaryTerm} className="glossary-add-form">
-              <h4>Añadir mi palabra</h4>
-              <div className="form-field">
-                <label htmlFor="new-term-input">Término:</label>
-                <input type="text" id="new-term-input" className="form-input" value={newTerm} onChange={(e) => setNewTerm(e.target.value)} placeholder="Escribe la palabra..." maxLength={50} required disabled={glossaryLoading} />
-              </div>
-              <div className="form-field">
-                <label htmlFor="new-definition-input">Definición:</label>
-                <textarea id="new-definition-input" className="form-textarea" value={newDefinition} onChange={(e) => setNewDefinition(e.target.value)} placeholder="Escribe qué significa..." rows={3} required disabled={glossaryLoading} />
-              </div>
-              {glossaryError && !glossaryLoading && <p className="error-message">{glossaryError}</p>}
-              <button type="submit" className="form-button primary" disabled={glossaryLoading}>
-                {glossaryLoading ? 'Guardando...' : 'Añadir palabra'}
-              </button>
-            </form>
-            <hr className="separator"/>
-            <div className="glossary-index">
-              {alphabet.map(letter => (
-                groupedGlossary[letter]
-                  ? <a key={letter} href={`#glossary-letter-${letter.toLowerCase()}`}>{letter}</a>
-                  : <span key={letter}>{letter}</span>
-              ))}
-              {groupedGlossary['#'] && <a href="#glossary-letter-symbol">#</a>}
+    /**
+     * Envía los cambios del perfil del usuario (nickname, avatar) a la API.
+     * @async
+     */
+    const handleSaveSettings = async () => {
+        setSettingsFeedback(null);
+        const newNickname = nicknameSetting.trim();
+        const newAvatarUrl = avatarUrlSetting.trim();
+        if (!newNickname) { setSettingsFeedback({ type: 'error', message: 'El nickname no puede estar vacío.' }); return; }
+        setSettingsLoading(true);
+        try {
+            const bodyPayload = { apodo: newNickname, avatar_url: newAvatarUrl || null };
+            const response = await fetch('/api/users/me/', { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }, body: JSON.stringify(bodyPayload) });
+            setSettingsLoading(false);
+            const responseData = await response.json();
+            if (!response.ok) { throw new Error(responseData.detail || `Error: ${response.status}`); }
+            setSettingsFeedback({ type: 'success', message: '¡Cambios guardados!' });
+            onSettingsSaved();
+            setTimeout(() => setSettingsFeedback(null), 3000);
+        } catch (error) {
+            setSettingsLoading(false);
+            const message = error instanceof Error ? error.message : 'Error al guardar ajustes.';
+            setSettingsFeedback({ type: 'error', message });
+        }
+    };
+
+    /**
+     * Gestiona el envío del formulario para añadir un nuevo término
+     * personalizado al glosario del usuario.
+     * @async
+     * @param {React.FormEvent} event - El evento de envío del formulario.
+     */
+    const handleAddGlossaryTerm = async (event: React.FormEvent) => {
+        event.preventDefault();
+        if (!newTerm.trim() || !newDefinition.trim()) { setGlossaryError("Debes escribir un término y una definición."); return; }
+        if (!authToken) { setGlossaryError("Error de autenticación."); return; }
+        setGlossaryError(null);
+        setGlossaryLoading(true);
+        try {
+            const response = await fetch('/api/glossary/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' },
+                body: JSON.stringify({ termino: newTerm.trim(), definicion: newDefinition.trim() })
+            });
+            if (!response.ok) {
+                let errorDetail = `Error ${response.status}: ${response.statusText}`;
+                try {
+                    const errorJson = await response.json();
+                    errorDetail = errorJson.detail || errorDetail;
+                } catch (e) { console.error("Error parsing JSON:", e); }
+                throw new Error(errorDetail);
+            }
+            setNewTerm('');
+            setNewDefinition('');
+            await fetchUserGlossaryTerms();
+        } catch (error) {
+            setGlossaryError(error instanceof Error ? error.message : 'No se pudo añadir la palabra.');
+        } finally {
+            setGlossaryLoading(false);
+        }
+    };
+
+    /**
+     * Procesa y memoriza la lista combinada de términos del glosario
+     * (predeterminados y del usuario), ordenándolos alfabéticamente y
+     * agrupándolos por su letra inicial para una visualización eficiente.
+     */
+    const groupedGlossary = useMemo(() => {
+        const combinedTerms = [...defaultGlossaryTerms, ...userGlossaryTerms];
+        const validTerms = combinedTerms.filter((term) => term && typeof term.term === 'string' && term.term.length > 0);
+        let sortedTerms: GlossaryEntry[] = [];
+        try {
+            sortedTerms = [...validTerms].sort((a, b) => a.term.localeCompare(b.term));
+        } catch (sortError) {
+            console.error("Error durante la ordenación:", sortError);
+            sortedTerms = [...validTerms];
+        }
+        const finalGroupedResult = sortedTerms.reduce((acc, term) => {
+            const firstLetter = term.term[0].toUpperCase();
+            if (/^[A-Z]$/.test(firstLetter)) {
+                if (!acc[firstLetter]) { acc[firstLetter] = []; }
+                acc[firstLetter].push(term);
+            } else {
+                const otherCategory = '#';
+                if (!acc[otherCategory]) { acc[otherCategory] = []; }
+                acc[otherCategory].push(term);
+            }
+            return acc;
+        }, {} as Record<string, GlossaryEntry[]>);
+        return finalGroupedResult;
+    }, [userGlossaryTerms]);
+
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+    const puedeHacerPostTest = true;
+    const yaHizoPostTest = false
+    const necesitaPreTest = userInfo && (userInfo.puntuacion_pre_test_total === null || userInfo.puntuacion_pre_test_total === undefined);
+
+    return (
+        <div id="side-panel" className={`side-panel ${isOpen ? 'open' : ''}`}>
+            <div className="panel-header">
+                <h2>PANEL DE AYUDA</h2>
+                <button id="close-panel-btn" className="panel-button-close" aria-label="Cerrar panel" onClick={onClose}>
+                    <FontAwesomeIcon icon={faX} />
+                </button>
             </div>
-            <hr className="separator"/>
-            {glossaryLoading && userGlossaryTerms.length === 0 && !glossaryError && <p>Cargando tus palabras...</p> }
-            {!glossaryLoading && !glossaryError && Object.keys(groupedGlossary).length === 0 && <p>Aún no hay palabras en el glosario. ¡Añade la primera!</p> }
-            {Object.keys(groupedGlossary).sort((a, b) => a === '#' ? 1 : b === '#' ? -1 : a.localeCompare(b)).map(letter => (
-              <div key={letter} className="glossary-letter-group">
-                <h4 id={`glossary-letter-${letter === '#' ? 'symbol' : letter.toLowerCase()}`} className="glossary-letter-heading">{letter}</h4>
-                <dl>
-                  {groupedGlossary[letter].map((entry) => {
-                    const termId = `glossary-entry-${entry.term.toLowerCase().replace(/[^a-z0-9ñáéíóúü]+/gi, '-')}`;
-                    return (
-                      <React.Fragment key={termId}>
-                        <dt id={termId}>{entry.term} {!entry.isDefault && <span className="user-term-tag">(Mi palabra)</span>}</dt>
-                        <dd>{entry.definition}</dd>
-                      </React.Fragment>
-                    );
-                  })}
-                </dl>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {activeSection === 'stats' && (
-          <div id="stats-content" className="panel-section-content" style={{ display: 'block' }}>
-            <EstadisticasPimpoyo
-              totalAnalizadas={fetchedStats?.totalAnalizadas ?? 0}
-              aciertos={fetchedStats?.aciertos ?? 0}
-              fallos={fetchedStats?.fallos ?? 0}
-              xp={fetchedStats?.xp ?? 0}
-              xpNextLevel={fetchedStats && fetchedStats.xpNextLevel > 0 ? fetchedStats.xpNextLevel : 1}
-            />
-            <div className="progress-section">
-                <h3>Evaluación de progreso</h3>
-                {necesitaPreTest && (
-                    <p className="progress-text">
-                        Primero necesitas completar las actividades iniciales para desbloquear la evaluación de progreso.
-                    </p>
-                )}
-                {puedeHacerPostTest && (
-                    <button
-                        className="panel-button action-button"
-                        onClick={() => {
-                            if(onStartPostTest) onStartPostTest();
-                            onClose();
-                        }}
-                    >
-                        Evaluar mi progreso actual
+            <div className="panel-content">
+                <div className="panel-nav-buttons">
+                    <button id="btn-chuleta" className={`panel-button ${activeSection === 'chuleta' ? 'active' : ''}`} onClick={() => handleSectionChange('chuleta')}>
+                        <FontAwesomeIcon icon={faLightbulb} />
+                        <span>Chuleta</span>
                     </button>
+                    <button id="btn-glossary" className={`panel-button ${activeSection === 'glossary' ? 'active' : ''}`} onClick={() => handleSectionChange('glossary')}>
+                        <FontAwesomeIcon icon={faBook} />
+                        <span>Glosario</span>
+                    </button>
+                    <button id="btn-stats" className={`panel-button ${activeSection === 'stats' ? 'active' : ''}`} onClick={() => handleSectionChange('stats')}>
+                        <FontAwesomeIcon icon={faChartPie} />
+                        <span>Estadísticas</span>
+                    </button>
+                    <button id="btn-settings" className={`panel-button ${activeSection === 'settings' ? 'active' : ''}`} onClick={() => handleSectionChange('settings')}>
+                        <FontAwesomeIcon icon={faGear} />
+                        <span>Ajustes</span>
+                    </button>
+                </div>
+
+                {activeSection === 'chuleta' && (
+                    <div id="chuleta-content" className="panel-section-content" style={{ display: 'block' }}>
+                        <h3>Chuleta de consejos</h3>
+                        <ul className="chuleta-list">
+                            {tipsResumen.map((tip, index) => (
+                                <li key={index} className="chuleta-item">
+                                    <span className="chuleta-icon">
+                                        <FontAwesomeIcon icon={tip.icon} />
+                                    </span>
+                                    <p>{tip.text}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 )}
-                {yaHizoPostTest && userInfo && (
-                    <p className="progress-text-completed">
-                        ¡Ya completaste tu evaluación de progreso!
-                        <br />
-                        Puntuación: {userInfo.puntuacion_post_test_total?.toFixed(2)}%
-                    </p>
+
+                {activeSection === 'glossary' && (
+                    <div id="glossary-content" className="panel-section-content" style={{ display: 'block' }}>
+                        <h3>Glosario de términos</h3>
+                        <form onSubmit={handleAddGlossaryTerm} className="glossary-add-form">
+                            <h4>Añadir mi palabra</h4>
+                            <div className="form-field">
+                                <label htmlFor="new-term-input">Término:</label>
+                                <input type="text" id="new-term-input" className="form-input" value={newTerm} onChange={(e) => setNewTerm(e.target.value)} placeholder="Escribe la palabra..." maxLength={50} required disabled={glossaryLoading} />
+                            </div>
+                            <div className="form-field">
+                                <label htmlFor="new-definition-input">Definición:</label>
+                                <textarea id="new-definition-input" className="form-textarea" value={newDefinition} onChange={(e) => setNewDefinition(e.target.value)} placeholder="Escribe qué significa..." rows={3} required disabled={glossaryLoading} />
+                            </div>
+                            {glossaryError && !glossaryLoading && <p className="error-message">{glossaryError}</p>}
+                            <button type="submit" className="form-button primary" disabled={glossaryLoading}>
+                                {glossaryLoading ? 'Guardando...' : 'Añadir palabra'}
+                            </button>
+                        </form>
+                        <hr className="separator" />
+                        <div className="glossary-index">
+                            {alphabet.map(letter => (
+                                groupedGlossary[letter]
+                                    ? <a key={letter} href={`#glossary-letter-${letter.toLowerCase()}`}>{letter}</a>
+                                    : <span key={letter}>{letter}</span>
+                            ))}
+                            {groupedGlossary['#'] && <a href="#glossary-letter-symbol">#</a>}
+                        </div>
+                        <hr className="separator" />
+                        {glossaryLoading && userGlossaryTerms.length === 0 && !glossaryError && <p>Cargando tus palabras...</p>}
+                        {!glossaryLoading && !glossaryError && Object.keys(groupedGlossary).length === 0 && <p>Aún no hay palabras en el glosario. ¡Añade la primera!</p>}
+                        {Object.keys(groupedGlossary).sort((a, b) => a === '#' ? 1 : b === '#' ? -1 : a.localeCompare(b)).map(letter => (
+                            <div key={letter} className="glossary-letter-group">
+                                <h4 id={`glossary-letter-${letter === '#' ? 'symbol' : letter.toLowerCase()}`} className="glossary-letter-heading">{letter}</h4>
+                                <dl>
+                                    {groupedGlossary[letter].map((entry) => {
+                                        const termId = `glossary-entry-${entry.term.toLowerCase().replace(/[^a-z0-9ñáéíóúü]+/gi, '-')}`;
+                                        return (
+                                            <React.Fragment key={termId}>
+                                                <dt id={termId}>{entry.term} {!entry.isDefault && <span className="user-term-tag">(Mi palabra)</span>}</dt>
+                                                <dd>{entry.definition}</dd>
+                                            </React.Fragment>
+                                        );
+                                    })}
+                                </dl>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {activeSection === 'stats' && (
+                    <div id="stats-content" className="panel-section-content" style={{ display: 'block' }}>
+                        <EstadisticasPimpoyo
+                            totalAnalizadas={fetchedStats?.totalAnalizadas ?? 0}
+                            aciertos={fetchedStats?.aciertos ?? 0}
+                            fallos={fetchedStats?.fallos ?? 0}
+                            xp={fetchedStats?.xp ?? 0}
+                            xpNextLevel={fetchedStats && fetchedStats.xpNextLevel > 0 ? fetchedStats.xpNextLevel : 1}
+                        />
+                        <div className="progress-section">
+                            <h3>Evaluación de progreso</h3>
+                            {necesitaPreTest && (
+                                <p className="progress-text">
+                                    Primero necesitas completar las actividades iniciales para desbloquear la evaluación de progreso.
+                                </p>
+                            )}
+                            {puedeHacerPostTest && (
+                                <button
+                                    className="panel-button action-button"
+                                    onClick={() => {
+                                        if (onStartPostTest) onStartPostTest();
+                                        onClose();
+                                    }}
+                                >
+                                    Evaluar mi progreso actual
+                                </button>
+                            )}
+                            {yaHizoPostTest && userInfo && (
+                                <p className="progress-text-completed">
+                                    ¡Ya completaste tu evaluación de progreso!
+                                    <br />
+                                    Puntuación: {userInfo.puntuacion_post_test_total?.toFixed(2)}%
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {activeSection === 'settings' && (
+                    <div id="settings-content" className="panel-section-content" style={{ display: 'block' }}>
+                        <h3>Ajustes de perfil</h3>
+                        {userInfo ? (<>
+                            <div className="setting-item">
+                                <label htmlFor="settings-nickname-input">Nickname</label>
+                                <input type="text" id="settings-nickname-input" className="settings-input" value={nicknameSetting} onChange={(e) => setNicknameSetting(e.target.value)} maxLength={20} disabled={settingsLoading} />
+                            </div>
+                            <div className="setting-item">
+                                <label htmlFor="settings-avatar-url-input">URL del avatar</label>
+                                <input type="url" id="settings-avatar-url-input" className="settings-input" placeholder="Pega la URL de tu imagen aquí..." value={avatarUrlSetting} onChange={(e) => setAvatarUrlSetting(e.target.value)} disabled={settingsLoading} />
+                                {avatarUrlSetting && <img src={avatarUrlSetting} alt="Avatar preview" className="avatar-preview" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
+                            </div>
+                            <button id="settings-save-btn" className="panel-button action-button" onClick={handleSaveSettings} disabled={settingsLoading}>
+                                {settingsLoading ? 'Guardando...' : 'Guardar Cambios'}
+                            </button>
+                            {settingsFeedback && (
+                                <p className={`settings-feedback ${settingsFeedback.type}`}>
+                                    {settingsFeedback.message}
+                                </p>
+                            )}
+                        </>) : (
+                            <p>Cargando información...</p>
+                        )}
+                    </div>
                 )}
             </div>
-          </div>
-        )}
 
-        {activeSection === 'settings' && (
-          <div id="settings-content" className="panel-section-content" style={{ display: 'block' }}>
-            <h3>Ajustes de perfil</h3>
-            {userInfo ? (<>
-              <div className="setting-item">
-                <label htmlFor="settings-nickname-input">Nickname</label>
-                <input type="text" id="settings-nickname-input" className="settings-input" value={nicknameSetting} onChange={(e) => setNicknameSetting(e.target.value)} maxLength={20} disabled={settingsLoading} />
-              </div>
-              <div className="setting-item">
-                <label htmlFor="settings-avatar-url-input">URL del avatar</label>
-                <input type="url" id="settings-avatar-url-input" className="settings-input" placeholder="Pega la URL de tu imagen aquí..." value={avatarUrlSetting} onChange={(e) => setAvatarUrlSetting(e.target.value)} disabled={settingsLoading} />
-                {avatarUrlSetting && <img src={avatarUrlSetting} alt="Avatar preview" className="avatar-preview" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
-              </div>
-              <button id="settings-save-btn" className="panel-button action-button" onClick={handleSaveSettings} disabled={settingsLoading}>
-                {settingsLoading ? 'Guardando...' : 'Guardar Cambios'}
-              </button>
-              {settingsFeedback && (
-                <p className={`settings-feedback ${settingsFeedback.type}`}>
-                  {settingsFeedback.message}
-                </p>
-              )}
-            </>) : (
-              <p>Cargando información...</p>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div className="logout-button-wrapper">
-        <button id="settings-logout-btn" onClick={onLogout}>
-          Salir de Pimpoyo
-        </button>
-      </div>
-    </div>
-  );
+            <div className="logout-button-wrapper">
+                <button id="settings-logout-btn" onClick={onLogout}>
+                    Salir de Pimpoyo
+                </button>
+            </div>
+        </div>
+    );
 }
 
 export default SidePanel;

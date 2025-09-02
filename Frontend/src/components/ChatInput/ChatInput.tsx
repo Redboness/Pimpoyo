@@ -4,59 +4,65 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { ChatInputProps } from '../../types/types';
 
+/**
+ * Un componente controlado para el área de entrada del chat.
+ * Incluye un textarea que se redimensiona automáticamente con el contenido y un botón de envío.
+ * @param {ChatInputProps} props - Propiedades para el componente.
+ * @param {(message: string) => void} props.onSendMessage - Función callback para enviar un mensaje.
+ * @param {boolean} props.disabled - Deshabilita la entrada y el botón cuando es verdadero.
+ * @returns {React.ReactElement} El elemento de formulario renderizado para la entrada de chat.
+ */
 function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
   const [inputText, setInputText] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  /**
+   * Actualiza el estado `inputText` cada vez que el usuario escribe en el textarea.
+   * @param {React.ChangeEvent<HTMLTextAreaElement>} event - El evento de cambio del textarea.
+   * @returns {void}
+   */
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(event.target.value);
   };
 
+  /**
+   * Efecto para auto-redimensionar la altura del textarea basándose en su contenido.
+   * Se activa cada vez que el `inputText` cambia.
+   */
   useEffect(() => {
     if (textareaRef.current) {
       const textarea = textareaRef.current;
       const computedStyle = window.getComputedStyle(textarea);
-      // Get the min-height as computed by the browser from your CSS (e.g., "42.4px")
-      // This represents the height of a single line.
       const cssMinHeight = parseInt(computedStyle.minHeight, 10);
 
       if (inputText.trim() === '') {
-        // If input is empty, ensure height is 'auto' to respect CSS min-height.
         textarea.style.height = 'auto';
-        // console.log(`Input empty. Height set to 'auto'. Effective min-height: ${cssMinHeight}px`);
       } else {
-        // For non-empty input:
-        // 1. Temporarily set to 'auto' to correctly measure scrollHeight,
-        //    allowing it to shrink if text was deleted.
         textarea.style.height = 'auto';
         const scrollHeight = textarea.scrollHeight;
-
-        // console.log(`Measured scrollHeight: ${scrollHeight}px, CSS minHeight: ${cssMinHeight}px`);
-
-        // 2. Only set the height to scrollHeight if scrollHeight is greater
-        //    than the single-line min-height. Otherwise, let 'auto' (and thus CSS min-height) rule.
-        //    A small tolerance (e.g., 1 or 2 pixels) can prevent jitter if scrollHeight and cssMinHeight
-        //    are extremely close but not identical due to subpixel rendering.
-        const tolerance = 25; // Adjust if needed, or set to 0 for strict comparison
+        const tolerance = 25;
         if (scrollHeight > cssMinHeight + tolerance) {
           textarea.style.height = `${scrollHeight}px`;
-          // console.log(`Expanded height to: ${scrollHeight}px`);
         } else {
-          // If content is still within the first line (or very close),
-          // ensure it stays at the CSS defined min-height by using 'auto'.
           textarea.style.height = 'auto';
-          // console.log('Content fits min-height. Height remains "auto".');
         }
       }
     }
   }, [inputText]);
 
+  /**
+   * Gestiona el envío del formulario.
+   * Previene la acción por defecto del formulario, recorta el texto de entrada,
+   * envía el mensaje si no está vacío y luego limpia el textarea.
+   * @param {React.FormEvent} event - El evento de envío del formulario.
+   * @returns {void}
+   */
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (disabled) return;
     if (inputText.trim()) {
       onSendMessage(inputText.trim());
-      setInputText(''); // Triggers useEffect, input becomes empty, height goes to 'auto'
+      setInputText('');
     }
   };
 

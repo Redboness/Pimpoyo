@@ -1,50 +1,74 @@
 /* src/components/InteractiveTerm/InteractiveTerm.css */
+
+/**
+ * @section Término Interactivo
+ * @description Estilo base para el contenedor del término.
+ * Lo hace visualmente distintivo, interactivo (cursor) y le añade
+ * un subrayado y espaciado para diferenciarlo del texto normal.
+ */
 .interactive-term {
   position: relative;
-  color: #007bff; /* Color distintivo para el término, ajústalo a tu paleta */
+  color: #007bff;
   cursor: pointer;
   text-decoration: underline dashed;
-  font-weight: bold; /* Para que destaque un poco más */
-  margin-left: 0.25ch;  /* Añade un pequeño espacio a la izquierda */
-  margin-right: 0.25ch; /* Añade un pequeño espacio a la derecha */
-
+  font-weight: bold;
+  margin-left: 0.25ch;
+  margin-right: 0.25ch;
 }
 
+/**
+ * @section Estados Hover/Focus
+ * @description Mejora la retroalimentación visual cuando el usuario
+ * interactúa con el término, cambiando el color y el estilo del subrayado.
+ */
 .interactive-term:hover,
 .interactive-term:focus {
   color: #0056b3;
   text-decoration: underline solid;
 }
 
+/**
+ * @section Popover de Definición
+ * @description Define la apariencia y el posicionamiento del popover
+ * que contiene la definición del término. Se posiciona absolutamente
+ * sobre el término, con un fondo oscuro, texto claro, y un ancho
+ * controlado para asegurar la legibilidad.
+ */
 .interactive-term-popover {
   position: absolute;
-  bottom: 100%; /* Posiciona encima del término */
+  bottom: 100%;
   left: 50%;
-  transform: translateX(-50%) translateY(-8px); /* Centra y añade un pequeño espacio */
-  background-color: #333; /* Fondo oscuro para el popover */
-  color: white; /* Texto blanco */
+  transform: translateX(-50%) translateY(-8px);
+  background-color: #333;
+  color: white;
   padding: 10px 15px;
   border-radius: 6px;
-  z-index: 100; /* Asegura que esté por encima de otros elementos */
+  z-index: 100;
   font-size: 0.9em;
   line-height: 1.4;
-  width: max-content; /* Ajusta el ancho al contenido */
-  min-width: 150px; /* Un ancho mínimo */
-  max-width: 300px; /* Evita que sea demasiado ancho */
+  width: max-content;
+  min-width: 150px;
+  max-width: 300px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   text-align: left;
-  font-weight: normal; /* Resetea el bold del término */
-  text-decoration: none; /* Quita el subrayado heredado */
+  font-weight: normal;
+  text-decoration: none;
 }
 
-/* Pequeña flecha para el popover (opcional pero mejora la UI) */
+/**
+ * @section Flecha del Popover
+ * @description Crea un pequeño triángulo (flecha) en la parte inferior
+ * del popover usando el pseudo-elemento ::after. Esto mejora la
+ * experiencia de usuario al señalar visualmente el término al que
+ * pertenece la definición.
+ */
 .interactive-term-popover::after {
   content: "";
   position: absolute;
-  top: 100%; /* Se posiciona en la parte inferior del popover */
+  top: 100%;
   left: 50%;
   transform: translateX(-50%);
   border-width: 6px;
   border-style: solid;
-  border-color: #333 transparent transparent transparent; /* Flecha hacia arriba */
+  border-color: #333 transparent transparent transparent;
 }

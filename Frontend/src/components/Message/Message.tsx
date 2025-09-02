@@ -1,19 +1,26 @@
 // src/components/Message/Message.tsx
-import React from 'react'; // <--- ASEGÚRATE DE TENER ESTA IMPORTACIÓN
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm'; // <--Remark-gfm para mejor renderizado
-// Modificado para usar 'import type' para tipos que solo se usan como anotaciones
-import type { ChatMessage, MessageButton} from '../../types/types'; // Ajusta la ruta
+import remarkGfm from 'remark-gfm';
+import type { ChatMessage, MessageButton} from '../../types/types';
 
 interface MessageProps {
   message: ChatMessage;
   onButtonClick: (messageId: number | string, buttonId: string) => void;
 }
 
-// Comentario encima de la función Message
+/**
+ * Renderiza un único mensaje en el chat.
+ * Es capaz de mostrar diferentes tipos de contenido: texto plano (usuario), Markdown (bot),
+ * HTML y componentes interactivos de React. También gestiona la visualización de
+ * botones de acción, de navegación y tarjetas de desafío.
+ * @param {MessageProps} props - Las propiedades del componente.
+ * @param {ChatMessage} props.message - El objeto del mensaje con la información a renderizar.
+ * @param {(messageId: number | string, buttonId: string) => void} props.onButtonClick - Callback que se ejecuta al hacer clic en un botón del mensaje.
+ * @returns {React.ReactElement} Un elemento `div` que representa el mensaje completo.
+ */
 function Message({ message, onButtonClick }: MessageProps) {
-  // Desestructurar el nuevo campo 'interactiveContent'
   const { id, sender, text, htmlContent, interactiveContent, avatar, buttons, buttonsDisabled, challengeCard } = message;
   const isUser = sender === 'user';
   const isTipNavButtonSet = buttons?.some(btn => btn.icon && (btn.id.startsWith('btn-tip-prev-') || btn.id.startsWith('btn-tip-next-'))) ?? false;
@@ -26,9 +33,8 @@ function Message({ message, onButtonClick }: MessageProps) {
         className={`avatar ${isUser ? 'user-avatar' : 'bot-avatar'}`}
       />
       <div className="message-bubble">
-        {/* --- INICIO DE LA MODIFICACIÓN DEL CONTENIDO PRINCIPAL --- */}
         {interactiveContent ? (
-          <div>{interactiveContent}</div> // Renderiza directamente el contenido interactivo
+          <div>{interactiveContent}</div>
         ) : htmlContent ? (
           <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
         ) : text ? (
@@ -38,9 +44,7 @@ function Message({ message, onButtonClick }: MessageProps) {
             <ReactMarkdown>{text}</ReactMarkdown>
           )
         ) : null}
-        {/* --- FIN DE LA MODIFICACIÓN DEL CONTENIDO PRINCIPAL --- */}
 
-        {/* NUEVO: Renderizado de la tarjeta del reto (tu código existente se mantiene) */}
         {challengeCard && (
           <div className="tip-challenge-card">
             <div className="challenge-question">
@@ -50,9 +54,9 @@ function Message({ message, onButtonClick }: MessageProps) {
               {challengeCard.options.map((button: MessageButton) => (
                 <button
                   key={button.id}
-                  className="message-button challenge-option-button" // Clase específica
+                  className="message-button challenge-option-button"
                   onClick={() => onButtonClick(id, button.id)}
-                  disabled={buttonsDisabled} // El mensaje general puede deshabilitar estos
+                  disabled={buttonsDisabled}
                   aria-label={button.ariaLabel || button.text}
                 >
                   {button.icon ? <FontAwesomeIcon icon={button.icon} /> : button.text}
@@ -62,9 +66,6 @@ function Message({ message, onButtonClick }: MessageProps) {
           </div>
         )}
 
-        {/* Botones de navegación PRINCIPALES del consejo (tu código existente se mantiene) */}
-        {/* He añadido !challengeCard aquí para evitar renderizar estos botones si ya hay una challengeCard.
-            Ajusta si tu lógica de visualización de botones es diferente. */}
         {buttons && buttons.length > 0 && !challengeCard && (
           <div className={isTipNavButtonSet ? "message-buttons-nav" : "message-buttons"}>
             {buttons.map((button: MessageButton) => {

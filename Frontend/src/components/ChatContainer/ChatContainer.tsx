@@ -217,7 +217,15 @@ Estilo de Comunicación:
 Objetivo Final: Que el usuario aprenda sobre la información que te pregunta, mediante un proceso interactivo y guiado.
 `;
 
-// Comentario encima de la función ChatContainer
+/**
+ * Componente principal que orquesta toda la interfaz de chat.
+ * Gestiona el estado de los mensajes, la información del usuario, los modos de juego (consejos, desafíos de noticias, chat libre),
+ * y las interacciones con el panel lateral y la API del backend.
+ * @param {ChatContainerProps} props Las propiedades del componente.
+ * @param {string} props.authToken El token de autenticación para el usuario actual.
+ * @param {() => void} props.onLogout Función de callback para gestionar el cierre de sesión del usuario.
+ * @returns {React.ReactElement} El componente del contenedor de chat renderizado.
+ */
 function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false);
@@ -231,7 +239,6 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const [isLoadingNews, setIsLoadingNews] = useState<boolean>(false);
   const [newsChallengeState, setNewsChallengeState] = useState<NewsChallengeState | null>(null);
 
-  // ---> INICIO DE LÓGICA DE PERSISTENCIA DE SESIÓN <---
   const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>(() => {
     const savedDifficulty = sessionStorage.getItem('difficultyLevel');
     const isValidDifficulty = savedDifficulty && ['bajo', 'medio', 'alto'].includes(savedDifficulty);
@@ -253,7 +260,6 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   useEffect(() => { sessionStorage.setItem('difficultyLevel', difficultyLevel); }, [difficultyLevel]);
   useEffect(() => { sessionStorage.setItem('correctStreak', correctStreak.toString()); }, [correctStreak]);
   useEffect(() => { sessionStorage.setItem('incorrectStreak', incorrectStreak.toString()); }, [incorrectStreak]);
-  // ---> FIN DE LÓGICA DE PERSISTENCIA DE SESIÓN <---
 
   const [lastChallengeType, setLastChallengeType] = useState<'pair' | 'guided' | null>(null);
   const [isSingleNewsAnalysisMode, setIsSingleNewsAnalysisMode] = useState<boolean>(false);
@@ -266,12 +272,15 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   const [selectedTermForSidePanel, setSelectedTermForSidePanel] = useState<string | null>(null);
   const [initialPanelSection, setInitialPanelSection] = useState<string | null>(null);
 
-  // ---> NUEVOS ESTADOS PARA EL FLUJO GUIADO <---
   const [guidedChoice, setGuidedChoice] = useState<'TRUE' | 'FALSE' | null>(null);
   const [guidedFlowStep, setGuidedFlowStep] = useState<'choice' | 'reasoning' | 'chatting' | null>(null);
 
 
-  // Comentario encima de la función handleLogout
+  /**
+   * Limpia el almacenamiento de sesión relacionado con el estado del juego y llama a la propiedad onLogout para cerrar la sesión del usuario.
+   * Está envuelta en useCallback para memorización.
+   * @returns {void}
+   */
   const handleLogout = useCallback(() => {
     sessionStorage.removeItem('difficultyLevel');
     sessionStorage.removeItem('correctStreak');
@@ -280,7 +289,13 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   }, [onLogout]);
 
 
-  // Comentario encima de la función fetchUserInfo
+  /**
+   * Obtiene de forma asíncrona la información del usuario actual desde la API utilizando el authToken proporcionado.
+   * Gestiona los estados de carga, errores y actualiza el estado `currentUserInfo`.
+   * También gestiona respuestas no autorizadas (401) cerrando la sesión del usuario. Envuelto en useCallback.
+   * @async
+   * @returns {Promise<void>}
+   */
   const fetchUserInfo = useCallback(async () => {
     setChatError('');
     if (!authToken) { setIsLoadingUserInfo(false); return; }
@@ -312,7 +327,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     }
   }, [authToken, fetchUserInfo, refreshUserInfoToggle]);
 
-  // Comentario encima de la función createWelcomeMessage
+  /**
+   * Crea el objeto de mensaje de bienvenida inicial para el chat, personalizándolo con el apodo del usuario.
+   * Envuelto en useCallback.
+   * @returns {ChatMessage} El objeto del mensaje de bienvenida.
+   */
   const createWelcomeMessage = useCallback((): ChatMessage => ({
     id: "welcome-msg-" + Date.now(), sender: "bot",
     text: `¡Encantado de conocerte, ${currentUserInfo?.apodo || "Usuario"}! Soy Pimpoyo. Puedo ayudarte con tips y consejos, descifrar noticias falsas o simplemente conversar un rato.`,
@@ -335,7 +354,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     }
   }, [isLoadingUserInfo, currentUserInfo, createWelcomeMessage, messages.length, isPostTestMode]);
 
-  // Comentario encima de la función togglePanel
+  /**
+   * Alterna la visibilidad del panel lateral.
+   * Si el panel se está cerrando, restablece cualquier término seleccionado o sección inicial.
+   * @returns {void}
+   */
   const togglePanel = () => {
     if (isPanelOpen) {
       setSelectedTermForSidePanel(null);
@@ -344,17 +367,29 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     setIsPanelOpen(prev => !prev);
   };
 
-  // Comentario encima de la función closePanel
+  /**
+   * Cierra explícitamente el panel lateral y restablece las variables de estado relacionadas.
+   * @returns {void}
+   */
   const closePanel = () => {
     setIsPanelOpen(false);
     setSelectedTermForSidePanel(null);
     setInitialPanelSection(null);
   };
 
-  // Comentario encima de la función handleSettingsSaved
+  /**
+   * Activa una actualización de la información del usuario al cambiar una variable de estado,
+   * que es una dependencia en el hook `useEffect` que llama a `fetchUserInfo`.
+   * @returns {void}
+   */
   const handleSettingsSaved = () => setRefreshUserInfoToggle(true);
 
-  // Comentario encima de la función addUserChoiceMessage
+  /**
+   * Añade un nuevo mensaje del usuario al historial del chat.
+   * Típicamente usado para clics en botones donde la acción del usuario se representa como texto. Envuelto en useCallback.
+   * @param {string} text El contenido de texto del mensaje del usuario.
+   * @returns {void}
+   */
   const addUserChoiceMessage = useCallback((text: string) => {
     if (!currentUserInfo) return;
     setMessages(prev => [...prev, {
@@ -363,7 +398,18 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     }]);
   }, [currentUserInfo]);
 
-  // Comentario encima de la función addBotResponse
+  /**
+   * Añade un nuevo mensaje del bot al historial del chat después de un retraso especificado.
+   * Puede manejar texto plano, HTML, componentes de React personalizados, botones y tarjetas de desafío. Envuelto en useCallback.
+   * @param {string | null} text El contenido de texto plano del mensaje del bot.
+   * @param {MessageButton[]} [buttons=[]] Un array de botones para mostrar con el mensaje.
+   * @param {number} [delay=300] El retraso en milisegundos antes de que aparezca el mensaje.
+   * @param {(id: string | number) => void} [onMessageAdded] Callback opcional ejecutado después de que se añade el mensaje.
+   * @param {string | null} [htmlContent=null] El contenido HTML para ser renderizado en el mensaje.
+   * @param {TipChallengeCard | null} [challengeCard=null] Una tarjeta de desafío para ser mostrada.
+   * @param {React.ReactNode} [interactiveContent] Contenido de React personalizado para ser renderizado.
+   * @returns {string | number} El ID único del mensaje del bot generado.
+   */
   const addBotResponse = useCallback((
       text: string | null,
       buttons: MessageButton[] = [],
@@ -394,7 +440,12 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     return botMsgId;
   }, []);
 
-  // Comentario encima de la función handleGlossaryTermClick
+  /**
+   * Gestiona los clics en los términos del glosario dentro de los mensajes del chat.
+   * Abre el panel lateral desplazado a la sección del glosario y resalta el término seleccionado. Envuelto en useCallback.
+   * @param {string} term El término del glosario que fue clickeado.
+   * @returns {void}
+   */
   const handleGlossaryTermClick = useCallback((term: string) => {
     console.log(`Término del glosario "${term}" clickeado/activado desde ChatContainer.`);
     setSelectedTermForSidePanel(term);
@@ -403,7 +454,12 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   }, []);
 
 
-  // Comentario encima de la función displayTipAndChallenge
+  /**
+   * Muestra un consejo educativo específico y su desafío asociado (si lo hay).
+   * Procesa el texto del consejo para hacer interactivos los términos del glosario. Envuelto en useCallback.
+   * @param {number} tipIndex El índice del consejo a mostrar del array `tips`.
+   * @returns {void}
+   */
   const displayTipAndChallenge = useCallback((tipIndex: number) => {
     const tip = tips[tipIndex];
     if (!tip) return;
@@ -453,7 +509,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
   }, [addBotResponse, handleGlossaryTermClick]);
 
 
-  // Comentario encima de la función increaseDifficulty
+  /**
+   * Aumenta el nivel de dificultad del juego según el orden predefinido.
+   * Actualiza el estado y registra el cambio. Envuelto en useCallback.
+   * @returns {boolean} `true` si la dificultad se incrementó, `false` si ya estaba en el nivel máximo.
+   */
   const increaseDifficulty = useCallback(() => {
     const currentIndex = difficultyOrder.indexOf(difficultyLevel);
     if (currentIndex < difficultyOrder.length - 1) {
@@ -466,7 +526,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     return false;
   }, [difficultyLevel]);
 
-  // Comentario encima de la función decreaseDifficulty
+  /**
+   * Disminuye el nivel de dificultad del juego.
+   * Actualiza el estado y registra el cambio. Envuelto en useCallback.
+   * @returns {boolean} `true` si la dificultad se disminuyó, `false` si ya estaba en el nivel mínimo.
+   */
   const decreaseDifficulty = useCallback(() => {
     const currentIndex = difficultyOrder.indexOf(difficultyLevel);
     if (currentIndex > 0) {
@@ -479,7 +543,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     return false;
   }, [difficultyLevel]);
 
-  // Comentario encima de la función resetSingleAnalysisMode
+  /**
+   * Restablece todas las variables de estado relacionadas con el modo de análisis de una sola noticia (guiado),
+   * finalizando efectivamente la sesión de análisis actual. Envuelto en useCallback.
+   * @returns {void}
+   */
   const resetSingleAnalysisMode = useCallback(() => {
     setIsSingleNewsAnalysisMode(false);
     setSingleNewsAnalysisData(null);
@@ -488,7 +556,12 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     setGuidedChoice(null);
   }, []);
 
-  // Comentario encima de la función createMobileViewHtml
+  /**
+   * Genera una cadena HTML para mostrar un artículo de noticias en un formato de tarjeta similar al de un móvil.
+   * Incluye imagen, entradilla, titular, fuente, fecha y cuerpo del texto.
+   * @param {NewsItem} newsItem El objeto de datos del artículo de noticias.
+   * @returns {string} Una cadena HTML que representa la tarjeta de noticias.
+   */
   const createMobileViewHtml = (newsItem: NewsItem): string => {
     const escapeHtml = (unsafe: string | null | undefined): string => {
         if (!unsafe) return '';
@@ -542,7 +615,14 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     `;
   };
 
-  // Comentario encima de la función processTwoNewsChallenge
+  /**
+   * Gestiona la lógica para el desafío de noticias en pareja.
+   * Selecciona una noticia verdadera y una falsa del nivel de dificultad actual, las muestra una al lado de la otra,
+   * y pide al usuario que elija la verdadera. Envuelto en useCallback.
+   * @param {NewsItem[]} currentNewsData El array de todos los artículos de noticias disponibles.
+   * @param {string | number} introId El ID del mensaje introductorio ("Buscando desafío...") para actualizar su texto.
+   * @returns {void}
+   */
   const processTwoNewsChallenge = useCallback((currentNewsData: NewsItem[], introId: string | number) => {
     const newsAtCurrentLevel = currentNewsData.filter(item => item.DIFFICULTY_LEVEL === difficultyLevel);
     const trueNewsFiltered = newsAtCurrentLevel.filter(item => item.CATEGORY === 'TRUE');
@@ -574,7 +654,13 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     setIsLoadingNews(false);
   }, [difficultyLevel, addBotResponse, setMessages, setNewsChallengeState]);
 
-  // Comentario encima de la función presentNewsChallenge
+  /**
+   * Inicia un desafío de noticias.
+   * Decide si presentar un desafío en pareja o un análisis guiado de una sola noticia basado en la última actividad.
+   * Obtiene los datos de noticias necesarios de la API y activa la función de visualización apropiada. Envuelto en useCallback.
+   * @async
+   * @returns {Promise<void>}
+   */
   const presentNewsChallenge = useCallback(async () => {
     if (isLoadingNews) return;
     setIsLoadingNews(true);
@@ -650,7 +736,15 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     }
   }, [authToken, isLoadingNews, lastChallengeType, handleLogout, resetSingleAnalysisMode, addBotResponse, processTwoNewsChallenge, newsData, createMobileViewHtml]);
 
-  // Comentario encima de la función handleMessageButtonClick
+  /**
+   * Manejador central para todos los clics de botones dentro de los mensajes del chat.
+   * Utiliza el ID del botón para determinar la acción, como navegar por los consejos, seleccionar una noticia,
+   * iniciar un modo de juego o responder a un desafío. Envuelto en useCallback.
+   * @async
+   * @param {number | string} messageId El ID del mensaje que contiene el botón clickeado.
+   * @param {string} buttonId El ID único del botón clickeado.
+   * @returns {Promise<void>}
+   */
   const handleMessageButtonClick = useCallback(async (messageId: number | string, buttonId: string) => {
     setMessages(current => current.map(msg => msg.id === messageId ? { ...msg, buttonsDisabled: true } : msg));
 
@@ -918,7 +1012,14 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     guidedChoice, setGuidedChoice, setGuidedFlowStep
   ]);
 
-  // Comentario encima de la función handleSendMessage
+  /**
+   * Gestiona el envío de un mensaje de texto del usuario a través del campo de entrada.
+   * Enruta el mensaje al endpoint del backend apropiado según el modo de chat actual (chat libre, análisis de noticias falsas o análisis guiado).
+   * Envuelto en useCallback.
+   * @async
+   * @param {string} inputText El texto introducido por el usuario.
+   * @returns {Promise<void>}
+   */
   const handleSendMessage = async (inputText: string) => {
     if (!inputText.trim() || !currentUserInfo) return;
     if (isTipChallengeActive) { addBotResponse("Por favor, responde al reto del consejo usando los botones.", [], 0); return; }
@@ -1022,7 +1123,15 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     }
   };
 
-  // Comentario encima de la función handlePostTestCompleted
+  /**
+   * Función de callback que se ejecuta cuando el usuario completa el post-test.
+   * Muestra la puntuación final y ofrece opciones para continuar con otras actividades. Envuelto en useCallback.
+   * @async
+   * @param {number} score La puntuación del usuario como porcentaje.
+   * @param {number} aciertos El número de respuestas correctas.
+   * @param {number} totalQuestions El número total de preguntas en el test.
+   * @returns {Promise<void>}
+   */
   const handlePostTestCompleted = useCallback(async (score: number, aciertos: number, totalQuestions: number) => {
     addBotResponse(
       `¡Terminaste tu evaluación de progreso! 🎉 Tu puntuación fue: **${score.toFixed(2)}%**
@@ -1037,7 +1146,12 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     await fetchUserInfo();
   }, [addBotResponse, fetchUserInfo]);
 
-  // Comentario encima de la función startPostTest
+  /**
+   * Inicia el flujo del post-test.
+   * Comprueba los prerrequisitos (como tener una puntuación del pre-test) y establece el estado del componente
+   * para mostrar el componente `PostTestFlow`. Envuelto en useCallback.
+   * @returns {void}
+   */
   const startPostTest = useCallback(() => {
     if (currentUserInfo && (currentUserInfo.puntuacion_pre_test_total === null || currentUserInfo.puntuacion_pre_test_total === undefined)) {
         addBotResponse("Para evaluar tu progreso, primero necesitas completar el test inicial. Si no lo has hecho, pregúntame por el 'pre-test'.", [], 300);
@@ -1056,7 +1170,11 @@ function ChatContainer({ authToken, onLogout }: ChatContainerProps) {
     setIsTipChallengeActive(false);
   }, [currentUserInfo, messages, addBotResponse, resetSingleAnalysisMode]);
 
-  // Comentario encima de la función handleRefresh
+  /**
+   * Restablece el chat a su estado inicial, borrando mensajes y estados de juego, y mostrando los botones del menú principal.
+   * Evita la actualización durante un post-test.
+   * @returns {void}
+   */
   const handleRefresh = () => {
     if (isPostTestMode) return;
 

@@ -9,6 +9,13 @@ import {
 type TestPhase = 'loading' | 'in-progress' | 'submitting' | 'finished' | 'error';
 type AllTestItems = (PostTestQuestion | NoticiaParaAnalisisPostTest)[];
 
+/**
+ * Combina las preguntas y las noticias en un único array para el test.
+ * Inserta las noticias antes de la sección 's4' si existe, o al final en caso contrario.
+ * @param {PostTestQuestion[]} questions - Array de preguntas del test.
+ * @param {NoticiaParaAnalisisPostTest[]} news - Array de noticias para analizar.
+ * @returns {AllTestItems} Un único array con todos los ítems del test combinados.
+ */
 const combineTestItems = (questions: PostTestQuestion[], news: NoticiaParaAnalisisPostTest[]): AllTestItems => {
     const items: AllTestItems = [...questions];
     const s3NewsIndex = questions.findIndex(q => q.seccion_id === 's4');
@@ -20,6 +27,16 @@ const combineTestItems = (questions: PostTestQuestion[], news: NoticiaParaAnalis
     return items;
 };
 
+/**
+ * Orquesta todo el flujo de un post-test. Gestiona la carga de preguntas,
+ * la navegación entre ellas, la recolección de respuestas y el envío final
+ * al servidor para su corrección.
+ * @param {PostTestFlowProps} props - Propiedades del componente.
+ * @param {string} props.authToken - Token de autenticación del usuario.
+ * @param {(score: number, maxScore: number, scoresBySection: any) => void} props.onTestComplete - Callback que se ejecuta al finalizar el test con los resultados.
+ * @param {() => void} props.onCancelTest - Callback para cancelar el test en caso de error.
+ * @returns {React.ReactElement} El elemento que renderiza la interfaz del test.
+ */
 function PostTestFlow({ authToken, onTestComplete, onCancelTest }: PostTestFlowProps) {
     const [phase, setPhase] = useState<TestPhase>('loading');
     const [allItems, setAllItems] = useState<AllTestItems>([]);
@@ -32,6 +49,10 @@ function PostTestFlow({ authToken, onTestComplete, onCancelTest }: PostTestFlowP
     const [error, setError] = useState<string | null>(null);
     const [testResultData, setTestResultData] = useState<PostTestSubmitResponse | null>(null);
 
+    /**
+     * Efecto que se ejecuta al montar el componente para obtener las preguntas
+     * y noticias del test desde la API. Gestiona los estados de carga y error.
+     */
     useEffect(() => {
         const fetchTestData = async () => {
             setError(null);
@@ -57,8 +78,22 @@ function PostTestFlow({ authToken, onTestComplete, onCancelTest }: PostTestFlowP
     }, [authToken]);
 
     const currentItem = useMemo(() => allItems[currentItemIndex], [allItems, currentItemIndex]);
+
+    /**
+     * Función de guarda de tipo (type guard) para diferenciar si un ítem del test
+     * es una pregunta (`PostTestQuestion`) o una noticia (`NoticiaParaAnalisisPostTest`).
+     * @param {any} item - El ítem del test a verificar.
+     * @returns {item is PostTestQuestion} `true` si el ítem es una pregunta.
+     */
     const isQuestion = (item: any): item is PostTestQuestion => 'texto_pregunta' in item;
 
+    /**
+     * Gestiona la acción del botón "Siguiente". Valida que la pregunta actual haya
+     * sido respondida. Si no es la última pregunta, avanza al siguiente ítem.
+     * Si es la última, invoca la función para enviar el test.
+     * @async
+     * @returns {Promise<void>}
+     */
     const handleNext = async () => {
         setError(null);
         if (isQuestion(currentItem)) {
@@ -92,6 +127,13 @@ function PostTestFlow({ authToken, onTestComplete, onCancelTest }: PostTestFlowP
         }
     };
 
+    /**
+     * Compila todas las respuestas del usuario en un payload y lo envía a la API
+     * para su corrección. Actualiza el estado del componente para mostrar la
+     * pantalla de resultados o de error.
+     * @async
+     * @returns {Promise<void>}
+     */
     const handleSubmitTest = async () => {
         setPhase('submitting');
         const payload: PostTestSubmitPayload = {
@@ -121,6 +163,14 @@ function PostTestFlow({ authToken, onTestComplete, onCancelTest }: PostTestFlowP
         }
     };
 
+    /**
+     * Actualiza el estado de las respuestas para preguntas de elección única o múltiple
+     * cada vez que el usuario selecciona o deselecciona una opción.
+     * @param {string} preguntaId - ID de la pregunta.
+     * @param {string} opcionId - ID de la opción seleccionada/deseleccionada.
+     * @param {'eleccion_unica' | 'eleccion_multiple'} tipo - El tipo de pregunta.
+     * @returns {void}
+     */
     const handleChoiceChange = (preguntaId: string, opcionId: string, tipo: 'eleccion_unica' | 'eleccion_multiple') => {
         setRespuestasEleccion(prev => {
             const newAnswers = { ...prev };
@@ -138,6 +188,11 @@ function PostTestFlow({ authToken, onTestComplete, onCancelTest }: PostTestFlowP
         });
     };
 
+    /**
+     * Devuelve el JSX apropiado para el ítem actual del test, ya sea una pregunta
+     * de opción múltiple, de texto libre o un análisis de noticia.
+     * @returns {React.ReactElement} El JSX para el ítem actual del test.
+     */
     const renderCurrentItem = () => {
         if (!currentItem) return <p>Cargando pregunta...</p>;
 
@@ -149,9 +204,6 @@ function PostTestFlow({ authToken, onTestComplete, onCancelTest }: PostTestFlowP
                     return (
                         <>
                             <p className="post-test-question-text">{q.texto_pregunta}</p>
-                            {q.tipo === 'eleccion_multiple' && (
-                                <p className="post-test-instruction"></p>
-                            )}
                             <div className="post-test-options-group">
                                 {q.opciones?.map(op => (
                                     <label key={op.id} className={`post-test-option-item ${respuestasEleccion[q.id_pregunta]?.includes(op.id) ? 'selected' : ''}`}>
@@ -163,7 +215,7 @@ function PostTestFlow({ authToken, onTestComplete, onCancelTest }: PostTestFlowP
                         </>
                     );
                 case 'texto_libre':
-                     return (
+                    return (
                         <>
                             <p className="post-test-question-text">{q.texto_pregunta}</p>
                             <textarea className="post-test-textarea" value={respuestasTexto[q.id_pregunta] || ''} onChange={e => setRespuestasTexto(prev => ({ ...prev, [q.id_pregunta]: e.target.value }))} rows={5} />
@@ -184,17 +236,17 @@ function PostTestFlow({ authToken, onTestComplete, onCancelTest }: PostTestFlowP
                         <p>¿Crees que esta noticia es Verdadera o Falsa?</p>
                         <div className="post-test-options-group">
                             <label className={`post-test-option-item option-true ${respuestaNoticia.evaluacion === 'Verdadero' ? 'selected' : ''}`}>
-                                <input type="radio" name={n.noticia_id_json} checked={respuestaNoticia.evaluacion === 'Verdadero'} onChange={() => setRespuestaNoticia(p => ({...p, evaluacion: 'Verdadero'}))} />
+                                <input type="radio" name={n.noticia_id_json} checked={respuestaNoticia.evaluacion === 'Verdadero'} onChange={() => setRespuestaNoticia(p => ({ ...p, evaluacion: 'Verdadero' }))} />
                                 Verdadera
                             </label>
                             <label className={`post-test-option-item option-false ${respuestaNoticia.evaluacion === 'Falso' ? 'selected' : ''}`}>
-                                <input type="radio" name={n.noticia_id_json} checked={respuestaNoticia.evaluacion === 'Falso'} onChange={() => setRespuestaNoticia(p => ({...p, evaluacion: 'Falso'}))} />
+                                <input type="radio" name={n.noticia_id_json} checked={respuestaNoticia.evaluacion === 'Falso'} onChange={() => setRespuestaNoticia(p => ({ ...p, evaluacion: 'Falso' }))} />
                                 Falsa
                             </label>
                         </div>
                     </div>
-                    <p style={{marginTop: '25px', fontWeight: '500'}}>¿Qué pistas o señales ves AHORA en la noticia para justificar tu respuesta?</p>
-                    <textarea className="post-test-textarea" value={respuestaNoticia.justificacion} onChange={e => setRespuestaNoticia(p => ({...p, justificacion: e.target.value}))} rows={4} />
+                    <p style={{ marginTop: '25px', fontWeight: '500' }}>¿Qué pistas o señales ves AHORA en la noticia para justificar tu respuesta?</p>
+                    <textarea className="post-test-textarea" value={respuestaNoticia.justificacion} onChange={e => setRespuestaNoticia(p => ({ ...p, justificacion: e.target.value }))} rows={4} />
                 </>
             );
         }

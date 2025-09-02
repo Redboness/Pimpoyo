@@ -1,25 +1,39 @@
 // src/components/InteractiveTerm/InteractiveTerm.tsx
 import React, { useState } from 'react';
-import './InteractiveTerm.css'; // Crearemos este archivo para los estilos
+import './InteractiveTerm.css';
 
 interface InteractiveTermProps {
   term: string;
   definition: string;
-  // Opcional: para manejar clic y llevar al panel del glosario
-  onTermClick?: (term: string) => void; 
+  onTermClick?: (term: string) => void;
 }
 
-// Componente para mostrar un término del glosario de forma interactiva
+/**
+ * Muestra un término de texto de forma interactiva.
+ * Al pasar el ratón (si no se proporciona `onTermClick`), muestra su definición en un popover.
+ * Si se proporciona `onTermClick`, actúa como un botón para activar una acción externa,
+ * como abrir un panel de glosario.
+ * @param {InteractiveTermProps} props - Las propiedades del componente.
+ * @param {string} props.term - El término que se mostrará.
+ * @param {string} props.definition - La definición del término, mostrada en el popover.
+ * @param {(term: string) => void} [props.onTermClick] - Callback opcional que se ejecuta al hacer clic. Si se provee, deshabilita el popover y delega la acción.
+ * @returns {React.ReactElement} El elemento `span` interactivo renderizado.
+ */
 const InteractiveTerm: React.FC<InteractiveTermProps> = ({ term, definition, onTermClick }) => {
   const [showPopover, setShowPopover] = useState(false);
 
-  // Función para manejar el clic en el término
+  /**
+   * Gestiona los eventos de clic y de teclado ('Enter', 'Space') en el término.
+   * Si existe la prop `onTermClick`, la invoca. De lo contrario, alterna la visibilidad
+   * del popover con la definición.
+   * @param {React.MouseEvent | React.KeyboardEvent} event - El evento de ratón o teclado que activó la función.
+   * @returns {void}
+   */
   const handleClick = (event: React.MouseEvent | React.KeyboardEvent) => {
-    event.preventDefault(); // Previene comportamiento por defecto si es un link, etc.
+    event.preventDefault();
     if (onTermClick) {
       onTermClick(term);
     } else {
-      // Si no hay onTermClick, simplemente alterna el popover
       setShowPopover(!showPopover);
     }
   };
@@ -30,9 +44,9 @@ const InteractiveTerm: React.FC<InteractiveTermProps> = ({ term, definition, onT
       onMouseEnter={() => !onTermClick && setShowPopover(true)}
       onMouseLeave={() => !onTermClick && setShowPopover(false)}
       onClick={handleClick}
-      onKeyPress={(e) => { if (e.key === 'Enter' || e.key === ' ') handleClick(e);}} // Para accesibilidad con teclado
-      tabIndex={0} // Hace que el span sea enfocable
-      role="button" // Indica que es interactivo
+      onKeyPress={(e) => { if (e.key === 'Enter' || e.key === ' ') handleClick(e); }}
+      tabIndex={0}
+      role="button"
       aria-expanded={showPopover}
       aria-describedby={showPopover ? `tooltip-${term.replace(/\s+/g, '-')}` : undefined}
     >
