@@ -1,0 +1,90 @@
+/* style.css */
+body {
+    margin: 0;
+    font-family: "Fredoka", sans-serif;
+    background-color: #fff9e9;
+    color: #4a3112;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+.page-header {
+    margin-bottom: 40px;
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+    border-radius: 50%;
+    border: 5px solid #f2eadd;
+    margin-bottom: 20px;
+}
+
+.page-header h1 {
+    font-size: 2.8em;
+    color: #8b4513;
+    margin: 0 0 10px 0;
+}
+
+.subtitle {
+    font-size: 1.2em;
+    color: #6b4f34;
+    margin: 0;
+}
+
+.links-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    border: 5px solid #f2eadd;
+}
+
+.links-section h2 {
+    color: #94ab3d;
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+.link-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: #fdfaf3;
+    padding: 18px;
+    border-radius: 25px;
+    border: 3px solid #eaddc0;
+    margin-bottom: 15px;
+    text-decoration: none;
+    color: #4a3112;
+    font-weight: 500;
+    font-size: 1.1em;
+    transition: all 0.2s ease-in-out;
+}
+
+.link-card:last-child {
+    margin-bottom: 0;
+}
+
+.link-card:hover {
+    border-color: #94ab3d;
+    background-color: #f0f5d4;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.link-card .icon {
+    font-size: 1.6em;
+    width: 30px; /* Ancho fijo para alinear los iconos */
+    text-align: center;
+}
