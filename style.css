@@ -1,4 +1,3 @@
-/* style.css */
 body {
     margin: 0;
     font-family: "Fredoka", sans-serif;
@@ -72,7 +71,8 @@ body {
     transition: all 0.2s ease-in-out;
 }
 
-.link-card:last-child {
+.link-card:last-child,
+.folder-container:last-child {
     margin-bottom: 0;
 }
 
@@ -85,6 +85,30 @@ body {
 
 .link-card .icon {
     font-size: 1.6em;
-    width: 30px; /* Ancho fijo para alinear los iconos */
+    width: 30px;
     text-align: center;
+}
+
+/* Estilos para la carpeta desplegable de avales */
+.folder-container {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.folder-summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.folder-summary::-webkit-details-marker {
+    display: none;
+}
+
+.folder-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-left: 25px;
+    margin-top: 15px;
+    border-left: 3px dashed #eaddc0;
 }
